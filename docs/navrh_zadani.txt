@@ -1,0 +1,57 @@
+Název:                  
+Univerzální doporučovací systém
+
+Anglický název:         
+Universal Recommender System
+
+Akademický rok vypsání:
+2009/2010
+
+Typ práce:              
+diplomová práce
+
+Jazyk práce: 
+angličtina
+
+Ústav:                  
+Katedra softwarového inženýrství (32-KSI)
+
+Vedoucí:                
+prof. RNDr. Vojtáš Peter, DrSc.
+
+Zásady pro vypracování:
+The goal of the thesis is to describe possibilities of creating a recommender system that is independent of the domain it is working on. 
+
+The first task is to define some abstract relationships that can be used for recommending. The recommender then utilises the relationships for making recommendations using various approaches, recommending should be independent of the decision taking time. The adaptation to an existing system will be done by mapping the existing relationships to the abstract ones. The final goal is to implement an experimental prototype of such a recommender and adapt it to at least three existing systems. 
+
+The assignment will be specified in more detail continuously.
+
+Seznam odborné literatury:
+
+Jerome Kunegis, Alan Said, Winfried Umbrath: The Universal Recommender, September 2009
+http://adsabs.harvard.edu/abs/2009arXiv0909.3472K
+
+Geoffrey J. Hueter, Steven C. Quandt, Noble H. Hueter: Universal system and method for representing and predicting human behavior patent description
+http://www.freepatentsonline.com/20090248599.pdf
+
+J. Ben Schafer, Dan Frankowski, Jon Herlocker, and Shilad Sen: Collaborative filtering recommender systems
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.130.4520&rep=rep1&type=pdf
+
+Robin Burke: Hybrid Web Recommender Systems
+http://josquin.cs.depaul.edu/twiki/pub/Csc594/ArticleList/burke-hybrid.pdf
+
+and some more if needed.
+
+Upoutávka:      
+Doporučovací systémy jsou programy, které se danému uživateli pokouší nabízet objekty (např. knihy, hudbu, novinové články), které by pro něj mohly být zajímavé. Tyto systémy mohou být užitečné pro uživatele, který se rozoduje mezi mnoha takovými objekty a nechce se zabývat procházením informací o všech dostupných objektech. 
+
+Tradiční doporučovací systémy jsou specifické pro danou doménu nabízených objektů. Náš pohled je obecnější, zahrnuje doménovou nezávislost.
+
+Cílem práce je vytvořit prototyp doporučovacího systému, aplikovatelného na různé domény. Po přizpůsobení by takový doporučovací systém byl schopen doporučovat objekty z domény.
+
+Upoutávka v anglickém jazyce: 
+Recommender systems are programs that try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
+
+Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence. 
+
+The thesis aims to create a prototype of a recommender system that would be applicable to various domains. After some adaptation it would be able to recommend the items of the domain.
