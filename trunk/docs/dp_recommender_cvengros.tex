@@ -38,13 +38,6 @@
 \newcommand{\datum}{DATUM}
 \newcommand{\vedoucimail}{Peter.Vojtas@mff.cuni.cz}
 
-\newcommand{\mat}[1]
-    {\vspace{2mm}
-        \[
-           #1
-            \vspace{2mm}
-        \]
-    }
 
 \title{Název práce}   % tyto dvì polo¾ky jsou zde v podstatì formálnì, ve skuteènosti nejsou nikde 
 \author{Petr Cvengro¹} % dále v dokumentu pou¾ity
@@ -159,6 +152,8 @@ Supervisor's e-mail address: \vedoucimail\\
 
 \chapter{Introduction}
     \label{introduction}
+    Jeste neco trocha poutavejsiho, ukrast treba z tech IEEE.
+    
     Recommender systems are programs operating on large amount of data in software systems. Recommender systems try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
     
     Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence. The thesis aims to create a prototype of a \emph{Universal Recommender} system. The system would be applicable to systems working on various domains. After some adaptation the Universal Recommender would recommend the items of the domain to users.
@@ -218,8 +213,21 @@ Supervisor's e-mail address: \vedoucimail\\
             
         \end{description}
     
-    \section{Works on Universal Recommender}
-        \label{works}
+    \section{Related Work}
+        \label{related_work}
+        Neco o recommenderech obecne. List komercne fungujicich. Netflix a jeho prize.
+        \subsection{Recommenders Generally}
+            \label{recommenders_generally}
+        
+        
+        \subsection{Domain Independent Recommenders}
+            \label{domain_independent_recommenders}
+            The idea of a domain-independent recommender isn't completely new. The most notable project in this field is an open-source project called \emph{AURA} (The Advanced Universal Recommendation Architecture) \cite{aura}. The project was supported by Sun and later by Oracle, but since the end of 2009 there's been no activity on the source code repository. The experimental music recommender based on AURA, \emph{The Music Explaura} \cite{music_explaura} seems to be inactive. The project aimed to create a universal hybrid recommender system, combining the two most used approaches: collaborative filtering and content-based recommendation (see \ref{collaborative_filtering}, \ref{content_based}). The system should have been working above a data store. More on the project can be found in \cite{aura_wiki}.  
+            
+            Another notable work on universal recommender is a US software pattent application \emph{Universal system and method for representing and predicting human behavior} \cite{patent}. The text contains a mixture of marketing proclamations, ideas on the recommender architecture, description of recommender and machine-learning algorithms and ideas on capturing implicit user ratings. In our opinion, the recommending methods presented in the text could be working well only on very small sets of data, for larger data sets, the ammount of time needed for performing some basic operations wouldn't be acceptable. The final paragraph, trying to claim everything around, from vector object representation to capturing the action of user adjusting the volume on his music player, gives a negative example of where the idea of software patents can lead. As far as we know there's no functional recommender system based on this patent. 
+            
+            white paper, 
+        
 
 
 \chapter{Relationship Analysis and Abstraction}
@@ -260,8 +268,10 @@ Supervisor's e-mail address: \vedoucimail\\
     \section{Recommender Algorithms}
         \label{algorithms}
         In the section we list algorithms used for recommending. Each algorithm is analyzed, its usability for universal recommending is evaluated. The space complexity and the time complexity of the common operations (see \ref{operations}) for each algorithm is estimated. Some implementation details are mentioned.
-        \subsection{Algorithm1}
-        \subsection{Algorithm2}
+        \subsection{Collaborative Filtering}
+            \label{collaborative_filtering}
+        \subsection{Content-based Recommender}
+            \label{content_based}
     \section{Recommendation Viewer}
         \label{viewer}
         The recommendations made by the Universal Recommender can be viewed in a web based application called \emph{Recommendation Viewer}. The application shows recommendations for a chosen subject. It is independent of the object and subject domain. The page for viewing the recommendations can be easily embedded to a webpage.
@@ -301,6 +311,10 @@ Supervisor's e-mail address: \vedoucimail\\
 %    case studies
 \addcontentsline{toc}{chapter}{Bibliography}
 % \bibitem{abraham-marsden}Abraham R., Marsden J. E.: {\em Foundations of Mechanics}, Addison-Wesley, Reading, 1985.
+ \bibitem{aura}The Advanced Universal Recommendation Architecture (AURA) Project home page. http://labs.oracle.com/projects/dashboard.php?id=196
+ \bibitem{music_explaura}The Music Explaura, an experimental music recommender based on AURA. Currently inactive. http://music.tastekeeper.com/
+ \bibitem{aura_wiki}The AURA project wiki. http://kenai.com/projects/aura/pages/Home
+ \bibitem{patent}Geoffrey J. Hueter, Steven C. Quandt, Noble H. Hueter: \emph{Universal system and method for representing and predicting human behavior} \#20090248599, United States Patent Application Publication, 2009. http://www.freshpatents.com/-dt20091001ptan20090248599.php, http://www.freepatentsonline.com/20090248599.pdf
 % \bibitem{derbes}Derbes D.: {\em Reinventing the wheel: Hodographic solutions to the Kepler problems}, Am. J. Phys. {\bf 69} (2001) 481--489.
 % \bibitem{kvasnica}Kvasnica J.: {\em Teorie elektromagnetického pole}, Academia, Praha, 1985.
 \end{thebibliography}
