@@ -25,6 +25,7 @@
 %\usepackage{fancybox} % umo¾òuje pokroèilé rámeèkování :-)
 \usepackage{graphicx} % nezbytné pro standardní vkládání obrázkù do dokumentu
 \usepackage{amsfonts}
+\usepackage{amsmath}
 
 \usepackage[left=4cm]{geometry} % nastavení dané velikosti okrajù
 
@@ -152,37 +153,50 @@ Supervisor's e-mail address: \vedoucimail\\
 
 \chapter{Introduction}
     \label{introduction}
-    Jeste neco trocha poutavejsiho, ukrast treba z tech IEEE.
+    %Jeste neco trocha poutavejsiho, inspirovat se takrka jakymkoliv paperem : user facing a huge ammount of data a tak. 
+    A present-day internet user is facing a plentitude of options. E-shops are offering a wide choice of various products, internet newspapers publish thousands of articles every day, loads of videos are published or uploaded by users every second. When a user is deciding what to buy, read or see, there far too many options to browse and choose the optimal one. Search engines don't help much, because a query like ``find something I would like'' is too vague. That's where recommender systems emerge. They help users to deal with the information overload and retailers to offer the most appropriate product for each client which resutls in increased custumer satisfaction and loyalty.
     
     Recommender systems are programs operating on large amount of data in software systems. Recommender systems try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
     
-    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence. The thesis aims to create a prototype of a \emph{Universal Recommender} system. The system would be applicable to systems working on various domains. After some adaptation the Universal Recommender would recommend the items of the domain to users.
+    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and a prediction of any type of relationship between the objects in the domains. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships.
     
     In the introductory chapter we describe the basic structure of the thesis. Then we give a formal definition of a recommender system. Finally we review projects and papers that have been created on the universal recommender topic.
     
     \section{Thesis Structure}
         \label{thesis_structure}
         In the \emph{\ref{introduction} Introduction} chapter we describe some basic ideas of the thesis, give a formal definition of a recommender system and explore the works that have been made on the topic.
-        
-        atd.
+        ...
 
     \section{Recommender System Definition}
         \label{definition}
-%         Informally, a recommender system is a system that presents some chosen \emph{objects} to a given \emph{subject}. The objects are chosen so that they are likely to invokte is the a positive response of the subject.
+         Informally, a recommender system is a system that presents some chosen \emph{objects} to a given \emph{subject}. The objects are chosen so that they are likely to invoke  a positive response of the subject.
+         
+         Similarly to the recommender problem definition in \cite{survey}, we formally define the recommendation as choosing the object $o'$ for each subject $s$, so that the object maximizes the subject's utility:
+         \begin{equation}
+            \label{eq_recommender_problem}
+            \forall s \in S: o'_s = \underset{o \in O}{arg \  max \  u_R(s, o)},
+        \end{equation}
+        where $S$ is the subject domain $O$ is the object domain. The usefulness of the object to the subject is measured by the $u$ function, $u: S \times O \to R$, where $R$ is a totally ordered set. 
+         
+        There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an adressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
         
         \subsection{Recommender Function}
             \label{recommender_function}
-            The \emph{Recommender Function} $R$ gives a \emph{Recommendation Rate} for a given subject and object:
+            The \emph{Recommender Function}:
             \begin{equation}
                 \label{eq_recommender_function}
-                R: S \times O \to \mathbb{R}_{0+},
+                R: S \times O \to [0, 1] \cup \lambda \times E
             \end{equation}
-            where $R$ is the Recommender Function, $S$ is the subject domain,$O$ is the object domain, $\mathbb{R}_{0+}$ are non-negative real numbers, that is $\{x|x \geq 0, x \in \mathbb{R}\}$.
-        
-        
-            The $S$ and $O$ are sets of entities. $S$ can be e.g. a set of system users, $O$ can be e.g. a set of books. In some cases $S=O$, e.g. when we are recommending new friends to a user. 
-            
-            The recommendation rate is a non-negative real number. The higher the rate, the more positive subject's response the objects evokes. The zero rate means that the object can't be recommended to the subject. That can happen in a case we know, e.g. that the user already owns the book.
+            For a given subject-object pair, $R$ gives:
+            \begin{description}
+                \item[Relationship prediction:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between 0 and 1 or $\lambda$, which is a special value meaining that there is already a relationship between the given pair.
+                \item[Explanation:] the explanation of the prediction. For some recommenders explanations aren't available.
+                %\item[Relationship metadata values]: coming soon
+            \end{description}
+
+            For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explenation, that they have four friends in common. This means, that the predicted probability of friendship between Alice and Bob is $0.75$. 
+
+
         \subsection{Recommendation}
             \label{recommendation}
             For the given subject, the \emph{Recommender System} or \emph{Recommender} performs a \emph{Recommendation} $\varrho$ -- it chooses at most $N$ subjects with the highest Recommendation Rate:
@@ -195,9 +209,6 @@ Supervisor's e-mail address: \vedoucimail\\
             The recommender always chooses exactly $N$ objects, except the case where there are less than $N$ objects with non-zero Recommendation Rate for the subject.
     
             The chosen objects are presented to the subject ordered by the Recommendation Rate.
-        \subsection{Universal Recommender}
-            \label{universal_recommender}
-            The \emph{Universal Recommender} is a recommender system that is independent of $S$ and $O$. For given $S$ and $O$, after an adaption, it can perform Recommendations.
         
         \subsection{Adaptation}
         \subsection{Relationship for Recommender}
@@ -215,7 +226,9 @@ Supervisor's e-mail address: \vedoucimail\\
     
     \section{Related Work}
         \label{related_work}
-        Neco o recommenderech obecne. List komercne fungujicich. Netflix a jeho prize.
+        Neco o recommenderech obecne. List komercne fungujicich. 
+        
+        The recommender research area has been strongly influenced by the Netflix prize \cite{netflix_wiki}. In the years 2006-2009, the Netflix DVD rental company held a competition on improving their recommender, awarded by the grand prize of US\$1,000,000. To the competition participants, Netflix exposed a data set of millions of ratings. Thousands of teams participated, the competition had a huge response in both scientific and mainstream media. A paper describing the winning solution was publicly released \cite{netflix_solution}. The competition brought benefits for the Netflix company as well as for the whole recommender research world \cite{netflix_benefit}  Unfortunately, the second Netflix prize was canceled after some user privacy issues \cite{netflix_end}.
         \subsection{Recommenders Generally}
             \label{recommenders_generally}
         
@@ -227,7 +240,7 @@ Supervisor's e-mail address: \vedoucimail\\
             Another notable work on universal recommender is a US software pattent application \emph{Universal system and method for representing and predicting human behavior} \cite{patent}. The text contains a mixture of marketing proclamations, ideas on the recommender architecture, description of recommender and machine-learning algorithms and ideas on capturing implicit user ratings. In our opinion, the recommending methods presented in the text could be working well only on very small sets of data, for larger data sets, the ammount of time needed for performing some basic operations wouldn't be acceptable. The final paragraph, trying to claim everything around, from vector object representation to capturing the action of user adjusting the volume on his music player, gives a negative example of where the idea of software patents can lead. As far as we know there's no functional recommender system based on this patent. 
             
             white paper, 
-        
+            Duine - trochu moc se tam pracuje s tim user ratingem
 
 
 \chapter{Relationship Analysis and Abstraction}
@@ -294,7 +307,7 @@ Supervisor's e-mail address: \vedoucimail\\
     \section{Improving the Recommender Results}
         \label{improving_the_results}
 
-\chapter{Conclusion}
+\chapter{Conclusion and Future Work}
 \label{conclusion}
     
     
@@ -311,10 +324,63 @@ Supervisor's e-mail address: \vedoucimail\\
 %    case studies
 \addcontentsline{toc}{chapter}{Bibliography}
 % \bibitem{abraham-marsden}Abraham R., Marsden J. E.: {\em Foundations of Mechanics}, Addison-Wesley, Reading, 1985.
- \bibitem{aura}The Advanced Universal Recommendation Architecture (AURA) Project home page. http://labs.oracle.com/projects/dashboard.php?id=196
- \bibitem{music_explaura}The Music Explaura, an experimental music recommender based on AURA. Currently inactive. http://music.tastekeeper.com/
- \bibitem{aura_wiki}The AURA project wiki. http://kenai.com/projects/aura/pages/Home
- \bibitem{patent}Geoffrey J. Hueter, Steven C. Quandt, Noble H. Hueter: \emph{Universal system and method for representing and predicting human behavior} \#20090248599, United States Patent Application Publication, 2009. http://www.freshpatents.com/-dt20091001ptan20090248599.php, http://www.freepatentsonline.com/20090248599.pdf
+    
+    \bibitem{patent}Geoffrey J. Hueter, Steven C. Quandt, Noble H. Hueter: \emph{Universal system and method for representing and predicting human behavior} \#20090248599, United States Patent Application Publication, 2009. http://www.freshpatents.com/-dt20091001ptan20090248599.php, http://www.freepatentsonline.com/20090248599.pdf
+
+    \bibitem{netflix_solution}http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
+    \bibitem{netflix_wiki}http://en.wikipedia.org/wiki/Netflix\_Prize
+    \bibitem{netflix_benefit}http://www.nytimes.com/2009/09/22/technology/internet/22netflix.html
+    \bibitem{netflix_end}http://blog.netflix.com/2010/03/this-is-neil-hunt-chief-product-officer.html
+        http://glaros.dtc.umn.edu/gkhome/suggest/overview
+    hybrid vec na duinu
+        http://wwwis.win.tue.nl/hacdais2010/paper4short.pdf 
+    \bibitem{survey}Gediminas Adomavicius and Alexander Tuzhilin: \emph{Towards the Next Generation of Recommender Systems:
+A Survey of the State-of-the-Art and Possible Extensions}, 2005
+http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
+odkazy:
+    http://en.wikipedia.org/wiki/Recommender\_system
+    http://www.deitel.com/ResourceCenters/Web20/RecommenderSystems/RecommenderSystemsConferences/tabid/1323/Default.aspx
+    http://lucene.apache.org/mahout/taste.html\#useful .. tam toho neni moc
+    Univerzalni recommender, projekty:
+        Aura (dead since 2009):
+            \bibitem{aura}The Advanced Universal Recommendation Architecture (AURA) Project home page. http://labs.oracle.com/projects/dashboard.php?id=196
+            \bibitem{music_explaura}The Music Explaura, an experimental music recommender based on AURA. Currently inactive. http://music.tastekeeper.com/
+            \bibitem{aura_wiki}The AURA project wiki. http://kenai.com/projects/aura/pages/Home
+        Loomia (komercni):
+            http://www.loomia.com/
+        SUGGEST (dead since 200):
+            http://glaros.dtc.umn.edu/gkhome/suggest/overview
+            + http://pypi.python.org/pypi/pysuggest/1.0
+        easyrec (opensource, vypada ze umi prd, ale bezi jako service):
+            http://easyrec.org/api-js
+        duine (opensource):
+            http://duineframework.org
+    knihovny na recommendaci
+        mahout
+            http://lucene.apache.org/mahout/
+            http://svn.apache.org/repos/asf/mahout/
+    
+    algoritmy
+        http://tastecliq.posterous.com/comparing-state-of-the-art-collaborative-filt
+        tagy:
+            http://stackoverflow.com/questions/2794272/tag-keyword-based-recommendation
+        
+        
+    python to Java
+        http://www.slideshare.net/onyame/mixing-python-and-java
+        http://wiki.cacr.caltech.edu/danse/index.php/Communication\_between\_Java\_and\_Python
+        Pres generovane c++
+            http://pypi.python.org/pypi/JCC/
+        nejak jinak (asi obracene)
+            http://jepp.sourceforge.net/
+        primo pres masiny (dead since 2009)
+            http://hustleplay.wordpress.com/2010/02/18/jpype-tutorial/
+            http://jpype.sourceforge.net/
+            
+            
+        
+    
+ 
 % \bibitem{derbes}Derbes D.: {\em Reinventing the wheel: Hodographic solutions to the Kepler problems}, Am. J. Phys. {\bf 69} (2001) 481--489.
 % \bibitem{kvasnica}Kvasnica J.: {\em Teorie elektromagnetického pole}, Academia, Praha, 1985.
 \end{thebibliography}
