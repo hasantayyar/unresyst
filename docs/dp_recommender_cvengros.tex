@@ -180,35 +180,37 @@ Supervisor's e-mail address: \vedoucimail\\
          
         There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an adressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
         
-        \subsection{Recommender Function}
-            \label{recommender_function}
-            The \emph{Recommender Function}:
+        \subsection{Relationship Prediction}
+            \label{relationship_prediction}
+            \emph{Relationship Prediction} $\hat{u}$ is an approximation of the utility function $u$: 
             \begin{equation}
-                \label{eq_recommender_function}
-                R: S \times O \to [0, 1] \cup \lambda \times E
+                \label{eq_relationship_prediction}
+                \hat{u}: S \times O \to [0, 1]  \times E,
             \end{equation}
-            For a given subject-object pair, $R$ gives:
+            where $E$ is a set of textual explanations.
+            
+            For a given subject-object pair, $\hat{u}$ gives:
             \begin{description}
-                \item[Relationship prediction:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between 0 and 1 or $\lambda$, which is a special value meaining that there is already a relationship between the given pair.
-                \item[Explanation:] the explanation of the prediction. For some recommenders explanations aren't available.
+                \item[Relationship prediction rate:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship prediction $1$ aren't presented to the subject Usually the recommended object are presented ordered by the rate. The exact value of the rate doesn't have to be presented to the subject.
+                \item[Explanation:] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
                 %\item[Relationship metadata values]: coming soon
             \end{description}
 
-            For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explenation, that they have four friends in common. This means, that the predicted probability of friendship between Alice and Bob is $0.75$. 
+            For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explenation, that they have four friends in common. This means that the predicted probability of friendship between Alice and Bob is $0.75$. 
 
 
         \subsection{Recommendation}
             \label{recommendation}
-            For the given subject, the \emph{Recommender System} or \emph{Recommender} performs a \emph{Recommendation} $\varrho$ -- it chooses at most $N$ subjects with the highest Recommendation Rate:
+            For the given subject, the \emph{Recommender System} or \emph{Recommender} performs a \emph{Recommendation} $\varrho$ -- it chooses at most $N$ subjects with the highest relationship prediction rate:
             \begin{equation}
                 \label{eq_recommendation}
                 \varrho: S \to \mathcal{P}_{\leq N}(O),
             \end{equation}
             where $\mathcal{P}_{\leq N}(O)$ is a $N$-limited powerset of $O$ (the set of subsets of $O$ of cardinality lower or equal to $N$).
             
-            The recommender always chooses exactly $N$ objects, except the case where there are less than $N$ objects with non-zero Recommendation Rate for the subject.
-    
-            The chosen objects are presented to the subject ordered by the Recommendation Rate.
+            The recommender always chooses exactly $N$ objects, except the case where there are less than $N$ objects available for recommendation. The chosen objects are presented to the subject ordered by the Recommendation Rate.
+            
+            For instance, using the example in \ref{relationship_prediction}, the friendship recommender presents ten other community server users to Alice. The users are sorted by the relationship prediction rate which reflects the number of mutual friends.
         
         \subsection{Adaptation}
         \subsection{Relationship for Recommender}
@@ -217,6 +219,7 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{operations}
         In a recommendation system, some common operations are:
         \begin{description}
+            \item[Recommender setup:] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation can be pretty time consuming, as this doesn't have to be performed very often. 
             \item[Recommendation (see \ref{recommendation}):] Recommendation is the most common operation for a recommender system. Choosing objects with the highest Recommendation Rate among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
             \item[Adding an object:] The recommender needs to perform this operation when an object is added to the system. For the recommender systems with an index, the object must be added to the index so that it can be recommended to the subjects. Adding an object corresponds to e.g. adding a new book to the system. The operation isn't as common as the recommendation, it doesn't have to be performed that fast - the adding of new object can appear in the recommendations after some time.
             \item[Adding a subject:] As for the new object, for the recommender systems with an index, the new subject has to be added to the recommendation index. Adding a subject corresponds to e.g. registering a new user to the system. 
@@ -228,14 +231,11 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{related_work}
         Neco o recommenderech obecne. List komercne fungujicich. 
         
-        The recommender research area has been strongly influenced by the Netflix prize \cite{netflix_wiki}. In the years 2006-2009, the Netflix DVD rental company held a competition on improving their recommender, awarded by the grand prize of US\$1,000,000. To the competition participants, Netflix exposed a data set of millions of ratings. Thousands of teams participated, the competition had a huge response in both scientific and mainstream media. A paper describing the winning solution was publicly released \cite{netflix_solution}. The competition brought benefits for the Netflix company as well as for the whole recommender research world \cite{netflix_benefit}  Unfortunately, the second Netflix prize was canceled after some user privacy issues \cite{netflix_end}.
-        \subsection{Recommenders Generally}
-            \label{recommenders_generally}
-        
+        The recommender research area has been strongly influenced by the Netflix prize \cite{netflix_wiki}. In the years 2006-2009, the Netflix DVD rental company held a competition on improving their recommender, awarded by the grand prize of US\$1,000,000. To the competition participants, Netflix exposed a data set of over hundred millions of ratings. Over 48,000 teams from 182 different countries participated, the competition had a huge response in both scientific and mainstream media. A paper describing the winning solution was publicly released \cite{netflix_solution}. The competition brought benefits for the Netflix company as well as for the whole recommender research world \cite{netflix_benefit}  Unfortunately, the second Netflix prize was canceled after some user privacy issues \cite{netflix_end}.
         
         \subsection{Domain Independent Recommenders}
             \label{domain_independent_recommenders}
-            The idea of a domain-independent recommender isn't completely new. The most notable project in this field is an open-source project called \emph{AURA} (The Advanced Universal Recommendation Architecture) \cite{aura}. The project was supported by Sun and later by Oracle, but since the end of 2009 there's been no activity on the source code repository. The experimental music recommender based on AURA, \emph{The Music Explaura} \cite{music_explaura} seems to be inactive. The project aimed to create a universal hybrid recommender system, combining the two most used approaches: collaborative filtering and content-based recommendation (see \ref{collaborative_filtering}, \ref{content_based}). The system should have been working above a data store. More on the project can be found in \cite{aura_wiki}.  
+            The idea of a domain-independent recommender isn't completely new. The most notable project in this field is an open-source project called \emph{AURA} (The Advanced Universal Recommendation Architecture) \cite{aura}. The project was supported by Sun and later by Oracle, but since the end of 2009 there's been no activity on the source code repository. The experimental music recommender based on AURA, \emph{The Music Explaura} \cite{music_explaura} seems to be inactive. The project aimed to create a universal hybrid recommender system, combining the two most used approaches: collaborative filtering and content-based recommendation (see \ref{collaborative_filtering}, \ref{content_based_filtering}). The system should have been working above a data store. More on the project can be found in \cite{aura_wiki}.  
             
             Another notable work on universal recommender is a US software pattent application \emph{Universal system and method for representing and predicting human behavior} \cite{patent}. The text contains a mixture of marketing proclamations, ideas on the recommender architecture, description of recommender and machine-learning algorithms and ideas on capturing implicit user ratings. In our opinion, the recommending methods presented in the text could be working well only on very small sets of data, for larger data sets, the ammount of time needed for performing some basic operations wouldn't be acceptable. The final paragraph, trying to claim everything around, from vector object representation to capturing the action of user adjusting the volume on his music player, gives a negative example of where the idea of software patents can lead. As far as we know there's no functional recommender system based on this patent. 
             
@@ -243,24 +243,48 @@ Supervisor's e-mail address: \vedoucimail\\
             Duine - trochu moc se tam pracuje s tim user ratingem
 
 
-\chapter{Relationship Analysis and Abstraction}
-    \label{relationship_analysis_and_abstraction}
-    In the chapter we firstly list algorithms that are commonly used for recommending. In each algorithm we analyze the relationships between subjects and objects that are used for recommending. The relationships are abstracted so they are independent of the subject and object domain.
+\chapter{Recommender Algorithms}
+    \label{algorithms}
+    In the chapter we list and describe algorithms that are commonly used for recommending. Finally we choose a combination of algorithms that will be used for the universal recommender.
+
+    \section{Content-based Filtering}
+        \label{content_based_filtering}
+        popis, rozsireny obrazek z white paperu
     
-    In the next section we analyze systems where there are some subjects and objects to recommend. The relationships between the entities in the system are examined and analyzed. The relationships that are suitable for recommendations are chosen and abstracted so they fit the relationships used in the recommender algorithms. 
+    \section{Collaborative Filtering}
+        \label{collaborative_filtering}
+        \subsection{User-based Collaborative Filtering}
+            popis, rozsireny obrazek z white paperu
+        \subsection{Item-based Collaborative Filtering}
+            popis, rozsireny obrazek z white paperu
+        
+        
+    \section{Social Networks and Link Prediction ???}
     
-    \section{Relationships Used by Recommender Algorithms}
-        \label{relationships_used_by_algorithms}
-        \subsection{Algorithm 1}
-        \subsection{Algorithm 2}
-        ...
+    \section{Demographic Filtering??}
     
-    
+    \section{Knowledge-based Recommenders}
+        \label{knowledge_based}
+        pravidla. 
+        
+    \section{Hybrid Recommenders}
+        \label{hybrid_recommenders}
+        popis, rozsireny obrazek z white paperu, nejaky typy jako ma mustafa mozna
+    \section{Matrix Factorization - nazev??}
+        ze je to to s cim vyhrali netflix,
+        ze to abstrahuje vsechny ty metody nahore, see white paper (mimo knowledge)
+    \section{Conclusion}
+        \label{algorithm_conclusion}
+        asi matrix s knowledge nad tim. 
+        
+        
+\chapter{Relationships in Studied Systems}
+    Tohle mozna vypustit, delam to univerzalne. In the chapter we analyze systems where there are some subjects and objects to recommend. The relationships between the entities in the system are examined and analyzed. The relationships that are suitable for recommendations are chosen and abstracted so they fit the relationships used in the recommender algorithms. 
     \section{Relationships in Existing Systems}
         \label{relationships_in_existing_systems}
-        Netflix
-        \subsection{System 1}
-        \subsection{System 2}
+        tohle mozna vypustit
+        \subsection{Rating}
+        \subsection{Friendship}
             
     \section{Relationship Abstraction Summary}
         \label{relationship_abstraction_summary}
@@ -269,22 +293,15 @@ Supervisor's e-mail address: \vedoucimail\\
 \chapter{Universal Recommender Design and Implementation}
     \label{design_and_implementation}
     The chapter describes how the Universal Recommender was implemented. We describe the basic architecture of the Universal Recommender. 
-    
-    The system implements several recommender algorithms. These are listed in the next section.
+
 % recommendation rate nejak uzpusobit, zavest special konstantu - pro objekty ktere uz subjekt ``vlastni'' - takovy zaklad konfigurace, kdyz to ma, tak mu to nenabizim. 
     \section{Universal Recommender Architecture}
         \label{architecture}
         The Universal Recommender is designed so that it's independent of the domain of the subjects and objects, working only with the abstract relationships. The set of relationships can be extended easily. Several instances of the recommender can be run on a single system, so the Universal Recommender can run with various configurations recommending various objects to various subjects. 
         
-        In the Universal Recommender there's a number of recommender algorithms implemented, it's designed so that new algorithms can be added easily. 
-    
-    \section{Recommender Algorithms}
-        \label{algorithms}
-        In the section we list algorithms used for recommending. Each algorithm is analyzed, its usability for universal recommending is evaluated. The space complexity and the time complexity of the common operations (see \ref{operations}) for each algorithm is estimated. Some implementation details are mentioned.
-        \subsection{Collaborative Filtering}
-            \label{collaborative_filtering}
-        \subsection{Content-based Recommender}
-            \label{content_based}
+    \section{Recommender Algorithm Implementation}
+        \label{algorithm_implementation}
+        
     \section{Recommendation Viewer}
         \label{viewer}
         The recommendations made by the Universal Recommender can be viewed in a web based application called \emph{Recommendation Viewer}. The application shows recommendations for a chosen subject. It is independent of the object and subject domain. The page for viewing the recommendations can be easily embedded to a webpage.
@@ -293,13 +310,15 @@ Supervisor's e-mail address: \vedoucimail\\
         ...
 \chapter{Adapting the Universal Recommender to Existing Systems}
     \label{adapting_to_existing_systems}
-    The process of adapting the Universal Recommender to some existing systems is described in the chapter. The chosen systems work on various domains. Each system has some API, so that the Universal Recommender can easily get data about the objects, subjects and their relationships. The way how to run the Universal Recommender in several instances for a system is described here. Some basic rules for the Universal Recommender configuration are given.
-        \subsection{System 1}
-        \subsection{System 2}
+    Minimalne tri. The process of adapting the Universal Recommender to some existing systems is described in the chapter. The chosen systems work on various domains. Each system has some API, so that the Universal Recommender can easily get data about the objects, subjects and their relationships. The way how to run the Universal Recommender in several instances for a system is described here. Some basic rules for the Universal Recommender configuration are given.
+        \subsection{MovieLens data set}
+        \subsection{Last.fm}
+        \subsection{Bikebook}
+        ...
 
 \chapter{Recommender Practice}
     \label{practice}
-    In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. We describe attempts to improve the results by changing the configuration. Finally we analyze the recommender speed and efficiency for various configurations.
+    In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. 
 
     \section{Comparison to Other Recommenders}
         \label{comparison_to_other}
