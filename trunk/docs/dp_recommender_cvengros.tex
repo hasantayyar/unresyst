@@ -166,7 +166,16 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{thesis_structure}
         In the \emph{\ref{introduction} Introduction} chapter we describe some basic ideas of the thesis, give a formal definition of a recommender system and explore the works that have been made on the topic.
         ...
-
+    \section{Thesis Concepts}
+        ucel prace, co prinasim
+        - prozkoumat vsechno.Analýza a návrh øe¹ení zadaného problému
+        - pouzivat k doporucovani ruzne relationships - mezi s-o, o-o, s-s, s-x-o, s-x-s, o-x-o, dano v konfiguraci. Vetsina jede na ratingy. rict, proc je/neni dobre jet na ratingy. ze to vlastne ratingy taky zvlada (likes relationsip + prediction rate). 
+        - predpovidat libovolny dany typ relationship
+        - doporucovat na libovolnych domenach, nedavat zadne domain-specific zalezitosti do recommenderu
+        - zahrnout knowledge-based recommending (ale na to prijdu az v kapitole algorithms).
+        - implementovat jenom rozhrani, + mozna ty pravidla, ne jednotlive algoritmy (mahout)
+        - nedelam framework ale recommender
+        - overit funkcnost rozhrani na 3 systemech. 
     \section{Recommender System Definition}
         \label{definition}
          Informally, a recommender system is a system that presents some chosen \emph{objects} to a given \emph{subject}. The objects are chosen so that they are likely to invoke  a positive response of the subject.
@@ -264,9 +273,9 @@ Supervisor's e-mail address: \vedoucimail\\
             \end{center}
         \end{figure}
         
-        \paragraph{Algorithm Definition}
+        \subsection{Definition}
         More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s, o_i)$ assigned by subject $s$ to objects $o_i \in O$ that are similar to object $o$. The method can be enhanced by introducing \emph{subject profiles} containing information about subjects' tastes. 
-        \paragraph{Benefits and Drawbacks}
+        \subsection{Benefits and Drawbacks}
         The accuracy of the provided recommendations strongly depends on the similarity determination. If the items are characterized properly and the subjects tend to like uniform sets of objects, the recommender can be pretty successful, as \cite{wiki_genome} mentioned above. However there are several drawbacks of the method, as mentioned in \cite{survey}:
         \begin{description}
             \item[Limited content analysis:] The set of characteristics assigned to each object is always limited and is never able to fully characterize the object. Moreover the values of the characteristics have to be determined either manually which is time-consuming or automatically which currently works well only for text documents. 
@@ -274,7 +283,7 @@ Supervisor's e-mail address: \vedoucimail\\
             \item[New user problem:] When a new subject emerges in the system and has no relationships to objects, the system cannot make any recommendations to the subject.
         \end{description}
 
-        \paragraph{Suitability for The Universal Recommender}
+        \subsection{Suitability for The Universal Recommender}
         In a domain-independent recommender we cannot assume that there are sufficient object characteristics available. The only way how to get object characteristics and similarities is to obtain them during the addaption to a new domain. As this is usually quite a complicated operation, the universal recommender wouldn't be much helpful for most of the domains. Therefore the content-based methods aren't very suitable for the universal recommender.
 
     \section{Collaborative Filtering}
@@ -293,43 +302,80 @@ Supervisor's e-mail address: \vedoucimail\\
             \end{center}
         \end{figure}
         
+        The collaborative filtering methods can be divided into several groups. The overview of the groups can be seen in the figure \ref{pic_collaborative_groups}), names of the techniques and algorithms belonging to the given groups are in italics. All terms are described throughout the chapter. 
+        \begin{figure}[!ht]\label{pic_collaborative_groups}
+            \vspace{3mm}
+            \begin{center}
+                \includegraphics[width=13cm]{pics/collaborative_groups.png}
+                \caption{Classification of the collaborative filtering algorithms}
+            \end{center}
+        \end{figure}
         
-        \paragraph{Algorithm Definition}
+        By the manner in which the unknown relationships are predicted, collaborative filtering methods can be divided into two groups: \emph{Memory-based} and \emph{Model-based} \cite{survey}.
         
-        There are serveral types of collaborative filters. They can be devided into two groups by the direction which is used for recommending.
-        \begin{description}
-            \item[User-based] (or subject-based). In this traditional variation, the similarity of users is computed. More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s_j, o)$ assigned to object $o$ by the subjects $s_j \in S$  who are similar to subject $s$. Usually the similarity between subjects is determined by comparing their relationships to objects. 
-            \item[Item-based] (or object-based): The variation has been popularized by Amazon.com \cite{wiki_collaborative}. The principle of the algorithm remains the same, but the algorithm starts at the objects and similarity between objects is computed. Objects sharing the same related subjects are taken as similar. The objects recommended to a subject are taken from objects similar to those the subject is related to. The method can also be used for showing an unknown user products that are related to the viewed product, as can be seen in the Amazon.com product catalogue: ``Users that bought product $x$ also bought product $y, z$''. The easiest implementation of the item-based collaborative filtering is the \emph{Slope One} method \cite{wiki_slope_one}. Amazon.com measures the similarity between two objects using a cosine of the object vectors \cite{amazon}. XXX jeste tam neco najebat o tech vektorech.
-        \end{description}
-        
-        The collaborative filtering methods can later be diveded into two groups by manner in which the unknown relationships are predicted.
-        \begin{description}
-            \item[Memory-based] (or heuristic-based):-neighbourhood methods
-            \item[Model-based]:-latent factor methods
-        \end{description}
-        
-        tabulka 
+        \subsection{Memory-based Collaborative Filtering}
+            Memory based (or heuristic-based) methods are historically the first collaborative filtering methods. In memory-based prediction methods, the predictions of possible relationships are counted as an aggreagate of the known subject-object relationships. The aggregate function can be a simple average or some more sofisticated measure using relative differences to average ratings or inter-subject similarity. 
             
+            \emph{Neighbourhood methods} belong to this category. For recommending an object to a subject they use relationships of the neighbouring subject or object (depending on the recommender being subject-based or object-based). The neighbour is defined as the subject/object having the highest similarity to the given subject/object. The similarity can be counted in many ways, including the Pearson correlation coefficient \cite{survey}. 
             
- 
- 
-        \paragraph{Benefits and Drawbacks}
-        \paragraph{Suitability for The Universal Recommender}
+            The memory-based methods can further be devided into two groups by the direction which is used for recommending: \emph{Subject-based} or \emph{Object-based}. 
+            
+            \subsubsection{Subject-based Collaborative Filtering}
+                Subject-based (or user-based) methods are centered to the subjects. In this traditional variation, the similarity of subjects is computed. More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s_j, o)$ assigned to object $o$ by the subjects $s_j \in S$  who are similar to subject $s$. Usually the similarity between subjects is determined by comparing their relationships to objects. 
+            \subsubsection{Object-based Collaborative Filtering}
+                Object-based (or item-based) methods have been popularized by Amazon.com \cite{wiki_collaborative}. The principle of the algorithm remains the same, but the algorithm starts at the objects and similarity between objects is computed. Objects sharing the same related subjects are taken as similar. The objects recommended to a subject are taken from objects similar to those the subject is related to. The method can also be used for showing an unknown user products that are related to the viewed product, as can be seen in the Amazon.com product catalogue: ``Users that bought product $x$ also bought product $y, z$''. The easiest implementation of the item-based memory-based collaborative filtering is the \emph{Slope One} method \cite{wiki_slope_one}. 
+                
+                Another way how to measure the similarity is the cosine measure, which is used in the \emph{Item-to-Item} algorithm patented by Amazon.com. The objects are represented as vectors. To count similarity between two objects, subjects that have a relationship to both of these objects are taken. Each such subject represents a dimension in the object vectors, the value is determined from the subject's rating or $0/1$ (the subject has bought/viewed the object or not). The similarity between two objects is then counted as a cosine of the object vectors \cite{amazon}.
+
+        \subsection{Model-based Collaborative Filtering}
+            Model-based recommenders use machine-learning techniques to learn a \emph{model} that predicts unknown relationships. The known relationships are used as training data for the model. The machine-learning techniques include \emph{Bayesian networks}, \emph{latent semantic models}, or \emph{artificial neural networks}. 
+
+            One of the commonly used technique belonging to latent semantic models is \emph{matrix factorization}. The matrix factorization method for learning a rating-predicting model was used by the BellKor team in the winning sollution of the Netflix grand prize \cite{bellkor_ieee}.
+            
+            XXX neco vic a obrazek-dve osy, lidi, objekty. - mozna vyclenit do specialni kapitoly. 
         
-        \subsection{User-based Collaborative Filtering}
-            popis, rozsireny obrazek z white paperu
-        \subsection{Item-based Collaborative Filtering}
-            popis, rozsireny obrazek z white paperu
         
+        Most of the commercially used recommender system use a combination of memory-based and model-based methods. 
         
-    \section{Social Networks and Link Prediction ???}
+        \subsection{Benefits and Drawbacks}
+        
+        In general, collaborative filtering methods are the most used and the most successful methods for recommending. When properly used, they provide high accuracy and scalability for large ammount of data. However they have some drawbacks too \cite{survey}.
+        \begin{description}
+            \item[Cold start problem:] As for the conteng-based method, the system doesn't have any data about a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender \ref{hybrid_recommenders}. 
+            A similar problem occurs when a new object is added to the system, it's not related to any subject and therefore it can never be recommended. This can be solved also by a hybrid recommender \ref{hybrid_recommenders}. 
+            \item[Sparsity:] The subject-object matrix is usually very sparse - the number of known relationships is very small compared to the number of relationships that should be predicted. Therefore, in most of the collaborative filtering methods, the objects related to few subjects are seldom recommended. This drawback is overcome by some of the model-based methods, e.g. matrix factorization. 
+         \end{description}
+        \subsection{Suitability for The Universal Recommender}
+        One of the biggest advantage of collaborative filtering is its domain independence. Generally, the algorithms don't assume any properties of subjects or objects, they just use the relationships between subjects and objects to make recommendations. Of course, the recommender tuned for a particular domain can't be used directly for other domain, but the core algorithm is domain-independent.
+        
+        The universal recommender proposed in \cite{white_paper} is based on the idea of matrix factorization, which is a model-based collaborative filtering technique. Therefore, the collaborative filtering methods are very suitable for a universal recommender.
     
-    \section{Demographic Filtering??}
-    
+    \section{Other Domain-specific Methods}
+        There are a lot more algorithms for recommending, but all of them rely on specific data that must be available about the subjects or objects for the recommender to work well. As these aren't acceptable for the universal recommender, we list only a few of them.
+        \subsection{Social Networks and Link Prediction}
+            In social networks, there are links between users, such as the \emph{friends} link. If these are available, the recommender can recommend an object according on what user's friends liked. A schematic picture of the a social network recommender can be seen in the figure \ref{pic_social}.
+            \begin{figure}[!ht]\label{pic_social}
+                \vspace{3mm}
+                \begin{center}
+                    \includegraphics[width=13cm]{pics/social.png}
+                    \caption{Recommending in social networks}
+                \end{center}
+            \end{figure}        
+
+        \subsection{Demographic Filtering}
+            When we have some additional information about subjects (users) such as nationality, residence, age or occupation, we can use for determining similarity between the users. A demographic filtering method can be used as an additional measure of user similarity when there's little known about the user's taste. An example of a recommendation made by a demographic filtering recommender can be seen in the figure \ref{pic_demographic}.
+            \begin{figure}[!ht]\label{pic_demographic}
+                \vspace{3mm}
+                \begin{center}
+                    \includegraphics[width=13cm]{pics/demographic.png}
+                    \caption{Demographic Filtering}
+                \end{center}
+            \end{figure}
+
     \section{Knowledge-based Recommenders}
         \label{knowledge_based}
         pravidla. 
-        
+
     \section{Hybrid Recommenders}
         \label{hybrid_recommenders}
         popis, rozsireny obrazek z white paperu, nejaky typy jako ma mustafa mozna
@@ -427,6 +473,12 @@ A Survey of the State-of-the-Art and Possible Extensions}, 2005
     \bibitem{wiki_collaborative}http://en.wikipedia.org/wiki/Collaborative\_filtering
     \bibitem{wiki_slope_one}http://en.wikipedia.org/wiki/Slope\_One
     \bibitem{amazon}Amazon.com Recommendations Item-to-Item Collaborative Filtering http://www.win.tue.nl/\~laroyo/2L340/resources/Amazon-Recommendations.pdf
+    \bibitem{bellkor_ieee}Matrix factorization techniques for recommender systems http://research.yahoo4.akadns.net/files/ieeecomputer.pdf
+    \bibitem{bellkor_2009}
+Yehuda Koren: The BellKor Solution to the Netflix Grand Prize
+http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
+    
+    \bibitem{white_paper}The Universal Recommender http://adsabs.harvard.edu/abs/2009arXiv0909.3472K
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
     http://en.wikipedia.org/wiki/Recommender\_system
