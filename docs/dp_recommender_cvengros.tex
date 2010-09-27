@@ -16,7 +16,7 @@
 %\pagestyle{headings}
 \pagestyle{plain}
 
-\frenchspacing % aktivuje pou¾ití nìkterých èeských typografických pravidel
+% \frenchspacing aktivuje pou¾ití nìkterých èeských typografických pravidel
 
 \usepackage[latin2]{inputenc} % nastavuje pou¾ité kódování, u¾ivatelé Windows zamìní latin2 za cp1250
 %\usepackage[czech]{babel}
@@ -97,7 +97,7 @@ Matematicko-fyzikální fakulta\\
 \vspace{20mm}
 
 \begin{center}
-2010 % doplòte rok vzniku va¹í bakaláøské práce
+2010-2011 % doplòte rok vzniku va¹í bakaláøské práce
 \end{center}
 
 \end{titlepage} % zde konèí úvodní strana
@@ -247,12 +247,75 @@ Supervisor's e-mail address: \vedoucimail\\
     \label{algorithms}
     In the chapter we list and describe algorithms that are commonly used for recommending. Finally we choose a combination of algorithms that will be used for the universal recommender.
 
-    \section{Content-based Filtering}
+    \section{Content-based Methods}
         \label{content_based_filtering}
-        popis, rozsireny obrazek z white paperu
-    
+        Content-based filtering methods are one of the oldest and most popular methods for recommending. The principle of these methods is recommending objects that are similar to some objects, the user liked in past. The similarity among the objects is determined from the values of their characteristics. 
+        
+        
+        They are widely used in text-based applications, for recommending documents or web sites \cite{survey}. One of the implementations of a content based based recommender is the Music Genome Project \cite{wiki_genome}. A musician analyzes each song in the system, giving a value for each of the musical characteristics. 
+        
+        The figure \ref{pic_content_based} shows an example of a content based recommender. The known relationships are marked as full arrows, the calculated or inserted object similarity by the dotted arrow and the predicted relationship by the dashed arrow.
+        
+        \begin{figure}[!ht]\label{pic_content_based}
+            \vspace{3mm}
+            \begin{center}
+                \includegraphics[width=13cm]{pics/content-based.png}
+                \caption{Content-based Methods}
+            \end{center}
+        \end{figure}
+        
+        \paragraph{Algorithm Definition}
+        More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s, o_i)$ assigned by subject $s$ to objects $o_i \in O$ that are similar to object $o$. The method can be enhanced by introducing \emph{subject profiles} containing information about subjects' tastes. 
+        \paragraph{Benefits and Drawbacks}
+        The accuracy of the provided recommendations strongly depends on the similarity determination. If the items are characterized properly and the subjects tend to like uniform sets of objects, the recommender can be pretty successful, as \cite{wiki_genome} mentioned above. However there are several drawbacks of the method, as mentioned in \cite{survey}:
+        \begin{description}
+            \item[Limited content analysis:] The set of characteristics assigned to each object is always limited and is never able to fully characterize the object. Moreover the values of the characteristics have to be determined either manually which is time-consuming or automatically which currently works well only for text documents. 
+            \item[Overspecialization:] The method always recommends objects that are similar to some that the subject liked in the past. Therefore the recommender never broadens subjects' horizon by recommending diverse objects.
+            \item[New user problem:] When a new subject emerges in the system and has no relationships to objects, the system cannot make any recommendations to the subject.
+        \end{description}
+
+        \paragraph{Suitability for The Universal Recommender}
+        In a domain-independent recommender we cannot assume that there are sufficient object characteristics available. The only way how to get object characteristics and similarities is to obtain them during the addaption to a new domain. As this is usually quite a complicated operation, the universal recommender wouldn't be much helpful for most of the domains. Therefore the content-based methods aren't very suitable for the universal recommender.
+
     \section{Collaborative Filtering}
         \label{collaborative_filtering}
+        Collaborative filtering is currently one of the most widely used technique for recommending. Market leaders as Amazon.com, Last.fm or Digg.com use recommenders based on collaborative filtering \cite{wiki_collaborative}. 
+        
+        For recommending an object to a subject, the method uses relationships between other subjects and objects. For a given subject $s$, the algorihm finds subjects that have relationships to most of the objects that $s$ has. Recommended objects are then taken from other objects related to found subjects. 
+        
+        In the figure \ref{pic_collaborative} there is a simplified example of a recommendation made by collaborative filtering. The full arrows represent already known relationships. The two subjects both have a relation to one item and therefore they are treated as similar. The recommendation is marked by the dashed arrow. An object to be recommended is chosen from the similar subject's related objects so that the subject isn't related to the object.
+        
+        \begin{figure}[!ht]\label{pic_collaborative}
+            \vspace{3mm}
+            \begin{center}
+                \includegraphics[width=13cm]{pics/collaborative.png}
+                \caption{Collaborative Filtering}
+            \end{center}
+        \end{figure}
+        
+        
+        \paragraph{Algorithm Definition}
+        
+        There are serveral types of collaborative filters. They can be devided into two groups by the direction which is used for recommending.
+        \begin{description}
+            \item[User-based] (or subject-based). In this traditional variation, the similarity of users is computed. More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s_j, o)$ assigned to object $o$ by the subjects $s_j \in S$  who are similar to subject $s$. Usually the similarity between subjects is determined by comparing their relationships to objects. 
+            \item[Item-based] (or object-based): The variation has been popularized by Amazon.com \cite{wiki_collaborative}. The principle of the algorithm remains the same, but the algorithm starts at the objects and similarity between objects is computed. Objects sharing the same related subjects are taken as similar. The objects recommended to a subject are taken from objects similar to those the subject is related to. The method can also be used for showing an unknown user products that are related to the viewed product, as can be seen in the Amazon.com product catalogue: ``Users that bought product $x$ also bought product $y, z$''. The easiest implementation of the item-based collaborative filtering is the \emph{Slope One} method \cite{wiki_slope_one}. Amazon.com measures the similarity between two objects using a cosine of the object vectors \cite{amazon}. XXX jeste tam neco najebat o tech vektorech.
+        \end{description}
+        
+        The collaborative filtering methods can later be diveded into two groups by manner in which the unknown relationships are predicted.
+        \begin{description}
+            \item[Memory-based] (or heuristic-based):-neighbourhood methods
+            \item[Model-based]:-latent factor methods
+        \end{description}
+        
+        tabulka 
+            
+            
+ 
+ 
+        \paragraph{Benefits and Drawbacks}
+        \paragraph{Suitability for The Universal Recommender}
+        
         \subsection{User-based Collaborative Filtering}
             popis, rozsireny obrazek z white paperu
         \subsection{Item-based Collaborative Filtering}
@@ -275,6 +338,7 @@ Supervisor's e-mail address: \vedoucimail\\
         ze to abstrahuje vsechny ty metody nahore, see white paper (mimo knowledge)
     \section{Conclusion}
         \label{algorithm_conclusion}
+        nemuzem predpokladat existenci vubec niceho, ani vazeb mezi subjekty
         asi matrix s knowledge nad tim. 
         
         
@@ -328,7 +392,11 @@ Supervisor's e-mail address: \vedoucimail\\
 
 \chapter{Conclusion and Future Work}
 \label{conclusion}
-    
+
+
+\chapter{Software tools}
+\label{tools}
+ - gedit, http://www.timtim.com (obrazky), Kile (latex),  pdfTeXk version 1.40.3 (Web2C 7.5.6)
     
     
 %%% Seznam literatury
@@ -355,6 +423,10 @@ Supervisor's e-mail address: \vedoucimail\\
         http://wwwis.win.tue.nl/hacdais2010/paper4short.pdf 
     \bibitem{survey}Gediminas Adomavicius and Alexander Tuzhilin: \emph{Towards the Next Generation of Recommender Systems:
 A Survey of the State-of-the-Art and Possible Extensions}, 2005
+    \bibitem{wiki_genome}http://en.wikipedia.org/wiki/Music\_Genome\_Project
+    \bibitem{wiki_collaborative}http://en.wikipedia.org/wiki/Collaborative\_filtering
+    \bibitem{wiki_slope_one}http://en.wikipedia.org/wiki/Slope\_One
+    \bibitem{amazon}Amazon.com Recommendations Item-to-Item Collaborative Filtering http://www.win.tue.nl/\~laroyo/2L340/resources/Amazon-Recommendations.pdf
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
     http://en.wikipedia.org/wiki/Recommender\_system
