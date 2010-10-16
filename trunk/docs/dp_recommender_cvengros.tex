@@ -27,7 +27,7 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 
-\usepackage[left=4cm]{geometry} % nastavení dané velikosti okrajù
+\usepackage[left=2.5cm]{geometry} % nastavení dané velikosti okrajù
 
 %\newindex{default}{idx}{ind}{Rejstøík} % zavádí rejstøík v pøípadì pou¾ití balíku index
 
@@ -38,6 +38,19 @@
 \newcommand{\nazev}{Univerzální doporuèovací systém}
 \newcommand{\datum}{DATUM}
 \newcommand{\vedoucimail}{Peter.Vojtas@mff.cuni.cz}
+
+% prikazy s parametry
+\newcommand{\fig}[4][13]{
+    \begin{figure}[!ht]
+        \vspace{3mm}
+        \begin{center}
+            \includegraphics[width=#1cm]{#2}
+            \caption{#3}
+            \label{#4}
+        \end{center}
+    \end{figure}
+}
+% parameters: [width in cm], filename, caption, label
 
 
 \title{Název práce}   % tyto dvì polo¾ky jsou zde v podstatì formálnì, ve skuteènosti nejsou nikde 
@@ -153,8 +166,10 @@ Supervisor's e-mail address: \vedoucimail\\
 
 \chapter{Introduction}
     \label{introduction}
-    %Jeste neco trocha poutavejsiho, inspirovat se takrka jakymkoliv paperem : user facing a huge ammount of data a tak. 
-    A present-day internet user is facing a plentitude of options. E-shops are offering a wide choice of various products, internet newspapers publish thousands of articles every day, loads of videos are published or uploaded by users every second. When a user is deciding what to buy, read or see, there far too many options to browse and choose the optimal one. Search engines don't help much, because a query like ``find something I would like'' is too vague. That's where recommender systems emerge. They help users to deal with the information overload and retailers to offer the most appropriate product for each client which resutls in increased custumer satisfaction and loyalty.
+
+    A present-day internet user is facing a plentitude of options. E-shops are offering a wide choice of various products, internet newspapers publish thousands of articles every day, loads of videos are published or uploaded by users every second. When a user is deciding what to buy, read or see, there are by far too many options to browse and choose the optimal one. Search engines don't help much, because a query like ``find something I would like'' is too vague. That's where recommender systems emerge. They help users to deal with the information overload, retailers to offer the most appropriate product for each client which resutls in increased custumer satisfaction and loyalty. 
+    
+    The key feature of recommender systems is \emph{personalization}. Unlike search engines, recommenders take into account the personality and past behaviour of each user. A typical recommender wouldn't present the same set of items to two different users.
     
     Recommender systems are programs operating on large amount of data in software systems. Recommender systems try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
     
@@ -167,28 +182,52 @@ Supervisor's e-mail address: \vedoucimail\\
         In the \emph{\ref{introduction} Introduction} chapter we describe some basic ideas of the thesis, give a formal definition of a recommender system and explore the works that have been made on the topic.
         ...
     \section{Thesis Concepts}
-        ucel prace, co prinasim
-        - prozkoumat vsechno.Analýza a návrh øe¹ení zadaného problému
-        - pouzivat k doporucovani ruzne relationships - mezi s-o, o-o, s-s, s-x-o, s-x-s, o-x-o, dano v konfiguraci. Vetsina jede na ratingy. rict, proc je/neni dobre jet na ratingy. ze to vlastne ratingy taky zvlada (likes relationsip + prediction rate). 
-        - predpovidat libovolny dany typ relationship
-        - doporucovat na libovolnych domenach, nedavat zadne domain-specific zalezitosti do recommenderu
-        - zahrnout knowledge-based recommending (ale na to prijdu az v kapitole algorithms).
-        - implementovat jenom rozhrani, + mozna ty pravidla, ne jednotlive algoritmy (mahout)
-        - nedelam framework ale recommender
-        - overit funkcnost rozhrani na 3 systemech. 
-    \section{Recommender System Definition}
-        \label{definition}
-         Informally, a recommender system is a system that presents some chosen \emph{objects} to a given \emph{subject}. The objects are chosen so that they are likely to invoke  a positive response of the subject.
-         
-         Similarly to the recommender problem definition in \cite{survey}, we formally define the recommendation as choosing the object $o'$ for each subject $s$, so that the object maximizes the subject's utility:
-         \begin{equation}
-            \label{eq_recommender_problem}
-            \forall s \in S: o'_s = \underset{o \in O}{arg \  max \  u_R(s, o)},
-        \end{equation}
-        where $S$ is the subject domain $O$ is the object domain. The usefulness of the object to the subject is measured by the $u$ function, $u: S \times O \to R$, where $R$ is a totally ordered set. 
-         
-        There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an adressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
+        The section describes the main concepts of the thesis. We list the most important features, establish the purpose of the thesis and briefly show the distinction from the existing work.
         
+        The main concepts of the thesis are:
+        \begin{description}
+                \item[Problem analysis and design of a solution.] The main goal of the work is to analyze the problem of a universal recommender, to create an architecture of the recommender system, design its interfaces and provide an implementation draft. The intefaces should be usable in real-world applications.
+                \item[Domain independence.] The recommender should work on any domain it's addapted to. It can't rely on any domain-specific assumptions. 
+                \item[Using various relationships.] For the recommendation, the recommender should be able to use any number of relationships available in the domain.
+                \item[Recommending given relationship.] The recommender should be able to predict any given relationship, not just the ``rating'' relationship as most recommenders do.
+                \item[A recommender, not a framework.] The adaptation to the given domain should be simple and without any need for programming. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be addapted and used on an arbitrary domain.
+                \item[Pluggable user interface.] The recommender should contain a web-based user interface for presenting the recommendations. The interface should be pluggable an existing web application, so that it can look like a part of the system and the user doesn't have to leave system web pages. 
+                \item[Verification on various domains.] The recommender should be addapted to at least three domains to verify its universality and usability of the recommender interfaces. 
+        \end{description}
+        \subsection{Out of Scope}
+        The section lists features that are relevant but out of the thesis scope. 
+        \begin{description}
+            \item[] preciznost a skalovatelnost implementace, optimalizace a rychlost dane implemetnace
+            \item[]dalsi hustoficury, ktere nestihnu, 
+            \item[]nebudu merit vykon v case jenom nejak plus minus asymptoticky
+        \end{description}
+
+        
+    \section{Definitions}
+        \label{definitions}
+        In this section we give some basic definitions of terms and problems that appear in the whole thesis.
+        
+        \subsection{Basic Terms}
+        \label{basic_terms}
+            The basic terms used both in definitions and throughout the tesis are:
+            \begin{description}
+                \item[Subject]: Subject of a recommendation is an entity to which the recommender presents its recommendations. A subject can be a user as well as a user group or any other entity.
+                \item[Object]: Object of a recommendation is an entity which can be recommended to subjects. Objects can be books, songs, or any other entities.  
+             \end{description}
+        
+        \subsection{Recommender System}
+        \label{def_recommender_system}
+            Informally, a recommender system is a system that presents some chosen \emph{objects} to a given \emph{subject}. The objects are chosen so that they are likely to invoke a positive response of the subject.
+            
+            Similarly to the recommender problem definition in \cite{survey}, we formally define the recommendation as choosing the object $o_s$ for each subject $s$, so that the object maximizes the subject's utility $u_R$:
+            \begin{equation}
+            \label{eq_recommender_problem}
+            \forall s \in S: o_s = \underset{o \in O}{arg \  max \  u_R(s, o)},
+            \end{equation}
+            where $S$ is the subject domain, $O$ is the object domain. The usefulness of the object to the subject is measured by the $u_R$ function, $u_R: S \times O \to T$, where $T$ is a totally ordered set. 
+            
+            There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an adressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
+            
         \subsection{Relationship Prediction}
             \label{relationship_prediction}
             \emph{Relationship Prediction} $\hat{u}$ is an approximation of the utility function $u$: 
@@ -250,11 +289,17 @@ Supervisor's e-mail address: \vedoucimail\\
             
             white paper, 
             Duine - trochu moc se tam pracuje s tim user ratingem
+    \section{Other Aspects of Recommender Systems}
+        \subsection{Relation to Other Research Areas}
+            vztah k vyhledavani, machine learningu, statistice, 
+        \subsection{Legal Issues}
 
 
 \chapter{Recommender Algorithms}
     \label{algorithms}
     In the chapter we list and describe algorithms that are commonly used for recommending. Finally we choose a combination of algorithms that will be used for the universal recommender.
+    
+    Vetsina jede na ratingy. rict, proc je/neni dobre jet na ratingy. ze to vlastne ratingy taky zvlada (likes relationsip + prediction rate)
 
     \section{Content-based Methods}
         \label{content_based_filtering}
@@ -265,14 +310,8 @@ Supervisor's e-mail address: \vedoucimail\\
         
         The figure \ref{pic_content_based} shows an example of a content based recommender. The known relationships are marked as full arrows, the calculated or inserted object similarity by the dotted arrow and the predicted relationship by the dashed arrow.
         
-        \begin{figure}[!ht]\label{pic_content_based}
-            \vspace{3mm}
-            \begin{center}
-                \includegraphics[width=13cm]{pics/content-based.png}
-                \caption{Content-based Methods}
-            \end{center}
-        \end{figure}
-        
+        \fig{pics/content-based.png}{Content-based Methods}{pic_content_based}
+
         \subsection{Definition}
         More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s, o_i)$ assigned by subject $s$ to objects $o_i \in O$ that are similar to object $o$. The method can be enhanced by introducing \emph{subject profiles} containing information about subjects' tastes. 
         \subsection{Benefits and Drawbacks}
@@ -294,22 +333,11 @@ Supervisor's e-mail address: \vedoucimail\\
         
         In the figure \ref{pic_collaborative} there is a simplified example of a recommendation made by collaborative filtering. The full arrows represent already known relationships. The two subjects both have a relation to one item and therefore they are treated as similar. The recommendation is marked by the dashed arrow. An object to be recommended is chosen from the similar subject's related objects so that the subject isn't related to the object.
         
-        \begin{figure}[!ht]\label{pic_collaborative}
-            \vspace{3mm}
-            \begin{center}
-                \includegraphics[width=13cm]{pics/collaborative.png}
-                \caption{Collaborative Filtering}
-            \end{center}
-        \end{figure}
+        \fig{pics/collaborative.png}{Collaborative Filtering}{pic_collaborative}
         
-        The collaborative filtering methods can be divided into several groups. The overview of the groups can be seen in the figure \ref{pic_collaborative_groups}), names of the techniques and algorithms belonging to the given groups are in italics. All terms are described throughout the chapter. 
-        \begin{figure}[!ht]\label{pic_collaborative_groups}
-            \vspace{3mm}
-            \begin{center}
-                \includegraphics[width=13cm]{pics/collaborative_groups.png}
-                \caption{Classification of the collaborative filtering algorithms}
-            \end{center}
-        \end{figure}
+        The collaborative filtering methods can be divided into several groups. The overview of the groups can be seen in the figure \ref{pic_collaborative_groups}), names of the techniques and algorithms belonging to the given groups are in italics.
+        
+        \fig{pics/collaborative_groups.png}{Classification of the collaborative filtering algorithms}{pic_collaborative_groups}
         
         By the manner in which the unknown relationships are predicted, collaborative filtering methods can be divided into two groups: \emph{Memory-based} and \emph{Model-based} \cite{survey}.
         
@@ -323,69 +351,110 @@ Supervisor's e-mail address: \vedoucimail\\
             \subsubsection{Subject-based Collaborative Filtering}
                 Subject-based (or user-based) methods are centered to the subjects. In this traditional variation, the similarity of subjects is computed. More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s_j, o)$ assigned to object $o$ by the subjects $s_j \in S$  who are similar to subject $s$. Usually the similarity between subjects is determined by comparing their relationships to objects. 
             \subsubsection{Object-based Collaborative Filtering}
-                Object-based (or item-based) methods have been popularized by Amazon.com \cite{wiki_collaborative}. The principle of the algorithm remains the same, but the algorithm starts at the objects and similarity between objects is computed. Objects sharing the same related subjects are taken as similar. The objects recommended to a subject are taken from objects similar to those the subject is related to. The method can also be used for showing an unknown user products that are related to the viewed product, as can be seen in the Amazon.com product catalogue: ``Users that bought product $x$ also bought product $y, z$''. The easiest implementation of the item-based memory-based collaborative filtering is the \emph{Slope One} method \cite{wiki_slope_one}. 
+                Object-based (or item-based) methods have been popularized by Amazon.com \cite{wiki_collaborative}. The principle of the algorithm remains the same, but the algorithm starts at the objects and similarity between objects is computed. Objects sharing the same related subjects are taken as similar. The objects recommended to a subject are taken from objects similar to those the subject is related to. The method can also be used for showing products that are related to a product that is viewed by an anonymous user, as can be seen in the Amazon.com product catalogue: ``Users that bought product $x$ also bought product $y, z$''. The easiest implementation of the item-based memory-based collaborative filtering is the \emph{Slope One} method \cite{wiki_slope_one}. 
                 
-                Another way how to measure the similarity is the cosine measure, which is used in the \emph{Item-to-Item} algorithm patented by Amazon.com. The objects are represented as vectors. To count similarity between two objects, subjects that have a relationship to both of these objects are taken. Each such subject represents a dimension in the object vectors, the value is determined from the subject's rating or $0/1$ (the subject has bought/viewed the object or not). The similarity between two objects is then counted as a cosine of the object vectors \cite{amazon}.
+                Another way how to measure the similarity is the cosine measure, which is used in the \emph{Item-to-Item} algorithm patented by Amazon.com \cite{amazon}. The objects are represented as vectors. To count similarity between two objects, subjects that have a relationship to both of these objects are taken. Each such subject represents a dimension in the object vectors, the value is determined from the subject's rating or $0/1$ (the subject has bought/viewed the object or not). The similarity between two objects is then counted as a cosine of the object vectors \cite{amazon}.
 
         \subsection{Model-based Collaborative Filtering}
-            Model-based recommenders use machine-learning techniques to learn a \emph{model} that predicts unknown relationships. The known relationships are used as training data for the model. The machine-learning techniques include \emph{Bayesian networks}, \emph{latent semantic models}, or \emph{artificial neural networks}. 
-
-            One of the commonly used technique belonging to latent semantic models is \emph{matrix factorization}. The matrix factorization method for learning a rating-predicting model was used by the BellKor team in the winning sollution of the Netflix grand prize \cite{bellkor_ieee}.
+            Model-based recommenders use machine-learning techniques to learn a \emph{model} that predicts unknown relationships. The known relationships are used as training data for the model. The machine-learning techniques include \emph{Bayesian networks}, \emph{latent factor models}, or \emph{artificial neural networks} \cite{survey}.
             
-            XXX neco vic a obrazek-dve osy, lidi, objekty. - mozna vyclenit do specialni kapitoly. 
-        
-        
-        Most of the commercially used recommender system use a combination of memory-based and model-based methods. 
-        
+            Latent semantic models use vectors to represent subjects and objects \cite{bellkor_ieee}. For objects, the values in the vectors mean some characteristics of the object. This approach is similar to the one used in content-based filtering (\ref{content_based_filtering}). The difference is in obtaining the vectors: the values in object vectors aren't submitted by a human expert, both subject and object vectors are learned from the known data by various techniques. Therefore the technique is domain-independent. 
+            
+            Subject and object vectors allow to project the subjects and object into multidimensional space. Recommended objects are those that are ``near'' the given subject in the multidimensional space. Some common techniques for measuring the subject-object distance are vector cosine and dot product. Some dimensions can be coupled with some known object characteristics as genre for movies \cite{bellkor_ieee}. But the meaning of most of the dimensions can hardly be discovered, as they aren't designed by a human but a machine-learining technique. Consequently, the recommenders using matrix factorization usually aren't able to give reasons for their recommendations. 
+            
+            Figure \ref{pic_latent} shows some users and items projected to a simplified two-dimensional space. Their nature determines their positions in the space. Items that are near each user are likely to produce a positive response from the user and hence they are good for recommendations. 
+            
+            \fig{pics/latent.png}{Latent factor model recommender}{pic_latent} 
+
+            \subsubsection{Matrix Factorization}
+            \label{matrix_factorization}
+            The main challenge in latent factor models is computing the subject and object vectors. One of the methods for computing them is \emph{matrix factorization}. The method was used by the BellKor team in the winning solution of the Netflix grand prize \cite{bellkor_ieee}. Since then the matrix factorization has become a dominant method for model-based collaborative filtering recommenders.
+            
+            The method is described in \cite{bellkor_ieee}. Relationships between subject and objects are projected to a subject-object matrix. For ratings, the values in the matrix are the subject's actual ratings of the appropriate object. For other relationships there are zeros and ones in the matrix. This matrix is decomposed into vectors so that the dot product between a subject and object vector gives the actual or predicted value on the appropriate coordinates in the subject-object matrix. The decomposition could be done by the \emph{single value decomposition} technique, but in \cite{bellkor_ieee} a better method is proposed: The known values are used directly to learn the vectors, using a minimization of the regularized squared error. The learning can be done either by the \emph{stochastic gradient descent} method or by \emph{alternating least squares}. The named methods are thoroughly studied in the section \ref{algorithm_implementation}.
+            
         \subsection{Benefits and Drawbacks}
+        \label{cf_benefits_drawbacks}
         
-        In general, collaborative filtering methods are the most used and the most successful methods for recommending. When properly used, they provide high accuracy and scalability for large ammount of data. However they have some drawbacks too \cite{survey}.
+        In general, collaborative filtering methods are currently the most used and the most successful methods for recommending. When properly used, they provide high accuracy and scalability for large ammount of data. However they have some drawbacks too \cite{survey}.
         \begin{description}
-            \item[Cold start problem:] As for the conteng-based method, the system doesn't have any data about a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender \ref{hybrid_recommenders}. 
-            A similar problem occurs when a new object is added to the system, it's not related to any subject and therefore it can never be recommended. This can be solved also by a hybrid recommender \ref{hybrid_recommenders}. 
-            \item[Sparsity:] The subject-object matrix is usually very sparse - the number of known relationships is very small compared to the number of relationships that should be predicted. Therefore, in most of the collaborative filtering methods, the objects related to few subjects are seldom recommended. This drawback is overcome by some of the model-based methods, e.g. matrix factorization. 
+            \item[Cold start problem:] As for the conteng-based method, the system doesn't have any data about a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender (\ref{hybrid_recommenders}). 
+            A similar problem occurs when a new object is added to the system, it's not related to any subject and therefore it can never be recommended. This can be solved also by a hybrid recommender (\ref{hybrid_recommenders}). 
+            \item[Sparsity:] The subject-object matrix is usually very sparse - the number of known relationships is very small compared to the number of relationships that should be predicted. Therefore, in most of the collaborative filtering methods, the objects related to few subjects are seldom recommended. This drawback is overcome by some of the model-based methods, e.g. matrix factorization \cite{bellkor_ieee}.
+            \item[Grey sheep problem:] This problem is mentioned in \cite{knowledge_spain}. In the system, there might be subjects whose preferences aren't consistently similar to other subjects. Therefore they don't belong to any preference subejct group and they can't get any accurate recommendations.
          \end{description}
         \subsection{Suitability for The Universal Recommender}
         One of the biggest advantage of collaborative filtering is its domain independence. Generally, the algorithms don't assume any properties of subjects or objects, they just use the relationships between subjects and objects to make recommendations. Of course, the recommender tuned for a particular domain can't be used directly for other domain, but the core algorithm is domain-independent.
         
         The universal recommender proposed in \cite{white_paper} is based on the idea of matrix factorization, which is a model-based collaborative filtering technique. Therefore, the collaborative filtering methods are very suitable for a universal recommender.
     
+    \section{Knowledge-based Recommenders}
+        \label{knowledge_based}
+        
+        Although the main focus in the recommender research field is on collaborative filtering, possibilities of knowledge-based recommenders are still being studied.
+        
+        There are many approaches to knowledge-based recommending. One of them is presented in \cite{knowledge_burke}. The user interaction to the system is similar as in the case of performing a search. At first, the  user specifies an item that he/she likes. Then the system iteratively presents similar items to the user. The user further specifies his/her preferences, like ``I would like a more romantic/adventurous movie''. This continues until the user is fully specified with the presented item.
+        
+        One problem of the aproach is that the recommendations aren't personal. There're no user profiles in the system, so the recommendations are based only on data given by the user during the search. The author describes how to reduce this disadvantage in \cite{integrating_burke}. The items found by the knowledge-based recommender are sorted by the integrated collaborative filter. Another problem of this approach is bothering the user. The user has to fully specify his preferences in order to get some good recommendations. Although the system leads the user through the search, it can take a lot of time to find the right item.
+        
+        The article \cite{knowledge_spain} proposes a bit different approach. Their knowledge-based recommender is trying to solve the ``cold start problem'' (see \ref{collaborative_filtering}). When a new user registers to the system, he/she is asked to choose an example of an item he/she likes in the item catalogue. Then the user is asked to compare the item to some other items, using a scale from zero to one, determining how much the item is preferred over the other. An underlying algorithm exploits this knowledge to the whole item catalogue and uses the data for making recommendations. This approach is a bit better than the first described one, as it bothers the user only once - when he/she is registering. Nevertheless new users are more sensitive to being asked a lot of questions and there's a risk, that the user leaves for a rival system. The presented recommender is only a theoretical suggestion, there might be some problems with scalability to large numbers of users and items.
+        
+        Recommendation by ordering is also discussed in \cite{order}. The authors of the article describe an advanced algorithm for exploiting the known relative preferences to the whole domain. The performance evaluations of the presented algorithm look very promising. Nevertheless, obtaining reliable relative preferences without bothering the user is diffcult and requires some non-trivial domain knowledge. Therefore such a recommender isn't suitable for our universal recommender. 
+        
+        Another approach to knowledge-based recommender was used in the \emph{RACOFI} system \cite{racofi}. The system consist of a collaborative filtering engine (\emph{COFI}) and a rule applying agent (\emph{RALOCA}). The primary recommendation is done by COFI. The rules are then used for adjusting the recommendation rate or removing objects from recommendations. The rules are applied on \emph{objective} data we know about the subjects and objects, like age and genre respectively. 
+        
+        The \cite{racofi} report shows that rules can handle boundary cases by removing inappropriate objects for recommendations - e.g. removing too expensive objects when recommending to student subjects. They can also refine recommendations by applying some rules that were found empirically. We find the idea of applying rules for recommending quite interesting, especially when there's not enough data for making other types of recommendation. The other benefit of rule-based recommending is the ability to give explanations why the objects were recommended.
+
+        \fig{pics/knowledge.png}{Knowledge-based Recommender}{pic_knowledge} 
+        
+        \subsection{Suitability for The Universal Recommender}
+        Knowledge can give an added value to a recommender, as some rules are well-known and often cannot be easily extracted from the underlying data. Therefore, if a way how to enter some basic domain-specific rules is found, the knowledge based recommender can be included into the universal recommender. 
+            
     \section{Other Domain-specific Methods}
         There are a lot more algorithms for recommending, but all of them rely on specific data that must be available about the subjects or objects for the recommender to work well. As these aren't acceptable for the universal recommender, we list only a few of them.
         \subsection{Social Networks and Link Prediction}
             In social networks, there are links between users, such as the \emph{friends} link. If these are available, the recommender can recommend an object according on what user's friends liked. A schematic picture of the a social network recommender can be seen in the figure \ref{pic_social}.
-            \begin{figure}[!ht]\label{pic_social}
-                \vspace{3mm}
-                \begin{center}
-                    \includegraphics[width=13cm]{pics/social.png}
-                    \caption{Recommending in social networks}
-                \end{center}
-            \end{figure}        
+            
+            \fig{pics/social.png}{Recommending in social networks}{pic_social} 
 
         \subsection{Demographic Filtering}
             When we have some additional information about subjects (users) such as nationality, residence, age or occupation, we can use for determining similarity between the users. A demographic filtering method can be used as an additional measure of user similarity when there's little known about the user's taste. An example of a recommendation made by a demographic filtering recommender can be seen in the figure \ref{pic_demographic}.
-            \begin{figure}[!ht]\label{pic_demographic}
-                \vspace{3mm}
-                \begin{center}
-                    \includegraphics[width=13cm]{pics/demographic.png}
-                    \caption{Demographic Filtering}
-                \end{center}
-            \end{figure}
-
-    \section{Knowledge-based Recommenders}
-        \label{knowledge_based}
-        pravidla. 
+            
+            \fig{pics/demographic.png}{Demographic Filtering}{pic_demographic} 
 
     \section{Hybrid Recommenders}
         \label{hybrid_recommenders}
-        popis, rozsireny obrazek z white paperu, nejaky typy jako ma mustafa mozna
-    \section{Matrix Factorization - nazev??}
-        ze je to to s cim vyhrali netflix,
-        ze to abstrahuje vsechny ty metody nahore, see white paper (mimo knowledge)
+        Hybrid recommenders combine two or more recommending methods in order to enhance their recommendations. There are several ways how to combine them.
+         
+        For enhancing the success of produced recommendations, we can use a hybrid recommender that uses all its underlying methods when producing any recommendation. The combined methods can be of various types, using various relationships among subjects and objects. A combination of content-based and collaborative filtering is quite popular, possibilities of combining the two methods into a single hybrid recommender are listed in \cite{survey}. The combination of memory-based and model-based collaborative filtering is often used in contemporary commercial recommenders, as in \cite{google_news} 
+        
+        A hybrid recommender can help to overcome some drawbacks of the recommendation methods, as the \emph{Cold start problem} (see \ref{cf_benefits_drawbacks} for explanations. In this case, when little data is known about a new subject and object, some subsidary recommendation method can be used. This subsidary method wouldn't be suitable for performing the most of the recommendations, but it can make the best of the little data that is available. This approach is used in the default strategy of the Duine recommender framework \cite{duine}.
+        
+        Figure \ref{pic_hybrid} shows a recommendation for a new user, performed by a hybrid recommender combining social links and collaborative filtering. 
+        
+        \fig{pics/hybrid.png}{Hybrid Recommender}{pic_hybrid} 
+        
+        \subsection{Suitability for The Universal Recommender}
+        As presented in \cite{white_paper}, the specific combination of methods used in a hybrid recommender depends on the data available in the given domains. Therefore a hybrid recommender can't be generic. The combination of used recommenders would have to be chosen in the addaptation phase. Finding the right combination of recommenders for the specific domain can be non-trivial and thereby hybrid recommenders aren't suitable for a universal recommender. 
+
     \section{Conclusion}
         \label{algorithm_conclusion}
-        nemuzem predpokladat existenci vubec niceho, ani vazeb mezi subjekty
-        asi matrix s knowledge nad tim. 
+        In the chapter we have described all common contemporary approaches to recommender systems, their suitability for domain-independent recommending has been evaluated. In a universal recommender we cannot assume that any specific relationships or subject and object properties exists, so our choice narrows a lot. 
+        
+        From the studied algorithms, the only one that is domain-independent by nature is \emph{collaborative filtering}. All the others are dependent on some specific features of subjects or objects, or they suppose some specific relationships. Therefore, for our universal recommender we choose a collaborative filter. 
+        
+        There is a lot of types of collaborative filtering algorithms, as can be seen in the \ref{collaborative_filtering} section. The most comprehensive from the described collaborative filters seems to be the \emph{matrix factorization} method. Moreover \cite{white_paper} prooves that all other recommenders, except the knowledge based which isn't menitioned, can be generalized by a recommender based on the matrix factorization collaoborative filtering technique. The only difference to the classical matrix factorization described in \cite{bellkor_ieee} is that the subject and object vectors have to reflect more than one type of relationship. 
+        
+        For the given reasons, the matrix factorization recommender should be in the core of our universal recommender. 
+        
+        \subsection{Combining Knowledge-based and Matrix Factorization Recommenders}
+        The only method that wasn't generalized by the universal recommender proposed in \cite{white_paper} is the knowledge-based method. As we have shown in \ref{knowledge_based}, simple domain-specific rules can enhance the recommendation accuracy, especially when there's little data available. Hence, incorporating a possibility to enter some simple domain-specific set of rules when addapting the universal recommender to a domain, would be very interesting. We found a few options how to incorporate the evaluation of knowledge rules into a matrix factorization recommender:
+        \begin{description}
+            \item[Knowledge-based recommender above matrix factorization.] In this variation there're independent knowledge based and matrix factorization recommenders, which corresponds to a hybrid recommender. This approach was used in the RACOFI system \cite{racofi} for other types of collaborative filters. For a relationship prediction, if a rule is available, it would be used for predicting the relationship together with the underlying matrix factorization. If not, only the matrix factorization method would be used. Although this is a possible combination of the recommenders it has a significant drawback. The method introduces a tension between the two recommenders. The results of the matrix factorization method, which should be universal, aren't used in some cases at all, in other cases its results are distorted by the knowledge recommender. This problem can lead to incorrect learning of the model.
+            \item[Using matrix factorization, converting the rules into relationships.] Optionally, the rules given in the addaptation to a specific domain, can be converted to relationships between subject/object pairs satisfying the condition in the rule. The matrix factorization recommender would use such relationships as any others and therefore its universality would remain intact. The drawback is the usage of the matrix factorization even for domains and subject/object pairs where a simple knowledge-based recommender would be sufficient. Another problem is the loss of recommendation explanations that would otherwise be available from the knowledge-based recommender.
+            \item[Combining the previously mentioned options.] The last possibility is to combine the previously mentioned options. The rules would be divided into two groups: \emph{hard rules} (when a rule condition is satisfied, the object will always be recommended) and \emph{soft rules} (when a rule condition is satisfied, the prediction rate would be decreased or increased). A knowledge-based recommender with the hard rules will be used as described in the first option. The soft rules would be converted into relationships as described in the second option. The distortion of the matrix factorization results would be minimized, the explanations of the knowledge-based recommender will be preserved and the matrix factorization would be used only in the cases when really needed. However matrix factorization distortion remains, as it is not used in all cases. A new problem emerges: The objects recommended by the hard rules would be recommended always and there's no way for a subject to decline them.
+        \end{description}
+        
+        For the given reasons we would choose the second option - \emph{Using matrix factorization, converting the rules into relationships}. Another advantage of this approach is that a standalone knowledge based recommender doesn't have to be implemented, as the modified matrix factorization recommender will be dealing with the rules. The described drawbacks of the method aren't critical and we should be able to overcome them during the implementation. 
         
         
 \chapter{Relationships in Studied Systems}
@@ -409,8 +478,31 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{architecture}
         The Universal Recommender is designed so that it's independent of the domain of the subjects and objects, working only with the abstract relationships. The set of relationships can be extended easily. Several instances of the recommender can be run on a single system, so the Universal Recommender can run with various configurations recommending various objects to various subjects. 
         
+        The figure \ref{pic_unrest_adaptation} shows an example how UNREST can be adapted to a domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Gear Recommender} and a \emph{Friend Recommender}. Each recommender has two interfaces: \emph{Adaptation Interface} and \emph{Runtime Interface}. The domain expert uses the Adaptation interface to adapt UNREST to the Tennis domain and performs necessary setup to put the recommenders into operation. 
+        \fig{pics/unrest_adaptation.png}{Adaptating UNREST to a domain done by a domain expert.}{pic_unrest_adaptation}
+        
+        In the figure \ref{pic_unrest_runtime} there is a schema of how a system using UNREST operates. The system user accesses the system as usually through its graphical interface (GUI). The UNREST GUI which is a part of UNREST is plugged into the Tennis Server user interface and it presents recommendations to the user. The UNREST GUI as well as the Tennis Server uses the Runtime Interface of both recommenders to get recommendations and to provide information needed for making recommendations. Both recommenders transfer the calls to the UNREST module. The UNREST module generates recommendations and stores them in a database. Recommendations are provided on demand.  
+        \fig[17]{pics/unrest_runtime.png}{UNREST common usage.}{pic_unrest_runtime}
+        
     \section{Recommender Algorithm Implementation}
         \label{algorithm_implementation}
+        
+        \subsection{Rule-based Recommender}
+            \label{rule_based}
+            
+            reprezentace pravidel: zvazil jsem xml a rek jasne ne. http://ruleml.org/ .. editing xml is torturing
+            maj ale i lepsi syntax http://ruleml.org/submission/ruleml-shortation.html ale stejne to neni zadnej slagr a as far as we know neni pythonovsky interpreter. 
+            mam reprezentaci pravidel. typy odpovidaji klasifikaci z \cite{knowledge_spain}, popsane v \ref{knowledge_based} - ale je to napasovane na relationships - podobnost
+            
+            Accordng to \cite{knowledge_spain}, there are three types of knowledge, the recommender system can deal with:
+        \begin{description}
+            \item[Catalog knowledge] provids information about objects and their features.
+            \item[Fuctional knowledge] provides information about how objects meet subjects' needs. 
+            \item[User knowledge] contains information about subjects' needs. 
+        \end{description}
+        
+        
+             
         
     \section{Recommendation Viewer}
         \label{viewer}
@@ -439,6 +531,7 @@ Supervisor's e-mail address: \vedoucimail\\
 \chapter{Conclusion and Future Work}
 \label{conclusion}
 
+zahrnul jsem knowledge-based recommender do matrix factorization (ale na to prijdu az v kapitole algorithms).
 
 \chapter{Software tools}
 \label{tools}
@@ -477,8 +570,22 @@ A Survey of the State-of-the-Art and Possible Extensions}, 2005
     \bibitem{bellkor_2009}
 Yehuda Koren: The BellKor Solution to the Netflix Grand Prize
 http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
+    \bibitem{google_news}Google News Personalization: Scalable Online Collaborative Filtering http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.4329\&rep=rep1\&type=pdf
     
     \bibitem{white_paper}The Universal Recommender http://adsabs.harvard.edu/abs/2009arXiv0909.3472K
+    \bibitem{duine}The Duine Framework http://duineframework.org
+    \bibitem{knowledge_burke}Knowledge-based recommender systems \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.41.3078&rep=rep1&type=pdf!
+    \bibitem{integrating_burke}Integrating Knowledge-based and Collaborative-filtering
+               Recommender Systems
+\verb!http://www.aaai.org/Papers/Workshops/1999/WS-99-01/WS99-01-011.pdf!
+\bibitem{racofi}RACOFI: A Rule-Applying Collaborative Filtering System
+\verb!http://www.daniel-lemire.com/fr/documents/publications/racofi_nrc.pdf!
+\bibitem{knowledge_spain}A Knowledge Based Recommender System Based on Consistent Preference Relations 
+\verb!http://www.springerlink.com/content/m64g474m7p0t4r26/!
+\verb!http://books.google.cz/books?id=LN4dVFPXBioC&lpg=PP1&ots=EwNO8Bpeyy&dq=Intelligent%20Decision%20and%20Policy%20Making%20Support%20Systems&pg=PP1#v=onepage&q&f=false!
+\bibitem{order}Learning to order things
+\verb!http://www.jair.org/media/587/live-587-1790-jair.pdf!
+
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
     http://en.wikipedia.org/wiki/Recommender\_system
