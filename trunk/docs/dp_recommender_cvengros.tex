@@ -478,11 +478,28 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{architecture}
         The Universal Recommender is designed so that it's independent of the domain of the subjects and objects, working only with the abstract relationships. The set of relationships can be extended easily. Several instances of the recommender can be run on a single system, so the Universal Recommender can run with various configurations recommending various objects to various subjects. 
         
+        neni nikde native - takze musi stat mimo ten system, mit s nim nejaky rozumny iterface. 
+        
         The figure \ref{pic_unrest_adaptation} shows an example how UNREST can be adapted to a domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Gear Recommender} and a \emph{Friend Recommender}. Each recommender has two interfaces: \emph{Adaptation Interface} and \emph{Runtime Interface}. The domain expert uses the Adaptation interface to adapt UNREST to the Tennis domain and performs necessary setup to put the recommenders into operation. 
         \fig{pics/unrest_adaptation.png}{Adaptating UNREST to a domain done by a domain expert.}{pic_unrest_adaptation}
         
         In the figure \ref{pic_unrest_runtime} there is a schema of how a system using UNREST operates. The system user accesses the system as usually through its graphical interface (GUI). The UNREST GUI which is a part of UNREST is plugged into the Tennis Server user interface and it presents recommendations to the user. The UNREST GUI as well as the Tennis Server uses the Runtime Interface of both recommenders to get recommendations and to provide information needed for making recommendations. Both recommenders transfer the calls to the UNREST module. The UNREST module generates recommendations and stores them in a database. Recommendations are provided on demand.  
         \fig[17]{pics/unrest_runtime.png}{UNREST common usage.}{pic_unrest_runtime}
+        
+        obrazek architecture:
+            Specific Recommender holds the domain-specific data.
+            Recommender provides a domain-independent interface for creating a recommender model, getting recommendations and updating the recommender model.
+            Abstractor translates the domain-specific objects into universal ones, converts the given business rules into relationships among subjects and objects.
+            Aggregator aggregates all renationships into a single one for subject-object, subject-subject and object-object pairs.
+            Recommender Algorithm uses the known relationships among subjects and objects, exploits them to predict all subject-object relationships of the given type.
+        
+        obrazek build:
+            During the build, domain data that have been entered by the domain expert are used for creating a recommender model. 
+            Recommender just passes the call to other layers.
+            Abstractor goes ove rhe subjects and objects, evalutes the business rules on them, introduces a new relationship or bilas for each rule. It converts subjects and objects to a universal representation that would be used in the rest of UNREST.
+            Aggregator aggregates all relationships int o a sinle one for subject-object, subject-subject and object-object pairs, using the given weights. It does the same for biases.
+            Recommender Algorithm uses the aggregated relationships to learn a recommender model.
+            
         
     \section{Recommender Algorithm Implementation}
         \label{algorithm_implementation}
