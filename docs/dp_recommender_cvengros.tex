@@ -215,6 +215,9 @@ Supervisor's e-mail address: \vedoucimail\\
             \begin{description}
                 \item[Subject]: Subject of a recommendation is an entity to which the recommender presents its recommendations. A subject can be a user as well as a user group or any other entity.
                 \item[Object]: Object of a recommendation is an entity which can be recommended to subjects. Objects can be books, songs, or any other entities.  
+                \item[Entity]: Entity is a subject, an object or any other thing that occurs in the domain.
+                \item[Predicted relationship]: Predicted relationship is a subject-object relationship that we try to predict for making recommendations. An example of such a relationship is the \emph{likes} relationship between a user and an item. 
+                \item[Preference in means of the predicted relationship]: For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will ocurr between the subject and object. In our user-item \emph{like} example, the preference would mean how much the user is likely to like the item. 
              \end{description}
         
         \subsection{Recommender System}
@@ -372,7 +375,7 @@ Supervisor's e-mail address: \vedoucimail\\
             \label{matrix_factorization}
             The main challenge in latent factor models is computing the subject and object vectors. One of the methods for computing them is \emph{matrix factorization}. The method was used by the BellKor team in the winning solution of the Netflix grand prize \cite{bellkor_ieee}. Since then the matrix factorization has become a dominant method for model-based collaborative filtering recommenders.
             
-            The method is described in \cite{bellkor_ieee}. Relationships between subject and objects are projected to a subject-object matrix. For ratings, the values in the matrix are the subject's actual ratings of the appropriate object. For other relationships there are zeros and ones in the matrix. This matrix is decomposed into vectors so that the dot product between a subject and object vector gives the actual or predicted value on the appropriate coordinates in the subject-object matrix. The decomposition could be done by the \emph{single value decomposition} technique, but in \cite{bellkor_ieee} a better method is proposed: The known values are used directly to learn the vectors, using a minimization of the regularized squared error. The learning can be done either by the \emph{stochastic gradient descent} method or by \emph{alternating least squares}. The named methods are thoroughly studied in the section \ref{algorithm_implementation}.
+            The method is described in \cite{bellkor_ieee}. Relationships between subject and objects are projected to a subject-object matrix. For ratings, the values in the matrix are the subject's actual ratings of the appropriate object. For other relationships there are zeros and ones in the matrix. This matrix is decomposed into vectors so that the dot product between a subject and object vector gives the actual or predicted value on the appropriate coordinates in the subject-object matrix. The decomposition could be done by the \emph{single value decomposition} technique, but in \cite{bellkor_ieee} a better method is proposed: The known values are used directly to learn the vectors, using a minimization of the regularized squared error. The learning can be done either by the \emph{stochastic gradient descent} method or by \emph{alternating least squares}. The named methods are thoroughly studied in the section ???.
             
         \subsection{Benefits and Drawbacks}
         \label{cf_benefits_drawbacks}
@@ -501,25 +504,59 @@ Supervisor's e-mail address: \vedoucimail\\
             Abstractor goes ove rhe subjects and objects, evalutes the business rules on them, introduces a new relationship or bilas for each rule. It converts subjects and objects to a universal representation that would be used in the rest of UNREST.
             Aggregator aggregates all relationships int o a sinle one for subject-object, subject-subject and object-object pairs, using the given weights. It does the same for biases.
             Recommender Algorithm uses the aggregated relationships to learn a recommender model.
-            
         
-    \section{Recommender Algorithm Implementation}
-        \label{algorithm_implementation}
-        
-        \subsection{Rule-based Recommender}
-            \label{rule_based}
+        \subsection{Representing Rules}
             
-            reprezentace pravidel: zvazil jsem xml a rek jasne ne. http://ruleml.org/ .. editing xml is torturing
-            maj ale i lepsi syntax http://ruleml.org/submission/ruleml-shortation.html ale stejne to neni zadnej slagr a as far as we know neni pythonovsky interpreter. 
+            During the adaptation phase, the domain expert can introduce business rules that will be used for creating recmmendations. As in \cite{racofi}, our rule consists of a \emph{condition} determining when the rule should be applied, and an \emph{action} defining what should be done if the condition is satisfied. The representation should use an easy human-editable notation, so that the rules can be easily added and later edited. 
+            
+            The RACOFI framework \cite{racofi} uses two types of actions: \emph{Modify} that modifies the predicted subject's object rating by a given constant and \emph{Not Offered} that excludes given object from recommendation to subject.
+            
+            Our rules aren't modifying predictions, but they serve as an input for predicting. Therefore we will use absolute values determining subject-object preference in means of the recommended relationship, not relative values as in RACOFI \emph{Modify} rules. The \emph{Not Offered} rule type can be represented by a rule giving the minimal possible value, so we won't have a special rule type for it. 
+            
+            In our rules we would also like to represent inter-entity similarity. Hence we will use the following types of rules:
+            \begin{description}
+                \item[Subject-object rules] defining subject-object interactions that can be used for recommending objects to subjects.
+                \item[Subject-subject rules] defining similarity between subjects.
+                \item[Object-object rules] defining similarity between objects.
+             \end{description}
+            
+            There are several ways how to represent rules. The first studied one is \emph{RuleML (Rule Markup Language)} \cite{ruleml}, a XML-based markup language for representing rules. The language is very powerful, having the same expresiveness as declarative programming languages\footnote{There are serveral convertors between the \emph{Prolog} programming language and RuleML, e.g. \cite{ruleml_prolog}}. RuleML was used for entering rules into the RACOFI recommender system \cite{racofi}.
+            
+            Creating and editing rules in RuleML isn't very convenient as creating and editing any other XML-based document. That is partially solved by a shortened notation \cite{ruleml_short}, but even that isn't very comfortable to a user that isn't experienced in declarative programing. Another drawback of using RuleML for our purpose is its generality. The set of conditions and actions we'd like to represent is very limited and therefore we don't need such a powerful language.
+            
+            A better option would be to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the addaptation phase, the domain expert instantiates the pre-defined class to create a business rule.
+             
+            For our object-oriented rule representation we need to define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible action is determining the preference or inter-entity similarity. Therefore actions will be represented as functions giving a preference or similarity respectively. More precisely, the rule objects contain:
+            \begin{description}
+                \item[Condition:] A boolean function determining whether the rule can be applied to a given entity pair. The function has a form depending on the rule type:
+                \begin{description}
+                    \item[Subject-object condition] $C_{so}:S \times O \to \{False, True\}$. A function takes a subject-object pair and determines whether the rule can be applied to the pair. Example: rating nebo has clicked, liked s oklikou pres entitu jineho typu - treba tag
+                    \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. Example: friends
+                    \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. Example: the same color
+                \end{description}
+                \item[Confidence:] A function determining the strength of the preference/similarity.
+                \begin{description}
+                    \item[Subject-object preference confidence] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example: rating nebo has clicked kolik sekund.
+                    \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the confidence, the more similar the subjects are, according to the rule. Example: friends
+                    \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity between the subjects. The higher the confidence, the more similar the subjects are, according to the rule. Example: the same color
+                \end{description}
+                \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike Confidence, is independent of the particular entities on which the rule is evalutated. Example: mys pres bude mit malou vahu, klik vetsi, explicitni hodnoceni nejvetsi.
+                \item[Explanation:] A text explaining the meaning of the rule. Explanations can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Example treba ty friends. 
+             \end{description}
+
+            
             mam reprezentaci pravidel. typy odpovidaji klasifikaci z \cite{knowledge_spain}, popsane v \ref{knowledge_based} - ale je to napasovane na relationships - podobnost
             
             Accordng to \cite{knowledge_spain}, there are three types of knowledge, the recommender system can deal with:
-        \begin{description}
-            \item[Catalog knowledge] provids information about objects and their features.
-            \item[Fuctional knowledge] provides information about how objects meet subjects' needs. 
-            \item[User knowledge] contains information about subjects' needs. 
-        \end{description}
-        
+            \begin{description}
+                \item[Catalog knowledge] provides information about objects and their features.
+                \item[Functional knowledge] provides information about how objects meet subjects' needs. 
+                \item[User knowledge] contains information about subjects' needs. 
+            \end{description}
+        \subsection{Representing Relationships}
+            napsat neco o ekvivalenci relationships a rules - spis ze vsechny relationships jdou napsat jako rules
+            
+            Apart from business rules, when adapting a system to Unresyst, the domain expert has to define which relationships are important for making recommendations.
         
              
         
@@ -604,6 +641,9 @@ http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
 \verb!http://books.google.cz/books?id=LN4dVFPXBioC&lpg=PP1&ots=EwNO8Bpeyy&dq=Intelligent%20Decision%20and%20Policy%20Making%20Support%20Systems&pg=PP1#v=onepage&q&f=false!
 \bibitem{order}Learning to order things
 \verb!http://www.jair.org/media/587/live-587-1790-jair.pdf!
+\bibitem{ruleml}\verb!http://ruleml.org/!
+\bibitem{ruleml_short}\verb!http://ruleml.org/submission/ruleml-shortation.html!
+\bibitem{ruleml_prolog}\verb!http://centria.di.fct.unl.pt/~cd/projectos/w4/ruleml/index.htm!
 
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
@@ -617,7 +657,7 @@ odkazy:
             \bibitem{aura_wiki}The AURA project wiki. http://kenai.com/projects/aura/pages/Home
         Loomia (komercni):
             http://www.loomia.com/
-        SUGGEST (dead since 200):
+        SUGGEST (dead since 2000):
             http://glaros.dtc.umn.edu/gkhome/suggest/overview
             + http://pypi.python.org/pypi/pysuggest/1.0
         easyrec (opensource, vypada ze umi prd, ale bezi jako service):
