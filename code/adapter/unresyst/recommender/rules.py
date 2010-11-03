@@ -37,7 +37,7 @@ class _BaseRule(Relationship):
         It doesn't depend on the entity pair.
         """
         
-        
+# confidence by taky mohla vracet string s doplnujicim vysvetlenim,         
 
 class _SimilarityRule(_BaseRule):
     """A base class (abstract) for all rules operating between the same type."""
@@ -54,6 +54,9 @@ class SubjectSimilarityRule(_SimilarityRule):
     pass
 
 
-class RecommendationRule(_BaseRule):
+class SubjectObjectRule(_BaseRule):
     """A class for representing subject-object preference for recommendation"""
+    pass    
+
+class Bias(object):
     pass    
