@@ -40,6 +40,8 @@
 \newcommand{\vedoucimail}{Peter.Vojtas@mff.cuni.cz}
 
 % prikazy s parametry
+
+% obrazek
 \newcommand{\fig}[4][13]{
     \begin{figure}[!ht]
         \vspace{3mm}
@@ -217,7 +219,7 @@ Supervisor's e-mail address: \vedoucimail\\
                 \item[Object]: Object of a recommendation is an entity which can be recommended to subjects. Objects can be books, songs, or any other entities.  
                 \item[Entity]: Entity is a subject, an object or any other thing that occurs in the domain.
                 \item[Predicted relationship]: Predicted relationship is a subject-object relationship that we try to predict for making recommendations. An example of such a relationship is the \emph{likes} relationship between a user and an item. 
-                \item[Preference in means of the predicted relationship]: For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will ocurr between the subject and object. In our user-item \emph{like} example, the preference would mean how much the user is likely to like the item. 
+                \item[Expectancy of the predicted relationship]: For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will ocurr between the subject and object. In other words, Expectancy can be explained as subject-object preference in means of the predicted relationship. In our user-item \emph{like} example, the expectancy would mean how much the user is likely to like the item. 
              \end{description}
         
         \subsection{Recommender System}
@@ -244,13 +246,28 @@ Supervisor's e-mail address: \vedoucimail\\
             
             For a given subject-object pair, $\hat{u}$ gives:
             \begin{description}
-                \item[Relationship prediction rate:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship prediction $1$ aren't presented to the subject Usually the recommended object are presented ordered by the rate. The exact value of the rate doesn't have to be presented to the subject.
+                \item[Expectancy:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ aren't presented to the subject. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented to the subject.
                 \item[Explanation:] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
                 %\item[Relationship metadata values]: coming soon
             \end{description}
 
-            For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explenation, that they have four friends in common. This means that the predicted probability of friendship between Alice and Bob is $0.75$. 
+            For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explanation, that they have four friends in common. This means that the predicted probability of friendship between Alice and Bob is $0.75$. 
+            
+            Our concept is similar to the one used in the Duine framework \cite{duine}. The prediction techniques in Duine give a \emph{Prediction}, \emph{Validity indicators} and an \emph{Explanation} for each subject-object pair. \emph{Prediction} is an estimation of subject's rating of the object. \emph{Validity indicators} determine the \emph{confidence} of the techinque when predicting the rating. Low values mean, that the technique isn't confident about the \emph{Prediction} for the given subject-object pair, e.g. it doesn't have enough information to make a valid prediction. \emph{Explanation} has the same meaning as the one in our recommender. 
+             
+            In a universal recommender we can't assume there will be a rating relationship between subjects and objects. Moreover, we are supposed to be able to predict any given relationship between subjects and objects, not just the preference expressed by the rating. In a Universal recommender, we only predict a $0/1$ indicator: the predicted relationship is between the given the subject and object, or it isn't. Hence we can shrink the prediction and confidence concepts into one - relationship expectance. 
+            
+            Let's show the reduction on an example. A recommender predicts, that \emph{Bob} will like the \emph{Five Days In Paris} book with $20\%$ probability. The like expectancy is $0.2$, which can be rewritten as giving prediction $1$ (Bob will like it) with the prediction confidence $0.2$. For us, this is the same as predicting that Bob won't like it with $80\%$ probability - giving a prediction $0$ with prediction confidence $0.8$. This is because, in our relationship representation, Bob either likes the book, or he doesn't. The events ``Bob likes the book'' and ``Bob doesn't like the book'' are complementary.
+            
+            In other words, low relationship expectance can mean low prediction value with high confidence as well as high prediction value with low confidence. But as the predicted indicator is of a $0/1$ type, we don't have to differentiate these cases. 
+            
+            % napr. prediction 0, confidence 0.75 je to samy jako prediction 1, confidence 0.25. Protoze P(0) = 0.75 = 1-0.25 - protoze jevy 0 a 1 se vylucuji. 
+            
+            The dependency between relationship expectancy and prediction confidence is illustrated on the figure \ref{pic_expectancy_confidence}. Let prediction confidence be a function to $[0,1]$ determining how sure the recommender is about the given relationship prediction. Expectancy values just above zero indicate that the recommender is quite sure that there won't be the given relationship between the given subject-object pair. Expectancy values near $0.5$ mean low confidence for the prediction. Especially $0.5$ means that according to the recommender, the probability of the relationship occurence is the same as for non-occurence. Expectancy values close to $1$ mean that recommender is quite sure, that there be the given subject-object pair will be connected by the given relationship. 
 
+            \fig[9]{pics/expectancy_confidence.png}{The dependency between relationship expectancy and prediction confidecne.}{pic_expectancy_confidence}
+
+            In our universal recommender we don't support rating prediction directly. But as subject-object rating means a level of subject-object preference, we can estimate rating using our relationship expectancy. We only need to define mapping from relationship expectancy values to rating. Taking the subject and object from the previous example (Bob and Five Days in Paris), we can interpret Bob's $0.2$ like relationship expectation, to the rating 1 star on a 0 to 5 star scale. 
 
         \subsection{Recommendation}
             \label{recommendation}
@@ -293,7 +310,7 @@ Supervisor's e-mail address: \vedoucimail\\
             Another notable work on universal recommender is a US software pattent application \emph{Universal system and method for representing and predicting human behavior} \cite{patent}. The text contains a mixture of marketing proclamations, ideas on the recommender architecture, description of recommender and machine-learning algorithms and ideas on capturing implicit user ratings. In our opinion, the recommending methods presented in the text could be working well only on very small sets of data, for larger data sets, the ammount of time needed for performing some basic operations wouldn't be acceptable. The final paragraph, trying to claim everything around, from vector object representation to capturing the action of user adjusting the volume on his music player, gives a negative example of where the idea of software patents can lead. As far as we know there's no functional recommender system based on this patent. 
             
             white paper, 
-            Duine - trochu moc se tam pracuje s tim user ratingem
+            Duine - trochu moc se tam pracuje s tim user ratingem. mixuju podobne pravidla a relationships jako on recommendation techniques. (minimalne mam podobne prostredky), ale nekaskaduju. 
     \section{Other Aspects of Recommender Systems}
         \subsection{Relation to Other Research Areas}
             vztah k vyhledavani, machine learningu, statistice, 
@@ -385,7 +402,7 @@ Supervisor's e-mail address: \vedoucimail\\
             \item[Cold start problem:] As for the conteng-based method, the system doesn't have any data about a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender (\ref{hybrid_recommenders}). 
             A similar problem occurs when a new object is added to the system, it's not related to any subject and therefore it can never be recommended. This can be solved also by a hybrid recommender (\ref{hybrid_recommenders}). 
             \item[Sparsity:] The subject-object matrix is usually very sparse - the number of known relationships is very small compared to the number of relationships that should be predicted. Therefore, in most of the collaborative filtering methods, the objects related to few subjects are seldom recommended. This drawback is overcome by some of the model-based methods, e.g. matrix factorization \cite{bellkor_ieee}.
-            \item[Grey sheep problem:] This problem is mentioned in \cite{knowledge_spain}. In the system, there might be subjects whose preferences aren't consistently similar to other subjects. Therefore they don't belong to any preference subejct group and they can't get any accurate recommendations.
+            \item[Grey sheep problem:] This problem is mentioned in \cite{knowledge_spain}. In the system, there might be subjects whose preferences aren't consistently similar to other subjects. Therefore they don't belong to any preference subject group and they can't get any accurate recommendations.
          \end{description}
         \subsection{Suitability for The Universal Recommender}
         One of the biggest advantage of collaborative filtering is its domain independence. Generally, the algorithms don't assume any properties of subjects or objects, they just use the relationships between subjects and objects to make recommendations. Of course, the recommender tuned for a particular domain can't be used directly for other domain, but the core algorithm is domain-independent.
@@ -410,6 +427,13 @@ Supervisor's e-mail address: \vedoucimail\\
         The \cite{racofi} report shows that rules can handle boundary cases by removing inappropriate objects for recommendations - e.g. removing too expensive objects when recommending to student subjects. They can also refine recommendations by applying some rules that were found empirically. We find the idea of applying rules for recommending quite interesting, especially when there's not enough data for making other types of recommendation. The other benefit of rule-based recommending is the ability to give explanations why the objects were recommended.
 
         \fig{pics/knowledge.png}{Knowledge-based Recommender}{pic_knowledge} 
+        
+        Accordng to \cite{knowledge_spain}, there are three types of knowledge, a recommender system can deal with:
+        \begin{description}
+            \item[Catalog knowledge] provides information about objects and their features.
+            \item[Functional knowledge] provides information about how objects meet subjects' needs. 
+            \item[User knowledge] contains information about subjects' needs. 
+        \end{description}
         
         \subsection{Suitability for The Universal Recommender}
         Knowledge can give an added value to a recommender, as some rules are well-known and often cannot be easily extracted from the underlying data. Therefore, if a way how to enter some basic domain-specific rules is found, the knowledge based recommender can be included into the universal recommender. 
@@ -506,12 +530,13 @@ Supervisor's e-mail address: \vedoucimail\\
             Recommender Algorithm uses the aggregated relationships to learn a recommender model.
         
         \subsection{Representing Rules}
+            \label{representing_rules}
             
             During the adaptation phase, the domain expert can introduce business rules that will be used for creating recmmendations. As in \cite{racofi}, our rule consists of a \emph{condition} determining when the rule should be applied, and an \emph{action} defining what should be done if the condition is satisfied. The representation should use an easy human-editable notation, so that the rules can be easily added and later edited. 
             
-            The RACOFI framework \cite{racofi} uses two types of actions: \emph{Modify} that modifies the predicted subject's object rating by a given constant and \emph{Not Offered} that excludes given object from recommendation to subject.
+            The RACOFI framework \cite{racofi} uses two types of actions: \emph{Modify} that modifies the predicted subject's object rating by a given constant and \emph{Not Offered} that excludes an object from subject's recommendation.
             
-            Our rules aren't modifying predictions, but they serve as an input for predicting. Therefore we will use absolute values determining subject-object preference in means of the recommended relationship, not relative values as in RACOFI \emph{Modify} rules. The \emph{Not Offered} rule type can be represented by a rule giving the minimal possible value, so we won't have a special rule type for it. 
+            Our rules aren't modifying predictions, but they serve as an input for predicting. Therefore we will use absolute  relationship expectancy, not relative values as in RACOFI \emph{Modify} rules. The \emph{Not Offered} rule type can be represented by a rule giving the minimal possible expectancy, so we won't have a special rule type for it. 
             
             In our rules we would also like to represent inter-entity similarity. Hence we will use the following types of rules:
             \begin{description}
@@ -524,9 +549,11 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Creating and editing rules in RuleML isn't very convenient as creating and editing any other XML-based document. That is partially solved by a shortened notation \cite{ruleml_short}, but even that isn't very comfortable to a user that isn't experienced in declarative programing. Another drawback of using RuleML for our purpose is its generality. The set of conditions and actions we'd like to represent is very limited and therefore we don't need such a powerful language.
             
-            A better option would be to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the addaptation phase, the domain expert instantiates the pre-defined class to create a business rule.
+            Another option would be to directly use a logic programming language as \emph{Prolog}. This option has the same drawbacks in over-generality and user-unfriedliness as RuleML. Additionally we would have to incorporate a logic programming language interpreter to Unresyst.  
+            
+            A better option is to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the addaptation phase, the domain expert instantiates the pre-defined class to create a business rule.
              
-            For our object-oriented rule representation we need to define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible action is determining the preference or inter-entity similarity. Therefore actions will be represented as functions giving a preference or similarity respectively. More precisely, the rule objects contain:
+            For our object-oriented rule representation we need to define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible actions are determining the expectancy of the subject-object relationship and determining inter-entity similarity. Therefore actions will be represented as functions giving an expectancy or similarity respectively. More precisely, the rule objects contain:
             \begin{description}
                 \item[Condition:] A boolean function determining whether the rule can be applied to a given entity pair. The function has a form depending on the rule type:
                 \begin{description}
@@ -534,32 +561,60 @@ Supervisor's e-mail address: \vedoucimail\\
                     \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. Example: friends
                     \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. Example: the same color
                 \end{description}
-                \item[Confidence:] A function determining the strength of the preference/similarity.
+                \item[Expectancy:] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity.
                 \begin{description}
-                    \item[Subject-object preference confidence] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example: rating nebo has clicked kolik sekund.
-                    \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the confidence, the more similar the subjects are, according to the rule. Example: friends
-                    \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity between the subjects. The higher the confidence, the more similar the subjects are, according to the rule. Example: the same color
+                    \item[Subject-object relationship expectancy] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example: rating nebo has clicked kolik sekund.
+                    \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the expectancy, the more similar the subjects are, according to the rule. Example: friends
+                    \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity between the subjects. The higher the expectancy, the more similar the objects are, according to the rule. Example: the same color
                 \end{description}
-                \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike Confidence, is independent of the particular entities on which the rule is evalutated. Example: mys pres bude mit malou vahu, klik vetsi, explicitni hodnoceni nejvetsi.
+                \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike Expectancy, is independent of the particular entities on which the rule is evalutated. Example: mys pres bude mit malou vahu, klik vetsi, explicitni hodnoceni nejvetsi.
                 \item[Explanation:] A text explaining the meaning of the rule. Explanations can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Example treba ty friends. 
-             \end{description}
-
-            
-            mam reprezentaci pravidel. typy odpovidaji klasifikaci z \cite{knowledge_spain}, popsane v \ref{knowledge_based} - ale je to napasovane na relationships - podobnost
-            
-            Accordng to \cite{knowledge_spain}, there are three types of knowledge, the recommender system can deal with:
-            \begin{description}
-                \item[Catalog knowledge] provides information about objects and their features.
-                \item[Functional knowledge] provides information about how objects meet subjects' needs. 
-                \item[User knowledge] contains information about subjects' needs. 
             \end{description}
-        \subsection{Representing Relationships}
-            napsat neco o ekvivalenci relationships a rules - spis ze vsechny relationships jdou napsat jako rules
             
-            Apart from business rules, when adapting a system to Unresyst, the domain expert has to define which relationships are important for making recommendations.
-        
+            Such rules can represent each of knowledge types described in \cite{knowledge_spain}, described in the section \ref{knowledge_based}. Catalog knowledge can be represented by rules accessing object properties in their Condition and Expectancy functions. Functional and user knowledge can be representing by rules using the relatioships between subjects and objects. 
+
+        \subsection{Representing Relationships}
+            \label{representing_relationships}
+            
+            Apart from defining business rules, the domain expert has to define which relatioship should be predicted and which relationships are relevant for performing this prediction. These actions are performed when adapting a system to Unresyst.
+            
+            We have some specific requirements on the relationship representation. In the system there can be various entities, not only subjects and objects. The relationships can also span such entities. Example: XXX Secondly, the relationships can have various relevance for predicting the given relationship. This should be implemented by assigning weights to relationships. For example XXXX
+            
+            We would like to represent relationships of the following types. The relationships don't have to be direct - on the path from subject/object to subject/object there can be an entity of any type. Example XXXX
+            \begin{description}
+                \item[Subject-object relationships] indicate a subject's preference for the given object in means of the predicted relationship. For example: XXXX
+                \item[Subject-subject relationships] indicate similarity among subjects. For example: XXX velikost nohy
+                \item[Object-object relationships] indicate similarity among objects. For example: XXX barva tricka
+            \end{description}
+
+            Obviously, the requirenemts on the relationship representation are very similar to the requirements we have set on rule representation. Hence, we can use the rule representation for relationships with some corrections:
+            \begin{description}
+                \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. Example XXXX.
+                \item[Expectancy:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair is surely in a relationship. Hence, such a function would always return $1$ for relationhips.
+                \item[Weight:] We need a way how to define the relevance of the relationship for predicting the relationship. Weight can be used on this purpose. Example XXXX. 
+                \item[Explanation:] The textual explanation can be used for clarifying the meaning of the relationship. Example XXXX. 
+                 
+             \end{description}
+            
+            Such a representation can use semantics of a system independently of its data model. There doesn't have to be a direct link between subjects/objects in the data model to define a relationship (Example XXXX). Moreover, the relationships can be taken from various sources, e.g. multiple databases, data stores, or log files. The only thing that has to be provided to Unresyst is an implementation of a function returning whether the given subjects/objects are in the relationship.
+            
+            This representation is a reduction of the full semantic representation used in \cite{white_paper}. The authors propose using all system entities and relationships for recommending. This approach has some significant drawbacks. Firstly, it's not clear how to assign weights for relationships between entities that are not subjects or objects. Such relationship can have a varied meaning in the context of different relationships. Example: XXXX. Secondly, most of the main-stream recommender algorithms use only subjects, objects and relationships between them. Therefore the choice of a recommender algorithm is much more limited.
+            
+            The relationships between entities that are not subjects or objects can be used in our representation as well, but only those that are on a path from a subject to an object, or subject to subject or object to object. Example: XXXX To our relationship definition we can include a relationship of any type:
+            \begin{description}
+                \item[One-to-one relationships] can be included by directly traversing the relationship. Example in pseudocode. XXXX
+                \item[One-to-many relationships] can be included by looping through all related entities of an entity (Example in pseudocode XXXX)  or testing whether a given entity is in the related entities of another entity Example in pseudocode XXXX).
+                \item[Many-to-many relationships] can be included by as one-to-many relationships Example in pseudocode XXXX.
+             \end{description}
              
-        
+             \subsection{Representing Relationship to Predict}
+                \label{representing_relationship_to_predict}
+                During the adaptation phase, the domain expert has to define which relationship should be predicted. For example, if we want Unresyst to predict which pair of shoes a user would like, we need to tell Unresyst somehow.
+                
+                This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the explanation remains as described in the section \ref{representing_relationships}.
+                
+                Example in pseudocode XXXX.
+
     \section{Recommendation Viewer}
         \label{viewer}
         The recommendations made by the Universal Recommender can be viewed in a web based application called \emph{Recommendation Viewer}. The application shows recommendations for a chosen subject. It is independent of the object and subject domain. The page for viewing the recommendations can be easily embedded to a webpage.
