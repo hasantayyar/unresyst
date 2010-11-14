@@ -552,23 +552,34 @@ Supervisor's e-mail address: \vedoucimail\\
             Another option would be to directly use a logic programming language as \emph{Prolog}. This option has the same drawbacks in over-generality and user-unfriedliness as RuleML. Additionally we would have to incorporate a logic programming language interpreter to Unresyst.  
             
             A better option is to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the addaptation phase, the domain expert instantiates the pre-defined class to create a business rule.
-             
-            For our object-oriented rule representation we need to define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible actions are determining the expectancy of the subject-object relationship and determining inter-entity similarity. Therefore actions will be represented as functions giving an expectancy or similarity respectively. More precisely, the rule objects contain:
+            
+            In the figure \ref{pic_semantic_network} there is an example of a semantic network that can be a part of the parent system. The network belongs to a shoe e-shop. Alice and Bob are users living in the same city. Alice has searched the word ``trainers'' which is a part of the description of the pictured trainers. In the trainer shoe description there's also the word ``comfortable'', which is also a part of the description of the displayed rubber boots. Bob has viewed a profile page of the trainers. The trainers and the rubber boots were made by a manufacturer seating in the city where Alice and Bob lives.
+            
+            \fig{pics/semantic_network.png}{A sample semantic network for demonstrating rules and relationships.}{pic_semantic_network}
+            
+            In the examples, we will be predicting the \emph{like} relationship, representing the preference of the user to the given shoe pair. We will demonstrate the rule definition on the following rules:
+            \begin{enumerate}
+                \item \label{ex_s_o} If a user is from a city in the south, we won't recommend him/her winter shoes.
+                \item \label{ex_s_s} If two users are of aproximately the same age, they are considered similar. 
+                \item \label{ex_o_o} When two pairs of shoes have in their description some common words, they are considered similar.
+            \end{enumerate}
+            
+            For our object-oriented rule representation we need to define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible actions are determining the expectancy of the subject-object relationship and determining inter-entity similarity. Therefore actions will be represented as functions giving an expectancy or similarity respectively. The rule objects contain:
             \begin{description}
-                \item[Condition:] A boolean function determining whether the rule can be applied to a given entity pair. The function has a form depending on the rule type:
+                \item[Condition:] A boolean function determining whether the rule can be applied to a given entity pair. The function is defined depending on the rule type:
                 \begin{description}
-                    \item[Subject-object condition] $C_{so}:S \times O \to \{False, True\}$. A function takes a subject-object pair and determines whether the rule can be applied to the pair. Example: rating nebo has clicked, liked s oklikou pres entitu jineho typu - treba tag
-                    \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. Example: friends
-                    \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. Example: the same color
+                    \item[Subject-object condition] $C_{so}:S \times O \to \{False, True\}$. A function takes a subject-object pair and determines whether the rule can be applied to the pair. Example \ref{ex_s_o}: If the user $s$ is from a city that is in south and the shoes $o$ are winter shoes, the condition evaluates to \emph{True}. Otherwise it's \emph{False}
+                    \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. Example \ref{ex_s_s}: If we know the age of both of the users, the condition is \emph{True}, otherwise it's \emph{False}.
+                    \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. Example \ref{ex_o_o}: If the descriptions of the shoes share some words, the condition is \emph{True}, otherwise it's \emph{False}. 
                 \end{description}
                 \item[Expectancy:] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity.
                 \begin{description}
-                    \item[Subject-object relationship expectancy] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example: rating nebo has clicked kolik sekund.
-                    \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the expectancy, the more similar the subjects are, according to the rule. Example: friends
-                    \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity between the subjects. The higher the expectancy, the more similar the objects are, according to the rule. Example: the same color
+                    \item[Subject-object relationship expectancy] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example \ref{ex_s_o}: We can use a linear function. The more southern the city is, the lower is the resulting expectancy.
+                    \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the expectancy, the more similar the subjects are, according to the rule. Example \ref{ex_s_s}: Our function returns a normalized difference between the age of the two users. 
+                    \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity between the subjects. The higher the expectancy, the more similar the objects are, according to the rule. Example \ref{ex_o_o}: We can use a function returning the number of common words divided by the number of words in the description.
                 \end{description}
-                \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike Expectancy, is independent of the particular entities on which the rule is evalutated. Example: mys pres bude mit malou vahu, klik vetsi, explicitni hodnoceni nejvetsi.
-                \item[Explanation:] A text explaining the meaning of the rule. Explanations can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Example treba ty friends. 
+                \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike Expectancy, is independent of the particular entities on which the rule is evalutated. In our example, the number \ref{ex_s_o} will have a high weight (e.g. $0.8$), because it is quite specific. Other rules would have lower weight, e.g. $0.1$.
+                \item[Explanation:] A text explaining the meaning of the rule. Explanations can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_o_o} can have an explanation ``The shoe pairs \{object1\} and \{object2\} are similar because their descriptions contain some words in common.''
             \end{description}
             
             Such rules can represent each of knowledge types described in \cite{knowledge_spain}, described in the section \ref{knowledge_based}. Catalog knowledge can be represented by rules accessing object properties in their Condition and Expectancy functions. Functional and user knowledge can be representing by rules using the relatioships between subjects and objects. 
@@ -576,44 +587,46 @@ Supervisor's e-mail address: \vedoucimail\\
         \subsection{Representing Relationships}
             \label{representing_relationships}
             
-            Apart from defining business rules, the domain expert has to define which relatioship should be predicted and which relationships are relevant for performing this prediction. These actions are performed when adapting a system to Unresyst.
+            Apart from defining business rules, the domain expert has to define which relationships are relevant for performing the prediction. This is done when adapting a system to Unresyst.
             
-            We have some specific requirements on the relationship representation. In the system there can be various entities, not only subjects and objects. The relationships can also span such entities. Example: XXX Secondly, the relationships can have various relevance for predicting the given relationship. This should be implemented by assigning weights to relationships. For example XXXX
+            We have some specific requirements on the relationship representation. In the system there can be various entities, not only subjects and objects. The relationships can also span such entities. In our example on the figure \ref{pic_semantic_network} there're are the ``city'' entities, which aren't subjects nor objects but we use them in rules. Secondly, the relationships can have various relevance for predicting the given relationship. This should be implemented by assigning weights to relationships. 
             
-            We would like to represent relationships of the following types. The relationships don't have to be direct - on the path from subject/object to subject/object there can be an entity of any type. Example XXXX
+            We would like to represent relationships of the following types. The relationships don't have to be direct - on the path from subject/object to subject/object there can be an entity of any type. 
+            
+            The following examples are related to the figure \ref{pic_semantic_network}.
             \begin{description}
-                \item[Subject-object relationships] indicate a subject's preference for the given object in means of the predicted relationship. For example: XXXX
-                \item[Subject-subject relationships] indicate similarity among subjects. For example: XXX velikost nohy
-                \item[Object-object relationships] indicate similarity among objects. For example: XXX barva tricka
+                \item[Subject-object relationships] indicate a subject's preference for the given object in means of the predicted relationship. In our example, if Bob has viewed a profile page of the trainers, we suppose he is quite interested in them.
+                \item[Subject-subject relationships] indicate similarity among subjects. For example if Alice and Bob live in the same city they are considered similar. 
+                \item[Object-object relationships] indicate similarity among objects. For example if the trainers and the rubber shoes were made by the same manufacturer they are considered kind of similar. 
             \end{description}
 
             Obviously, the requirenemts on the relationship representation are very similar to the requirements we have set on rule representation. Hence, we can use the rule representation for relationships with some corrections:
             \begin{description}
-                \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. Example XXXX.
+                \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. In the subject-object example, the Condition is a function returning \emph{True} if the user has viewed the profile page of the shoes, otherwise it returns \emph{False}.
                 \item[Expectancy:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair is surely in a relationship. Hence, such a function would always return $1$ for relationhips.
-                \item[Weight:] We need a way how to define the relevance of the relationship for predicting the relationship. Weight can be used on this purpose. Example XXXX. 
-                \item[Explanation:] The textual explanation can be used for clarifying the meaning of the relationship. Example XXXX. 
+                \item[Weight:] We need a way how to define the relevance of the relationship for predicting the relationship. Weight can be used on this purpose. In our example the ``viewed profile'' relationship would have higher weight than the others because it's the most specific relationship out of the three. 
+                \item[Explanation:] The textual explanation can be used for clarifying the meaning of the relationship. ``\{subject\} has viewed the profile of \{object\}.
                  
              \end{description}
             
-            Such a representation can use semantics of a system independently of its data model. There doesn't have to be a direct link between subjects/objects in the data model to define a relationship (Example XXXX). Moreover, the relationships can be taken from various sources, e.g. multiple databases, data stores, or log files. The only thing that has to be provided to Unresyst is an implementation of a function returning whether the given subjects/objects are in the relationship.
+            Such a representation can use semantics of a system independently of its data model. There doesn't have to be a direct link between subjects/objects in the data model to define a relationship. For example Alice has searched for the word ``trainers'' which is in the description of the displayed trainers. Even though there isn't a direct connection in the data model, we can represent such a relationship in our system. Moreover, the relationships can be taken from various sources, e.g. multiple databases, data stores, or log files. The only thing that has to be provided to Unresyst is an implementation of a function returning whether the given subjects/objects are in the relationship.
             
-            This representation is a reduction of the full semantic representation used in \cite{white_paper}. The authors propose using all system entities and relationships for recommending. This approach has some significant drawbacks. Firstly, it's not clear how to assign weights for relationships between entities that are not subjects or objects. Such relationship can have a varied meaning in the context of different relationships. Example: XXXX. Secondly, most of the main-stream recommender algorithms use only subjects, objects and relationships between them. Therefore the choice of a recommender algorithm is much more limited.
+            This representation is a reduction of the full semantic representation used in \cite{white_paper}. The authors propose using all system entities and relationships for recommending. This approach has some significant drawbacks. Firstly, it's not clear how to assign weights for relationships between entities that are not subjects or objects. Such relationship can have a varied meaning in the context of different relationships. In our example, we can use the user-city relationship both in subject-subject similarity relationship (Alice and Bob are from the same city) and in subject-object preference (Alice prefers shoes that are made in the same city where she lives). The significance of the user-city relationship vary in these two contexts and there's no clear way how to statically assign the weight to the user-city relationship. The second drawback of the \cite{white_paper} approach is that most of the main-stream recommender algorithms use only subjects, objects and relationships between them. Therefore the choice of a recommender algorithm is much more limited.
             
-            The relationships between entities that are not subjects or objects can be used in our representation as well, but only those that are on a path from a subject to an object, or subject to subject or object to object. Example: XXXX To our relationship definition we can include a relationship of any type:
+            The relationships between entities that are not subjects or objects can be used in our representation as well, but only those that are on a path in a semantic network from a subject to an object, or subject to subject or object to object. For example we can use words searched by users on a path from users to shoes. 
+            
+            To our relationship definition we can include a relationship of any type:
             \begin{description}
-                \item[One-to-one relationships] can be included by directly traversing the relationship. Example in pseudocode. XXXX
-                \item[One-to-many relationships] can be included by looping through all related entities of an entity (Example in pseudocode XXXX)  or testing whether a given entity is in the related entities of another entity Example in pseudocode XXXX).
-                \item[Many-to-many relationships] can be included by as one-to-many relationships Example in pseudocode XXXX.
+                \item[One-to-one relationships] can be included by directly traversing the relationship. For example a connection between a shoe pair and its profile page. 
+                \item[One-to-many relationships] can be included by looping through all related entities of an entity. For example, all shoes a user has viewed are from the same manufacturer. Or we can test whether a given entity is in the related entities of another entity, e.g. we can test if the shoe pairs are from the same manufacturer.
+                \item[Many-to-many relationships] can be included in the same means as the one-to-many relationships. E.g. the shoes are one of those the user has viewed. 
              \end{description}
              
              \subsection{Representing Relationship to Predict}
                 \label{representing_relationship_to_predict}
                 During the adaptation phase, the domain expert has to define which relationship should be predicted. For example, if we want Unresyst to predict which pair of shoes a user would like, we need to tell Unresyst somehow.
                 
-                This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the explanation remains as described in the section \ref{representing_relationships}.
-                
-                Example in pseudocode XXXX.
+                This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the explanation remains as described in the section \ref{representing_relationships}. 
 
     \section{Recommendation Viewer}
         \label{viewer}
