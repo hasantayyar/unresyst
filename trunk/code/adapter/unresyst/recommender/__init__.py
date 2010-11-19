@@ -1,4 +1,4 @@
-"""Package holding the Recommender class, holding the interface for the whole
+"""Package holding the BaseRecommender class, holding the interface for the whole
 unresyst."""
 
-from base import Recommender
+from base import BaseRecommender

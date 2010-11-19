@@ -1,7 +1,7 @@
 """A package holding the whole unresyst application.
 
-The only class to be used outside is the Recommender.
+The only class to be used outside is the BaseRecommender.
 """
 
-from recommender.base import Recommender
+from recommender.recommender import Recommender
 from recommender.rules import *
