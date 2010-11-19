@@ -15,8 +15,8 @@ class User(DjangoUser):
     shoe_size = models.PositiveSmallIntegerField(null=True, blank=True)
     """The size of user's shoe in european shoe size system."""
     
-    shoes = models.ManyToManyField(ShoePair)
-    """User's shoes."""
+    likes_shoes = models.ManyToManyField(ShoePair)
+    """User's favorite shoes."""
 
     
     

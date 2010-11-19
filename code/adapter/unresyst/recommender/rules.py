@@ -6,7 +6,7 @@ class Relationship(object):
     between the entities that are in the given relationship.
     """
     
-    def __init__(self, condition, description=None):
+    def __init__(self, condition, weight, description=None):
         """The constructor."""
         
         self.condition = condition
@@ -17,25 +17,26 @@ class Relationship(object):
         
         self.description = description
         """A string describing the rule. Can contain placeholders for entities."""
+        
+        self.weight = weight
+        """A float number from [0, 1] representing the *static* weight of the rule. 
+        It doesn't depend on the entity pair.
+        """        
 
 
 class _BaseRule(Relationship):
     """A base class for all rules (abstract)."""
     
-    def __init__(self, condition, confidence, weight, description=None):
+    def __init__(self, condition, weight, expectancy, description=None):
         """The constructor."""
         
-        Relationship.__init__(self, condition, description)
+        Relationship.__init__(self, condition, weight, description)
         
-        self.confidence = confidence
+        self.expectancy = expectancy
         """A float function giving values from [0, 1] representing the confidence
-        of the rule for the given pair. It's dynamic, depends on the entity pair
+        of the rule for the given pair. It's dynamic, depends on the entity pair.
         """
         
-        self.weight = weight
-        """An integer number from 0 to 100 representing the *static* weitht of the rule. 
-        It doesn't depend on the entity pair.
-        """
         
 # confidence by taky mohla vracet string s doplnujicim vysvetlenim,         
 
