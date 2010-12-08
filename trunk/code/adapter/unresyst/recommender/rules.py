@@ -6,31 +6,74 @@ class Relationship(object):
     between the entities that are in the given relationship.
     """
     
-    def __init__(self, condition, weight, description=None):
+    def __init__(self, condition, description=None):
         """The constructor."""
         
         self.condition = condition
         """A boolean function that represents the condition. If True 
-        for the given pair of entities, there's the Relationship between the entities. 
+        for the given pair of entities, there's the Relationship between the 
+        entities. 
         Should be simple.
         """
         
         self.description = description
-        """A string describing the rule. Can contain placeholders for entities."""
+        """A string describing the rule. It can contain placeholders for entities: 
+        
+         - %(subject)s, %(object)s for subject-object relationships and rules
+         - %(subject1)s, %(subject2)s for subject-subject relationships 
+            and rules
+         - %(object1)s, %(object2)s for object-object relationships and rules
+         - %(subjectobject1)s, %(subjectobject2)s for recommenders where 
+            subject domain is the same as object domain        
+        """
+        
+
+
+class _WeightedRelationship(Relationship):
+    """A class representing a relationship with a weight."""
+
+    def __init__(self, condition, weight, description=None):
+        """The constructor."""
+        
+        super(_WeightedRelationship, self).__init__(condition, description)
         
         self.weight = weight
         """A float number from [0, 1] representing the *static* weight of the rule. 
         It doesn't depend on the entity pair.
         """        
+        
+        
+
+class SubjectObjectRelationship(_WeightedRelationship):
+    """A class for representing subject-object preference for recommendation"""
+    pass 
+
+class _SimilarityRelationship(_WeightedRelationship):
+    """A base class (abstract) for all relationships operating between the same type 
+    and meaning similarity.
+    """
+    pass
+    
+
+class ObjectSimilarityRelationship(_SimilarityRelationship):
+    """A class for representing inter-object similarity."""    
+    pass
 
 
-class _BaseRule(Relationship):
+class SubjectSimilarityRelationship(_SimilarityRelationship):
+    """A class for representing inter-subject similarity."""
+    pass
+
+# rules:
+# 
+
+class _BaseRule(_WeightedRelationship):
     """A base class for all rules (abstract)."""
     
     def __init__(self, condition, weight, expectancy, description=None):
         """The constructor."""
         
-        Relationship.__init__(self, condition, weight, description)
+        super(_BaseRule, self).__init__(condition, weight, description)
         
         self.expectancy = expectancy
         """A float function giving values from [0, 1] representing the confidence
@@ -41,7 +84,8 @@ class _BaseRule(Relationship):
 # confidence by taky mohla vracet string s doplnujicim vysvetlenim,         
 
 class _SimilarityRule(_BaseRule):
-    """A base class (abstract) for all rules operating between the same type."""
+    """A base class (abstract) for all rules operating between the same type 
+    and meaning similarity."""
     pass
     
 

@@ -1,23 +1,69 @@
 """Demo models for the demo application"""
 
 from django.db import models
-from django.contrib.auth.models import User as DjangoUser
+
+from constants import *
 
 class ShoePair(models.Model):
     """A model for a pair of shoes."""
     
-    size = models.PositiveSmallIntegerField()
-    """The size of the shoe in european shoe size system."""
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """The shoe model name"""
+    
+    manufacturer = models.ForeignKey('Manufacturer')
+    """The manufacturer who made the shoes."""
+    
+    for_winter = models.BooleanField(default=False)
+    """Are the shoes suitable for winter?"""
+    
+    keywords = models.ManyToManyField('Keyword')
+    """The keywords associated with the shoes."""
+    
 
-class User(DjangoUser):
+class Keyword(models.Model):
+    """A model for a keyword associated with shoe pair."""
+    
+    word = models.CharField(max_length=MAX_LENGTH_NAME, unique=True)
+    """The key word."""    
+
+
+class User(models.Model):
     """A model for the users of the demo system."""
-    
-    shoe_size = models.PositiveSmallIntegerField(null=True, blank=True)
-    """The size of user's shoe in european shoe size system."""
-    
-    likes_shoes = models.ManyToManyField(ShoePair)
-    """User's favorite shoes."""
 
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """The user's name"""
+
+    age = models.IntegerField(null=True, default=None)
+    """The age of the user."""
     
+    likes_shoes = models.ManyToManyField('ShoePair', related_name='likers')
+    """User's favorite shoes."""
     
+    viewed_shoes = models.ManyToManyField('ShoePair', related_name='viewers')
+    """Shoes the user has viewed."""
     
+    home_city = models.ForeignKey('City', null=True, default=None)        
+    """The city where the user lives."""
+    
+    words_searched = models.ManyToManyField('Keyword', related_name='searchers')
+    """The words searched by the user."""
+    
+
+class Manufacturer(models.Model):
+    """A model for a shoe manufacturer"""
+    
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """The name of the manufacturer"""
+    
+    home_city = models.ForeignKey('City', null=True)
+    """The city where the manufacturer seats."""
+
+
+class City(models.Model):
+    """A model for a city."""    
+        
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """The name of the city."""
+    
+    in_south = models.BooleanField(default=False)
+    """Is the city in south?"""
