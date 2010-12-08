@@ -87,22 +87,6 @@ class BaseRecommender(object):
         and applied rules"""
         pass            
 
-    # Class configuration - the behaviour of the layers below the recommender
-    # Empty, will be overriden by the Recommender class
-    #
-    
-    Abstractor = None
-    """The class that will be used for the abstractor level. Can be 
-    overriden in suclasses"""
-    
-    Aggregator = None
-    """The class that will be used for the aggregator level. Can be 
-    overriden in suclasses"""
-    
-    Algorithm = None
-    """The class that will be used for the algorithm level. Can be 
-    overriden in suclasses"""
-    
     # Domain specific data. empty, will be overriden in the domain specific recommender
     #
     subjects = None
@@ -119,5 +103,23 @@ class BaseRecommender(object):
         
     rules = None
     """Rules that can be applied to the domain"""
+    
+    # Class configuration - the behaviour of the layers below the recommender
+    # Empty, will be overriden by the Recommender class
+    #
+    
+    Abstractor = None
+    """The class that will be used for the abstractor level. Can be 
+    overriden in suclasses"""
+    
+    Aggregator = None
+    """The class that will be used for the aggregator level. Can be 
+    overriden in suclasses"""
+    
+    Algorithm = None
+    """The class that will be used for the algorithm level. Can be 
+    overriden in suclasses"""
+    
+
     
     #TODO jeste by to chtelo nejake settings, co to ma delat, kdyz se ptam na subject object pair, ktery uz mezi sebou ma predicted_relationship
