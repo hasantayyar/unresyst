@@ -85,12 +85,26 @@ class BaseRecommender(object):
     def remove_object(cls, object_):
         """Remove the object from the recommender, including its relationships
         and applied rules"""
-        pass            
-
+        pass      
+                  
     # Domain specific data. empty, will be overriden in the domain specific recommender
     #
+
+    name = ""
+    """The name of the recommender"""
+    
     subjects = None
-    """The objects to who the recommender will recommend."""
+    """The objects to who the recommender will recommend.
+    Requires the following interface:
+    on subjects manager:
+     - iterator(): get an iterator on the collection
+     - all(): get all sujbects
+    queryset:
+     - exists(): is there something in the queryset?
+    on each subject instance:
+     - id: an integer id of the subject    
+     - __unicode__(): printable string
+    """
     
     objects = None
     """The objects that will be recommended.""" 

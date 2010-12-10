@@ -1,6 +1,6 @@
 """The module defines base class for the abstractor package."""
 
-def BaseAbstractor(object):
+class BaseAbstractor(object):
     """The base (abstract) class for all abstractors. Defines the interface."""
     
     # Build phase:
@@ -8,11 +8,20 @@ def BaseAbstractor(object):
     
     @classmethod
     def create_subjectobjects(cls, recommender, subjects, objects):
-        """Create abstract representation of subjects and objects"""
+        """Create abstract representation of subjects and objects.
+        
+        @type recommender: models.Recommender
+        @param recommender: the recommender model instance
+        
+        @type subjects: django.db.models.manager.Manager
+        @param subjects: the manager above the subject model
+        
+        @type objects: django.db.models.manager.Manager
+        @param objects: the manager above the object model
+        
+        """
         pass
         
-
-    # tyhle tri se budou asi delat jednotne - jedna metoda, kterou zavolaj
     
     @classmethod            
     def create_predicted_relationship_instances(cls, recommender, predicted_relationship):
@@ -20,6 +29,12 @@ def BaseAbstractor(object):
         
         Create bindings on subject-object pairs for pairs between which there's
         the predicted relationship.
+
+        @type recommender: models.Recommender
+        @param recommender: the recommender model instance        
+        
+        @type predicted_relationship: rules.Relationship
+        @param predicted_relationship: the definition of relationship to be predicted        
         """
         pass
 
@@ -30,6 +45,12 @@ def BaseAbstractor(object):
         
         Create bindings on pairs of subject/objects, for pairs between where 
         the relationship is.
+        
+        @type recommender: models.Recommender
+        @param recommender: the recommender model instance        
+        
+        @type relationships: list of rules._WeightedRelationship subclass instances
+        @param relatioships: recommender relationships to be instantiated        
         """
         pass
 
@@ -40,6 +61,12 @@ def BaseAbstractor(object):
         
         Create bindings on pairs of subject/objects, for pairs between where 
         the rule applies.
+
+        @type recommender: models.Recommender
+        @param recommender: the recommender model instance                
+        
+        @type rules: list of rules._BaseRule subclass instances
+        @param rules: recommender rules to be instantiated
         """
         pass
     

@@ -16,6 +16,12 @@ class Recommender(models.Model):
     class_name = models.CharField(max_length=MAX_LENGTH_CLASS_NAME, unique=True)
     """The name of the recommender class. Has to be unique."""
 
+    # mozna jeste jestli jsou subjects == objects
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name
+        
     class Meta:
         app_label = 'unresyst'
         
@@ -35,6 +41,10 @@ class SubjectObject(models.Model):
     
     recommender = models.ForeignKey('unresyst.Recommender')
     """The recommender to which the subject/object belongs."""
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name
 
     class Meta:
         app_label = 'unresyst'    

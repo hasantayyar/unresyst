@@ -20,10 +20,14 @@ class PredictedRelationshipDefinition(models.Model):
     """The name of the relationship"""        
 
     # tady bude potreba jeste nejaky content type, abych mohl vybirat jenom toto bez potomku
+
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name 
     
     class Meta:
         app_label = 'unresyst'
-        
+               
 
 class RuleRelationshipDefinition(PredictedRelationshipDefinition):
     """A definition of a rule/relationship. Represents the rule/relationship

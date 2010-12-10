@@ -18,6 +18,10 @@ class ShoePair(models.Model):
     
     keywords = models.ManyToManyField('Keyword')
     """The keywords associated with the shoes."""
+
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name    
     
 
 class Keyword(models.Model):
@@ -26,6 +30,9 @@ class Keyword(models.Model):
     word = models.CharField(max_length=MAX_LENGTH_NAME, unique=True)
     """The key word."""    
 
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.word
 
 class User(models.Model):
     """A model for the users of the demo system."""
@@ -48,6 +55,10 @@ class User(models.Model):
     words_searched = models.ManyToManyField('Keyword', related_name='searchers')
     """The words searched by the user."""
     
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name
+    
 
 class Manufacturer(models.Model):
     """A model for a shoe manufacturer"""
@@ -57,6 +68,10 @@ class Manufacturer(models.Model):
     
     home_city = models.ForeignKey('City', null=True)
     """The city where the manufacturer seats."""
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name    
 
 
 class City(models.Model):
@@ -67,3 +82,7 @@ class City(models.Model):
     
     in_south = models.BooleanField(default=False)
     """Is the city in south?"""
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name    

@@ -14,30 +14,51 @@ MAX_LENGTH_ENTITY_TYPE = 2
 MAX_LENGTH_RELATIONSHIP_TYPE = 5
 """The maximum length of the relationship type string"""
 
+ENTITY_TYPE_SUBJECT = 'S'
+"""The subject entity type"""
+
+ENTITY_TYPE_OBJECT = 'O'
+"""The object entity type"""
+
+ENTITY_TYPE_SUBJECTOBJECT = 'SO'
+"""The subject object entity type"""
+
 ENTITY_TYPE_CHOICES = (
     # a subject:
-    ('S', _('Subject')),
+    (ENTITY_TYPE_SUBJECT, _('Subject')),
     
     # an object:
-    ('O', _('Object')),
+    (ENTITY_TYPE_OBJECT, _('Object')),
     
     # when subject domain is the same as object domain
-    ('SO', _('Subject == Object')),
+    (ENTITY_TYPE_SUBJECTOBJECT, _('Subject == Object')),
 )
 """Choices for the entity_type field"""
 
+RELATIONSHIP_TYPE_SUBJECT_OBJECT = 'S-O'
+"""Subject-object relationship type"""
+
+RELATIONSHIP_TYPE_SUBJECT_SUBJECT = 'S-S'
+"""Subject-subject relationship type"""
+
+RELATIONSHIP_TYPE_OBJECT_OBJECT = 'O-O'
+"""Object-object relatioship type"""
+
+RELATIONSHIP_TYPE_SUBJECTOBJECT_SUBJECTOBJECT = 'SO-SO'
+"""Subjectobject-subjectobject relatioship type"""
+
 RELATIONSHIP_TYPE_CHOICES = (
     # a subject-object relationship
-    ('S-O', _('Subejct-Object')),
+    (RELATIONSHIP_TYPE_SUBJECT_OBJECT, _('Subejct-Object')),
     
     # a subject-subject relationship
-    ('S-S', _('Subject-Subject')),
+    (RELATIONSHIP_TYPE_SUBJECT_SUBJECT, _('Subject-Subject')),
     
     # an object-object relationship
-    ('O-O', _('Object-Object')),
+    (RELATIONSHIP_TYPE_OBJECT_OBJECT, _('Object-Object')),
     
     # a relationship for recommender where subject domain equals object domain
-    ('SO-SO', _('SubjectObject-SubjectObject')),
+    (RELATIONSHIP_TYPE_SUBJECTOBJECT_SUBJECTOBJECT, _('SubjectObject-SubjectObject')),
 )
 """Choices for the relationship_type field"""
 

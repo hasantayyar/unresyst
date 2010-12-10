@@ -8,6 +8,9 @@ from models import *
 
 class ShoeRecommender(Recommender):
     """A BaseRecommender subclass holding all domain-specific data"""
+
+    name = "Shoe Recommender"
+    """The name"""    
     
     subjects = User.objects
     """The objects to who the recommender will recommend."""

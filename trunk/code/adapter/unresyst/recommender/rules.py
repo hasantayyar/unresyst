@@ -1,5 +1,7 @@
 """The classes for representing business rules and relationships"""
 
+from unresyst.constants import *
+
 class Relationship(object):
     """A class representing a relationship between entities (not necessarily 
     of the same type). Contains the condition that is true between and only 
@@ -26,6 +28,33 @@ class Relationship(object):
          - %(subjectobject1)s, %(subjectobject2)s for recommenders where 
             subject domain is the same as object domain        
         """
+    
+    on_left = ENTITY_TYPE_SUBJECT
+    """The manager that is on left for condition and expectancy functions"""
+    
+    on_right = ENTITY_TYPE_OBJECT
+    """The manager that is on left for condition and expectancy functions"""    
+    
+    def create_instances(self):
+        """Create and save rule instances.
+        """
+        
+        """
+        r (relationship/rule)
+        create definition, save
+        
+        
+        
+        if <to co ma byt vpravo> == <to co ma byt vlevo>:
+            nejak vychytat, aby se to pro kazdy par delalo jen jednou
+        else    
+        for so1 in <to co ma byt vlevo>:
+            for so2 in <to co ma byt vpravo>:
+                if r.condition(so1, so2):
+                    create instance including expectancy
+                    save
+        """        
+        pass
         
 
 
