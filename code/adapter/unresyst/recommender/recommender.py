@@ -3,9 +3,11 @@ for user-defined recommenders.
 """
 from base import BaseRecommender
 from unresyst.constants import *
-from unresyst.abstractor import NormalAbstractor
+from unresyst.exceptions import ConfigurationError
+from unresyst.abstractor import BasicAbstractor 
 from unresyst.aggregator import LinearAggregator
 from unresyst.algorithm import DummyAlgorithm
+from unresyst.models.common import Recommender as RecommenderModel
 
 class Recommender(BaseRecommender):
     """The base class for all user-defined recommenders.
@@ -27,8 +29,36 @@ class Recommender(BaseRecommender):
         # 
         
         # Subjects, objects non-empty
+        if not cls.subjects.all().exists():
+            raise ConfigurationError(
+                message="No subjects given",
+                parameter_name="Recommender.subjects",
+                parameter_value=cls.subjects
+            )
         
+        if not cls.objects.all().exists():
+            raise ConfigurationError(
+                message="No objects given",
+                parameter_name="Recommender.objects",
+                parameter_value=cls.objects
+            )
+                
+                    
         # predicted relationship given
+        if not cls.predicted_relationship:
+            raise ConfigurationError(
+                message="No predicted relationship given",
+                parameter_name="Recommender.predicted_relationship",
+                parameter_value=cls.predicted_relationship
+            )
+        
+        # rules and relationships don't have to be given
+
+        # if the recommender with the given name doesn't exist, create it,
+        # if it does, find it
+        recommender, created = RecommenderModel.objects.get_or_create(
+                        class_name=cls.__name__,
+                        defaults={"name": cls.name})
         
         # build the recommender model
         #
@@ -40,7 +70,7 @@ class Recommender(BaseRecommender):
         
         # create the domain neutral representation for objects and subjects
         cls.Abstractor.create_subjectobjects(
-            recommender=cls.__name__,
+            recommender=recommender,
             subjects=cls.subjects, 
             objects=cls.objects
         )
@@ -219,7 +249,7 @@ class Recommender(BaseRecommender):
     # Class configuration - the behaviour of the layers below the recommender
     # Can be overriden in user defined subclasses
     
-    Abstractor = NormalAbstractor
+    Abstractor = BasicAbstractor
     """The class that will be used for the abstractor level. Can be 
     overriden in suclasses"""
     

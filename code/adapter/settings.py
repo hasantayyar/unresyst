@@ -83,6 +83,12 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+# use nose tests
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# always run doc tests, add some verbosity, stop on failed test
+NOSE_ARGS = ['--with-doctest','-v', '--stop']
+
 INSTALLED_APPS = (
     'demo',
     'unresyst',
@@ -91,6 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django_nose'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
