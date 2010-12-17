@@ -99,6 +99,7 @@ class BaseRecommender(object):
     on subjects manager:
      - iterator(): get an iterator on the collection
      - all(): get all sujbects
+     - get(id=..) get the object with the given id
     queryset:
      - exists(): is there something in the queryset?
     on each subject instance:

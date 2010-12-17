@@ -1,5 +1,9 @@
 """Module containing the definition of BaseRecommender: the base class 
 for user-defined recommenders.
+
+Contents:
+ - Recommender: the recommender for client subclassing
+ - MetaRecommender: the metaclass for creating recommender classes
 """
 from base import BaseRecommender
 from unresyst.constants import *
@@ -9,6 +13,35 @@ from unresyst.aggregator import LinearAggregator
 from unresyst.algorithm import DummyAlgorithm
 from unresyst.models.common import Recommender as RecommenderModel
 
+class MetaRecommender(type):
+    """The meta-class adding a reference to the class for the contained
+    rules and relationships.
+    """
+    def __init__(cls, name, bases, dct):        
+        """The class constructor.
+        
+        Adds the reference to the recommender class to all of the rules
+        and relationships
+        """
+        
+        super(MetaRecommender, cls).__init__(name, bases, dct)
+        
+        # add it to the predicted relationship
+        if cls.predicted_relationship:       
+            cls.predicted_relationship.recommender = cls
+        
+        # then to the rules
+        if cls.rules:
+            for rule in cls.rules:
+                rule.recommender = cls
+            
+        # finally to the relationships
+        if cls.relationships:
+            for relationship in cls.relationships:
+                relationship.recommender = cls
+        
+
+
 class Recommender(BaseRecommender):
     """The base class for all user-defined recommenders.
     
@@ -17,6 +50,7 @@ class Recommender(BaseRecommender):
     
     Defines default behaviour assigning the classes for the layers. 
     """
+    __metaclass__ = MetaRecommender
     
     # Build phase:
     #
@@ -58,7 +92,13 @@ class Recommender(BaseRecommender):
         # if it does, find it
         recommender, created = RecommenderModel.objects.get_or_create(
                         class_name=cls.__name__,
-                        defaults={"name": cls.name})
+                        defaults={
+                            "name": cls.name,
+                            "are_subjects_objects": cls.subjects == cls.objects
+                        })
+        
+        # remember the recommender model in the class
+        cls.recommender_model =  recommender
         
         # build the recommender model
         #
@@ -76,20 +116,19 @@ class Recommender(BaseRecommender):
         )
         
         # create the relationship instances for the predicted relationship
-        cls.Abstractor.create_predicted_relationship_instances(
-            recommender=cls.__name__,            
+        cls.Abstractor.create_predicted_relationship_instances(           
             predicted_relationship=cls.predicted_relationship            
         )
         
         # create relationship instances between subjects/objects 
         cls.Abstractor.create_relationship_instances(
-            recommender=cls.__name__,
+            recommender=recommender,
             relationships=cls.relationships
         )    
                 
         # evaluate rules and make rule instances between the affected subjects/objects
         cls.Abstractor.create_rule_instances(
-            recommender=cls.__name__,        
+            recommender=recommender,        
             rules=cls.rules
         )
         
@@ -97,13 +136,13 @@ class Recommender(BaseRecommender):
         # 
         
         # aggregate the relationships and rules
-        cls.Aggregator.aggregate(recommender=cls.__name__)        
+        cls.Aggregator.aggregate(recommender=recommender)        
         
         # Algorithm
         #
         
         # build the algorithm model from the aggregated relationships
-        cls.Algorithm.build(recommender=cls.__name__)
+        cls.Algorithm.build(recommender=recommender)
 
 
     # Recommend phase:

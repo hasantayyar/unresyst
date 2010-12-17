@@ -6,9 +6,12 @@ A representation of each defined role and relationship.
 from django.db import models
 
 from unresyst.constants import *
-from base import BaseRelationshipInstance
+from base import BaseRelationshipInstance, ContentTypeModel
 
-class PredictedRelationshipDefinition(models.Model):
+# Definitions:
+#
+
+class PredictedRelationshipDefinition(ContentTypeModel):
     """A definition of the relationship that should be predicted. There's only
     one for a recommender.
     """
@@ -18,8 +21,6 @@ class PredictedRelationshipDefinition(models.Model):
     
     name = models.CharField(max_length=MAX_LENGTH_NAME)
     """The name of the relationship"""        
-
-    # tady bude potreba jeste nejaky content type, abych mohl vybirat jenom toto bez potomku
 
     def __unicode__(self):
         """Return a printable representation of the instance"""
@@ -44,8 +45,15 @@ class RuleRelationshipDefinition(PredictedRelationshipDefinition):
         app_label = 'unresyst' 
 
 
-class RelationshipInstance(BaseRelationshipInstance):
-    """The relationship between two subject/objects"""
+# instances:
+#
+
+class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
+    """The relationship between two subject/objects.
+    
+    All relationships are "symetrical" in sense that if there is 
+    a relationship in the given direction there can't be one in the opposite
+    """
     
     definition = models.ForeignKey(PredictedRelationshipDefinition)
     """The definition of the relationship."""
