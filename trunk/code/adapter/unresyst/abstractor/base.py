@@ -24,14 +24,11 @@ class BaseAbstractor(object):
         
     
     @classmethod            
-    def create_predicted_relationship_instances(cls, recommender, predicted_relationship):
+    def create_predicted_relationship_instances(cls, predicted_relationship):
         """Create the instances of the predicted relationship.
         
         Create bindings on subject-object pairs for pairs between which there's
         the predicted relationship.
-
-        @type recommender: models.Recommender
-        @param recommender: the recommender model instance        
         
         @type predicted_relationship: rules.Relationship
         @param predicted_relationship: the definition of relationship to be predicted        
@@ -72,7 +69,8 @@ class BaseAbstractor(object):
     
     
     # Recommend phase:
-    #
+    # Neblaaaaazni
+    
     
     @classmethod
     def get_dn_subject(cls, recommender, subject):

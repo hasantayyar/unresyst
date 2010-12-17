@@ -19,8 +19,9 @@ class ShoeRecommender(Recommender):
     """The objects that will be recommended.""" 
 
     predicted_relationship = Relationship( 
+        name="User likes shoes.",
         condition=lambda s, o: 
-            o in s.shoes.all(), 
+            o in s.likes_shoes.all(), 
         description="""User %(subject)s likes shoes %(object)s."""
     )
     """The relationship that will be predicted"""
@@ -29,29 +30,26 @@ class ShoeRecommender(Recommender):
         
         # if the user has viewed the shoes it's a sign of preference
         SubjectObjectRelationship(
-
+            name="User has viewed shoes.",
             condition=lambda s, o:
-                o in s.viewed_shoes,
-            
-            weight=0.4,
-            
+                o in s.viewed_shoes,            
+            weight=0.4,            
             description="User %(subject1)s has viewed %(object1)s."
         ),
         
         # if users live in the same city, they are considered similar
         SubjectSimilarityRelationship(
-            
+            name="Users live in the same city.",
             condition=lambda s1, s2:
-                s1.home_city == s2.home_city,
-                
-            weight=0.3,
-            
+                s1.home_city == s2.home_city,                
+            weight=0.3,            
             description="Users %(subject1)s and %(subject2)s live in the same city."
         ),
         
         # if shoes were made by the same manufacturer, they are considered 
         # similar
         ObjectSimilarityRelationship(
+            name="Shoes were made by the same manufacturer.",
             condition=lambda o1, o2:
                 o1.manufacturer == o2.manufacturer,
                 
@@ -67,7 +65,7 @@ class ShoeRecommender(Recommender):
     rules = (
         # if user lives on south, don't recommend him winter shoes        
         SubjectObjectRule( 
-
+            name="Don't recommend winter shoes for southern users.",
             # is the user from a southern city?
             condition=lambda s, o: 
                 s.home_city.in_south, 
@@ -83,6 +81,7 @@ class ShoeRecommender(Recommender):
         
         # if users are the same age +- year they are similar
         SubjectSimilarityRule(
+            name="Users with similar age.",
             # both users have given their age
             condition=lambda s1, s2: 
                 s1.age and s2.age and s1.age -1 <= s2.age <= s2.age + 1,
@@ -98,6 +97,7 @@ class ShoeRecommender(Recommender):
         
         # if shoes have common keywords, they are similar.
         ObjectSimilarityRule(
+            name="Shoes with common keywords.",
             # shoes have some common keywords
             condition=lambda o1, o2: 
                 bool(_intersection(o1.keywords, o2.keywords)),          

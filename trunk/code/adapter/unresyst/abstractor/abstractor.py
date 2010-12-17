@@ -1,7 +1,7 @@
 """The main class of the abstractor package - Abstractor"""
 
 from base import BaseAbstractor
-from unresyst.models.common import SubjectObject
+from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.constants import *
 
 class BasicAbstractor(BaseAbstractor):
@@ -57,16 +57,25 @@ class BasicAbstractor(BaseAbstractor):
     # typy ktere do toho budou vstupovat
     
     @classmethod            
-    def create_predicted_relationship_instances(cls, recommender, predicted_relationship):
-        """See the base class for documentation."""
+    def create_predicted_relationship_instances(cls, predicted_relationship):
+        """See the base class for documentation."""        
+        
+        # evaluate the relationship for all possible subjectobjects
+        predicted_relationship.evaluate()
        
     
     @classmethod        
     def create_relationship_instances(cls, recommender, relationships):
         """See the base class for documentation."""
-        pass
+        return         
+        # evaluate all relationships
+        for rel in relationships:
+            rel.evaluate(recommender)
     
     @classmethod
     def create_rule_instances(cls, recommender, rules):
         """See the base class for documentation."""
-        pass
+        return
+        # eveluate all rules
+        for rule in rules:
+            rule.evaluate(recommender_model)

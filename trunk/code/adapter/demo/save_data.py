@@ -65,6 +65,7 @@ def save_data():
     )
     alice.save()
     alice.viewed_shoes.add(rubber_shoes)
+    alice.likes_shoes.add(sneakers)
     alice.words_searched.add(trainers)
     alice.save()
     
