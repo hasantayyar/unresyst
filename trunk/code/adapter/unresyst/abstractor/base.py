@@ -37,14 +37,11 @@ class BaseAbstractor(object):
 
     
     @classmethod        
-    def create_relationship_instances(cls, recommender, relationships):
+    def create_relationship_instances(cls, relationships):
         """Create the instances of relationships relevant for recommendation.
         
         Create bindings on pairs of subject/objects, for pairs between where 
-        the relationship is.
-        
-        @type recommender: models.Recommender
-        @param recommender: the recommender model instance        
+        the relationship is.        
         
         @type relationships: list of rules._WeightedRelationship subclass instances
         @param relatioships: recommender relationships to be instantiated        

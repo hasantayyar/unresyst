@@ -1,11 +1,12 @@
 """Tests for the building phase"""
 
 from nose.tools import eq_
+from django.db.models import Q
 
 from unresyst import Recommender
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
-    RelationshipInstance
+    RelationshipInstance, RuleRelationshipDefinition
 from test_base import DBTestCase
 
 from demo.recommender import ShoeRecommender
@@ -52,7 +53,52 @@ class TestRecommender(TestBuild):
         
             
 class TestAbstractor(TestBuild):
-    """Testing the abstractor in the build phase"""    
+    """Testing the abstractor in the build phase"""  
+    
+    def setUp(self):
+        """Obtain specific and universal subject objects 
+        and store them in the test instance
+        """ 
+        
+        super(TestAbstractor, self).setUp()
+        
+        self.specific_entities = {
+            'Alice': User.objects.get(name="Alice"),
+            'Bob': User.objects.get(name="Bob"),
+            'Cindy': User.objects.get(name="Cindy"),
+            'Sneakers': ShoePair.objects.get(name="Sneakers"),
+            "Rubber Shoes": ShoePair.objects.get(name="Rubber Shoes"),
+            'RS 130': ShoePair.objects.get(name='RS 130'),
+        }
+        
+        rm = ShoeRecommender.recommender_model
+        self.universal_entities = {
+            'Alice': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Alice'], 
+                            entity_type='S', 
+                            recommender=rm),
+            'Bob': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Bob'], 
+                            entity_type='S', 
+                            recommender=rm),
+            'Cindy': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Cindy'], 
+                            entity_type='S', 
+                            recommender=rm),                            
+            'Sneakers': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Sneakers'], 
+                            entity_type='O', 
+                            recommender=rm),
+            'Rubber Shoes': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Rubber Shoes'], 
+                            entity_type='O', 
+                            recommender=rm),
+            'RS 130': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['RS 130'], 
+                            entity_type='O', 
+                            recommender=rm),
+        }                            
+
     
     def test_create_subjectobjects(self):
         """Test creating universal subjects, objects"""
@@ -122,22 +168,95 @@ class TestAbstractor(TestBuild):
         # test it has the right properties
         # 
         
-        # get alice and sneakers in the universal form
-        alice = User.objects.get(name="Alice")
-        alice_universal = SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=alice, 
-                            entity_type='S', 
-                            recommender=ShoeRecommender.recommender_model)
-                            
-        sneakers = ShoePair.objects.get(name="Sneakers")
-        sneakers_universal = SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=sneakers, 
-                            entity_type='O', 
-                            recommender=ShoeRecommender.recommender_model) 
-
-        sneakers = ShoePair.objects.get(name="Sneakers")
-        
         # assert everything as expected
-        assert instance.contains_object(alice_universal)
-        assert instance.contains_object(sneakers_universal)
+        assert instance.contains_object(self.universal_entities['Alice'])
+        assert instance.contains_object(self.universal_entities['Sneakers'])
         eq_(instance.description, "User Alice likes shoes Sneakers.")
+
+    def test_create_relationship_definitions(self):
+        """Test creating the definitions of the relationships"""
+        
+        # get definitions related to the shoe recommender
+        qs = RuleRelationshipDefinition.objects.filter(
+            recommender=ShoeRecommender.recommender_model)
+        
+        # assert the number of definitions is right
+        # TODO + len(ShoeRecommender.rules)
+        eq_(qs.count(), len(ShoeRecommender.relationships))
+        
+        # for each defined type there should be a model definition in db
+        for rel in ShoeRecommender.relationships:
+
+            # get the definition model by name (shouldn't throw an error)
+            rel_model = qs.get(name=rel.name)
+            
+            # assert the weight and relationship type are right
+            eq_(rel_model.weight, rel.weight)            
+            eq_(rel_model.relationship_type, rel.relationship_type)
+
+    
+    EXPECTED_RELATIONSHIP_DICT = {
+        # relationship name, list of instances - (entity1, entity2, description)
+        "User has viewed shoes.": (
+            ('Alice', 'Rubber Shoes', "User Alice has viewed Rubber Shoes."),
+            ('Bob', 'Sneakers', "User Bob has viewed Sneakers."),
+            ('Cindy', 'Rubber Shoes', "User Cindy has viewed Rubber Shoes."),
+        ),
+        "Users live in the same city.": (
+            ('Alice', 'Bob', "Users Alice and Bob live in the same city.",
+                "Users Bob and Alice live in the same city."),
+        ),
+        "Shoes were made by the same manufacturer.": (
+            ('Sneakers', 'Rubber Shoes', 
+                "Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+                "Shoes Rubber Shoes and Sneakers were made by the same manufacturer."),
+        ),
+    }
+        
+                                
+    def test_create_relationship_instances(self):
+        """Test creating instances of all the defined relationships."""
+        
+        # get definitions related to the shoe recommender
+        qs = RuleRelationshipDefinition.objects.filter(
+            recommender=ShoeRecommender.recommender_model)                
+        
+        # for each defined type there should be a model definition in db
+        for rel in ShoeRecommender.relationships:
+
+            # get the expected data
+            expected_relationships = self.EXPECTED_RELATIONSHIP_DICT[rel.name]                        
+
+            # get the definition model by name (shouldn't throw an error)
+            definition = qs.get(name=rel.name)
+            
+            instances = RelationshipInstance.objects.filter(definition=definition)
+            
+            # expect there are as many relationship instances as expected
+            eq_(instances.count(), len(expected_relationships))
+            
+            for expected_data in expected_relationships:
+            
+                # instances that have either one or another order of the subjobjects
+                rel_instance = instances.filter(
+                    Q(subject_object1=self.universal_entities[expected_data[0]], 
+                        subject_object2=self.universal_entities[expected_data[1]]) | \
+                    Q(subject_object1=self.universal_entities[expected_data[1]], 
+                        subject_object2=self.universal_entities[expected_data[0]])
+                )
+               
+            
+                # there should be one
+                eq_(rel_instance.count(), 1)
+                    
+                instance = rel_instance[0]
+            
+                # test it has the right description
+                if len(expected_data) == 4:
+                    assert instance.description == expected_data[2] or \
+                        instance.description == expected_data[3], \
+                            "The description '%s' is wrong. Should be '%s' or '%s'" % \
+                            (instance.description, expected_data[2], expected_data[3])
+                else:
+                    eq_(instance.description, expected_data[2])                       
+                        

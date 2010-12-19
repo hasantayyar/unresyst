@@ -42,7 +42,64 @@ class ConfigurationError(UnresystError):
                "    parameter name: %s\n" + \
                "    parameter value: %s") \
                % (self.message, self.parameter_name, self.parameter_value)
-               
+
+
+class RuleRelationshipError(UnresystError):
+    """An error in the configuration of rules/relationships.
+
+    @type message: str
+    @ivar message: additional message
+    
+    @type name: str
+    @ivar name: the name of the rule/relationship where the error occured    
+    """
+    
+    def __init__(self, message, name):
+        """The constructor."""        
+
+        self.message = message
+        """The message saying what's wrong""" 
+        
+        self.name = name
+        """The rule/relationship name"""
+    
+
+class DescriptionKeyError(RuleRelationshipError):
+    """Exception meaning that there are wrong strings in the rule/relationship
+    description.   
+
+    @type message: str
+    @ivar message: additional message
+    
+    @type name: str
+    @ivar name: the name of the rule/relationship where the error occured
+    
+    @type key: str
+    @ivar key: the key that shouldn't have been there
+    
+    @type permitted_keys: str list
+    @ivar permitted_keys: the keys that can be in the description
+    """
+    
+    def __init__(self, message, name, key, permitted_keys):
+        """The constructor."""        
+
+        super(DescriptionKeyError, self).__init__(message, name)
+        
+        self.key = key
+        """The string key that is wrong"""
+        
+        self.permitted_keys = permitted_keys
+        """The list of permitted keys"""
+
+
+    def __str__(self):
+        return ("There's an invalid format key '%s' in the rule/relationship description.\n" + \
+               "    message: %s\n" + \
+               "    rule/relationship name: %s\n" + \
+               "    the invalid key: %s\n" + \
+               "    The permitted keys are: %s") \
+               % (self.key, self.message, self.name, self.key, self.permitted_keys) 
                        
 class SymmetryError(UnresystError):
     """An error for handling symmetric relationship errors.

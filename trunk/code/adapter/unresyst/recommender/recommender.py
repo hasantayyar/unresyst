@@ -122,10 +122,9 @@ class Recommender(BaseRecommender):
         
         # create relationship instances between subjects/objects 
         cls.Abstractor.create_relationship_instances(
-            recommender=recommender,
             relationships=cls.relationships
         )    
-                
+        #XXX tady pokracovat        
         # evaluate rules and make rule instances between the affected subjects/objects
         cls.Abstractor.create_rule_instances(
             recommender=recommender,        
@@ -302,3 +301,27 @@ class Recommender(BaseRecommender):
     
     default_recommendation_count = DEFAULT_RECOMMENDATION_COUNT
     """The defaul count of the obtained recommended objects"""
+    
+    # Auxiliary methods - not to be used by clients
+    #
+    
+    @classmethod
+    def _get_entity_manager(cls, entity_type):
+        """Get the manager from the recommender for the given entity type.
+        
+        @type entity_type: str
+        @param entity_type: the type of the entity 'S'/'O'/'SO'
+        
+        @rtype: django.db.models.manager.Manager
+        @return: the manager over the domain specific entities.
+        
+        @raise KeyError: when the entity_type is invalid 
+        """
+        
+        manager_dict = {
+            ENTITY_TYPE_SUBJECT: cls.subjects,
+            ENTITY_TYPE_OBJECT: cls.objects,            
+            ENTITY_TYPE_SUBJECTOBJECT: cls.objects # or sujbects if you care
+        }
+        
+        return manager_dict[entity_type]

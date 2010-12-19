@@ -529,6 +529,10 @@ Supervisor's e-mail address: \vedoucimail\\
             Aggregator aggregates all relationships int o a sinle one for subject-object, subject-subject and object-object pairs, using the given weights. It does the same for biases.
             Recommender Algorithm uses the aggregated relationships to learn a recommender model.
         
+        obrazek class diagram:
+	    Classes are displayed as rectangles, objects as rectangles with round corners. All the classes are \emph{purely static} - there are no instances of the classes, the classes contain only class methods. They act as singleton objects.
+	    The diamond relationships mean that the given class/object can be accessed only from the containing class. 
+        
         \subsection{Representing Rules}
             \label{representing_rules}
             
@@ -560,7 +564,7 @@ Supervisor's e-mail address: \vedoucimail\\
             In the examples, we will be predicting the \emph{like} relationship, representing the preference of the user to the given shoe pair. We will demonstrate the rule definition on the following rules:
             \begin{enumerate}
                 \item \label{ex_s_o} If a user is from a city in the south, we won't recommend him/her winter shoes.
-                \item \label{ex_s_s} If two users are of aproximately the same age, they are considered similar. 
+                \item \label{ex_s_s} If two users are about the same age, they are considered similar. 
                 \item \label{ex_o_o} When two pairs of shoes have in their description some common words, they are considered similar.
             \end{enumerate}
             
@@ -574,12 +578,12 @@ Supervisor's e-mail address: \vedoucimail\\
                 \end{description}
                 \item[Expectancy:] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity.
                 \begin{description}
-                    \item[Subject-object relationship expectancy] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example \ref{ex_s_o}: We can use a linear function. The more southern the city is, the lower is the resulting expectancy.
+                    \item[Subject-object relationship expectancy] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example \ref{ex_s_o}: We can use a linear function. The more southern the city is, the lower is the resulting expectancy. Or we can simply remove the shoes from the user's recommendation by always returning zero.
                     \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the expectancy, the more similar the subjects are, according to the rule. Example \ref{ex_s_s}: Our function returns a normalized difference between the age of the two users. 
                     \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity between the subjects. The higher the expectancy, the more similar the objects are, according to the rule. Example \ref{ex_o_o}: We can use a function returning the number of common words divided by the number of words in the description.
                 \end{description}
                 \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike Expectancy, is independent of the particular entities on which the rule is evalutated. In our example, the number \ref{ex_s_o} will have a high weight (e.g. $0.8$), because it is quite specific. Other rules would have lower weight, e.g. $0.1$.
-                \item[Explanation:] A text explaining the meaning of the rule. Explanations can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_o_o} can have an explanation ``The shoe pairs \{object1\} and \{object2\} are similar because their descriptions contain some words in common.''
+                \item[Description:] A text explaining the meaning of the rule. Descriptions can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_o_o} can have a description ``The shoe pairs \{object1\} and \{object2\} are similar because their descriptions contain some words in common.''
             \end{description}
             
             Such rules can represent each of knowledge types described in \cite{knowledge_spain}, described in the section \ref{knowledge_based}. Catalog knowledge can be represented by rules accessing object properties in their Condition and Expectancy functions. Functional and user knowledge can be representing by rules using the relatioships between subjects and objects. 
@@ -605,7 +609,7 @@ Supervisor's e-mail address: \vedoucimail\\
                 \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. In the subject-object example, the Condition is a function returning \emph{True} if the user has viewed the profile page of the shoes, otherwise it returns \emph{False}.
                 \item[Expectancy:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair is surely in a relationship. Hence, such a function would always return $1$ for relationhips.
                 \item[Weight:] We need a way how to define the relevance of the relationship for predicting the relationship. Weight can be used on this purpose. In our example the ``viewed profile'' relationship would have higher weight than the others because it's the most specific relationship out of the three. 
-                \item[Explanation:] The textual explanation can be used for clarifying the meaning of the relationship. ``\{subject\} has viewed the profile of \{object\}.
+                \item[Description:] The textual explanation can be used for clarifying the meaning of the relationship. ``\{subject\} has viewed the profile of \{object\}.
                  
              \end{description}
             
@@ -626,7 +630,7 @@ Supervisor's e-mail address: \vedoucimail\\
                 \label{representing_relationship_to_predict}
                 During the adaptation phase, the domain expert has to define which relationship should be predicted. For example, if we want Unresyst to predict which pair of shoes a user would like, we need to tell Unresyst somehow.
                 
-                This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the explanation remains as described in the section \ref{representing_relationships}. 
+                This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the description remains as described in the section \ref{representing_relationships}. 
 
     \section{Recommendation Viewer}
         \label{viewer}
