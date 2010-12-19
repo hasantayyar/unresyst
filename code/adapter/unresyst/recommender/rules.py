@@ -4,6 +4,7 @@ from unresyst.constants import *
 
 from unresyst.models.abstractor import *
 from unresyst.models.common import SubjectObject
+from unresyst.exceptions import DescriptionKeyError
 
 class Relationship(object):
     """A class for representing the predicted relationship.
@@ -84,23 +85,30 @@ class Relationship(object):
             format_strings[0]: arg1,
             format_strings[1]: arg2
         }
-        return self.description % format_dict
+        try:
+            desc = self.description % format_dict
+        except KeyError, e:
+            raise DescriptionKeyError(
+                message="There's an invalid key in description",
+                name=self.name, 
+                key=e.__str__(), 
+                permitted_keys=format_dict.keys()
+            )
         
-    def get_create_definition_kwargs(self, recommender):
-        """Get dictionary of parameters for the definition model constructor.
+        return desc
         
-        @type recommender: models.Recommender
-        @param recommender: the recommender to which the rule belongs
+    def get_create_definition_kwargs(self):
+        """Get dictionary of parameters for the definition model constructor.        
         
         @rtype: dictionary string: object`
         @return: the kwargs of the definition model constructor 
         """
         return {
             "name": self.name,
-            "recommender": recommender
+            "recommender": self.recommender.recommender_model,
         }
     
-    def get_create_instance_kwargs(self, recommender, definition, arg1, arg2):
+    def get_create_instance_kwargs(self, definition, arg1, arg2):
         """Get dictionary of parameters for the rule instance model
         
         @type recommender: models.Recommender
@@ -116,6 +124,40 @@ class Relationship(object):
             'description': self.get_filled_description(arg1, arg2)
         }
     
+    def evaluate_on_args(self, arg1, arg2, definition):        
+        """Evaluates the rule on the given arguments. If evaluated positively,
+        a new rule/relationship instance is saved.
+       
+        @type arg1: models.SubjectObject
+        @param arg1: a domain neutral representation of the first entity.
+
+        @type arg2: models.SubjectObject
+        @param arg2: a domain neutral representation of the second entity.
+        
+        @type definition: models.abstractor.RuleRelationshipDefinition
+        @param definition: the model representing the rule/relationship 
+            definition
+        """
+  
+        # get the domain specific objects for our universal representations
+        #
+        arg1_manager = self.recommender._get_entity_manager(arg1.entity_type)
+        ds_arg1 = arg1.get_domain_specific_entity(entity_manager=arg1_manager)
+        
+        arg2_manager = self.recommender._get_entity_manager(arg2.entity_type)
+        ds_arg2 = arg2.get_domain_specific_entity(entity_manager=arg2_manager)
+
+        # if the condition is satisfied
+        if self.condition(ds_arg1, ds_arg2):
+            instance_kwargs = self.get_create_instance_kwargs(
+                definition=definition,
+                arg1=arg1,
+                arg2=arg2
+            )
+            
+            instance = self.InstanceClass(**instance_kwargs)
+            instance.save()
+    
     def evaluate(self):
         """Evaluate the rule on all subjects/objects - pairs.
         
@@ -124,7 +166,7 @@ class Relationship(object):
         """
         
         # obtain the kwargs for creating the definition
-        def_kwargs = self.get_create_definition_kwargs(self.recommender.recommender_model)
+        def_kwargs = self.get_create_definition_kwargs()
 
         # create and save the definition
         definition = self.DefinitionClass(**def_kwargs)
@@ -133,30 +175,44 @@ class Relationship(object):
         # parse what should be used as condition args
         arg1_s, arg2_s = self.relationship_type.split(RELATIONSHIP_TYPE_SEPARATOR)
         
+        # filter subjectobjects for my recommender
+        qs_recommender = SubjectObject.objects.filter(
+            recommender=self.recommender.recommender_model)
+        
         if arg1_s == arg2_s:
-            #TODO: nejak to vychytat
-            pass
+            
+            # filter the entities with the right type
+            qs_entities = qs_recommender.filter(entity_type=arg1_s)
+            
+            # the number of entities
+            entity_count = qs_entities.count()            
+            
+            # loop only through the matrix members below the diagonal 
+            # 
+            
+            # get the first argument and the number of entities that 
+            # will be taken as the second arg. Starting from 1, 
+            # finishing at <count -1>.
+            # The first entity will never be used as second argument 
+            for arg1, count in zip( \
+                qs_entities.order_by('id')[1:].iterator(), \
+                range(1, entity_count)):
+
+                # obtain only first count entities
+                for arg2 in qs_entities.order_by('id')[:count].iterator():
+                
+                    # evaluate it
+                    self.evaluate_on_args(arg1, arg2, definition)
+            
         else:
+        
             # go through all things that have to be as first and as second param
-            for arg1 in SubjectObject.objects.filter(entity_type=arg1_s).iterator():
-                for arg2 in SubjectObject.objects.filter(entity_type=arg2_s).iterator():
-                    
-                    # get the domain specific objects for our universal representations
-                    ds_arg1 = arg1.get_domain_specific_entity(self.recommender.subjects)
-                    ds_arg2 = arg2.get_domain_specific_entity(self.recommender.objects)
-                    
-                    # if the condition is satisfied
-                    if self.condition(ds_arg1, ds_arg2):
-                        instance_kwargs = self.get_create_instance_kwargs(
-                            recommender=self.recommender.recommender_model,
-                            definition=definition,
-                            arg1=arg1,
-                            arg2=arg2
-                        )
-                        
-                        instance = self.InstanceClass(**instance_kwargs)
-                        instance.save()
-                        
+            for arg1 in qs_recommender.filter(entity_type=arg1_s).iterator():
+                for arg2 in qs_recommender.filter(entity_type=arg2_s).iterator():
+               
+                    # evaluate the rule/relationship on the given args
+                    self.evaluate_on_args(arg1, arg2, definition)
+
         """
         r (relationship/rule)                
         
@@ -170,9 +226,6 @@ class Relationship(object):
                     save
         """        
 
-        
-
-
 class _WeightedRelationship(Relationship):
     """A class representing a relationship with a weight."""
 
@@ -184,13 +237,33 @@ class _WeightedRelationship(Relationship):
         self.weight = weight
         """A float number from [0, 1] representing the *static* weight of the rule. 
         It doesn't depend on the entity pair.
-        """        
+        """                
+    
+    def get_create_definition_kwargs(self):
+        """Get dictionary of parameters for the definition model constructor.        
         
+        Add the weight to the parameters. 
+        
+        @rtype: dictionary string: object
+        @return: the kwargs of the definition model constructor 
+        """
+        ret_dict = super(_WeightedRelationship, self).get_create_definition_kwargs()
+        ret_dict['weight'] = self.weight
+        ret_dict["relationship_type"] = self.relationship_type        
+        return ret_dict
+        
+    DefinitionClass = RuleRelationshipDefinition
+    """The model class used for representing the definition of the 
+    rule/relationship
+    """
         
 
 class SubjectObjectRelationship(_WeightedRelationship):
     """A class for representing subject-object preference for recommendation"""
-    pass 
+    
+    relationship_type = RELATIONSHIP_TYPE_SUBJECT_OBJECT
+    """The type of the relationship S-O""" 
+
 
 class _SimilarityRelationship(_WeightedRelationship):
     """A base class (abstract) for all relationships operating between the same type 
@@ -201,12 +274,26 @@ class _SimilarityRelationship(_WeightedRelationship):
 
 class ObjectSimilarityRelationship(_SimilarityRelationship):
     """A class for representing inter-object similarity."""    
-    pass
+
+    relationship_type = RELATIONSHIP_TYPE_OBJECT_OBJECT
+    """The type of the relationship O-O"""    
 
 
 class SubjectSimilarityRelationship(_SimilarityRelationship):
     """A class for representing inter-subject similarity."""
-    pass
+
+    relationship_type = RELATIONSHIP_TYPE_SUBJECT_SUBJECT
+    """The type of the relationship S-S"""
+
+
+class SubjectObjectSimilarityRelationship(_SimilarityRelationship):
+    """A class used only when subject domain equals object domain. 
+    For representing inter-entity similarity.
+    """
+    
+    relationship_type = RELATIONSHIP_TYPE_SUBJECTOBJECT_SUBJECTOBJECT
+    """The type of the relationship SO-SO"""
+
 
 # rules:
 # 

@@ -32,9 +32,9 @@ class ShoeRecommender(Recommender):
         SubjectObjectRelationship(
             name="User has viewed shoes.",
             condition=lambda s, o:
-                o in s.viewed_shoes,            
+                o in s.viewed_shoes.all(),  
             weight=0.4,            
-            description="User %(subject1)s has viewed %(object1)s."
+            description="User %(subject)s has viewed %(object)s."
         ),
         
         # if users live in the same city, they are considered similar

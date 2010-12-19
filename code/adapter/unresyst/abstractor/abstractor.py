@@ -65,12 +65,13 @@ class BasicAbstractor(BaseAbstractor):
        
     
     @classmethod        
-    def create_relationship_instances(cls, recommender, relationships):
+    def create_relationship_instances(cls, relationships):
         """See the base class for documentation."""
-        return         
+
         # evaluate all relationships
         for rel in relationships:
-            rel.evaluate(recommender)
+            rel.evaluate()
+
     
     @classmethod
     def create_rule_instances(cls, recommender, rules):

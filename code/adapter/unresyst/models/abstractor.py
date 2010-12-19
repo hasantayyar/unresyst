@@ -52,7 +52,9 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
     """The relationship between two subject/objects.
     
     All relationships are "symetrical" in sense that if there is 
-    a relationship in the given direction there can't be one in the opposite
+    a relationship in the given direction there can't be one in the opposite.
+    
+    Weight of the relationship is in the definition.
     """
     
     definition = models.ForeignKey(PredictedRelationshipDefinition)

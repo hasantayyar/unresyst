@@ -32,9 +32,9 @@ class BaseRecommender(object):
         """Get the prediction of the given relationship type between the subject
         and the object. 
         
-        @rtype: float
+        @rtype: float/None (TODO spis nejaky zapouzdrujici objekt)
         @return: The probability of the predicted relationship between the subject and
-            the object.
+            the object, or None if the prediction is not available.
         """
         pass
         
@@ -42,8 +42,11 @@ class BaseRecommender(object):
     def get_recommendations(cls, subject, count=None):
         """Get recommendations for the given subject.
         
-        @rtype: a list of objects
-        @return: subject's recommended objects.
+        @type count: int
+        @param count: a maximum number of objects to be recommended
+        
+        @rtype: a list of objects (TODO spis nejaky zapouzdrujici objekt)
+        @return: subject's recommended objects. or None if the recommndations aren't available - objekt s nejakou hlaskou.
         """
         pass
  
