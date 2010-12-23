@@ -74,9 +74,9 @@ class BasicAbstractor(BaseAbstractor):
 
     
     @classmethod
-    def create_rule_instances(cls, recommender, rules):
+    def create_rule_instances(cls, rules):
         """See the base class for documentation."""
-        return
+        
         # eveluate all rules
         for rule in rules:
-            rule.evaluate(recommender_model)
+            rule.evaluate()

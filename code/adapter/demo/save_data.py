@@ -14,6 +14,9 @@ def save_data():
     
     sporty = Keyword(word="Sporty")
     sporty.save()
+    
+    cool = Keyword(word='Cool')
+    cool.save()
 
     # cities
     hollywood = City(name="Hollywood", in_south=True)
@@ -36,7 +39,7 @@ def save_data():
         for_winter=False        
     )
     sneakers.save()
-    sneakers.keywords.add(comfortable,trainers)
+    sneakers.keywords.add(comfortable,trainers, cool)
     sneakers.save()
     
     rubber_shoes = ShoePair(
@@ -54,13 +57,13 @@ def save_data():
         for_winter=True
     )
     ski_boots.save()
-    ski_boots.keywords.add(sporty)
+    ski_boots.keywords.add(sporty, cool)
     ski_boots.save()
     
     # users    
     alice = User(
         name="Alice",
-        age=17,
+        age=19,
         home_city=hollywood
     )
     alice.save()

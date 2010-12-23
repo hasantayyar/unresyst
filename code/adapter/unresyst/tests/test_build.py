@@ -6,7 +6,7 @@ from django.db.models import Q
 from unresyst import Recommender
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
-    RelationshipInstance, RuleRelationshipDefinition
+    RelationshipInstance, RuleInstance, RuleRelationshipDefinition
 from test_base import DBTestCase
 
 from demo.recommender import ShoeRecommender
@@ -98,7 +98,10 @@ class TestAbstractor(TestBuild):
                             entity_type='O', 
                             recommender=rm),
         }                            
-
+    
+    
+    # creating subjectobjects:
+    #
     
     def test_create_subjectobjects(self):
         """Test creating universal subjects, objects"""
@@ -132,6 +135,10 @@ class TestAbstractor(TestBuild):
                 
                 # recommender
                 eq_(en_un.recommender.class_name, ShoeRecommender.__name__)
+
+    
+    # predicted relationship
+    #
     
     def test_create_predicted_relationship_definition(self):
         """Test creating the definition of the predicted relationship"""
@@ -173,43 +180,32 @@ class TestAbstractor(TestBuild):
         assert instance.contains_object(self.universal_entities['Sneakers'])
         eq_(instance.description, "User Alice likes shoes Sneakers.")
 
+
+    # relationships:
+    #
+
     def test_create_relationship_definitions(self):
         """Test creating the definitions of the relationships"""
         
-        # get definitions related to the shoe recommender
-        qs = RuleRelationshipDefinition.objects.filter(
-            recommender=ShoeRecommender.recommender_model)
-        
-        # assert the number of definitions is right
-        # TODO + len(ShoeRecommender.rules)
-        eq_(qs.count(), len(ShoeRecommender.relationships))
-        
-        # for each defined type there should be a model definition in db
-        for rel in ShoeRecommender.relationships:
-
-            # get the definition model by name (shouldn't throw an error)
-            rel_model = qs.get(name=rel.name)
-            
-            # assert the weight and relationship type are right
-            eq_(rel_model.weight, rel.weight)            
-            eq_(rel_model.relationship_type, rel.relationship_type)
+        self._test_definitions(ShoeRecommender.relationships)
 
     
     EXPECTED_RELATIONSHIP_DICT = {
         # relationship name, list of instances - (entity1, entity2, description)
+        # for symmetric relationships the description is a pair - both orderings
         "User has viewed shoes.": (
             ('Alice', 'Rubber Shoes', "User Alice has viewed Rubber Shoes."),
             ('Bob', 'Sneakers', "User Bob has viewed Sneakers."),
             ('Cindy', 'Rubber Shoes', "User Cindy has viewed Rubber Shoes."),
         ),
         "Users live in the same city.": (
-            ('Alice', 'Bob', "Users Alice and Bob live in the same city.",
-                "Users Bob and Alice live in the same city."),
+            ('Alice', 'Bob', ("Users Alice and Bob live in the same city.",
+                "Users Bob and Alice live in the same city.")),
         ),
         "Shoes were made by the same manufacturer.": (
             ('Sneakers', 'Rubber Shoes', 
-                "Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
-                "Shoes Rubber Shoes and Sneakers were made by the same manufacturer."),
+                ("Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+                "Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")),
         ),
     }
         
@@ -217,20 +213,76 @@ class TestAbstractor(TestBuild):
     def test_create_relationship_instances(self):
         """Test creating instances of all the defined relationships."""
         
+        self._test_instances(
+            def_list=ShoeRecommender.relationships,
+            expected_dict=self.EXPECTED_RELATIONSHIP_DICT,
+            instance_manager=RelationshipInstance.objects)    
+    
+    # rules:
+    #
+    
+    def test_create_rule_definitions(self):
+        """Test creating the definitions of the rules"""
+        
+        self._test_definitions(ShoeRecommender.rules)
+
+
+    EXPECTED_RULE_DICT = {
+        # rule name, list of instances - (entity1, entity2, description, expectancy)
+        # for symmetric rules the description is a pair - both orderings
+        "Don't recommend winter shoes for southern users.": (
+            ('Alice', 'RS 130', "Alice is from south, so RS 130 can't be recommended to him/her.", 0),
+            ('Bob', 'RS 130', "Bob is from south, so RS 130 can't be recommended to him/her.", 0),
+        ),
+        "Users with similar age.": (
+            ('Alice', 'Bob', ("Users Alice and Bob are about the same age.", 
+                "Users Bob and Alice are about the same age."), 0.75),
+        ),
+        "Shoes with common keywords.": (
+            ('Rubber Shoes', 'Sneakers', ("The shoe pairs Rubber Shoes and Sneakers share some keywords.",
+                "The shoe pairs Sneakers and Rubber Shoes share some keywords."), 1),
+            ('Sneakers', 'RS 130', ("The shoe pairs Sneakers and RS 130 share some keywords.",
+                "The shoe pairs RS 130 and Sneakers share some keywords."), 0.5),                
+        ),
+    }            
+
+    def test_create_rule_instances(self):
+        """Test creating instances of all the defined rules."""
+        
+        self._test_instances(
+            def_list=ShoeRecommender.rules,
+            expected_dict=self.EXPECTED_RULE_DICT,
+            instance_manager=RuleInstance.objects)
+            
+    # auxiliary functions:
+    # 
+    
+    def _test_instances(self, def_list, expected_dict, instance_manager):
+        """Test creating instances.
+        
+        @type def_list: list of Rule/Relationship definitions    
+        @param def_list: a list of definitions to check
+        
+        @type expected_dict: dict str: tuple
+        @param expected_dict: dictionary of expected instance attributes
+        
+        @type instance_manager: django.db.models.manager.Manager
+        @param instance_manager: the manager above rule/relationship instances
+        """
         # get definitions related to the shoe recommender
         qs = RuleRelationshipDefinition.objects.filter(
             recommender=ShoeRecommender.recommender_model)                
         
         # for each defined type there should be a model definition in db
-        for rel in ShoeRecommender.relationships:
+        for r in def_list:
 
             # get the expected data
-            expected_relationships = self.EXPECTED_RELATIONSHIP_DICT[rel.name]                        
+            expected_relationships = expected_dict[r.name]                        
 
             # get the definition model by name (shouldn't throw an error)
-            definition = qs.get(name=rel.name)
+            definition = qs.get(name=r.name)
             
-            instances = RelationshipInstance.objects.filter(definition=definition)
+            instances = instance_manager.filter(definition=definition)
             
             # expect there are as many relationship instances as expected
             eq_(instances.count(), len(expected_relationships))
@@ -244,19 +296,48 @@ class TestAbstractor(TestBuild):
                     Q(subject_object1=self.universal_entities[expected_data[1]], 
                         subject_object2=self.universal_entities[expected_data[0]])
                 )
-               
-            
+                          
                 # there should be one
                 eq_(rel_instance.count(), 1)
                     
                 instance = rel_instance[0]
             
                 # test it has the right description
-                if len(expected_data) == 4:
-                    assert instance.description == expected_data[2] or \
-                        instance.description == expected_data[3], \
+                # the diferentiation for symmetric relationships - the order 
+                # of the entities in the description can be arbitrary
+                if r.is_symmetric:
+                    desc_tuple = expected_data[2]
+                    assert instance.description == desc_tuple[0] or \
+                        instance.description == desc_tuple[1], \
                             "The description '%s' is wrong. Should be '%s' or '%s'" % \
-                            (instance.description, expected_data[2], expected_data[3])
+                            (instance.description, desc_tuple[0], desc_tuple[1])
                 else:
-                    eq_(instance.description, expected_data[2])                       
-                        
+                    eq_(instance.description, expected_data[2]) 
+                    
+                # for rules    
+                if len(expected_data) == 4:
+                    eq_(instance.expectancy, expected_data[3])
+                    
+
+    def _test_definitions(self, def_list):
+        """Test the definitions.
+        
+        @type def_list: an iterable of RuleRelationshipDefinition model
+        @param def_list: list of definitions to check.
+        """
+        # get definitions related to the shoe recommender
+        qs = RuleRelationshipDefinition.objects.filter(
+            recommender=ShoeRecommender.recommender_model)
+        
+        # assert the number of definitions is right
+        eq_(qs.count(), len(ShoeRecommender.relationships) + len(ShoeRecommender.rules))
+        
+        # for each defined type there should be a model definition in db
+        for r in def_list:
+
+            # get the definition model by name (shouldn't throw an error)
+            rmodel = qs.get(name=r.name)
+            
+            # assert the weight and relationship type are right
+            eq_(rmodel.weight, r.weight)   
+            eq_(rmodel.relationship_type, r.relationship_type)        

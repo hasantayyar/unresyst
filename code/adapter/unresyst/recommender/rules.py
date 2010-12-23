@@ -63,6 +63,11 @@ class Relationship(object):
     """The model class used for representing the definition of the 
     rule/relationship
     """
+        
+    is_symmetric = False
+    """Is the rule/relationship between the entities of the same domain?
+    True for S-S, O-O, SO-SO
+    """
     
     def get_filled_description(self, arg1, arg2):
         """Get description for a rule/relationship instance, between 
@@ -100,7 +105,7 @@ class Relationship(object):
     def get_create_definition_kwargs(self):
         """Get dictionary of parameters for the definition model constructor.        
         
-        @rtype: dictionary string: object`
+        @rtype: dictionary string: object
         @return: the kwargs of the definition model constructor 
         """
         return {
@@ -108,21 +113,21 @@ class Relationship(object):
             "recommender": self.recommender.recommender_model,
         }
     
-    def get_create_instance_kwargs(self, definition, arg1, arg2):
-        """Get dictionary of parameters for the rule instance model
+    def get_additional_instance_kwargs(self, ds_arg1, ds_arg2):
+        """Get dictionary of additional kwargs for creating the rule/relationship
+        instance. 
         
-        @type recommender: models.Recommender
-        @param recommender: the recommender to which the rule belongs
+        @type ds_arg1: django.db.models.manager.Manager
+        @param ds_arg1: the first argument of the rule instance - domain specific
+                
+        @type ds_arg2: django.db.models.manager.Manager
+        @param ds_arg2: the second argument of the rule instance - domain specific
         
         @rtype: dictionary string: object
-        @return: the kwargs of the instance model constructor        
+        @return: additional keyword args for creating rule/relationship instance 
         """
-        return {
-            'definition': definition,
-            'subject_object1': arg1,
-            'subject_object2': arg2,
-            'description': self.get_filled_description(arg1, arg2)
-        }
+        return {}
+    
     
     def evaluate_on_args(self, arg1, arg2, definition):        
         """Evaluates the rule on the given arguments. If evaluated positively,
@@ -149,13 +154,18 @@ class Relationship(object):
 
         # if the condition is satisfied
         if self.condition(ds_arg1, ds_arg2):
-            instance_kwargs = self.get_create_instance_kwargs(
-                definition=definition,
-                arg1=arg1,
-                arg2=arg2
-            )
             
-            instance = self.InstanceClass(**instance_kwargs)
+            
+            add_kwargs = self.get_additional_instance_kwargs(ds_arg1, ds_arg2)
+            
+            # create a rule/relationship instance
+            instance = self.InstanceClass(
+                            definition=definition,
+                            subject_object1=arg1,
+                            subject_object2=arg2,
+                            description=self.get_filled_description(arg1, arg2),
+                            **add_kwargs)
+            
             instance.save()
     
     def evaluate(self):
@@ -269,7 +279,9 @@ class _SimilarityRelationship(_WeightedRelationship):
     """A base class (abstract) for all relationships operating between the same type 
     and meaning similarity.
     """
-    pass
+    
+    is_symmetric = True
+    """For documentation see the base class"""
     
 
 class ObjectSimilarityRelationship(_SimilarityRelationship):
@@ -301,15 +313,29 @@ class SubjectObjectSimilarityRelationship(_SimilarityRelationship):
 class _BaseRule(_WeightedRelationship):
     """A base class for all rules (abstract)."""
     
+    InstanceClass = RuleInstance
+    """The model class used for representing instances of the rule/relationship"""
+    
     def __init__(self, name, condition, weight, expectancy, description=None):
         """The constructor."""
         
         super(_BaseRule, self).__init__(name, condition, weight, description)
         
         self.expectancy = expectancy
-        """A float function giving values from [0, 1] representing the confidence
-        of the rule for the given pair. It's dynamic, depends on the entity pair.
+        """A float function giving values from [0, 1] representing the 
+        confidence of the rule for the given pair. It's dynamic, depends 
+        on the entity pair.
         """
+
+    
+    def get_additional_instance_kwargs(self, ds_arg1, ds_arg2):
+        """See the base class for documentation
+        """
+        ret_dict = super(_BaseRule, self).get_additional_instance_kwargs(
+                                            ds_arg1, ds_arg2)
+
+        ret_dict['expectancy'] = self.expectancy(ds_arg1, ds_arg2)
+        return ret_dict
         
         
 # confidence by taky mohla vracet string s doplnujicim vysvetlenim,         
@@ -317,22 +343,38 @@ class _BaseRule(_WeightedRelationship):
 class _SimilarityRule(_BaseRule):
     """A base class (abstract) for all rules operating between the same type 
     and meaning similarity."""
-    pass
+
+    is_symmetric = True
+    """For documentation see the base class"""    
     
 
 class ObjectSimilarityRule(_SimilarityRule):
     """A class for representing inter-object similarity."""    
-    pass
+
+    relationship_type = RELATIONSHIP_TYPE_OBJECT_OBJECT
+    """The type of the relationship O-O""" 
 
 
 class SubjectSimilarityRule(_SimilarityRule):
     """A class for representing inter-subject similarity."""
-    pass
+
+    relationship_type = RELATIONSHIP_TYPE_SUBJECT_SUBJECT
+    """The type of the relationship S-S"""    
 
 
 class SubjectObjectRule(_BaseRule):
     """A class for representing subject-object preference for recommendation"""
-    pass    
+
+    relationship_type = RELATIONSHIP_TYPE_SUBJECT_OBJECT
+    """The type of the relationship S-O"""    
+
+class SubjectObjectSimilarityRule(_SimilarityRelationship):
+    """A class used only when subject domain equals object domain. 
+    For representing inter-entity rule.
+    """
+    
+    relationship_type = RELATIONSHIP_TYPE_SUBJECTOBJECT_SUBJECTOBJECT
+    """The type of the relationship SO-SO"""
 
 class Bias(object):
     pass    
