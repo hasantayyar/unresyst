@@ -124,13 +124,13 @@ class Recommender(BaseRecommender):
         cls.Abstractor.create_relationship_instances(
             relationships=cls.relationships
         )    
-        #XXX tady pokracovat        
+               
         # evaluate rules and make rule instances between the affected subjects/objects
-        cls.Abstractor.create_rule_instances(
-            recommender=recommender,        
+        cls.Abstractor.create_rule_instances(        
             rules=cls.rules
         )
         
+        #XXX tady pokracovat 
         # Aggregator
         # 
         
@@ -302,7 +302,7 @@ class Recommender(BaseRecommender):
     default_recommendation_count = DEFAULT_RECOMMENDATION_COUNT
     """The defaul count of the obtained recommended objects"""
     
-    # Auxiliary methods - not to be used by clients
+    # Auxiliary methods - not to be used from outside the application
     #
     
     @classmethod

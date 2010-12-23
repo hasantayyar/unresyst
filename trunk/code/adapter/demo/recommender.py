@@ -6,6 +6,34 @@ from unresyst import *
 
 from models import *
 
+
+def _get_keyword_set(o):
+    """Get set of keywords for the given shoepair
+    """
+    return set([kw.word for kw in o.keywords.all()])  
+
+def _keyword_set_similarity(o1, o2):
+    """A function measuring similarity of keywords for shoepairs o1 and o2.
+    
+    Counted as the size of the intersection divided by the size of the 
+    smaller set of keywords.
+    """
+    # make sets of the keywords
+    keyword_set1 = _get_keyword_set(o1)
+    keyword_set2 = _get_keyword_set(o2)
+    
+    # the intersection of the keywords
+    keyword_intersection = keyword_set1.intersection(keyword_set2)
+    
+    # size of the smaller set
+    min_len = min(len(keyword_set1), len(keyword_set2))
+    
+    # they have some keywords in common, so min_len is never 0
+    
+    #the final measure
+    return float(len(keyword_intersection))/min_len
+  
+
 class ShoeRecommender(Recommender):
     """A BaseRecommender subclass holding all domain-specific data"""
 
@@ -66,9 +94,9 @@ class ShoeRecommender(Recommender):
         # if user lives on south, don't recommend him winter shoes        
         SubjectObjectRule( 
             name="Don't recommend winter shoes for southern users.",
-            # is the user from a southern city?
+            # is the user from a southern city and shoes for winter?
             condition=lambda s, o: 
-                s.home_city.in_south, 
+                s.home_city.in_south and o.for_winter, 
 
             weight=0.85, 
 
@@ -89,7 +117,7 @@ class ShoeRecommender(Recommender):
             
             # a magic linear expectancy function
             expectancy=lambda s1, s2: 
-                1 - 0.25 * abs(s1 - s2),
+                1 - 0.25 * abs(s1.age - s2.age),
             
             description="Users %(subject1)s and %(subject2)s are about " + 
                 "the same age."
@@ -98,35 +126,21 @@ class ShoeRecommender(Recommender):
         # if shoes have common keywords, they are similar.
         ObjectSimilarityRule(
             name="Shoes with common keywords.",
-            # shoes have some common keywords
+            # shoes have some common keywords, if both empty, it's false
             condition=lambda o1, o2: 
-                bool(_intersection(o1.keywords, o2.keywords)),          
+                bool(_get_keyword_set(o1).intersection(_get_keyword_set(o2))),
             
             weight=0.4,
             
             # the size of the intersection / the size of the smaller set
-            expectancy=lambda o1, o2: 
-                float(len(_intersection(o1.keywords, o2.keywords))) / 
-                min(len(o1.keywords), len(o2.keywords)),
+            expectancy=_keyword_set_similarity,
             
             description="The shoe pairs %(object1)s and %(object2)s " + 
                 "share some keywords."
         ),
     )
     """Rules that can be applied to the domain"""
-    
-def _intersection(keywords1, keywords2):
-    """Intersection of the set of keywords for given by parameters.
-    
-    @type keywords1: iterable of strings or other type
-    @param keywords1: the first list of keywords
 
-    @type keywords2: iterable of strings or other type
-    @param keywords2: the second list of keywords    
-
-    @rtype: set of strings (or other type)
-    @returns: the intersection
-    """
     
-    return set([kw.word for kw in keywords1]).intersection( 
-                set([kw.word for kw in keywords2]))
+
+
