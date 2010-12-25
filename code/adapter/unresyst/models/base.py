@@ -26,6 +26,18 @@ class ContentTypeModel(models.Model):
         
         # return only this cont type
         return cls.objects.filter(content_type=cont_type)
+        
+    def as_leaf_class(self):
+        """Get the object as the whole inherited class"""
+
+        # get the leaf class
+        content_type = self.content_type
+        Model = content_type.model_class()
+        
+        # get the appropriate object
+        if (Model == self.__class__):
+            return self
+        return Model.objects.get(pk=self.pk)  
 
     def save(self,*args, **kwargs):
         """Save with the right content type"""

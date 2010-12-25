@@ -1,12 +1,23 @@
 """Support for symmetric relationships"""
 
 from django.db import models
+from django.db.models import Q
+from django.core.exceptions import MultipleObjectsReturned
 
 from unresyst.exceptions import SymmetryError, UnresystError as BaseError
 
 class SymmetricalRelationship(models.Model):
     """A base class for all symmetrical relationship models. The relationship can't be 
-    between the same object."""
+    between the same object.
+    
+    Main custom methods:
+     - cls.get_related_objects(obj): objects related to obj
+     - cls.get_relationships(obj): relationship objects related to obj
+     - rel.get_related(obj): object related to obj on rel
+     - rel.contains_object(obj): does the rel contain obj?
+     - cls.get_relationship(obj1, obj2): get relationship between obj1 and obj2, or None
+     - cls.are_related(obj1, obj2): are obj1 and obj2 related?
+    """
     
     attr_name1 = ''
     """The name of the first attribute pointing on some model. Should be overriden"""
@@ -143,7 +154,7 @@ class SymmetricalRelationship(models.Model):
         return list(q)
         
         
-    def get_related(self,obj):
+    def get_related(self, obj):
         """On a relationship, get the object that is related to obj, no matter in which
         attribute it is.
                 
@@ -212,7 +223,8 @@ class SymmetricalRelationship(models.Model):
         # if some exists
         if query:
             if query.count() > 1:
-                raise BaseError('Database Error - too many obtained relationships')
+                raise MultipleObjectsReturned(
+                    'Too many obtained relationships for the pair %s, %s.' % (object1, object2))
             
             # return it    
             return query[0]
@@ -245,6 +257,42 @@ class SymmetricalRelationship(models.Model):
         # try the second
         return cls.__get_relation(object2, object1)              
 
+    @classmethod
+    def filter_relationships(cls, object1, object2, queryset=None):
+        """Filter relationships so that it contains only the ones between 
+        object1 and object2. 
+        For models where sets (object1, object2) are unique does the same 
+        as get_relationships (except returning a queryset)
+
+        @type object1: Model
+        @param object1: the first object 
+        
+        @type object2: Model
+        @param object2: the second object 
+        
+        @type queryset: django queryset
+        @param queryset: the queryset to filter (optional). If not passed, all
+            objects of the model are filtered, otherwise the passed queryset is
+            filtered.
+        
+        @rtype: django queryset
+        @return: queryset containing relationships between object1 and object2
+        """
+        if queryset is None:
+            queryset = cls.objects.all()
+        # prepare the filter kwargs:
+        kwargs1 = {
+            cls.attr_name1: object1,
+            cls.attr_name2: object2
+        }        
+        kwargs2 = {
+            cls.attr_name1: object2,
+            cls.attr_name2: object1
+        }
+
+        # filter relationships that have the pair in the given or the opposite
+        # direction        
+        return queryset.filter(Q(**kwargs1) | Q(**kwargs2))                
 
     @classmethod
     def are_related(cls, object1, object2):
