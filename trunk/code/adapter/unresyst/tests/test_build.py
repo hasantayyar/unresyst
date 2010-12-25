@@ -138,7 +138,7 @@ class TestAbstractor(TestBuild):
 
     
     # predicted relationship
-    #
+    #                   
     
     def test_create_predicted_relationship_definition(self):
         """Test creating the definition of the predicted relationship"""
@@ -155,30 +155,41 @@ class TestAbstractor(TestBuild):
         
         # test it has the right name
         eq_(definition.name, "User likes shoes.")
+
                                 
+    EXPECTED_PREDICTED_RELATIONSHIP_INSTANCES = (
+            ('Alice', 'Sneakers', "User Alice likes shoes Sneakers."),
+            ('Bob', 'Sneakers', "User Bob likes shoes Sneakers."),
+    ) 
+
     
     def test_create_predicted_relationship_instances(self):
         """Test creating instances of the predicted relationship."""
         
         # get the relationship definition
-        definition = PredictedRelationshipDefinition.remove_subclass_objects().get( \
+        definition = PredictedRelationshipDefinition.remove_subclass_objects().get( 
             recommender=ShoeRecommender.recommender_model)
         
         # get instances of the predicted relationship
-        qs = RelationshipInstance.remove_subclass_objects().filter(definition=definition)
+        instances = RelationshipInstance.remove_subclass_objects().filter(definition=definition)
         
-        # there should be one
-        eq_(qs.count(), 1)
+        for expected_data in self.EXPECTED_PREDICTED_RELATIONSHIP_INSTANCES:
+
+            # instances that have either one or another order of the subjobjects
+            rel_instance = instances.filter(
+                Q(subject_object1=self.universal_entities[expected_data[0]], 
+                    subject_object2=self.universal_entities[expected_data[1]]) | \
+                Q(subject_object1=self.universal_entities[expected_data[1]], 
+                    subject_object2=self.universal_entities[expected_data[0]])
+            )
+                      
+            # there should be one
+            eq_(rel_instance.count(), 1)
+                
+            instance = rel_instance[0]
             
-        instance = qs[0]
-        
-        # test it has the right properties
-        # 
-        
-        # assert everything as expected
-        assert instance.contains_object(self.universal_entities['Alice'])
-        assert instance.contains_object(self.universal_entities['Sneakers'])
-        eq_(instance.description, "User Alice likes shoes Sneakers.")
+            # test it has the right description
+            eq_(instance.description, expected_data[2])                
 
 
     # relationships:
@@ -206,6 +217,13 @@ class TestAbstractor(TestBuild):
             ('Sneakers', 'Rubber Shoes', 
                 ("Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
                 "Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")),
+        ),
+        'User lives in the same city as the shoe manufacturer.': (
+            ('Alice', 'Rubber Shoes', "User Alice is from the same city as manufacturer of Rubber Shoes."),
+            ('Bob', 'Rubber Shoes',  "User Bob is from the same city as manufacturer of Rubber Shoes."),
+            ('Alice', 'Sneakers',  "User Alice is from the same city as manufacturer of Sneakers."),
+            ('Bob', 'Sneakers', "User Bob is from the same city as manufacturer of Sneakers."),
+            ('Cindy', 'RS 130', "User Cindy is from the same city as manufacturer of RS 130."),
         ),
     }
         

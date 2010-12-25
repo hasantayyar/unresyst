@@ -53,6 +53,15 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
     it has to be also for the predicted relationship instances.
     """
     
+    additional_unique = ('definition', )
+    """There can be multiple pairs for one recommender"""
+    
+    class Meta:
+        app_label = 'unresyst' 
+        
+        unique_together = ('subject_object1', 'subject_object2', 'definition')
+        """For each definition there can be only one subject-object pair."""
+
     def get_linear_expectancy(self):
         """Gets the linearly aggregated parameters for instance expectancy.
         In this class returns the weight.
@@ -61,12 +70,7 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
         @return: the aggregated expectancy.
         """
         return self.definition.as_leaf_class().weight
-    
-    class Meta:
-        app_label = 'unresyst' 
-        
-        unique_together = ('subject_object1', 'subject_object2', 'definition')
-        """For each definition there can be only one subject-object pair."""
+
 
 class RuleInstance(RelationshipInstance):
     """The rule applied to a pair of subjects/objects.""" 

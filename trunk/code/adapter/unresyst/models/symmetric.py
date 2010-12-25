@@ -11,12 +11,19 @@ class SymmetricalRelationship(models.Model):
     between the same object.
     
     Main custom methods:
-     - cls.get_related_objects(obj): objects related to obj
-     - cls.get_relationships(obj): relationship objects related to obj
      - rel.get_related(obj): object related to obj on rel
      - rel.contains_object(obj): does the rel contain obj?
+
+    Only for additional_unique == ():
+     - cls.get_related_objects(obj): objects related to obj
+     - cls.get_relationships(obj): relationship objects related to obj
      - cls.get_relationship(obj1, obj2): get relationship between obj1 and obj2, or None
      - cls.are_related(obj1, obj2): are obj1 and obj2 related?
+
+    Also for additional_unique <> ():
+     - cls.filter_relationships(obj1, obj2, queryset=None): filter relationships between
+        obj1 and obj2, from queryset or from all relationships
+
     """
     
     attr_name1 = ''
@@ -24,6 +31,11 @@ class SymmetricalRelationship(models.Model):
     
     attr_name2 = ''
     """The name of the second attribute pointing on some model. Should be overriden"""
+    
+    additional_unique = ()
+    """A tuple containing names of attributes that are unique together with the symmetrical
+    relationship pair. Like unique_together = (('attr1', 'attr2'), 'additional_unique')
+    """
 
     class Meta:
         abstract = True
@@ -64,8 +76,13 @@ class SymmetricalRelationship(models.Model):
         """Check whether the the relationship between the objects in the given direction
         can be saved. If not, throw an exception. Includes checks for update."""
         
+        # create a dictionary of additional kwargs
+        additional_kwargs = {}
+        for ad_un in self.additional_unique:
+            additional_kwargs[ad_un] = getattr(self, ad_un)
+        
         # try finding the relation in the database
-        rel = self.__class__.__get_relation(object1, object2)
+        rel = self.__class__.__get_relation(object1, object2, **additional_kwargs)
 
         # if we have found a relation between object1 and object2
         if rel:
@@ -211,14 +228,21 @@ class SymmetricalRelationship(models.Model):
         return bool(cls.__get_relation(object1, object2))
     
     @classmethod
-    def __get_relation(cls, object1, object2): 
+    def __get_relation(cls, object1, object2, **kwargs): 
         """Get the relation of the two objects in the given direction. If it doesn't exist
-        return None"""
+        return None.
+        kwargs are additional arguments for filter, when additional_unique <> ()
+        """
+        
+        # prepare kwargs for the filter function
+        filter_kwargs = {
+            cls.attr_name1: object1,
+            cls.attr_name2: object2
+        }
+        filter_kwargs.update(kwargs)
         
         # try to get the relationship
-        query = cls.objects.filter(
-            **{cls.attr_name1: object1,
-               cls.attr_name2: object2})
+        query = cls.objects.filter(**filter_kwargs)
 
         # if some exists
         if query:

@@ -21,6 +21,9 @@ class AggregatedRelationshipInstance(BaseRelationshipInstance):
     recommender = models.ForeignKey('unresyst.Recommender')
     """The recommender it belongs to"""
     
+    additional_unique = ('recommender', )
+    """There can be multiple pairs for one recommender"""
+    
     class Meta:
         app_label = 'unresyst' 
         

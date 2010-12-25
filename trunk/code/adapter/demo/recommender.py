@@ -65,6 +65,15 @@ class ShoeRecommender(Recommender):
             description="User %(subject)s has viewed %(object)s."
         ),
         
+        # if the user is from the same city as the shoe manufacturer, he might like it
+        SubjectObjectRelationship(
+            name='User lives in the same city as the shoe manufacturer.',
+            condition=lambda s, o:
+                o.manufacturer.home_city == s.home_city,
+            weight=0.1,
+            description="User %(subject)s is from the same city as manufacturer of %(object)s."
+        ),
+        
         # if users live in the same city, they are considered similar
         SubjectSimilarityRelationship(
             name="Users live in the same city.",
