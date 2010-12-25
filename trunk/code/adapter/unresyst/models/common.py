@@ -118,17 +118,21 @@ class SubjectObject(models.Model):
         @param recommender: the recommender model for which the pairs should be
             obtained
 
-        @type entity_type: str ('S', 'O' or 'SO')
-        @param entity_type: the entity type from whic the pair should be taken
+        @type entity_type: str ('S', 'O' or 'SO') or None
+        @param entity_type: the entity type from whic the pair should be taken,
+            if None, all entity types are taken
         
         @rtype: generator for two-tuples
         @returns: pairs of subjectobjects entity_type entities belonging to 
             the recommender.
         """
+        ent_type_kwargs = {} if entity_type is None \
+                            else {'entity_type': entity_type}
+        
         # get the subjectobjects to iterate over
         qs_entities = cls.objects.filter(
             recommender=recommender, 
-            entity_type=entity_type)
+            **ent_type_kwargs).order_by('id')
 
         # the number of entities
         entity_count = qs_entities.count()             
@@ -138,10 +142,10 @@ class SubjectObject(models.Model):
         # finishing at <count -1>.
         # The first entity will never be used as second argument 
         for arg1, count in zip( \
-            qs_entities.order_by('id')[1:].iterator(), \
+            qs_entities[1:].iterator(), \
             range(1, entity_count)):
 
             # obtain only first count entities
-            for arg2 in qs_entities.order_by('id')[:count].iterator():
+            for arg2 in qs_entities[:count].iterator():
 
                 yield (arg1, arg2)

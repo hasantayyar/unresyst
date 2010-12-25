@@ -60,7 +60,7 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
         @rtype: float from [0, 1]
         @return: the aggregated expectancy.
         """
-        return self.definition.weight
+        return self.definition.as_leaf_class().weight
     
     class Meta:
         app_label = 'unresyst' 
