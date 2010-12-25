@@ -80,6 +80,7 @@ def save_data():
     bob.save()
     bob.viewed_shoes.add(sneakers)
     bob.words_searched.add(sporty, comfortable)
+    bob.likes_shoes.add(sneakers)
     bob.save()
     
     cindy = User(
