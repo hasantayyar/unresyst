@@ -17,4 +17,12 @@ class AggregatedRelationshipInstance(BaseRelationshipInstance):
     """The probability of the relationship between subject/object.
     A number from [0, 1].
     """
-
+    
+    recommender = models.ForeignKey('unresyst.Recommender')
+    """The recommender it belongs to"""
+    
+    class Meta:
+        app_label = 'unresyst' 
+        
+        unique_together = ('subject_object1', 'subject_object2', 'recommender')
+        """For each recommender there can be only one subject-object pair."""

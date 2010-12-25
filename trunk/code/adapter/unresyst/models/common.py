@@ -104,4 +104,44 @@ class SubjectObject(models.Model):
         """
         return entity_manager.get(id=self.id_in_specific)
 
-                        
+    @classmethod
+    def unique_pairs(cls, recommender, entity_type):
+        """A generator looping through the pairs of subjectobjects so that each two 
+        object set is returned only once. 
+        
+        E.g. after (a, b), the (b, a) pair isn't returned. 
+        It doesn't return pairs like (a, a).
+        
+        Useful for symmetric rule and relationship evaluation.
+        
+        @type recommender: models.Recommender
+        @param recommender: the recommender model for which the pairs should be
+            obtained
+
+        @type entity_type: str ('S', 'O' or 'SO')
+        @param entity_type: the entity type from whic the pair should be taken
+        
+        @rtype: generator for two-tuples
+        @returns: pairs of subjectobjects entity_type entities belonging to 
+            the recommender.
+        """
+        # get the subjectobjects to iterate over
+        qs_entities = cls.objects.filter(
+            recommender=recommender, 
+            entity_type=entity_type)
+
+        # the number of entities
+        entity_count = qs_entities.count()             
+            
+        # get the first argument and the number of entities that 
+        # will be taken as the second arg. Starting from 1, 
+        # finishing at <count -1>.
+        # The first entity will never be used as second argument 
+        for arg1, count in zip( \
+            qs_entities.order_by('id')[1:].iterator(), \
+            range(1, entity_count)):
+
+            # obtain only first count entities
+            for arg2 in qs_entities.order_by('id')[:count].iterator():
+
+                yield (arg1, arg2)

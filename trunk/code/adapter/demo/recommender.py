@@ -46,7 +46,7 @@ class ShoeRecommender(Recommender):
     objects = ShoePair.objects
     """The objects that will be recommended.""" 
 
-    predicted_relationship = Relationship( 
+    predicted_relationship = PredictedRelationship( 
         name="User likes shoes.",
         condition=lambda s, o: 
             o in s.likes_shoes.all(), 

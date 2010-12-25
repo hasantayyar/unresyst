@@ -128,16 +128,19 @@ class BaseRecommender(object):
     
     Abstractor = None
     """The class that will be used for the abstractor level. Can be 
-    overriden in suclasses"""
+    overriden in subclasses"""
     
     Aggregator = None
     """The class that will be used for the aggregator level. Can be 
-    overriden in suclasses"""
+    overriden in subclasses"""
     
     Algorithm = None
     """The class that will be used for the algorithm level. Can be 
-    overriden in suclasses"""
+    overriden in subclasses"""
     
-
+    remove_predicted_from_recommendations = None
+    """Should the instances of the predicted_relationship be removed from
+    recommendation list?
+    """
     
     #TODO jeste by to chtelo nejake settings, co to ma delat, kdyz se ptam na subject object pair, ktery uz mezi sebou ma predicted_relationship
