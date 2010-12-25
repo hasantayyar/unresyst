@@ -4,33 +4,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 from symmetric import SymmetricalRelationship
-        
-
-class BaseRelationshipInstance(SymmetricalRelationship):
-    """An abstract class, the base class of all s-o, s-s, o-o relationships."""
-
-    subject_object1 = models.ForeignKey('unresyst.SubjectObject', \
-                        related_name='%(class)s_relationships1')
-    """The first subject/object that is in the relationship."""                        
-    
-    subject_object2 = models.ForeignKey('unresyst.SubjectObject', \
-                        related_name='%(class)s_relationships2')
-    """The second subject/object that is in the relationship"""              
-    
-    description = models.TextField(default='', blank=True)
-    """The description of the relationship/rule instance."""          
-        
-        
-    attr_name1 = 'subject_object1'
-    """Overriden attribute name 1"""
-    
-    attr_name2 = 'subject_object2'
-    """Overriden attribute name 2"""
-
-    class Meta:
-        abstract = True                
-        app_label = 'unresyst'        
-
+from unresyst.constants import *
 
 class ContentTypeModel(models.Model):
     """An abstract base class for all models having some subclasses whose
@@ -63,4 +37,53 @@ class ContentTypeModel(models.Model):
 
     class Meta:
         abstract = True                
+        app_label = 'unresyst'        
+
+
+class BaseRelationshipInstance(SymmetricalRelationship):
+    """An abstract class, the base class of all s-o, s-s, o-o relationships."""
+
+    subject_object1 = models.ForeignKey('unresyst.SubjectObject', \
+                        related_name='%(class)s_relationships1')
+    """The first subject/object that is in the relationship."""                        
+    
+    subject_object2 = models.ForeignKey('unresyst.SubjectObject', \
+                        related_name='%(class)s_relationships2')
+    """The second subject/object that is in the relationship"""              
+    
+    description = models.TextField(default='', blank=True)
+    """The description of the relationship/rule instance."""          
+        
+        
+    attr_name1 = 'subject_object1'
+    """Overriden attribute name 1"""
+    
+    attr_name2 = 'subject_object2'
+    """Overriden attribute name 2"""
+
+    class Meta:
+        abstract = True                
+        app_label = 'unresyst'        
+
+
+class BaseRelationshipDefinition(ContentTypeModel):
+    """A definition of the relationship that should be predicted. There's only
+    one for a recommender.
+    """    
+    
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """The name of the relationship"""  
+    
+    recommender = models.ForeignKey('unresyst.Recommender')
+    """The recommender to which the definition belongs. Each recommender has
+    exactly one predicted relationship.
+    """      
+
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name 
+    
+    class Meta:
         app_label = 'unresyst'
+
+

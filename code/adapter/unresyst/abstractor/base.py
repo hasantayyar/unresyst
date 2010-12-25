@@ -7,11 +7,11 @@ class BaseAbstractor(object):
     #
     
     @classmethod
-    def create_subjectobjects(cls, recommender, subjects, objects):
+    def create_subjectobjects(cls, recommender_model, subjects, objects):
         """Create abstract representation of subjects and objects.
         
-        @type recommender: models.Recommender
-        @param recommender: the recommender model instance
+        @type recommender_model: models.Recommender
+        @param recommender_model: the recommender model instance
         
         @type subjects: django.db.models.manager.Manager
         @param subjects: the manager above the subject model

@@ -6,8 +6,8 @@ from unresyst.models.abstractor import *
 from unresyst.models.common import SubjectObject
 from unresyst.exceptions import DescriptionKeyError
 
-class Relationship(object):
-    """A class for representing the predicted relationship.
+class _Relationship(object):
+    """A base class for representing all relationships and rules.
     
     A subclass for all classes representing a relationship between entities (not necessarily 
     of the same type). Contains the condition that is true between and only 
@@ -59,7 +59,7 @@ class Relationship(object):
     InstanceClass = RelationshipInstance
     """The model class used for representing instances of the rule/relationship"""
     
-    DefinitionClass = PredictedRelationshipDefinition
+    DefinitionClass = RuleRelationshipDefinition
     """The model class used for representing the definition of the 
     rule/relationship
     """
@@ -183,38 +183,22 @@ class Relationship(object):
         definition.save()
             
         # parse what should be used as condition args
-        arg1_s, arg2_s = self.relationship_type.split(RELATIONSHIP_TYPE_SEPARATOR)
-        
-        # filter subjectobjects for my recommender
-        qs_recommender = SubjectObject.objects.filter(
-            recommender=self.recommender.recommender_model)
+        arg1_s, arg2_s = self.relationship_type.split(RELATIONSHIP_TYPE_SEPARATOR)        
         
         if arg1_s == arg2_s:
-            
-            # filter the entities with the right type
-            qs_entities = qs_recommender.filter(entity_type=arg1_s)
-            
-            # the number of entities
-            entity_count = qs_entities.count()            
-            
+                                                           
             # loop only through the matrix members below the diagonal 
             # 
-            
-            # get the first argument and the number of entities that 
-            # will be taken as the second arg. Starting from 1, 
-            # finishing at <count -1>.
-            # The first entity will never be used as second argument 
-            for arg1, count in zip( \
-                qs_entities.order_by('id')[1:].iterator(), \
-                range(1, entity_count)):
-
-                # obtain only first count entities
-                for arg2 in qs_entities.order_by('id')[:count].iterator():
-                
-                    # evaluate it
-                    self.evaluate_on_args(arg1, arg2, definition)
+            for arg1, arg2 in SubjectObject.unique_pairs(
+                                recommender=self.recommender.recommender_model,
+                                entity_type=arg1_s):                          
+                # evaluate it
+                self.evaluate_on_args(arg1, arg2, definition)
             
         else:
+            # filter subjectobjects for my recommender
+            qs_recommender = SubjectObject.objects.filter(
+                recommender=self.recommender.recommender_model)
         
             # go through all things that have to be as first and as second param
             for arg1 in qs_recommender.filter(entity_type=arg1_s).iterator():
@@ -235,8 +219,15 @@ class Relationship(object):
                     create instance including expectancy
                     save
         """        
+class PredictedRelationship(_Relationship):
+    """A class for representing the predicted relationship."""
 
-class _WeightedRelationship(Relationship):
+    DefinitionClass = PredictedRelationshipDefinition
+    """The model class used for representing the definition of the 
+    rule/relationship
+    """    
+
+class _WeightedRelationship(_Relationship):
     """A class representing a relationship with a weight."""
 
     def __init__(self, name, condition, weight, description=None):

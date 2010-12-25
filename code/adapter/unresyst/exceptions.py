@@ -100,6 +100,39 @@ class DescriptionKeyError(RuleRelationshipError):
                "    the invalid key: %s\n" + \
                "    The permitted keys are: %s") \
                % (self.key, self.message, self.name, self.key, self.permitted_keys) 
+
+class InvalidParameterError(UnresystError):
+    """An exception raised when a parameter passed to a function is invalid.
+
+    @type message: string
+    @ivar message: the reason why the parameter is invalid
+    
+    @type parameter_name: string
+    @ivar parameter_name: the name of the invalid parameter
+    
+    @type parameter_value: object
+    @ivar parameter_value: the current (invalid) parameter value
+    
+    """
+    def __init__(self, message, parameter_name, parameter_value):
+        """The constructor."""        
+
+        self.message = message
+        """The message saying why the parameter is invalid""" 
+        
+        self.parameter_name = parameter_name
+        """The name of the invalid parameter"""
+        
+        self.parameter_value = parameter_value
+        """The current (invalid) value of the parameter"""               
+        
+    def __str__(self):
+        return ("The parameter passed to the function is invalid.\n" + \
+               "    message: %s\n" + \
+               "    parameter name: %s\n" + \
+               "    parameter value: %s") \
+               % (self.message, self.parameter_name, self.parameter_value)
+    
                        
 class SymmetryError(UnresystError):
     """An error for handling symmetric relationship errors.

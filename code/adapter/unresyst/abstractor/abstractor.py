@@ -8,12 +8,12 @@ class BasicAbstractor(BaseAbstractor):
     """The basic implementation of the Abstractor class"""
 
     @classmethod
-    def create_subjectobjects(cls, recommender, subjects, objects):
+    def create_subjectobjects(cls, recommender_model, subjects, objects):
         """See the base class for documentation."""
 
         # delete all subjects and objects for the recommender
         # and everything pointing at it.
-        SubjectObject.objects.filter(recommender=recommender).delete()
+        SubjectObject.objects.filter(recommender=recommender_model).delete()
         
         # if subjects are the same as objects, use the "so" entity type 
         so = ENTITY_TYPE_SUBJECTOBJECT if subjects == objects else ""
@@ -26,7 +26,7 @@ class BasicAbstractor(BaseAbstractor):
                 id_in_specific=subj.id,
                 name=subj.__unicode__(),
                 entity_type=so or ENTITY_TYPE_SUBJECT,
-                recommender=recommender
+                recommender=recommender_model
             )
             
             # save it
@@ -44,7 +44,7 @@ class BasicAbstractor(BaseAbstractor):
                 id_in_specific=obj.id,
                 name=obj.__unicode__(),
                 entity_type=ENTITY_TYPE_OBJECT,
-                recommender=recommender
+                recommender=recommender_model
             )
             
             # save it

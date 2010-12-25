@@ -49,6 +49,10 @@ class Recommender(BaseRecommender):
     domain specific data.
     
     Defines default behaviour assigning the classes for the layers. 
+    
+    The predicted relationship is ignored when building and updating the 
+    recommender. If it's needed, one should create a rule/relationship 
+    with the appropriate condition. 
     """
     __metaclass__ = MetaRecommender
     
@@ -90,7 +94,7 @@ class Recommender(BaseRecommender):
 
         # if the recommender with the given name doesn't exist, create it,
         # if it does, find it
-        recommender, created = RecommenderModel.objects.get_or_create(
+        recommender_model, created = RecommenderModel.objects.get_or_create(
                         class_name=cls.__name__,
                         defaults={
                             "name": cls.name,
@@ -98,7 +102,7 @@ class Recommender(BaseRecommender):
                         })
         
         # remember the recommender model in the class
-        cls.recommender_model =  recommender
+        cls.recommender_model =  recommender_model
         
         # build the recommender model
         #
@@ -110,7 +114,7 @@ class Recommender(BaseRecommender):
         
         # create the domain neutral representation for objects and subjects
         cls.Abstractor.create_subjectobjects(
-            recommender=recommender,
+            recommender_model=recommender_model,
             subjects=cls.subjects, 
             objects=cls.objects
         )
@@ -135,13 +139,13 @@ class Recommender(BaseRecommender):
         # 
         
         # aggregate the relationships and rules
-        cls.Aggregator.aggregate(recommender=recommender)        
+        cls.Aggregator.aggregate(recommender_model=recommender_model)        
         
         # Algorithm
         #
         
         # build the algorithm model from the aggregated relationships
-        cls.Algorithm.build(recommender=recommender)
+        cls.Algorithm.build(recommender=recommender_model)
 
 
     # Recommend phase:
@@ -301,6 +305,11 @@ class Recommender(BaseRecommender):
     
     default_recommendation_count = DEFAULT_RECOMMENDATION_COUNT
     """The defaul count of the obtained recommended objects"""
+    
+    remove_predicted_from_recommendations = True
+    """The entity pairs that already have the predicted_relationship
+    between them, will be removed from recommendation list.
+    """
     
     # Auxiliary methods - not to be used from outside the application
     #
