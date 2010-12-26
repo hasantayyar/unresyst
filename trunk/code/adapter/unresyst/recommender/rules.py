@@ -207,18 +207,7 @@ class _Relationship(object):
                     # evaluate the rule/relationship on the given args
                     self.evaluate_on_args(arg1, arg2, definition)
 
-        """
-        r (relationship/rule)                
-        
-        if <to co ma byt vpravo> == <to co ma byt vlevo>:
-            nejak vychytat, aby se to pro kazdy par delalo jen jednou
-        else    
-        for so1 in <to co ma byt vlevo>:
-            for so2 in <to co ma byt vpravo>:
-                if r.condition(so1, so2):
-                    create instance including expectancy
-                    save
-        """        
+  
 class PredictedRelationship(_Relationship):
     """A class for representing the predicted relationship."""
 

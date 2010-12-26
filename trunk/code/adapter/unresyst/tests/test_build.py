@@ -7,22 +7,13 @@ from unresyst import Recommender
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
     RelationshipInstance, RuleInstance, RuleRelationshipDefinition
-from test_base import DBTestCase
+from unresyst.models.aggregator import AggregatedRelationshipInstance    
+from test_base import TestBuild, TestEntities
 
 from demo.recommender import ShoeRecommender
 from demo.models import User, ShoePair
 
 #TODO: otestovat cascade delete na recommenderu
-
-class TestBuild(DBTestCase):
-    """The base class for all build tests"""
-
-    def setUp(self):
-        """The setup for all tests - build the recommender"""
-        super(TestBuild, self).setUp()
-
-        # call the tested function        
-        ShoeRecommender.build()
 
 
 class TestRecommender(TestBuild):
@@ -50,56 +41,11 @@ class TestRecommender(TestBuild):
         
         # assert the model is saved in the recommender
         eq_(ShoeRecommender.recommender_model, rec)            
-        
-            
-class TestAbstractor(TestBuild):
+
+
+class TestAbstractor(TestEntities):
     """Testing the abstractor in the build phase"""  
-    
-    def setUp(self):
-        """Obtain specific and universal subject objects 
-        and store them in the test instance
-        """ 
         
-        super(TestAbstractor, self).setUp()
-        
-        self.specific_entities = {
-            'Alice': User.objects.get(name="Alice"),
-            'Bob': User.objects.get(name="Bob"),
-            'Cindy': User.objects.get(name="Cindy"),
-            'Sneakers': ShoePair.objects.get(name="Sneakers"),
-            "Rubber Shoes": ShoePair.objects.get(name="Rubber Shoes"),
-            'RS 130': ShoePair.objects.get(name='RS 130'),
-        }
-        
-        rm = ShoeRecommender.recommender_model
-        self.universal_entities = {
-            'Alice': SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=self.specific_entities['Alice'], 
-                            entity_type='S', 
-                            recommender=rm),
-            'Bob': SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=self.specific_entities['Bob'], 
-                            entity_type='S', 
-                            recommender=rm),
-            'Cindy': SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=self.specific_entities['Cindy'], 
-                            entity_type='S', 
-                            recommender=rm),                            
-            'Sneakers': SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=self.specific_entities['Sneakers'], 
-                            entity_type='O', 
-                            recommender=rm),
-            'Rubber Shoes': SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=self.specific_entities['Rubber Shoes'], 
-                            entity_type='O', 
-                            recommender=rm),
-            'RS 130': SubjectObject.get_domain_neutral_entity(
-                            domain_specific_entity=self.specific_entities['RS 130'], 
-                            entity_type='O', 
-                            recommender=rm),
-        }                            
-    
-    
     # creating subjectobjects:
     #
     
@@ -358,4 +304,59 @@ class TestAbstractor(TestBuild):
             
             # assert the weight and relationship type are right
             eq_(rmodel.weight, r.weight)   
-            eq_(rmodel.relationship_type, r.relationship_type)        
+            eq_(rmodel.relationship_type, r.relationship_type)      
+            
+class TestAggregator(TestEntities):
+    """Testing the building phase of the Linear Aggregator"""
+    
+    EXPECTED_AGGREGATES = {
+        # S-O
+        ('Alice', 'RS 130'): (0.0, ),
+        ('Alice', 'Rubber Shoes'): ((0.4 + 0.1)/2, ),
+        ('Alice', 'Sneakers'): (0.1, ),
+        ('Bob', 'RS 130'): (0.0, ),
+        ('Bob', 'Sneakers'): ((0.4 + 0.1)/2, ),
+        ('Bob', 'Rubber Shoes'): (0.1, ),
+        ('Cindy', 'Rubber Shoes'): (0.4, ),
+        ('Cindy', 'RS 130'): (0.1, ),
+        
+        # S-S
+        ('Alice', 'Bob'): ((0.75 * 0.2 + 0.3)/2, ),
+        
+        # O-O
+        ('Rubber Shoes', 'Sneakers'): ((0.4 + 0.1)/2, ),
+        ('Sneakers', 'RS 130'): (0.2, ),         
+    }
+    """A dictionary: pair of entities : expectancy."""
+    
+    def test_aggregates_created(self):
+        """Test that the aggregates were created as expected"""
+        
+        # filter aggregated instances for my recommender
+        aggr_instances = AggregatedRelationshipInstance.objects.filter(
+                            recommender=ShoeRecommender.recommender_model)
+        
+        # assert it has the expected length 
+        eq_(aggr_instances.count(), len(self.EXPECTED_AGGREGATES))
+        
+        for aggr_inst in aggr_instances.iterator():
+            pair1 = (aggr_inst.subject_object1.name, aggr_inst.subject_object2.name)
+            pair2 = (aggr_inst.subject_object2.name, aggr_inst.subject_object1.name)            
+            
+            # try getting the instance from expected in both directions
+            if self.EXPECTED_AGGREGATES.has_key(pair1):
+                expected_expectancy = self.EXPECTED_AGGREGATES[pair1][0]
+            else:
+                if self.EXPECTED_AGGREGATES.has_key(pair2):
+                    expected_expectancy = self.EXPECTED_AGGREGATES[pair2][0]
+                else:
+                    # if not found it's unexpected.
+                    assert False, \
+                        "Unexpected aggregate between '%s' and '%s' expectancy: %f" % \
+                        (pair1 + (aggr_inst.expectancy, ))
+
+            # assert the expectancy is as expected    
+            eq_(aggr_inst.expectancy, expected_expectancy,
+                "Expectancy is '%f' should be '%f' for the pair %s, %s" % \
+                    ((aggr_inst.expectancy, expected_expectancy) + pair1)) 
+        
