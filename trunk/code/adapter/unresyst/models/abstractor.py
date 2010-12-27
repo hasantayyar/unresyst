@@ -29,6 +29,9 @@ class RuleRelationshipDefinition(BaseRelationshipDefinition):
     relationship_type = models.CharField(max_length=MAX_LENGTH_ENTITY_TYPE, \
                     choices=ENTITY_TYPE_CHOICES)
     """A string indicating whether it's a subject, object or both.s/o/so"""
+    
+    is_positive = models.BooleanField()
+    """Is the rule/relationship positive for the predicted_relationship?"""
 
     class Meta:
         app_label = 'unresyst' 
@@ -62,9 +65,30 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
         unique_together = ('subject_object1', 'subject_object2', 'definition')
         """For each definition there can be only one subject-object pair."""
 
-    def get_linear_expectancy(self, _redirect_to_leaf=True):
-        """Gets the linearly aggregated parameters for instance expectancy.
-        In this class returns the weight.
+    def _count_expectancy(self, weighted_confidence):
+        """Count the expectancy for the instance as 1/2 +- weighted_confidence/2 
+        .. depending on whether the rule/relationship is positive.
+        
+        @type weighted_confidence: float
+        @param weighted_confidence: the confidence of the rule/relationship 
+            including the effect of weight.
+        
+        @rtype: float
+        @return: the probability of the predicted_relationship appearing between
+            the entities in the pair.
+        """
+
+        # get the whole object for definition
+        leaf_definition = self.definition.as_leaf_class()
+        
+        # get factor 
+        factor = 1 if leaf_definition.is_positive else -1        
+        
+        return 0.5 + factor * (weighted_confidence / 2)
+
+
+    def get_expectancy(self, _redirect_to_leaf=True):
+        """Get the instance expectancy counted 
         
         @type redirect_to_leaf: bool
         @param redirect_to_leaf: if True, the call is redirected to the leaf class.
@@ -77,22 +101,29 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
         
         # redirect to leaf or not
         if _redirect_to_leaf:
-            return self.as_leaf_class().get_linear_expectancy(_redirect_to_leaf=False)
+            return self.as_leaf_class().get_expectancy(_redirect_to_leaf=False)
         
-        return self.definition.as_leaf_class().weight
+        # get the whole object for definition
+        leaf_definition = self.definition.as_leaf_class()
+        
+        # get factor and weight
+        weight = leaf_definition.weight        
+        
+        return self._count_expectancy(weighted_confidence=weight)
 
 
 class RuleInstance(RelationshipInstance):
     """The rule applied to a pair of subjects/objects.""" 
     
-    expectancy = models.FloatField()
-    """The probability of the relationship between subject/object.
+    confidence = models.FloatField()
+    """The confidence of the given rule being positive/negative (depending on
+    definition.is_positive) in means of the predicted_relationship
     A number from [0, 1].
     """
     
-    def get_linear_expectancy(self, _redirect_to_leaf=True):
-        """Gets the linearly aggregated parameters for instance expectancy.
-        Multiplies the base class weight by expectancy.
+    def get_expectancy(self, _redirect_to_leaf=True):
+        """Get the instance expectancy counted as 1/2 +- weight*confidence/2 .. depending on whether
+        the relationship is positive.
 
         @type redirect_to_leaf: bool
         @param redirect_to_leaf: if True, the call is redirected to the leaf class.
@@ -102,10 +133,15 @@ class RuleInstance(RelationshipInstance):
         @rtype: float from [0, 1]
         @return: the aggregated expectancy.
         """
-        base_expectancy = super(RuleInstance, self).get_linear_expectancy(
-                                                    _redirect_to_leaf=False)
+        # get the whole object for definition
+        leaf_definition = self.definition.as_leaf_class()
         
-        return base_expectancy * self.expectancy
+        # get factor and weight
+        weight = leaf_definition.weight        
+        
+        return self._count_expectancy(weight * self.confidence)
+        
+
         
     class Meta:
         app_label = 'unresyst'

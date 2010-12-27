@@ -59,27 +59,42 @@ class ShoeRecommender(Recommender):
         # if the user has viewed the shoes it's a sign of preference
         SubjectObjectRelationship(
             name="User has viewed shoes.",
+            
             condition=lambda s, o:
                 o in s.viewed_shoes.all(),  
-            weight=0.4,            
+                
+            weight=0.4,  
+            
+            is_positive=True,          
+            
             description="User %(subject)s has viewed %(object)s."
         ),
         
         # if the user is from the same city as the shoe manufacturer, he might like it
         SubjectObjectRelationship(
             name='User lives in the same city as the shoe manufacturer.',
+            
             condition=lambda s, o:
                 o.manufacturer.home_city == s.home_city,
+                
             weight=0.1,
+            
+            is_positive=True,            
+            
             description="User %(subject)s is from the same city as manufacturer of %(object)s."
         ),
         
         # if users live in the same city, they are considered similar
         SubjectSimilarityRelationship(
             name="Users live in the same city.",
+            
             condition=lambda s1, s2:
-                s1.home_city == s2.home_city,                
+                s1.home_city == s2.home_city, 
+                
+            is_positive=True,               
+            
             weight=0.3,            
+            
             description="Users %(subject1)s and %(subject2)s live in the same city."
         ),
         
@@ -87,9 +102,12 @@ class ShoeRecommender(Recommender):
         # similar
         ObjectSimilarityRelationship(
             name="Shoes were made by the same manufacturer.",
+            
             condition=lambda o1, o2:
                 o1.manufacturer == o2.manufacturer,
                 
+            is_positive=True,                
+            
             weight=0.1,
             
             description="Shoes %(object1)s and %(object2)s were made by" + \
@@ -106,11 +124,12 @@ class ShoeRecommender(Recommender):
             # is the user from a southern city and shoes for winter?
             condition=lambda s, o: 
                 s.home_city.in_south and o.for_winter, 
-
+                
+            is_positive=False,
+            
             weight=0.85, 
-
-            # remove from recommendations by returning always 0.
-            expectancy=lambda s, o: 0, 
+            
+            confidence=lambda s, o: 1,             
             
             description="%(subject)s is from south, so %(object)s can't " + 
                 "be recommended to him/her."
@@ -119,13 +138,17 @@ class ShoeRecommender(Recommender):
         # if users are the same age +- year they are similar
         SubjectSimilarityRule(
             name="Users with similar age.",
+            
             # both users have given their age
             condition=lambda s1, s2: 
                 s1.age and s2.age and s1.age -1 <= s2.age <= s2.age + 1,
+                
+            is_positive=True,   
+                
             weight=0.2,
             
-            # a magic linear expectancy function
-            expectancy=lambda s1, s2: 
+            # a magic linear confidence function
+            confidence=lambda s1, s2: 
                 1 - 0.25 * abs(s1.age - s2.age),
             
             description="Users %(subject1)s and %(subject2)s are about " + 
@@ -135,14 +158,17 @@ class ShoeRecommender(Recommender):
         # if shoes have common keywords, they are similar.
         ObjectSimilarityRule(
             name="Shoes with common keywords.",
+            
             # shoes have some common keywords, if both empty, it's false
             condition=lambda o1, o2: 
                 bool(_get_keyword_set(o1).intersection(_get_keyword_set(o2))),
             
+            is_positive=True,
+            
             weight=0.4,
             
             # the size of the intersection / the size of the smaller set
-            expectancy=_keyword_set_similarity,
+            confidence=_keyword_set_similarity,
             
             description="The shoe pairs %(object1)s and %(object2)s " + 
                 "share some keywords."

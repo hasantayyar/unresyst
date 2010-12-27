@@ -134,7 +134,7 @@ class Recommender(BaseRecommender):
             rules=cls.rules
         )
         
-        #XXX tady pokracovat 
+
         # Aggregator
         # 
         
@@ -143,7 +143,7 @@ class Recommender(BaseRecommender):
         
         # Algorithm
         #
-        
+        #XXX tady pokracovat         
         # build the algorithm model from the aggregated relationships
         cls.Algorithm.build(recommender=recommender_model)
 
