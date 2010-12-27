@@ -65,7 +65,7 @@ class LinearAggregator(BaseAggregator):
             desc = ' '.join([pair.description for pair in pairs_qs])
             
             # expectancy is an average expectancy
-            exp = sum([pair.get_linear_expectancy() for pair in pairs_qs])\
+            exp = sum([pair.get_expectancy() for pair in pairs_qs])\
                     / pairs_qs.count()
             
             aggr_inst = AggregatedRelationshipInstance(

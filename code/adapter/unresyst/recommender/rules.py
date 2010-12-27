@@ -4,7 +4,7 @@ from unresyst.constants import *
 
 from unresyst.models.abstractor import *
 from unresyst.models.common import SubjectObject
-from unresyst.exceptions import DescriptionKeyError
+from unresyst.exceptions import DescriptionKeyError, ConfigurationError
 
 class _Relationship(object):
     """A base class for representing all relationships and rules.
@@ -219,16 +219,20 @@ class PredictedRelationship(_Relationship):
 class _WeightedRelationship(_Relationship):
     """A class representing a relationship with a weight."""
 
-    def __init__(self, name, condition, weight, description=None):
+    def __init__(self, name, condition, is_positive, weight, description=None):
         """The constructor."""
         
         super(_WeightedRelationship, self).__init__(name, condition, description)
         
+        self.is_positive = is_positive
+        """Is the relationship positive to the predicted relationship?"""
+        
         self.weight = weight
         """A float number from [0, 1] representing the *static* weight of the rule. 
         It doesn't depend on the entity pair.
-        """                
-    
+        """
+
+
     def get_create_definition_kwargs(self):
         """Get dictionary of parameters for the definition model constructor.        
         
@@ -238,14 +242,17 @@ class _WeightedRelationship(_Relationship):
         @return: the kwargs of the definition model constructor 
         """
         ret_dict = super(_WeightedRelationship, self).get_create_definition_kwargs()
+        
+        ret_dict['is_positive'] = self.is_positive
         ret_dict['weight'] = self.weight
-        ret_dict["relationship_type"] = self.relationship_type        
+        ret_dict["relationship_type"] = self.relationship_type      
+        
         return ret_dict
         
     DefinitionClass = RuleRelationshipDefinition
     """The model class used for representing the definition of the 
     rule/relationship
-    """
+    """    
         
 
 class SubjectObjectRelationship(_WeightedRelationship):
@@ -294,19 +301,19 @@ class _BaseRule(_WeightedRelationship):
     """A base class for all rules (abstract)."""
     
     InstanceClass = RuleInstance
-    """The model class used for representing instances of the rule/relationship"""
+    """The model class used for representing instances of 
+    the rule/relationship"""
     
-    def __init__(self, name, condition, weight, expectancy, description=None):
-        """The constructor."""
-        
-        super(_BaseRule, self).__init__(name, condition, weight, description)
-        
-        self.expectancy = expectancy
-        """A float function giving values from [0, 1] representing the 
-        confidence of the rule for the given pair. It's dynamic, depends 
-        on the entity pair.
-        """
+    def __init__(self, name, condition, is_positive, weight, confidence, description=None):
+        """The constructor.""" 
 
+        super(_BaseRule, self).__init__(name, condition, is_positive, weight, description)
+        
+        self.confidence = confidence
+        """A float function giving values from [0, 1] representing the 
+        the confidence of the rule on the given pair. 
+        It's dynamic, depends on the entity pair.
+        """                
     
     def get_additional_instance_kwargs(self, ds_arg1, ds_arg2):
         """See the base class for documentation
@@ -314,7 +321,7 @@ class _BaseRule(_WeightedRelationship):
         ret_dict = super(_BaseRule, self).get_additional_instance_kwargs(
                                             ds_arg1, ds_arg2)
 
-        ret_dict['expectancy'] = self.expectancy(ds_arg1, ds_arg2)
+        ret_dict['confidence'] = self.confidence(ds_arg1, ds_arg2)
         return ret_dict
         
         

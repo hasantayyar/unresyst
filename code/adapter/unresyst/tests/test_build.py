@@ -195,8 +195,8 @@ class TestAbstractor(TestEntities):
         # rule name, list of instances - (entity1, entity2, description, expectancy)
         # for symmetric rules the description is a pair - both orderings
         "Don't recommend winter shoes for southern users.": (
-            ('Alice', 'RS 130', "Alice is from south, so RS 130 can't be recommended to him/her.", 0),
-            ('Bob', 'RS 130', "Bob is from south, so RS 130 can't be recommended to him/her.", 0),
+            ('Alice', 'RS 130', "Alice is from south, so RS 130 can't be recommended to him/her.", 1),
+            ('Bob', 'RS 130', "Bob is from south, so RS 130 can't be recommended to him/her.", 1),
         ),
         "Users with similar age.": (
             ('Alice', 'Bob', ("Users Alice and Bob are about the same age.", 
@@ -280,7 +280,7 @@ class TestAbstractor(TestEntities):
                     
                 # for rules    
                 if len(expected_data) == 4:
-                    eq_(instance.expectancy, expected_data[3])
+                    eq_(instance.confidence, expected_data[3])
                     
 
     def _test_definitions(self, def_list):
@@ -302,33 +302,40 @@ class TestAbstractor(TestEntities):
             # get the definition model by name (shouldn't throw an error)
             rmodel = qs.get(name=r.name)
             
-            # assert the weight and relationship type are right
+            # assert the positiveness, weight and relationship type are right
+            eq_(rmodel.is_positive, r.is_positive)
             eq_(rmodel.weight, r.weight)   
             eq_(rmodel.relationship_type, r.relationship_type)      
-            
+
+def _count_exp(conf):
+    return 0.5 + conf/2
+    
+def _count_neg_exp(conf):    
+    return 0.5 - conf/2
+                
 class TestAggregator(TestEntities):
     """Testing the building phase of the Linear Aggregator"""
     
     EXPECTED_AGGREGATES = {
         # S-O
-        ('Alice', 'RS 130'): (0.0, ),
-        ('Alice', 'Rubber Shoes'): ((0.4 + 0.1)/2, ),
-        ('Alice', 'Sneakers'): (0.1, ),
-        ('Bob', 'RS 130'): (0.0, ),
-        ('Bob', 'Sneakers'): ((0.4 + 0.1)/2, ),
-        ('Bob', 'Rubber Shoes'): (0.1, ),
-        ('Cindy', 'Rubber Shoes'): (0.4, ),
-        ('Cindy', 'RS 130'): (0.1, ),
+        ('Alice', 'RS 130'): (_count_neg_exp(0.85), ), # 0.075
+        ('Alice', 'Rubber Shoes'): ((_count_exp(0.4) + _count_exp(0.1))/2, ), # 0.625
+        ('Alice', 'Sneakers'): (_count_exp(0.1), ), # 0.55
+        ('Bob', 'RS 130'): (_count_neg_exp(0.85), ), # 0.075
+        ('Bob', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, ), # 0.625
+        ('Bob', 'Rubber Shoes'): (_count_exp(0.1), ), # 0.55
+        ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), ), # 0.7
+        ('Cindy', 'RS 130'): (_count_exp(0.1), ), # 0.55
         
         # S-S
-        ('Alice', 'Bob'): ((0.75 * 0.2 + 0.3)/2, ),
+        ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, ), # 0.6125
         
         # O-O
-        ('Rubber Shoes', 'Sneakers'): ((0.4 + 0.1)/2, ),
-        ('Sneakers', 'RS 130'): (0.2, ),         
+        ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, ), # 0.625
+        ('Sneakers', 'RS 130'): (_count_exp(0.2), ), # 0.6        
     }
     """A dictionary: pair of entities : expectancy."""
-    
+
     def test_aggregates_created(self):
         """Test that the aggregates were created as expected"""
         
