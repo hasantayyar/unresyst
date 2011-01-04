@@ -18,3 +18,8 @@ class RelationshipPredictionInstance(BaseRelationshipInstance):
     the subject and the object. A number from [0, 1]. 
     """
     
+    recommender = models.ForeignKey('unresyst.Recommender')
+    """The recommender it belongs to"""
+    
+    class Meta:
+        app_label = 'unresyst'    

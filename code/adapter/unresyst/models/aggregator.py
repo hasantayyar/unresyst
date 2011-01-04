@@ -4,7 +4,9 @@ The aggregated relationship.
 """
 
 from django.db import models
+
 from base import BaseRelationshipInstance
+from unresyst.constants import *
 
 class AggregatedRelationshipInstance(BaseRelationshipInstance):
     """A representation of an aggregated relationship between two subject/objects
@@ -20,6 +22,10 @@ class AggregatedRelationshipInstance(BaseRelationshipInstance):
     
     recommender = models.ForeignKey('unresyst.Recommender')
     """The recommender it belongs to"""
+    
+    relationship_type = models.CharField(max_length=MAX_LENGTH_RELATIONSHIP_TYPE, 
+                    choices=RELATIONSHIP_TYPE_CHOICES)
+    """A string indicating whether it's a S-O, O-O, S-S, or SO-SO relationship."""
     
     additional_unique = ('recommender', )
     """There can be multiple pairs for one recommender"""

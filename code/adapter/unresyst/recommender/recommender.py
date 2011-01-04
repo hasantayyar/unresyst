@@ -10,7 +10,7 @@ from unresyst.constants import *
 from unresyst.exceptions import ConfigurationError
 from unresyst.abstractor import BasicAbstractor 
 from unresyst.aggregator import LinearAggregator
-from unresyst.algorithm import DummyAlgorithm
+from unresyst.algorithm import SimpleAlgorithm
 from unresyst.models.common import Recommender as RecommenderModel
 
 class MetaRecommender(type):
@@ -129,10 +129,9 @@ class Recommender(BaseRecommender):
             relationships=cls.relationships
         )    
                
-        # evaluate rules and make rule instances between the affected subjects/objects
-        cls.Abstractor.create_rule_instances(        
-            rules=cls.rules
-        )
+        # evaluate rules and make rule instances between the affected 
+        # subjects/objects
+        cls.Abstractor.create_rule_instances(rules=cls.rules)
         
 
         # Aggregator
@@ -142,10 +141,11 @@ class Recommender(BaseRecommender):
         cls.Aggregator.aggregate(recommender_model=recommender_model)        
         
         # Algorithm
-        #
-        #XXX tady pokracovat         
+        #        
         # build the algorithm model from the aggregated relationships
-        cls.Algorithm.build(recommender=recommender_model)
+        cls.Algorithm.build(
+            recommender_model=recommender_model, 
+            remove_predicted=cls.remove_predicted_from_recommendations)
 
 
     # Recommend phase:
@@ -299,7 +299,7 @@ class Recommender(BaseRecommender):
     """The class that will be used for the aggregator level. Can be 
     overriden in suclasses"""
     
-    Algorithm = DummyAlgorithm
+    Algorithm = SimpleAlgorithm
     """The class that will be used for the algorithm level. Can be 
     overriden in suclasses"""
     
