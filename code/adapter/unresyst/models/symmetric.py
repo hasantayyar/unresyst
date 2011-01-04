@@ -155,8 +155,8 @@ class SymmetricalRelationship(models.Model):
         @type obj: core.models.BaseEntity
         @param obj: the object whose relationships should be got
         
-        @rtype: list of relationship class
-        @return: the list of relationships related to obj                
+        @rtype: QuerySet of relationship class
+        @return: relationships related to obj                
         """
         # get relationships where there is cls at first or second place
         # 
@@ -168,7 +168,7 @@ class SymmetricalRelationship(models.Model):
             Q(**kwargs1) | Q(**kwargs2)
         )
 
-        return list(q)
+        return q
         
         
     def get_related(self, obj):

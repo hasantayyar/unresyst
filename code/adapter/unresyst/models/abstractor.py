@@ -111,6 +111,23 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
         
         return self._count_expectancy(weighted_confidence=weight)
 
+    @classmethod
+    def filter_predicted(cls, recommender_model):
+        """Get queryset of the instances of the predicted relationship.
+        
+        @type recommender_model: models.common.Recommender
+        @param recommender_model: the recommender whose instances should
+            be aggregated. 
+
+        @rtype: QuerySet
+        @returns: instances of the predicted relationship for the given
+            recommender
+        """
+        # get the predicted relationship definition
+        pred_rel_def = PredictedRelationshipDefinition.objects.get(
+                        recommender=recommender_model)
+        
+        return cls.objects.filter(definition=pred_rel_def)                        
 
 class RuleInstance(RelationshipInstance):
     """The rule applied to a pair of subjects/objects.""" 

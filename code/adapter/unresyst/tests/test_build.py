@@ -7,7 +7,8 @@ from unresyst import Recommender
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
     RelationshipInstance, RuleInstance, RuleRelationshipDefinition
-from unresyst.models.aggregator import AggregatedRelationshipInstance    
+from unresyst.models.aggregator import AggregatedRelationshipInstance
+from unresyst.models.algorithm import RelationshipPredictionInstance    
 from test_base import TestBuild, TestEntities
 
 from demo.recommender import ShoeRecommender
@@ -372,4 +373,54 @@ class TestAggregator(TestEntities):
                 "Relationship type is '%s' should be '%s' for the pair %s, %s" % \
                     ((aggr_inst.relationship_type, expected_rel_type) + pair1)) 
                             
+
+class TestAlgorithm(TestEntities):
+    """Testing the building phase of the SimpleAlgorithm"""       
+    
+    
+    EXPECTED_PREDICTIONS = {
+        # S-O
+        ('Alice', 'RS 130'): _count_neg_exp(0.85), # 0.075
+        ('Alice', 'Rubber Shoes'): (_count_exp(0.4) + _count_exp(0.1))/2, # 0.625
+        ('Alice', 'Sneakers'): 0, 
         
+        ('Bob', 'RS 130'): _count_neg_exp(0.85), # 0.075
+        ('Bob', 'Rubber Shoes'): _count_exp(0.1), # 0.55
+        ('Bob', 'Sneakers'): 0, 
+
+        ('Cindy', 'RS 130'): _count_exp(0.1), # 0.55
+        ('Cindy', 'Rubber Shoes'): _count_exp(0.4), # 0.7        
+    }     
+    
+    def test_predictions_created(self):
+        """Test that the predictions were created as expected"""
+        
+        # filter aggregated instances for my recommender
+        pred_instances = RelationshipPredictionInstance.objects.filter(
+                            recommender=ShoeRecommender.recommender_model)
+        
+        # assert it has the expected length 
+        eq_(pred_instances.count(), len(self.EXPECTED_PREDICTIONS))
+        
+        for pred_inst in pred_instances.iterator():
+            pair1 = (pred_inst.subject_object1.name, pred_inst.subject_object2.name)
+            pair2 = (pred_inst.subject_object2.name, pred_inst.subject_object1.name)            
+            
+            # try getting the instance from expected in both directions
+            if self.EXPECTED_PREDICTIONS.has_key(pair1):
+                expected_prediction = self.EXPECTED_PREDICTIONS[pair1]
+            else:
+                if self.EXPECTED_PREDICTIONS.has_key(pair2):
+                    expected_prediction = self.EXPECTED_PREDICTIONS[pair2]
+                else:
+                    # if not found it's unexpected.
+                    assert False, \
+                        "Unexpected prediction between '%s' and '%s' expectancy: %f" % \
+                        (pair1 + (pred_inst.expectancy, ))
+
+            # assert the expectancy is as expected    
+            eq_(pred_inst.expectancy, expected_prediction,
+                "Prediction is '%f' should be '%f' for the pair %s, %s" % \
+                    ((pred_inst.expectancy, expected_prediction) + pair1)) 
+        
+
