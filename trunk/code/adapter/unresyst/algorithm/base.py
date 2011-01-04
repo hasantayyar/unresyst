@@ -8,9 +8,17 @@ class BaseAlgorithm(object):
     #
     
     @classmethod
-    def build(cls, recommender):
-        """Build the recommender model, so that the given relationship can be
+    def build(cls, recommender_model, remove_predicted):
+        """Build the recommender, so that the given relationship can be
         predicted easily.
+        
+        @type recommender_model: models.common.Recommender
+        @param recommender_model: the recommender whose instances should
+            be aggregated. 
+
+        @type remove_predicted: bool
+        @param remove_predicted: should pairs already having 
+            predicted_relationship between them be removed from recommendations?
         """
         pass
     

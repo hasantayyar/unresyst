@@ -318,21 +318,21 @@ class TestAggregator(TestEntities):
     
     EXPECTED_AGGREGATES = {
         # S-O
-        ('Alice', 'RS 130'): (_count_neg_exp(0.85), ), # 0.075
-        ('Alice', 'Rubber Shoes'): ((_count_exp(0.4) + _count_exp(0.1))/2, ), # 0.625
-        ('Alice', 'Sneakers'): (_count_exp(0.1), ), # 0.55
-        ('Bob', 'RS 130'): (_count_neg_exp(0.85), ), # 0.075
-        ('Bob', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, ), # 0.625
-        ('Bob', 'Rubber Shoes'): (_count_exp(0.1), ), # 0.55
-        ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), ), # 0.7
-        ('Cindy', 'RS 130'): (_count_exp(0.1), ), # 0.55
+        ('Alice', 'RS 130'): (_count_neg_exp(0.85), 'S-O'), # 0.075
+        ('Alice', 'Rubber Shoes'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O'), # 0.625
+        ('Alice', 'Sneakers'): (_count_exp(0.1), 'S-O'), # 0.55
+        ('Bob', 'RS 130'): (_count_neg_exp(0.85), 'S-O'), # 0.075
+        ('Bob', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O'), # 0.625
+        ('Bob', 'Rubber Shoes'): (_count_exp(0.1), 'S-O'), # 0.55
+        ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), 'S-O'), # 0.7
+        ('Cindy', 'RS 130'): (_count_exp(0.1), 'S-O'), # 0.55
         
         # S-S
-        ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, ), # 0.6125
+        ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, 'S-S'), # 0.6125
         
         # O-O
-        ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, ), # 0.625
-        ('Sneakers', 'RS 130'): (_count_exp(0.2), ), # 0.6        
+        ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'O-O'), # 0.625
+        ('Sneakers', 'RS 130'): (_count_exp(0.2), 'O-O'), # 0.6        
     }
     """A dictionary: pair of entities : expectancy."""
 
@@ -352,10 +352,10 @@ class TestAggregator(TestEntities):
             
             # try getting the instance from expected in both directions
             if self.EXPECTED_AGGREGATES.has_key(pair1):
-                expected_expectancy = self.EXPECTED_AGGREGATES[pair1][0]
+                expected_expectancy, expected_rel_type = self.EXPECTED_AGGREGATES[pair1]
             else:
                 if self.EXPECTED_AGGREGATES.has_key(pair2):
-                    expected_expectancy = self.EXPECTED_AGGREGATES[pair2][0]
+                    expected_expectancy,expected_rel_type = self.EXPECTED_AGGREGATES[pair2]
                 else:
                     # if not found it's unexpected.
                     assert False, \
@@ -366,4 +366,10 @@ class TestAggregator(TestEntities):
             eq_(aggr_inst.expectancy, expected_expectancy,
                 "Expectancy is '%f' should be '%f' for the pair %s, %s" % \
                     ((aggr_inst.expectancy, expected_expectancy) + pair1)) 
+        
+            # assert the relationship type is as expected    
+            eq_(aggr_inst.relationship_type, expected_rel_type,
+                "Relationship type is '%s' should be '%s' for the pair %s, %s" % \
+                    ((aggr_inst.relationship_type, expected_rel_type) + pair1)) 
+                            
         

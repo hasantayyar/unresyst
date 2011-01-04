@@ -26,8 +26,8 @@ class RuleRelationshipDefinition(BaseRelationshipDefinition):
     weight = models.FloatField()
     """The weight of the rule/relationship. A number from [0, 1]."""
     
-    relationship_type = models.CharField(max_length=MAX_LENGTH_ENTITY_TYPE, \
-                    choices=ENTITY_TYPE_CHOICES)
+    relationship_type = models.CharField(max_length=MAX_LENGTH_RELATIONSHIP_TYPE, 
+                    choices=RELATIONSHIP_TYPE_CHOICES)
     """A string indicating whether it's a subject, object or both.s/o/so"""
     
     is_positive = models.BooleanField()

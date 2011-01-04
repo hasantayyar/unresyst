@@ -62,10 +62,10 @@ class ShoeRecommender(Recommender):
             
             condition=lambda s, o:
                 o in s.viewed_shoes.all(),  
+
+            is_positive=True, 
                 
-            weight=0.4,  
-            
-            is_positive=True,          
+            weight=0.4,                       
             
             description="User %(subject)s has viewed %(object)s."
         ),
@@ -76,10 +76,10 @@ class ShoeRecommender(Recommender):
             
             condition=lambda s, o:
                 o.manufacturer.home_city == s.home_city,
-                
-            weight=0.1,
-            
+
             is_positive=True,            
+                
+            weight=0.1,           
             
             description="User %(subject)s is from the same city as manufacturer of %(object)s."
         ),

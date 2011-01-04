@@ -49,7 +49,7 @@ class LinearAggregator(BaseAggregator):
                              recommender=recommender_model,
                              entity_type=None):
             
-            # get relationships between ent1 and ent2
+            # get rules and relationships between ent1 and ent2
             pairs_qs = RelationshipInstance.filter_relationships(
                         object1=ent1,
                         object2=ent2,
@@ -68,11 +68,16 @@ class LinearAggregator(BaseAggregator):
             exp = sum([pair.get_expectancy() for pair in pairs_qs])\
                     / pairs_qs.count()
             
+            # take the relationship type from the definition of the first 
+            # rule/relationship
+            rel_type = pairs_qs[0].definition.as_leaf_class().relationship_type
+            
             aggr_inst = AggregatedRelationshipInstance(
                             subject_object1=ent1,
                             subject_object2=ent2, 
                             description=desc,
                             expectancy=exp,
+                            relationship_type=rel_type,
                             recommender=recommender_model)
             
             aggr_inst.save()
