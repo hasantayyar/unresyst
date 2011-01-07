@@ -80,3 +80,7 @@ FORMAT_STR_SUBJECTOBJECT2 = "subjectobject2"
 
 DEFAULT_RECOMMENDATION_COUNT = 10
 """The defaul count of the obtained recommended objects"""
+
+UNCERTAIN_PREDICTION_VALUE = 0.5
+"""The value that is returned when the prediction for the pair isn't 
+available"""

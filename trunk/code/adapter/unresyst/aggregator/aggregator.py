@@ -12,6 +12,9 @@ class LinearAggregator(BaseAggregator):
     of entities. 
     
     It ignores the predicted_relationship instances.
+    
+    A better aggregator could add the positive and subtract the negative 
+    expectances somehow.
     """
 
     @classmethod
@@ -19,6 +22,10 @@ class LinearAggregator(BaseAggregator):
         """For documentation see the base class.
         
         Linearly combines the rule and relationship instances.
+        
+        The descriptions of the aggregates are made by joining the descriptions
+        of the aggregated instances. The descriptions are ordered by the expectancy
+        of their owners, the highest expectancy comes first.
         """
         
         # if there's something in the database for the recommender
@@ -61,12 +68,20 @@ class LinearAggregator(BaseAggregator):
             # if there're some relationship instances, create an aggregated
             # instance and save it
             
+            pairs_qs = list(pairs_qs)
+            
+            # count expectancies
+            for pair in pairs_qs:
+                pair.exp = pair.get_expectancy()
+            
+            # sort the list by expectancy
+            pairs_qs.sort(key=lambda pair: pair.exp, reverse=True)
+            
             # description are joined descriptions of the relationships
             desc = ' '.join([pair.description for pair in pairs_qs])
             
             # expectancy is an average expectancy
-            exp = sum([pair.get_expectancy() for pair in pairs_qs])\
-                    / pairs_qs.count()
+            exp = sum([pair.exp for pair in pairs_qs]) / len(pairs_qs)
             
             # take the relationship type from the definition of the first 
             # rule/relationship
