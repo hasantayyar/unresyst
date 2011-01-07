@@ -32,21 +32,46 @@ class BaseRecommender(object):
         """Get the prediction of the given relationship type between the subject
         and the object. 
         
-        @rtype: float/None (TODO spis nejaky zapouzdrujici objekt)
-        @return: The probability of the predicted relationship between the subject and
-            the object, or None if the prediction is not available.
+        @type subject: domain specific subject
+        @param subject: the subject
+        
+        @type object_: domain specific object
+        @param object_: the object
+        
+        @rtype: RelationshipPrediction
+        @return: An instance representing the prediction of the relationship 
+            between the subject and the object, containing the estimated 
+            probability and explanation. If the prediction isn't known, returns
+            an prediction with expectancy 0.5 and empty explanation
+        
+        @raise InvalidParameterError: if the given subject or object doesn't 
+            have a domain neutral representation in the unresyst database. 
+            Either the recommender hasn't been built or the subject/object was
+            added later without updating the recommender.
         """
         pass
         
     @classmethod
     def get_recommendations(cls, subject, count=None):
         """Get recommendations for the given subject.
-        
+
+        @type subject: domain specific subject
+        @param subject: the subject
+                
         @type count: int
-        @param count: a maximum number of objects to be recommended
+        @param count: a maximum number of objects to be recommended, if not given,
+            the default_recommendation_count from the recommender class is used.
         
-        @rtype: a list of objects (TODO spis nejaky zapouzdrujici objekt)
-        @return: subject's recommended objects. or None if the recommndations aren't available - objekt s nejakou hlaskou.
+        @rtype: list of RelationshipPrediction
+        @return: An instance representing the prediction of the relationship 
+            between the subject and the object, containing the estimated 
+            probability and explanation. If the prediction isn't known, returns
+            an prediction with expectancy 0.5 and empty explanation
+
+        @raise InvalidParameterError: if the given subject doesn't 
+            have a domain neutral representation in the unresyst database. 
+            Either the recommender hasn't been built or the subject was
+            added later without updating the recommender.        
         """
         pass
  
@@ -143,4 +168,10 @@ class BaseRecommender(object):
     recommendation list?
     """
     
-    #TODO jeste by to chtelo nejake settings, co to ma delat, kdyz se ptam na subject object pair, ktery uz mezi sebou ma predicted_relationship
+    recommendation_expectancy_limit = None
+    """The limit for expectancy above which the objects can be recommended.
+    If not none, only objects with expectancy above the limit are recommended.
+    A reasonable limit is 0.5 - the recommendations then don't include random 
+    objects.
+    """
+    

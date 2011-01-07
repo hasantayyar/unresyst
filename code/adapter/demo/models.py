@@ -10,7 +10,7 @@ class ShoePair(models.Model):
     name = models.CharField(max_length=MAX_LENGTH_NAME)
     """The shoe model name"""
     
-    manufacturer = models.ForeignKey('Manufacturer')
+    manufacturer = models.ForeignKey('Manufacturer', null=True)
     """The manufacturer who made the shoes."""
     
     for_winter = models.BooleanField(default=False)

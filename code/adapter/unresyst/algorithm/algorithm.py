@@ -243,6 +243,51 @@ class SimpleAlgorithm(BaseAlgorithm):
                                 recommender=recommender_model)
 
             prediction.save()
+
+    # Recommend phase:
+    #
+    
+    @classmethod
+    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object):
+        """See the base class for the documentation.
+        """
+        # filter the predictions for recommender
+        qs_rec_pred = RelationshipPredictionInstance.objects.filter(
+                        recommender=recommender_model)
+
+        # filter the predictions for the given pair                        
+        qs_pred = RelationshipPredictionInstance.filter_relationships(
+                        object1=dn_subject,
+                        object2=dn_object,
+                        queryset=qs_rec_pred)        
         
+        # if not available return the uncertain                        
+        if not qs_pred:
+            return RelationshipPredictionInstance(
+                subject_object1=dn_subject,
+                subject_object2=dn_object,
+                description='',
+                recommender=recommender_model,
+                expectancy=UNCERTAIN_PREDICTION_VALUE
+            )
         
+        # otherwise return the found one
+        assert len(qs_pred) == 1
+
+        return qs_pred[0]
         
+    @classmethod
+    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit):
+        """See the base class for documentation.
+        """
+        
+        # get the recommendations ordered by the expectancy from the largest
+        recommendations = RelationshipPredictionInstance\
+                            .get_relationships(obj=dn_subject)\
+                            .filter(recommender=recommender_model, 
+                                expectancy__gt=expectancy_limit)\
+                            .order_by('-expectancy')                            
+        # TODO: if vysledku je malo && limit > 0.5 narvi tam nejake, na ktere nejsou recommendations
+        # udelat fci na uncertain prediction
+                 
+        return recommendations[:count]

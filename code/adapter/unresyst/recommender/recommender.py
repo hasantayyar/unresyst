@@ -6,12 +6,14 @@ Contents:
  - MetaRecommender: the metaclass for creating recommender classes
 """
 from base import BaseRecommender
+from predictions import RelationshipPrediction
 from unresyst.constants import *
-from unresyst.exceptions import ConfigurationError
+from unresyst.exceptions import ConfigurationError, InvalidParameterError
 from unresyst.abstractor import BasicAbstractor 
 from unresyst.aggregator import LinearAggregator
 from unresyst.algorithm import SimpleAlgorithm
-from unresyst.models.common import Recommender as RecommenderModel
+from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
+
 
 class MetaRecommender(type):
     """The meta-class adding a reference to the class for the contained
@@ -55,6 +57,9 @@ class Recommender(BaseRecommender):
     with the appropriate condition. 
     """
     __metaclass__ = MetaRecommender
+    """A metaclass putting the reference to the recommender to all member
+    rules and relationships.
+    """
     
     # Build phase:
     #
@@ -145,7 +150,8 @@ class Recommender(BaseRecommender):
         # build the algorithm model from the aggregated relationships
         cls.Algorithm.build(
             recommender_model=recommender_model, 
-            remove_predicted=cls.remove_predicted_from_recommendations)
+            remove_predicted=cls.remove_predicted_from_recommendations
+        )
 
 
     # Recommend phase:
@@ -153,25 +159,60 @@ class Recommender(BaseRecommender):
     
     @classmethod        
     def predict_relationship(cls, subject, object_):
-        """For documentation, see the base class"""
+        """For documentation, see the base class"""        
+        
+        subject_ent_type = ENTITY_TYPE_SUBJECT \
+                            if not cls.recommender_model.are_subjects_objects \
+                            else ENTITY_TYPE_SUBJECTOBJECT
+
+        object_ent_type = ENTITY_TYPE_OBJECT \
+                            if not cls.recommender_model.are_subjects_objects \
+                            else ENTITY_TYPE_SUBJECTOBJECT
 
         # get the domain neutral representations for the subject and object
-        dn_subject = cls.Abstractor.get_dn_subject(
-            recommender=cls.__name__, 
-            subject=subject
-        )
-        dn_object = cls.Abstractor.get_dn_object(
-            recommender=cls.__name__, 
-            object_=object_
-        )
+        try:
+            dn_subject = SubjectObject.get_domain_neutral_entity(
+                domain_specific_entity=subject,
+                entity_type=subject_ent_type,
+                recommender=cls.recommender_model
+            )
+        except SubjectObject.DoesNotExist, e:
+            raise InvalidParameterError(
+                message="The subject wasn't found in the recommender database." + \
+                    "Try rebuilding the model. Exception: %s" % e,
+                parameter_name='subject', 
+                parameter_value=subject)            
+
+        try:                
+            dn_object = SubjectObject.get_domain_neutral_entity(
+                domain_specific_entity=object_,
+                entity_type=object_ent_type,
+                recommender=cls.recommender_model
+            )
+        except SubjectObject.DoesNotExist, e:
+            raise InvalidParameterError(
+                message="The object wasn't found in the recommender database." + \
+                    "Try rebuilding the model. Exception: %s" % e,
+                parameter_name='object_', 
+                parameter_value=object_)     
         
         # get the prediction from the algorithm
-        return cls.Algorithm.get_relationship_prediction(
-            recommender=cls.__name__,
+        prediction_model = cls.Algorithm.get_relationship_prediction(
+            recommender_model=cls.recommender_model,
             dn_subject=dn_subject,
             dn_object=dn_object
         )
-    
+        
+        # create and return the outer-world object
+        prediction = RelationshipPrediction(
+            subject=subject,
+            object_=object_,
+            expectancy=prediction_model.expectancy,
+            explanation=prediction_model.description
+        )            
+        return prediction
+
+
     @classmethod
     def get_recommendations(cls, subject, count=None):        
         """For documentation, see the base class"""
@@ -180,23 +221,58 @@ class Recommender(BaseRecommender):
         if not count:
             count = cls.default_recommendation_count
         
+        subject_ent_type = ENTITY_TYPE_SUBJECT \
+                            if not cls.recommender_model.are_subjects_objects \
+                            else ENTITY_TYPE_SUBJECTOBJECT
+                            
         # convert the the subject to domain neutral
-        dn_subject = cls.Abstractor.get_dn_subject(
-            recommender=cls.__name__, 
-            subject=subject
-        )
-        
+        try:
+            dn_subject = SubjectObject.get_domain_neutral_entity(
+                domain_specific_entity=subject,
+                entity_type=subject_ent_type,
+                recommender=cls.recommender_model
+            )
+        except SubjectObject.DoesNotExist, e:
+            raise InvalidParameterError(
+                message="The subject wasn't found in the recommender database." + \
+                    "Try rebuilding the model. Exception: %s" % e,
+                parameter_name='subject', 
+                parameter_value=subject)  
+
+        limit = cls.recommendation_expectancy_limit \
+            if not cls.recommendation_expectancy_limit is None else 0
+
         # get the recommendations from the algorithm
-        dn_objects = cls.Algorithm.get_recommendations(
-            recommender=cls.__name__,
-            dn_subject=dn_subject
+        prediction_models = cls.Algorithm.get_recommendations(
+            recommender_model=cls.recommender_model,
+            dn_subject=dn_subject,
+            count=count,
+            expectancy_limit=limit
         )
         
-        # convert the object to domain specific
-        return [cls.Abstractor.get_object(
-                    recommender=cls.__name__,
-                    dn_object=dn_object
-                ) for dn_object in dn_objects]
+        recommendations = []
+        
+        # go through the obtained predictions
+        for pred_model in prediction_models:
+
+            # obtain the object from the prediction
+            dn_object = pred_model.get_related(dn_subject)
+            
+            # get its domain specific representation
+            object_ = dn_object.get_domain_specific_entity(entity_manager=cls.objects)
+                        
+            # create the outer-world object
+            prediction = RelationshipPrediction(
+                subject=subject,
+                object_=object_,
+                expectancy=pred_model.expectancy,
+                explanation=pred_model.description
+            )            
+            
+            recommendations.append(prediction)
+
+        return recommendations
+
 
     # Update phase:
     # 

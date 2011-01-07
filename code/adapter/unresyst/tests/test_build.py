@@ -1,4 +1,13 @@
-"""Tests for the building phase"""
+"""Tests for the building phase.
+
+Each layer has a separate test:
+ - recommender
+ - abstractor
+ - aggregator
+ - algorithm 
+
+The tests are always started by running the recommender.build method.
+"""
 
 from nose.tools import eq_
 from django.db.models import Q
@@ -322,25 +331,49 @@ class TestAggregator(TestEntities):
     
     EXPECTED_AGGREGATES = {
         # S-O
-        ('Alice', 'RS 130'): (_count_neg_exp(0.85), 'S-O'), # 0.075
-        ('Alice', 'Rubber Shoes'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O'), # 0.625
-        ('Alice', 'Sneakers'): (_count_exp(0.1), 'S-O'), # 0.55
-        ('Bob', 'RS 130'): (_count_neg_exp(0.85), 'S-O'), # 0.075
-        ('Bob', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O'), # 0.625
-        ('Bob', 'Rubber Shoes'): (_count_exp(0.1), 'S-O'), # 0.55
-        ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), 'S-O'), # 0.7
-        ('Cindy', 'RS 130'): (_count_exp(0.1), 'S-O'), # 0.55
-        ('Daisy', 'RS 130'): (_count_exp(0.1), 'S-O'), # 0.55
+        ('Alice', 'RS 130'): (_count_neg_exp(0.85), 'S-O', 
+            ("Alice is from south, so RS 130 can't be recommended to him/her.",)), # 0.075
+        ('Alice', 'Rubber Shoes'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O',
+            ('User Alice has viewed Rubber Shoes. User Alice is from the same city as manufacturer of Rubber Shoes.',)), # 0.625
+        ('Alice', 'Sneakers'): (_count_exp(0.1), 'S-O',  
+            ("User Alice is from the same city as manufacturer of Sneakers.",)), # 0.55
+            
+        ('Bob', 'RS 130'): (_count_neg_exp(0.85), 'S-O', 
+            ("Bob is from south, so RS 130 can't be recommended to him/her.",)), # 0.075
+        ('Bob', 'Rubber Shoes'): (_count_exp(0.1), 'S-O',
+            ("User Bob is from the same city as manufacturer of Rubber Shoes.",)), # 0.55
+        ('Bob', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O',
+            ("User Bob has viewed Sneakers. User Bob is from the same city as manufacturer of Sneakers.",)), # 0.625
+
+        ('Cindy', 'RS 130'): (_count_exp(0.1), 'S-O',
+            ("User Cindy is from the same city as manufacturer of RS 130.",)), # 0.55
+        ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), 'S-O',
+            ("User Cindy has viewed Rubber Shoes.",)), # 0.7
+        
+        ('Daisy', 'RS 130'): (_count_exp(0.1), 'S-O',
+            ("User Daisy is from the same city as manufacturer of RS 130.",)), # 0.55
         
         # S-S
-        ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, 'S-S'), # 0.6125
-        ('Cindy', 'Daisy'): (_count_exp(0.3), 'S-S'),
+        ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, 'S-S', (
+            "Users Alice and Bob live in the same city. Users Alice and Bob are about the same age.",
+            "Users Alice and Bob live in the same city. Users Bob and Alice are about the same age.",
+            "Users Alice and Bob live in the same city. Users Bob and Alice are about the same age.",
+            "Users Bob and Alice live in the same city. Users Bob and Alice are about the same age.")), # 0.6125
+        ('Cindy', 'Daisy'): (_count_exp(0.3), 'S-S', (
+            "Users Cindy and Daisy live in the same city.",
+            "Users Daisy and Cindy live in the same city.")), #0.65
         
         # O-O
-        ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'O-O'), # 0.625
-        ('Sneakers', 'RS 130'): (_count_exp(0.2), 'O-O'), # 0.6        
+        ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'O-O', (
+            "The shoe pairs Rubber Shoes and Sneakers share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+            "The shoe pairs Rubber Shoes and Sneakers share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.",
+            "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+            "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")), # 0.625
+        ('Sneakers', 'RS 130'): (_count_exp(0.2), 'O-O',(
+            "The shoe pairs Sneakers and RS 130 share some keywords.",
+            "The shoe pairs RS 130 and Sneakers share some keywords.",)), # 0.6        
     }
-    """A dictionary: pair of entities : expectancy."""
+    """A dictionary: pair of entities : expectancy, entity_type, description"""
 
     def test_aggregates_created(self):
         """Test that the aggregates were created as expected"""
@@ -358,10 +391,10 @@ class TestAggregator(TestEntities):
             
             # try getting the instance from expected in both directions
             if self.EXPECTED_AGGREGATES.has_key(pair1):
-                expected_expectancy, expected_rel_type = self.EXPECTED_AGGREGATES[pair1]
+                expected_expectancy, expected_rel_type, expected_descs = self.EXPECTED_AGGREGATES[pair1]
             else:
                 if self.EXPECTED_AGGREGATES.has_key(pair2):
-                    expected_expectancy,expected_rel_type = self.EXPECTED_AGGREGATES[pair2]
+                    expected_expectancy,expected_rel_type, expected_descs = self.EXPECTED_AGGREGATES[pair2]
                 else:
                     # if not found it's unexpected.
                     assert False, \
@@ -377,6 +410,11 @@ class TestAggregator(TestEntities):
             eq_(aggr_inst.relationship_type, expected_rel_type,
                 "Relationship type is '%s' should be '%s' for the pair %s, %s" % \
                     ((aggr_inst.relationship_type, expected_rel_type) + pair1)) 
+                    
+            # assert the description is as expected                    
+            assert aggr_inst.description in expected_descs, \
+                "Description is '%s' should be one of '%s' for the pair %s, %s" % \
+                    ((aggr_inst.description, expected_descs) + pair1) 
                             
 
 class TestAlgorithm(TestEntities):

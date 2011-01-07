@@ -27,21 +27,45 @@ class BaseAlgorithm(object):
     #
     
     @classmethod
-    def get_relationship_prediction(cls, recommender, dn_subject, dn_object):
+    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object):
         """Get the prediction of the appearance of the predicted_relationship.
+
+        @type recommender_model: models.common.Recommender
+        @param recommender_model: the recommender whose instances should
+            be aggregated.         
         
-        @rtype: float
-        @return: the probability of appearance of the predict_relationship
+        @type dn_subject: models.common.SubjectObject
+        @param dn_subject: the domain neutral subject
+        
+        @type dn_object: models.common.SubjectObject
+        @param dn_object: the domain neutral object
+                    
+        @rtype: models.algorithm.RelationshipPredictionInstance
+        @return: the model instance for the prediction 
         """
         pass
 
         
     @classmethod
-    def get_recommendations(cls, recommender, dn_subject):
+    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit):
         """Get the recommendations for the given subject
+
+        @type recommender_model: models.common.Recommender
+        @param recommender_model: the recommender whose instances should
+            be aggregated. 
+
+        @type dn_subject: models.common.SubjectObject
+        @param dn_subject: the domain neutral subject
+
+        @type count: int
+        @param count: how many recommendations should be obtained
         
-        @rtype: a list of SubjectObjects
-        @return: the objects recommended to the subject
+        @type expectancy_limit: float
+        @param expectancy_limit: the lower limit for object expectancy, only
+            objects with expectancy higher than limit are recommended.
+        
+        @rtype: a list of models.algorithm.RelationshipPredictionInstance
+        @return: the predictions of the objects recommended to the subject
         """
         pass
 
