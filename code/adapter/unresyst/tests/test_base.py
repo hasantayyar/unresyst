@@ -44,6 +44,7 @@ class TestEntities(TestBuild):
             'Alice': User.objects.get(name="Alice"),
             'Bob': User.objects.get(name="Bob"),
             'Cindy': User.objects.get(name="Cindy"),
+            'Daisy': User.objects.get(name="Daisy"),
             'Sneakers': ShoePair.objects.get(name="Sneakers"),
             "Rubber Shoes": ShoePair.objects.get(name="Rubber Shoes"),
             'RS 130': ShoePair.objects.get(name='RS 130'),
@@ -62,7 +63,11 @@ class TestEntities(TestBuild):
             'Cindy': SubjectObject.get_domain_neutral_entity(
                             domain_specific_entity=self.specific_entities['Cindy'], 
                             entity_type='S', 
-                            recommender=rm),                            
+                            recommender=rm),
+            'Daisy': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Daisy'], 
+                            entity_type='S', 
+                            recommender=rm),                                                 
             'Sneakers': SubjectObject.get_domain_neutral_entity(
                             domain_specific_entity=self.specific_entities['Sneakers'], 
                             entity_type='O', 

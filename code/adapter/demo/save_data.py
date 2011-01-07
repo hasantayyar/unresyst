@@ -92,4 +92,11 @@ def save_data():
     cindy.viewed_shoes.add(rubber_shoes)
     cindy.save()
     
+    daisy = User(
+        name="Daisy",
+        age=32,
+        home_city=helsinki
+    )
+    daisy.save()
+    
                     

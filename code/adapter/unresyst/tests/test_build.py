@@ -159,6 +159,8 @@ class TestAbstractor(TestEntities):
         "Users live in the same city.": (
             ('Alice', 'Bob', ("Users Alice and Bob live in the same city.",
                 "Users Bob and Alice live in the same city.")),
+            ('Cindy', 'Daisy', ("Users Cindy and Daisy live in the same city.",
+                 "Users Daisy and Cindy live in the same city.")),
         ),
         "Shoes were made by the same manufacturer.": (
             ('Sneakers', 'Rubber Shoes', 
@@ -171,6 +173,7 @@ class TestAbstractor(TestEntities):
             ('Alice', 'Sneakers',  "User Alice is from the same city as manufacturer of Sneakers."),
             ('Bob', 'Sneakers', "User Bob is from the same city as manufacturer of Sneakers."),
             ('Cindy', 'RS 130', "User Cindy is from the same city as manufacturer of RS 130."),
+            ('Daisy', 'RS 130', "User Daisy is from the same city as manufacturer of RS 130.")
         ),
     }
         
@@ -327,9 +330,11 @@ class TestAggregator(TestEntities):
         ('Bob', 'Rubber Shoes'): (_count_exp(0.1), 'S-O'), # 0.55
         ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), 'S-O'), # 0.7
         ('Cindy', 'RS 130'): (_count_exp(0.1), 'S-O'), # 0.55
+        ('Daisy', 'RS 130'): (_count_exp(0.1), 'S-O'), # 0.55
         
         # S-S
         ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, 'S-S'), # 0.6125
+        ('Cindy', 'Daisy'): (_count_exp(0.3), 'S-S'),
         
         # O-O
         ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'O-O'), # 0.625
@@ -390,6 +395,8 @@ class TestAlgorithm(TestEntities):
 
         ('Cindy', 'RS 130'): _count_exp(0.1), # 0.55
         ('Cindy', 'Rubber Shoes'): _count_exp(0.4), # 0.7        
+        
+        ('Daisy', 'RS 130'): _count_exp(0.1), # 0.55
     }     
     
     def test_predictions_created(self):
