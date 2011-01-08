@@ -10,10 +10,6 @@ class BasicAbstractor(BaseAbstractor):
     @classmethod
     def create_subjectobjects(cls, recommender_model, subjects, objects):
         """See the base class for documentation."""
-
-        # delete all subjects and objects for the recommender
-        # and everything pointing at it.
-        SubjectObject.objects.filter(recommender=recommender_model).delete()
         
         # if subjects are the same as objects, use the "so" entity type 
         so = ENTITY_TYPE_SUBJECTOBJECT if subjects == objects else ""

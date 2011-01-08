@@ -97,14 +97,15 @@ class Recommender(BaseRecommender):
         
         # rules and relationships don't have to be given
 
-        # if the recommender with the given name doesn't exist, create it,
-        # if it does, find it
-        recommender_model, created = RecommenderModel.objects.get_or_create(
-                        class_name=cls.__name__,
-                        defaults={
-                            "name": cls.name,
-                            "are_subjects_objects": cls.subjects == cls.objects
-                        })
+        # if the recommender with the given name exists, delete it,
+        RecommenderModel.objects.filter(class_name=cls.__name__).delete()
+                
+        # create a new recommender and save it
+        recommender_model = RecommenderModel(
+                                class_name=cls.__name__,
+                                name=cls.name,
+                                are_subjects_objects=(cls.subjects == cls.objects))
+        recommender_model.save()                                
         
         # remember the recommender model in the class
         cls.recommender_model = recommender_model
