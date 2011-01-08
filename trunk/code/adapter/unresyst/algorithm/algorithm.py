@@ -1,14 +1,24 @@
 """The main classes of the algorithm package"""
 
+from django.db.models import Q
+
 from base import BaseAlgorithm
 from unresyst.constants import *
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
     RelationshipInstance
 from unresyst.models.aggregator import AggregatedRelationshipInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance
+from unresyst.models.common import SubjectObject
 
 class SimpleAlgorithm(BaseAlgorithm):
-    """A simple implementation of a recommender algorithm"""
+    """A simple implementation of a recommender algorithm.
+    
+    The remove_predicted_from_recommendations is implemented by adding a zero
+    prediction for all pairs in predicted relationship. 
+    
+    The get_recommendation function returns only recommendations with expectancy
+    above zero or the expectancy_limit.
+    """
 
     # Build phase:
     #
@@ -39,7 +49,7 @@ class SimpleAlgorithm(BaseAlgorithm):
             cls._build_similar_subjects(recommender_model)                
         
         # remove the ones that are already in the predicted_relationship 
-        # (if it should be done)
+        # (if it should be done) - add them with zero expectancy.
         if remove_predicted:
             cls._build_remove_predicted(recommender_model)
         
@@ -263,12 +273,10 @@ class SimpleAlgorithm(BaseAlgorithm):
         
         # if not available return the uncertain                        
         if not qs_pred:
-            return RelationshipPredictionInstance(
-                subject_object1=dn_subject,
-                subject_object2=dn_object,
-                description='',
-                recommender=recommender_model,
-                expectancy=UNCERTAIN_PREDICTION_VALUE
+            return cls._get_uncertain_prediction(
+                recommender_model=recommender_model, 
+                dn_subject=dn_subject, 
+                dn_object=dn_object
             )
         
         # otherwise return the found one
@@ -284,10 +292,72 @@ class SimpleAlgorithm(BaseAlgorithm):
         # get the recommendations ordered by the expectancy from the largest
         recommendations = RelationshipPredictionInstance\
                             .get_relationships(obj=dn_subject)\
-                            .filter(recommender=recommender_model, 
-                                expectancy__gt=expectancy_limit)\
+                            .filter(recommender=recommender_model)\
                             .order_by('-expectancy')                            
-        # TODO: if vysledku je malo && limit > 0.5 narvi tam nejake, na ktere nejsou recommendations
-        # udelat fci na uncertain prediction
-                 
-        return recommendations[:count]
+
+        # if there should be more recommendations than we have and 
+        # the expectancy limit is below the uncertain, add uncertain 
+        # predictions
+        if recommendations.count() < count \
+            and expectancy_limit < UNCERTAIN_PREDICTION_VALUE:                       
+
+            object_ent_type = ENTITY_TYPE_SUBJECTOBJECT \
+                if recommender_model.are_subjects_objects \
+                else ENTITY_TYPE_OBJECT            
+
+            # all objects excluding the objects recommended to dn_subject
+            # the last exclude is just for SO entity_type - we won't recommend 
+            # subject to himself
+            uncertain_objects = SubjectObject.objects\
+                .filter(entity_type=object_ent_type, recommender=recommender_model)\
+                .exclude(relationshippredictioninstance_relationships1__subject_object2=dn_subject)\
+                .exclude(relationshippredictioninstance_relationships2__subject_object1=dn_subject)\
+                .exclude(pk=dn_subject.pk)
+            
+            # divide the recommendations into groups exp => uncertain, exp < uncertain
+            positive_preds = recommendations.filter(
+                expectancy__gte=UNCERTAIN_PREDICTION_VALUE)
+            negative_preds = recommendations.filter(
+                expectancy__lt=UNCERTAIN_PREDICTION_VALUE)
+            
+            # how many non-positive recommendations we want
+            required_count = count - positive_preds.count()
+            uncertain_count = uncertain_objects.count()
+            
+            # if there're enough uncertains to fill the recommendations, 
+            # clear the negative
+            if uncertain_count >= required_count:
+                uncertain_required_count = required_count
+                negative_preds = []
+            else:
+                # otherwise we want all uncertains we have
+                uncertain_required_count = uncertain_count
+
+                negative_required_count = required_count - uncertain_count
+                
+                # and for the rest use negative - only those above limit
+                negative_preds = negative_preds.filter(
+                    expectancy__gt=expectancy_limit)[:negative_required_count]
+
+            uncertain_preds = []
+                
+            # construct the uncertain recommendations
+            for obj in uncertain_objects[:uncertain_required_count]:
+                pred = cls._get_uncertain_prediction(recommender_model, dn_subject, obj)
+                uncertain_preds.append(pred)
+
+            return list(positive_preds) + uncertain_preds + list(negative_preds)
+        # apply the limit for expectancy and count
+        return list(recommendations.filter(expectancy__gt=expectancy_limit)[:count])
+                         
+    @staticmethod
+    def _get_uncertain_prediction(recommender_model, dn_subject, dn_object):
+        """Get the prediction for a pair for which nothing is known"""
+        
+        return RelationshipPredictionInstance(
+                subject_object1=dn_subject,
+                subject_object2=dn_object,
+                description='',
+                recommender=recommender_model,
+                expectancy=UNCERTAIN_PREDICTION_VALUE
+            )        
