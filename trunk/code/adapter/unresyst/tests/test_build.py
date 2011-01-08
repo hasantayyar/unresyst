@@ -24,8 +24,6 @@ from unresyst.exceptions import ConfigurationError
 from demo.recommender import ShoeRecommender
 from demo.models import User, ShoePair
 
-#TODO: otestovat cascade delete na recommenderu
-
 
 class TestRecommender(TestBuild):
     """Test case for the recommender class"""
@@ -67,6 +65,23 @@ class TestRecommender(TestBuild):
         
         # in SubjectObject
         eq_(SubjectObject.objects.filter(name='Alice').count(), 0)
+        
+        # in RelationshipInstance
+        eq_(RelationshipInstance.objects.filter(subject_object1__name='Alice').count(), 0)
+        eq_(RelationshipInstance.objects.filter(subject_object2__name='Alice').count(), 0)        
+        
+        # in RuleInstance
+        eq_(RuleInstance.objects.filter(subject_object1__name='Alice').count(), 0)
+        eq_(RuleInstance.objects.filter(subject_object2__name='Alice').count(), 0)
+        
+        # in AggregatedRelationshipInstance
+        eq_(AggregatedRelationshipInstance.objects.filter(subject_object1__name='Alice').count(), 0)
+        eq_(AggregatedRelationshipInstance.objects.filter(subject_object2__name='Alice').count(), 0)
+        
+        # in RelationshipPredictionInstance
+        eq_(RelationshipPredictionInstance.objects.filter(subject_object1__name='Alice').count(), 0)
+        eq_(RelationshipPredictionInstance.objects.filter(subject_object2__name='Alice').count(), 0)        
+
 
 class TestAbstractor(TestEntities):
     """Testing the abstractor in the build phase"""  
