@@ -84,3 +84,6 @@ DEFAULT_RECOMMENDATION_COUNT = 10
 UNCERTAIN_PREDICTION_VALUE = 0.5
 """The value that is returned when the prediction for the pair isn't 
 available"""
+
+MIN_WEIGHT = 0.0
+MAX_WEIGHT = 1.0

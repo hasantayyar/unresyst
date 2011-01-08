@@ -9,7 +9,7 @@ Each layer has a separate test:
 The tests are always started by running the recommender.build method.
 """
 
-from nose.tools import eq_
+from nose.tools import eq_, assert_raises
 from django.db.models import Q
 
 from unresyst import Recommender
@@ -18,7 +18,8 @@ from unresyst.models.abstractor import PredictedRelationshipDefinition, \
     RelationshipInstance, RuleInstance, RuleRelationshipDefinition
 from unresyst.models.aggregator import AggregatedRelationshipInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance    
-from test_base import TestBuild, TestEntities
+from test_base import TestBuild, TestEntities, DBTestCase
+from unresyst.exceptions import ConfigurationError
 
 from demo.recommender import ShoeRecommender
 from demo.models import User, ShoePair
@@ -52,6 +53,20 @@ class TestRecommender(TestBuild):
         # assert the model is saved in the recommender
         eq_(ShoeRecommender.recommender_model, rec)            
 
+    def test_cascade_delete(self):
+        """Test that the rebuild deletes all that should be deleted"""
+        
+        # get and delete alice
+        a = User.objects.get(name='Alice')        
+        a.delete()
+        
+        # build the recommender again
+        ShoeRecommender.build()
+        
+        # assert there's nothing:
+        
+        # in SubjectObject
+        eq_(SubjectObject.objects.filter(name='Alice').count(), 0)
 
 class TestAbstractor(TestEntities):
     """Testing the abstractor in the build phase"""  
@@ -320,6 +335,49 @@ class TestAbstractor(TestEntities):
             eq_(rmodel.weight, r.weight)   
             eq_(rmodel.relationship_type, r.relationship_type)      
 
+
+class TestAbstractorErrors(DBTestCase):
+    """Test various errors thrown by Abstractor"""
+
+    def test_invalid_relationship_weight(self):
+        """Test if the exception is raised for a relatioship with invalid weight"""
+                  
+        # set some invalid weight, assert it throws the error         
+        w = ShoeRecommender.relationships[1].weight 
+        ShoeRecommender.relationships[1].weight = 1.5
+
+        assert_raises(ConfigurationError, ShoeRecommender.build)
+
+        # restore the original value
+        ShoeRecommender.relationships[1].weight = w
+
+         
+    def test_invalid_rule_weight(self):
+        """Test if the exception is raised for a rule with invalid weight"""
+                          
+        # set some invalid weight, assert it throws the error         
+        w = ShoeRecommender.rules[2].weight 
+        ShoeRecommender.rules[2].weight = 1.5
+
+        assert_raises(ConfigurationError, ShoeRecommender.build)
+
+        # restore the original value
+        ShoeRecommender.rules[2].weight = w         
+
+
+    def test_invalid_confidence(self):
+        """Test if the exception is raised for a rule with invalid confidence"""
+                  
+        # set some invalid weight, assert it throws the error         
+        c = ShoeRecommender.rules[0].confidence
+        ShoeRecommender.rules[0].confidence = lambda a, b: 1.3
+
+        assert_raises(ConfigurationError, ShoeRecommender.build)
+
+        # restore the original value
+        ShoeRecommender.rules[0].confidence = c
+        
+    
 def _count_exp(conf):
     return 0.5 + conf/2
     

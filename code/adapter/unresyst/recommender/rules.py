@@ -240,10 +240,21 @@ class _WeightedRelationship(_Relationship):
         
         @rtype: dictionary string: object
         @return: the kwargs of the definition model constructor 
+        
+        @raise ConfigurationError: if the weight isn't from [0, 1]
         """
         ret_dict = super(_WeightedRelationship, self).get_create_definition_kwargs()
         
         ret_dict['is_positive'] = self.is_positive
+
+        if not (MIN_WEIGHT <= self.weight <= MAX_WEIGHT):
+            raise ConfigurationError(
+                message=("The rule/relationship '%s' has weight %f," + \
+                    " should be between 0 and 1.") % (self.name, self.weight),
+                parameter_name="Recommender.rules or Recommender.relationships",
+                parameter_value=(self.recommender.rules, self.recommender.relationships)
+            )
+        
         ret_dict['weight'] = self.weight
         ret_dict["relationship_type"] = self.relationship_type      
         
@@ -317,11 +328,25 @@ class _BaseRule(_WeightedRelationship):
     
     def get_additional_instance_kwargs(self, ds_arg1, ds_arg2):
         """See the base class for documentation
+        
+        @raise ConfigurationError: if the confidence function returns a value
+            outside [0, 1]
         """
         ret_dict = super(_BaseRule, self).get_additional_instance_kwargs(
                                             ds_arg1, ds_arg2)
 
-        ret_dict['confidence'] = self.confidence(ds_arg1, ds_arg2)
+        confidence = self.confidence(ds_arg1, ds_arg2)
+        
+        if not (0.0 <= confidence <= 1.0):
+            raise ConfigurationError(
+                message=("The rule '%s' has a confidence %f, for the" + \
+                    "  pair (%s, %s). Should be between 0 and 1.") % \
+                        (self.name, confidence, ds_arg1, ds_arg2),
+                parameter_name="Recommender.rules",
+                parameter_value=self.recommender.rules
+            )
+        
+        ret_dict['confidence'] = confidence
         return ret_dict
         
         

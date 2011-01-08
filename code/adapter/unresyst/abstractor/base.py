@@ -44,7 +44,10 @@ class BaseAbstractor(object):
         the relationship is.        
         
         @type relationships: list of rules._WeightedRelationship subclass instances
-        @param relatioships: recommender relationships to be instantiated        
+        @param relatioships: recommender relationships to be instantiated  
+
+        @raise ConfigurationError: if the weight of some relatioship is
+            outside [0, 1]      
         """
         pass
 
@@ -61,6 +64,9 @@ class BaseAbstractor(object):
         
         @type rules: list of rules._BaseRule subclass instances
         @param rules: recommender rules to be instantiated
+        
+        @raise ConfigurationError: if the weight of some rule is outside [0, 1]
+            or some confidence function returns a value outside [0, 1].
         """
         pass
     

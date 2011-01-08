@@ -107,7 +107,7 @@ class Recommender(BaseRecommender):
                         })
         
         # remember the recommender model in the class
-        cls.recommender_model =  recommender_model
+        cls.recommender_model = recommender_model
         
         # build the recommender model
         #
