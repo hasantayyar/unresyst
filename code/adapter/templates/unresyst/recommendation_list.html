@@ -1,0 +1,41 @@
+{% comment %}
+    A template for displaying a list of recommendations.
+    Should be included in some other page.
+    Variables: recommendations, show_expectancy
+{% endcomment %}
+
+{% load i18n %}
+{% if recommendations %}
+    <div class="link-list">
+        <ul>
+            {% for item in recommendations %}
+                <li>
+                    <div class="link-item">
+                        {% with item.object_.get_absolute_url as object_url %}
+                            {% block item %}
+                                {# <a href="{{ item.get_absolute_url }}"><img src="{{ item.get_avatar_path }}" alt="avatar" /></a> #}
+                            {% endblock %}
+                            {% block item_description %}
+                                {% if object_url %}
+                                    <a href="{{ object_url }}">{{ item.object_ }}</a>: 
+                                {% else %}
+                                    <b>{{ item.object_ }}</b>:
+                                {% endif %}
+                                <em>{{ item.explanation }}</em> 
+                                {% if show_expectancy %}
+                                    Recommended with expectancy {{ item.expectancy }}.
+                                {% endif %}
+                            {% endblock %}
+                        {% endwith %}
+                    </div>
+                </li>               
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="empty-list">
+        {% block no_item %}
+            {% trans "No recommendation." %}
+        {% endblock %}
+    </div>
+{% endif %}

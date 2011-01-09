@@ -10,13 +10,55 @@ class UnresystError(Exception):
     def _set_message(self, message): 
         self._message = message
     message = property(_get_message, _set_message)
+    
+class RecommenderError(UnresystError):
+    """The base class for exceptions related to a recommender.
 
-class ConfigurationError(UnresystError):
+    @type message: string
+    @ivar message: the reason for the error    
+    
+    @type recommender: recommender.Recommender
+    @ivar recommender: the recommender on which the error occured    
+    """    
+    
+    def __init__(self, message, recommender):
+        """The constructor."""        
+
+        self.message = message
+        """The message saying the reason for the error""" 
+        
+        self.recommender = recommender
+        """The recommender for which the error is raised""" 
+            
+
+class RecommenderNotBuiltError(RecommenderError):
+    """Exception meaning that the recommender hasn't been built even though
+    it should have been.
+    
+    @type message: string
+    @ivar message: the reason for the error    
+    
+    @type recommender: recommender.Recommender
+    @ivar recommender: the recommender on which the error occured
+    """    
+
+
+    def __str__(self):
+        return ("The recommender needs to be built to perform the action.\n" + \
+               "    message: %s\n" + \
+               "    recommender: %s\n") \
+               % (self.message, self.recommender.name)
+               
+
+class ConfigurationError(RecommenderError):
     """Exception meaning that something is wrong in the recommender configuration.        
 
     @type message: string
     @ivar message: the reason why the parameter is invalid
-    
+
+    @type recommender: recommender.Recommender
+    @ivar recommender: the recommender on which the error occured
+        
     @type parameter_name: string
     @ivar parameter_name: the name of the invalid parameter
     
@@ -24,11 +66,10 @@ class ConfigurationError(UnresystError):
     @ivar parameter_value: the current (invalid) parameter value    
     """
     
-    def __init__(self, message, parameter_name, parameter_value):
+    def __init__(self, message, recommender, parameter_name, parameter_value):
         """The constructor."""        
 
-        self.message = message
-        """The message saying why the parameter is invalid""" 
+        super(ConfigurationError, self).__init__(message, recommender)
         
         self.parameter_name = parameter_name
         """The name of the invalid parameter"""
@@ -39,26 +80,29 @@ class ConfigurationError(UnresystError):
     def __str__(self):
         return ("A configuration parameter is invalid.\n" + \
                "    message: %s\n" + \
+               "    recommender: %s\n" + \
                "    parameter name: %s\n" + \
-               "    parameter value: %s") \
-               % (self.message, self.parameter_name, self.parameter_value)
+               "    parameter value: %s\n") \
+               % (self.message, self.recommender.name, self.parameter_name, self.parameter_value)
 
 
-class RuleRelationshipError(UnresystError):
+class RuleRelationshipError(RecommenderError):
     """An error in the configuration of rules/relationships.
 
     @type message: str
     @ivar message: additional message
-    
+
+    @type recommender: recommender.Recommender
+    @ivar recommender: the recommender on which the error occured
+        
     @type name: str
     @ivar name: the name of the rule/relationship where the error occured    
     """
     
-    def __init__(self, message, name):
+    def __init__(self, message, recommender, name):
         """The constructor."""        
 
-        self.message = message
-        """The message saying what's wrong""" 
+        super(RuleRelationshipError, self).__init__(message, recommender)
         
         self.name = name
         """The rule/relationship name"""
@@ -70,7 +114,10 @@ class DescriptionKeyError(RuleRelationshipError):
 
     @type message: str
     @ivar message: additional message
-    
+ 
+    @type recommender: recommender.Recommender
+    @ivar recommender: the recommender on which the error occured
+        
     @type name: str
     @ivar name: the name of the rule/relationship where the error occured
     
@@ -81,10 +128,10 @@ class DescriptionKeyError(RuleRelationshipError):
     @ivar permitted_keys: the keys that can be in the description
     """
     
-    def __init__(self, message, name, key, permitted_keys):
+    def __init__(self, message, recommender, name, key, permitted_keys):
         """The constructor."""        
 
-        super(DescriptionKeyError, self).__init__(message, name)
+        super(DescriptionKeyError, self).__init__(message, recommender, name)
         
         self.key = key
         """The string key that is wrong"""
@@ -96,17 +143,21 @@ class DescriptionKeyError(RuleRelationshipError):
     def __str__(self):
         return ("There's an invalid format key '%s' in the rule/relationship description.\n" + \
                "    message: %s\n" + \
+               "    recommender: %s\n" + \
                "    rule/relationship name: %s\n" + \
                "    the invalid key: %s\n" + \
                "    The permitted keys are: %s") \
-               % (self.key, self.message, self.name, self.key, self.permitted_keys) 
+               % (self.key, self.message, self.recommender.name, self.name, self.key, self.permitted_keys) 
 
-class InvalidParameterError(UnresystError):
+class InvalidParameterError(RecommenderError):
     """An exception raised when a parameter passed to a function is invalid.
 
     @type message: string
     @ivar message: the reason why the parameter is invalid
-    
+
+    @type recommender: recommender.Recommender
+    @ivar recommender: the recommender on which the error occured
+        
     @type parameter_name: string
     @ivar parameter_name: the name of the invalid parameter
     
@@ -114,11 +165,10 @@ class InvalidParameterError(UnresystError):
     @ivar parameter_value: the current (invalid) parameter value
     
     """
-    def __init__(self, message, parameter_name, parameter_value):
+    def __init__(self, message, recommender, parameter_name, parameter_value):
         """The constructor."""        
 
-        self.message = message
-        """The message saying why the parameter is invalid""" 
+        super(InvalidParameterError, self).__init__(message, recommender)
         
         self.parameter_name = parameter_name
         """The name of the invalid parameter"""
@@ -129,9 +179,10 @@ class InvalidParameterError(UnresystError):
     def __str__(self):
         return ("The parameter passed to the function is invalid.\n" + \
                "    message: %s\n" + \
+               "    recommender: %s\n" + \
                "    parameter name: %s\n" + \
                "    parameter value: %s") \
-               % (self.message, self.parameter_name, self.parameter_value)
+               % (self.message, self.recommender.name, self.parameter_name, self.parameter_value)
     
                        
 class SymmetryError(UnresystError):

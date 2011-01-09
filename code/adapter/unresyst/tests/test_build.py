@@ -19,7 +19,7 @@ from unresyst.models.abstractor import PredictedRelationshipDefinition, \
 from unresyst.models.aggregator import AggregatedRelationshipInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance    
 from test_base import TestBuild, TestEntities, DBTestCase
-from unresyst.exceptions import ConfigurationError
+from unresyst.exceptions import ConfigurationError, DescriptionKeyError
 
 from demo.recommender import ShoeRecommender
 from demo.models import User, ShoePair
@@ -49,7 +49,7 @@ class TestRecommender(TestBuild):
             ShoeRecommender.subjects == ShoeRecommender.objects)
         
         # assert the model is saved in the recommender
-        eq_(ShoeRecommender.recommender_model, rec)            
+        eq_(ShoeRecommender._get_recommender_model(), rec)            
 
     def test_cascade_delete(self):
         """Test that the rebuild deletes all that should be deleted"""
@@ -131,7 +131,7 @@ class TestAbstractor(TestEntities):
         
         # get definitions related to the shoe recommender
         qs = PredictedRelationshipDefinition.remove_subclass_objects().filter(
-            recommender=ShoeRecommender.recommender_model)
+            recommender=ShoeRecommender._get_recommender_model())
         
         # get how many definitions there are
         # should be one
@@ -154,7 +154,7 @@ class TestAbstractor(TestEntities):
         
         # get the relationship definition
         definition = PredictedRelationshipDefinition.remove_subclass_objects().get( 
-            recommender=ShoeRecommender.recommender_model)
+            recommender=ShoeRecommender._get_recommender_model())
         
         # get instances of the predicted relationship
         instances = RelationshipInstance.remove_subclass_objects().filter(definition=definition)
@@ -207,12 +207,12 @@ class TestAbstractor(TestEntities):
                 "Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")),
         ),
         'User lives in the same city as the shoe manufacturer.': (
-            ('Alice', 'Rubber Shoes', "User Alice is from the same city as manufacturer of Rubber Shoes."),
-            ('Bob', 'Rubber Shoes',  "User Bob is from the same city as manufacturer of Rubber Shoes."),
-            ('Alice', 'Sneakers',  "User Alice is from the same city as manufacturer of Sneakers."),
-            ('Bob', 'Sneakers', "User Bob is from the same city as manufacturer of Sneakers."),
-            ('Cindy', 'RS 130', "User Cindy is from the same city as manufacturer of RS 130."),
-            ('Daisy', 'RS 130', "User Daisy is from the same city as manufacturer of RS 130.")
+            ('Alice', 'Rubber Shoes', "User Alice is from the same city as the manufacturer of Rubber Shoes."),
+            ('Bob', 'Rubber Shoes',  "User Bob is from the same city as the manufacturer of Rubber Shoes."),
+            ('Alice', 'Sneakers',  "User Alice is from the same city as the manufacturer of Sneakers."),
+            ('Bob', 'Sneakers', "User Bob is from the same city as the manufacturer of Sneakers."),
+            ('Cindy', 'RS 130', "User Cindy is from the same city as the manufacturer of RS 130."),
+            ('Daisy', 'RS 130', "User Daisy is from the same city as the manufacturer of RS 130.")
         ),
     }
         
@@ -278,7 +278,7 @@ class TestAbstractor(TestEntities):
         """
         # get definitions related to the shoe recommender
         qs = RuleRelationshipDefinition.objects.filter(
-            recommender=ShoeRecommender.recommender_model)                
+            recommender=ShoeRecommender._get_recommender_model())                
         
         # for each defined type there should be a model definition in db
         for r in def_list:
@@ -334,7 +334,7 @@ class TestAbstractor(TestEntities):
         """
         # get definitions related to the shoe recommender
         qs = RuleRelationshipDefinition.objects.filter(
-            recommender=ShoeRecommender.recommender_model)
+            recommender=ShoeRecommender._get_recommender_model())
         
         # assert the number of definitions is right
         eq_(qs.count(), len(ShoeRecommender.relationships) + len(ShoeRecommender.rules))
@@ -351,8 +351,8 @@ class TestAbstractor(TestEntities):
             eq_(rmodel.relationship_type, r.relationship_type)      
 
 
-class TestAbstractorErrors(DBTestCase):
-    """Test various errors thrown by Abstractor"""
+class TestAbstractorRecommenderErrors(DBTestCase):
+    """Test various errors thrown by Abstractor and/or Recommender"""
 
     def test_invalid_relationship_weight(self):
         """Test if the exception is raised for a relatioship with invalid weight"""
@@ -391,8 +391,77 @@ class TestAbstractorErrors(DBTestCase):
 
         # restore the original value
         ShoeRecommender.rules[0].confidence = c
+
+    def test_empty_predicted_relationship(self):
+        """Test building a recommender with emtpy predicted relationship"""
         
-    
+        # save and delete the predicted_relationship
+        pr = ShoeRecommender.predicted_relationship
+        ShoeRecommender.predicted_relationship = None
+        
+        # assert it raises an error
+        assert_raises(ConfigurationError, ShoeRecommender.build)
+        
+        # restore the original predicted_relationship
+        ShoeRecommender.predicted_relationship = pr
+        
+    def test_empty_subjects(self):
+        """Test building a recommender with empty subjects"""
+        
+        # delete all users
+        User.objects.all().delete()
+        
+        # assert it raises an error
+        assert_raises(ConfigurationError, ShoeRecommender.build)        
+
+    def test_empty_objects(self):
+        """Test building a recommender with empty objects"""
+        
+        # delete all shoes
+        ShoePair.objects.all().delete()
+        
+        # assert it raises an error
+        assert_raises(ConfigurationError, ShoeRecommender.build)   
+        
+    def test_rule_description_error(self):
+        """Test building a recommender with strange rule description"""
+        
+        # save and mess up the description
+        d = ShoeRecommender.rules[1].description        
+        ShoeRecommender.rules[1].description = """Some messed %(crap)s description"""
+        
+        # assert it raises an error
+        assert_raises(DescriptionKeyError, ShoeRecommender.build)   
+        
+        # restore the original 
+        ShoeRecommender.rules[1].description = d
+
+    def test_relationship_description_error(self):
+        """Test building a recommender with strange relationship description"""
+        
+        # save and mess up the description
+        d = ShoeRecommender.relationships[0].description        
+        ShoeRecommender.relationships[0].description = """Some other messed %(other_crap)s description"""
+        
+        # assert it raises an error
+        assert_raises(DescriptionKeyError, ShoeRecommender.build)   
+        
+        # restore the original 
+        ShoeRecommender.relationships[0].description = d
+
+    def test_no_key_description_error(self):
+        """Test building a recommender with a description without keys"""
+        
+        # save and mess up the description
+        d = ShoeRecommender.rules[2].description        
+        ShoeRecommender.rules[2].description = """No-key description."""
+        
+        # assert it doesn't raise any error
+        ShoeRecommender.build()
+        
+        # restore the original 
+        ShoeRecommender.rules[2].description = d
+                     
 def _count_exp(conf):
     return 0.5 + conf/2
     
@@ -407,24 +476,24 @@ class TestAggregator(TestEntities):
         ('Alice', 'RS 130'): (_count_neg_exp(0.85), 'S-O', 
             ("Alice is from south, so RS 130 can't be recommended to him/her.",)), # 0.075
         ('Alice', 'Rubber Shoes'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O',
-            ('User Alice has viewed Rubber Shoes. User Alice is from the same city as manufacturer of Rubber Shoes.',)), # 0.625
+            ('User Alice has viewed Rubber Shoes. User Alice is from the same city as the manufacturer of Rubber Shoes.',)), # 0.625
         ('Alice', 'Sneakers'): (_count_exp(0.1), 'S-O',  
-            ("User Alice is from the same city as manufacturer of Sneakers.",)), # 0.55
+            ("User Alice is from the same city as the manufacturer of Sneakers.",)), # 0.55
             
         ('Bob', 'RS 130'): (_count_neg_exp(0.85), 'S-O', 
             ("Bob is from south, so RS 130 can't be recommended to him/her.",)), # 0.075
         ('Bob', 'Rubber Shoes'): (_count_exp(0.1), 'S-O',
-            ("User Bob is from the same city as manufacturer of Rubber Shoes.",)), # 0.55
+            ("User Bob is from the same city as the manufacturer of Rubber Shoes.",)), # 0.55
         ('Bob', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'S-O',
-            ("User Bob has viewed Sneakers. User Bob is from the same city as manufacturer of Sneakers.",)), # 0.625
+            ("User Bob has viewed Sneakers. User Bob is from the same city as the manufacturer of Sneakers.",)), # 0.625
 
         ('Cindy', 'RS 130'): (_count_exp(0.1), 'S-O',
-            ("User Cindy is from the same city as manufacturer of RS 130.",)), # 0.55
+            ("User Cindy is from the same city as the manufacturer of RS 130.",)), # 0.55
         ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), 'S-O',
             ("User Cindy has viewed Rubber Shoes.",)), # 0.7
         
         ('Daisy', 'RS 130'): (_count_exp(0.1), 'S-O',
-            ("User Daisy is from the same city as manufacturer of RS 130.",)), # 0.55
+            ("User Daisy is from the same city as the manufacturer of RS 130.",)), # 0.55
         
         # S-S
         ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, 'S-S', (
@@ -453,7 +522,7 @@ class TestAggregator(TestEntities):
         
         # filter aggregated instances for my recommender
         aggr_instances = AggregatedRelationshipInstance.objects.filter(
-                            recommender=ShoeRecommender.recommender_model)
+                            recommender=ShoeRecommender._get_recommender_model())
         
         # assert it has the expected length 
         eq_(aggr_instances.count(), len(self.EXPECTED_AGGREGATES))
@@ -515,7 +584,7 @@ class TestAlgorithm(TestEntities):
         
         # filter aggregated instances for my recommender
         pred_instances = RelationshipPredictionInstance.objects.filter(
-                            recommender=ShoeRecommender.recommender_model)
+                            recommender=ShoeRecommender._get_recommender_model())
         
         # assert it has the expected length 
         eq_(pred_instances.count(), len(self.EXPECTED_PREDICTIONS))

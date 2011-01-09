@@ -8,7 +8,8 @@ Contents:
 from base import BaseRecommender
 from predictions import RelationshipPrediction
 from unresyst.constants import *
-from unresyst.exceptions import ConfigurationError, InvalidParameterError
+from unresyst.exceptions import ConfigurationError, InvalidParameterError, \
+    RecommenderNotBuiltError
 from unresyst.abstractor import BasicAbstractor 
 from unresyst.aggregator import LinearAggregator
 from unresyst.algorithm import SimpleAlgorithm
@@ -20,15 +21,17 @@ class MetaRecommender(type):
     rules and relationships.
     """
     def __init__(cls, name, bases, dct):        
-        """The class constructor.
+        """The class initializer.
         
         Adds the reference to the recommender class to all of the rules
-        and relationships
+        and relationships.
+        
+        Tries searching for the recommender model in the database.
         """
         
         super(MetaRecommender, cls).__init__(name, bases, dct)
         
-        # add it to the predicted relationship
+        # add the recommender class to the predicted relationship
         if cls.predicted_relationship:       
             cls.predicted_relationship.recommender = cls
         
@@ -40,8 +43,7 @@ class MetaRecommender(type):
         # finally to the relationships
         if cls.relationships:
             for relationship in cls.relationships:
-                relationship.recommender = cls
-        
+                relationship.recommender = cls        
 
 
 class Recommender(BaseRecommender):
@@ -54,12 +56,16 @@ class Recommender(BaseRecommender):
     
     The predicted relationship is ignored when building and updating the 
     recommender. If it's needed, one should create a rule/relationship 
-    with the appropriate condition. 
+    with the appropriate condition.
+    
+    The contained rules and relationships have to be included in only one
+    recommender class. There can't be a rule/relationship instance 
+    which is contained in two recommender classes.
     """
     __metaclass__ = MetaRecommender
     """A metaclass putting the reference to the recommender to all member
     rules and relationships.
-    """
+    """        
     
     # Build phase:
     #
@@ -68,6 +74,7 @@ class Recommender(BaseRecommender):
     def build(cls):
         """For documentation, see the base class"""
         
+        
         # validate the subclass data
         # 
         
@@ -75,6 +82,7 @@ class Recommender(BaseRecommender):
         if not cls.subjects.all().exists():
             raise ConfigurationError(
                 message="No subjects given",
+                recommender=cls,
                 parameter_name="Recommender.subjects",
                 parameter_value=cls.subjects
             )
@@ -82,6 +90,7 @@ class Recommender(BaseRecommender):
         if not cls.objects.all().exists():
             raise ConfigurationError(
                 message="No objects given",
+                recommender=cls,
                 parameter_name="Recommender.objects",
                 parameter_value=cls.objects
             )
@@ -91,6 +100,7 @@ class Recommender(BaseRecommender):
         if not cls.predicted_relationship:
             raise ConfigurationError(
                 message="No predicted relationship given",
+                recommender=cls,
                 parameter_name="Recommender.predicted_relationship",
                 parameter_value=cls.predicted_relationship
             )
@@ -100,15 +110,15 @@ class Recommender(BaseRecommender):
         # if the recommender with the given name exists, delete it,
         RecommenderModel.objects.filter(class_name=cls.__name__).delete()
                 
-        # create a new recommender and save it
+        # create a new recommender and save it, keep it in the class
         recommender_model = RecommenderModel(
-                                class_name=cls.__name__,
-                                name=cls.name,
-                                are_subjects_objects=(cls.subjects == cls.objects))
-        recommender_model.save()                                
-        
-        # remember the recommender model in the class
-        cls.recommender_model = recommender_model
+            class_name=cls.__name__,
+            name=cls.name,
+            is_built=False,
+            are_subjects_objects=(cls.subjects == cls.objects),
+            random_recommendation_description=cls.random_recommendation_description
+        )        
+        recommender_model.save() 
         
         # build the recommender model
         #
@@ -153,6 +163,10 @@ class Recommender(BaseRecommender):
             recommender_model=recommender_model, 
             remove_predicted=cls.remove_predicted_from_recommendations
         )
+        
+        # mark the recommender as built, save it and keep it in the class
+        recommender_model.is_built = True
+        recommender_model.save()
 
 
     # Recommend phase:
@@ -162,12 +176,22 @@ class Recommender(BaseRecommender):
     def predict_relationship(cls, subject, object_):
         """For documentation, see the base class"""        
         
+        recommender_model = cls._get_recommender_model()
+        # if the recommender isn't built raise an error
+        if not recommender_model or not recommender_model.is_built:
+            raise RecommenderNotBuiltError(
+                message="Build the recommender prior to performing the " + \
+                    "predict_relationship action.",
+                recommender=cls
+            )
+                
+        
         subject_ent_type = ENTITY_TYPE_SUBJECT \
-                            if not cls.recommender_model.are_subjects_objects \
+                            if not recommender_model.are_subjects_objects \
                             else ENTITY_TYPE_SUBJECTOBJECT
 
         object_ent_type = ENTITY_TYPE_OBJECT \
-                            if not cls.recommender_model.are_subjects_objects \
+                            if not recommender_model.are_subjects_objects \
                             else ENTITY_TYPE_SUBJECTOBJECT
 
         # get the domain neutral representations for the subject and object
@@ -175,12 +199,13 @@ class Recommender(BaseRecommender):
             dn_subject = SubjectObject.get_domain_neutral_entity(
                 domain_specific_entity=subject,
                 entity_type=subject_ent_type,
-                recommender=cls.recommender_model
+                recommender=recommender_model
             )
         except SubjectObject.DoesNotExist, e:
             raise InvalidParameterError(
                 message="The subject wasn't found in the recommender database." + \
-                    "Try rebuilding the model. Exception: %s" % e,
+                    "Try rebuilding the recommender. Exception: %s" % e,
+                recommender=cls,
                 parameter_name='subject', 
                 parameter_value=subject)            
 
@@ -188,18 +213,19 @@ class Recommender(BaseRecommender):
             dn_object = SubjectObject.get_domain_neutral_entity(
                 domain_specific_entity=object_,
                 entity_type=object_ent_type,
-                recommender=cls.recommender_model
+                recommender=recommender_model
             )
         except SubjectObject.DoesNotExist, e:
             raise InvalidParameterError(
                 message="The object wasn't found in the recommender database." + \
-                    "Try rebuilding the model. Exception: %s" % e,
+                    "Try rebuilding the recommender. Exception: %s" % e,
+                recommender=cls,
                 parameter_name='object_', 
                 parameter_value=object_)     
         
         # get the prediction from the algorithm
         prediction_model = cls.Algorithm.get_relationship_prediction(
-            recommender_model=cls.recommender_model,
+            recommender_model=recommender_model,
             dn_subject=dn_subject,
             dn_object=dn_object
         )
@@ -218,12 +244,22 @@ class Recommender(BaseRecommender):
     def get_recommendations(cls, subject, count=None):        
         """For documentation, see the base class"""
         
+        recommender_model = cls._get_recommender_model()
+        
+        # if the recommender isn't built raise an error
+        if not recommender_model or not recommender_model.is_built:
+            raise RecommenderNotBuiltError(
+                message="Build the recommender prior to performing the " + \
+                    "get_recommendations action.",
+                recommender=cls
+            )
+        
         # if count wasn't given take the default one
         if not count:
             count = cls.default_recommendation_count
         
         subject_ent_type = ENTITY_TYPE_SUBJECT \
-                            if not cls.recommender_model.are_subjects_objects \
+                            if not recommender_model.are_subjects_objects \
                             else ENTITY_TYPE_SUBJECTOBJECT
                             
         # convert the the subject to domain neutral
@@ -231,12 +267,13 @@ class Recommender(BaseRecommender):
             dn_subject = SubjectObject.get_domain_neutral_entity(
                 domain_specific_entity=subject,
                 entity_type=subject_ent_type,
-                recommender=cls.recommender_model
+                recommender=recommender_model
             )
         except SubjectObject.DoesNotExist, e:
             raise InvalidParameterError(
                 message="The subject wasn't found in the recommender database." + \
-                    "Try rebuilding the model. Exception: %s" % e,
+                    "Try rebuilding the recommender. Exception: %s" % e,
+                recommender=cls,
                 parameter_name='subject', 
                 parameter_value=subject)  
 
@@ -245,7 +282,7 @@ class Recommender(BaseRecommender):
 
         # get the recommendations from the algorithm
         prediction_models = cls.Algorithm.get_recommendations(
-            recommender_model=cls.recommender_model,
+            recommender_model=recommender_model,
             dn_subject=dn_subject,
             count=count,
             expectancy_limit=limit
@@ -388,8 +425,32 @@ class Recommender(BaseRecommender):
     between them, will be removed from recommendation list.
     """
     
+    random_recommendation_description = "A random object"
+    """The description for random recommendations Can be overriden in
+    subclass"""
+    
     # Auxiliary methods - not to be used from outside the application
-    #
+    #    
+    @classmethod
+    def _get_recommender_model(cls):
+        """Get the recommender model belonging to the class"""
+        
+        # can't be caching 'cause database can die out without notifying the 
+        # if it's already saved, return it
+        #if cls._recommender_model:
+        #    return cls._recommender_model
+        
+        # otherwise try finding it in database            
+        models = RecommenderModel.objects.filter(class_name=cls.__name__)
+        
+        # if the recommender was found, assign it to the class and return it
+        if models:            
+            assert len(models) == 1
+            cls._recommender_model = models[0]
+            return cls._recommender_model
+        
+        # if not return None
+        return None            
     
     @classmethod
     def _get_entity_manager(cls, entity_type):

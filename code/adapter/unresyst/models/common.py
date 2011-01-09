@@ -17,7 +17,13 @@ class Recommender(models.Model):
     """The name of the recommender class. Has to be unique."""
 
     are_subjects_objects = models.BooleanField()
-    """Are subjects == objects for the recommender?"""    
+    """Are subjects == objects for the recommender?"""
+    
+    is_built = models.BooleanField()
+    """Is the recommender built?"""
+    
+    random_recommendation_description = models.TextField(default='', blank=True)
+    """The description of the relationship/rule instance.""" 
         
     class Meta:
         app_label = 'unresyst'

@@ -357,7 +357,7 @@ class SimpleAlgorithm(BaseAlgorithm):
         return RelationshipPredictionInstance(
                 subject_object1=dn_subject,
                 subject_object2=dn_object,
-                description='',
+                description=recommender_model.random_recommendation_description,
                 recommender=recommender_model,
                 expectancy=UNCERTAIN_PREDICTION_VALUE
             )        
