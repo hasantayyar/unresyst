@@ -81,7 +81,7 @@ class ShoeRecommender(Recommender):
                 
             weight=0.1,           
             
-            description="User %(subject)s is from the same city as manufacturer of %(object)s."
+            description="User %(subject)s is from the same city as the manufacturer of %(object)s."
         ),
         
         # if users live in the same city, they are considered similar
@@ -176,6 +176,7 @@ class ShoeRecommender(Recommender):
     )
     """Rules that can be applied to the domain"""
 
+    random_recommendation_description = "Recommending a random shoe pair to the user."
     
 
 

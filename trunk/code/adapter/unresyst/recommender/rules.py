@@ -95,6 +95,7 @@ class _Relationship(object):
         except KeyError, e:
             raise DescriptionKeyError(
                 message="There's an invalid key in description",
+                recommender=self.recommender,
                 name=self.name, 
                 key=e.__str__(), 
                 permitted_keys=format_dict.keys()
@@ -110,7 +111,7 @@ class _Relationship(object):
         """
         return {
             "name": self.name,
-            "recommender": self.recommender.recommender_model,
+            "recommender": self.recommender._get_recommender_model(),
         }
     
     def get_additional_instance_kwargs(self, ds_arg1, ds_arg2):
@@ -190,7 +191,7 @@ class _Relationship(object):
             # loop only through the matrix members below the diagonal 
             # 
             for arg1, arg2 in SubjectObject.unique_pairs(
-                                recommender=self.recommender.recommender_model,
+                                recommender=self.recommender._get_recommender_model(),
                                 entity_type=arg1_s):                          
                 # evaluate it
                 self.evaluate_on_args(arg1, arg2, definition)
@@ -198,7 +199,7 @@ class _Relationship(object):
         else:
             # filter subjectobjects for my recommender
             qs_recommender = SubjectObject.objects.filter(
-                recommender=self.recommender.recommender_model)
+                recommender=self.recommender._get_recommender_model())
         
             # go through all things that have to be as first and as second param
             for arg1 in qs_recommender.filter(entity_type=arg1_s).iterator():
@@ -251,6 +252,7 @@ class _WeightedRelationship(_Relationship):
             raise ConfigurationError(
                 message=("The rule/relationship '%s' has weight %f," + \
                     " should be between 0 and 1.") % (self.name, self.weight),
+                recommender=self.recommender,
                 parameter_name="Recommender.rules or Recommender.relationships",
                 parameter_value=(self.recommender.rules, self.recommender.relationships)
             )
@@ -342,6 +344,7 @@ class _BaseRule(_WeightedRelationship):
                 message=("The rule '%s' has a confidence %f, for the" + \
                     "  pair (%s, %s). Should be between 0 and 1.") % \
                         (self.name, confidence, ds_arg1, ds_arg2),
+                recommender=self.recommender,
                 parameter_name="Recommender.rules",
                 parameter_value=self.recommender.rules
             )

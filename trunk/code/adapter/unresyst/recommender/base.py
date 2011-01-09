@@ -146,7 +146,15 @@ class BaseRecommender(object):
         
     rules = None
     """Rules that can be applied to the domain"""
-    
+
+    random_recommendation_description = None
+    """The description that will be used as a description 
+    to random recommendations."""
+
+    # Auxiliary class attributes
+    _recommender_model = None
+    """The database model instance belonging to the class"""
+        
     # Class configuration - the behaviour of the layers below the recommender
     # Empty, will be overriden by the Recommender class
     #

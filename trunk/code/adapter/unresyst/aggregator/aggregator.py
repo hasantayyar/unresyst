@@ -35,6 +35,7 @@ class LinearAggregator(BaseAggregator):
             
             raise InvalidParameterError(
                 message="There're unexpected aggregated instances for the recommender.", 
+                recommender=cls,
                 parameter_name="recommender_model", 
                 parameter_value=recommender_model)
 

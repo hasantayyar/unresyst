@@ -6,11 +6,11 @@ The test are always started by running the recommender.build method.
 
 from nose.tools import eq_, assert_raises, assert_almost_equal
 
-from test_base import TestBuild, TestEntities
+from test_base import TestBuild, TestEntities, DBTestCase
 from demo.recommender import ShoeRecommender
 from demo.models import User, ShoePair
 
-from unresyst.exceptions import InvalidParameterError
+from unresyst.exceptions import InvalidParameterError, RecommenderNotBuiltError
 
 def _count_exp(conf):
     return 0.5 + conf/2
@@ -22,20 +22,20 @@ EXPECTED_PREDICTIONS = {
     # S-O
     ('Alice', 'RS 130'): (_count_neg_exp(0.85), "Alice is from south, so RS 130 can't be recommended to him/her."), # 0.075
     ('Alice', 'Rubber Shoes'): ((_count_exp(0.4) + _count_exp(0.1))/2, 
-        'User Alice has viewed Rubber Shoes. User Alice is from the same city as manufacturer of Rubber Shoes.'),# 0.625
+        'User Alice has viewed Rubber Shoes. User Alice is from the same city as the manufacturer of Rubber Shoes.'),# 0.625
     ('Alice', 'Sneakers'): (0, "User Alice likes shoes Sneakers."), 
     
     ('Bob', 'RS 130'): (_count_neg_exp(0.85), "Bob is from south, so RS 130 can't be recommended to him/her."), # 0.075
-    ('Bob', 'Rubber Shoes'): (_count_exp(0.1), "User Bob is from the same city as manufacturer of Rubber Shoes."), # 0.55
+    ('Bob', 'Rubber Shoes'): (_count_exp(0.1), "User Bob is from the same city as the manufacturer of Rubber Shoes."), # 0.55
     ('Bob', 'Sneakers'): (0, "User Bob likes shoes Sneakers."),
 
-    ('Cindy', 'RS 130'): (_count_exp(0.1), "User Cindy is from the same city as manufacturer of RS 130."), # 0.55
+    ('Cindy', 'RS 130'): (_count_exp(0.1), "User Cindy is from the same city as the manufacturer of RS 130."), # 0.55
     ('Cindy', 'Rubber Shoes'): (_count_exp(0.4), "User Cindy has viewed Rubber Shoes."), # 0.7        
-    ('Cindy', 'Sneakers'): (0.5, ''), 
+    ('Cindy', 'Sneakers'): (0.5, 'Recommending a random shoe pair to the user.'), 
     
-    ('Daisy', 'RS 130'): (_count_exp(0.1), "User Daisy is from the same city as manufacturer of RS 130."), # 0.55
-    ('Daisy', 'Rubber Shoes'): (0.5, ''), 
-    ('Daisy', 'Sneakers'): (0.5, ''),         
+    ('Daisy', 'RS 130'): (_count_exp(0.1), "User Daisy is from the same city as the manufacturer of RS 130."), # 0.55
+    ('Daisy', 'Rubber Shoes'): (0.5, 'Recommending a random shoe pair to the user.'), 
+    ('Daisy', 'Sneakers'): (0.5, 'Recommending a random shoe pair to the user.'),         
 }   
 """A dictionary: name: (prediction, explanation)"""
 
@@ -107,22 +107,22 @@ expectancy in reverse order, the zero expectancy recommendations are removed.
 
 EXPECTED_RECOMMENDATIONS = {
     'Bob': [
-        ('Rubber Shoes', 0.55, 'User Bob is from the same city as manufacturer of Rubber Shoes.'),
+        ('Rubber Shoes', 0.55, 'User Bob is from the same city as the manufacturer of Rubber Shoes.'),
         ('RS 130', 0.075000000000000011, "Bob is from south, so RS 130 can't be recommended to him/her.")
     ], 
     'Alice': [
-        ('Rubber Shoes', 0.625, 'User Alice has viewed Rubber Shoes. User Alice is from the same city as manufacturer of Rubber Shoes.'), 
+        ('Rubber Shoes', 0.625, 'User Alice has viewed Rubber Shoes. User Alice is from the same city as the manufacturer of Rubber Shoes.'), 
         ('RS 130', 0.075, "Alice is from south, so RS 130 can't be recommended to him/her.")
     ], 
     'Cindy': [
         ('Rubber Shoes', 0.7, 'User Cindy has viewed Rubber Shoes.'), 
-        ('RS 130', 0.55, 'User Cindy is from the same city as manufacturer of RS 130.'), 
-        ('Sneakers', 0.5, '')
+        ('RS 130', 0.55, 'User Cindy is from the same city as the manufacturer of RS 130.'), 
+        ('Sneakers', 0.5, 'Recommending a random shoe pair to the user.')
     ], 
     'Daisy': [
-        ('RS 130', 0.55, 'User Daisy is from the same city as manufacturer of RS 130.'), 
-        ('Sneakers', 0.5, ''), 
-        ('Rubber Shoes', 0.5, '')
+        ('RS 130', 0.55, 'User Daisy is from the same city as the manufacturer of RS 130.'), 
+        ('Sneakers', 0.5, 'Recommending a random shoe pair to the user.'), 
+        ('Rubber Shoes', 0.5, 'Recommending a random shoe pair to the user.')
     ]
 }
 """The same but a bit more explicit"""
@@ -130,37 +130,37 @@ EXPECTED_RECOMMENDATIONS = {
 
 EXPECTED_RECOMMENDATIONS_COUNT = {
     'Bob': [
-        ('Rubber Shoes', 0.55, 'User Bob is from the same city as manufacturer of Rubber Shoes.'),
+        ('Rubber Shoes', 0.55, 'User Bob is from the same city as the manufacturer of Rubber Shoes.'),
         ('RS 130', 0.075, "Bob is from south, so RS 130 can't be recommended to him/her.")
     ], 
     'Alice': [
-        ('Rubber Shoes', 0.625, 'User Alice has viewed Rubber Shoes. User Alice is from the same city as manufacturer of Rubber Shoes.'), 
+        ('Rubber Shoes', 0.625, 'User Alice has viewed Rubber Shoes. User Alice is from the same city as the manufacturer of Rubber Shoes.'), 
         ('RS 130', 0.075, "Alice is from south, so RS 130 can't be recommended to him/her.")
     ], 
     'Cindy': [
         ('Rubber Shoes', 0.7, 'User Cindy has viewed Rubber Shoes.'), 
-        ('RS 130', 0.55, 'User Cindy is from the same city as manufacturer of RS 130.'), 
+        ('RS 130', 0.55, 'User Cindy is from the same city as the manufacturer of RS 130.'), 
     ], 
     'Daisy': [
-        ('RS 130', 0.55, 'User Daisy is from the same city as manufacturer of RS 130.'), 
-        ('Sneakers', 0.5, ''), 
+        ('RS 130', 0.55, 'User Daisy is from the same city as the manufacturer of RS 130.'), 
+        ('Sneakers', 0.5, 'Recommending a random shoe pair to the user.'), 
     ]
 }
 """Recommendations when the count is 2"""
 
 EXPECTED_RECOMMENDATIONS_LIMIT = {
     'Bob': [
-        ('Rubber Shoes', 0.55, 'User Bob is from the same city as manufacturer of Rubber Shoes.'),
+        ('Rubber Shoes', 0.55, 'User Bob is from the same city as the manufacturer of Rubber Shoes.'),
     ], 
     'Alice': [
-        ('Rubber Shoes', 0.625, 'User Alice has viewed Rubber Shoes. User Alice is from the same city as manufacturer of Rubber Shoes.'), 
+        ('Rubber Shoes', 0.625, 'User Alice has viewed Rubber Shoes. User Alice is from the same city as the manufacturer of Rubber Shoes.'), 
     ], 
     'Cindy': [
         ('Rubber Shoes', 0.7, 'User Cindy has viewed Rubber Shoes.'), 
-        ('RS 130', 0.55, 'User Cindy is from the same city as manufacturer of RS 130.'), 
+        ('RS 130', 0.55, 'User Cindy is from the same city as the manufacturer of RS 130.'), 
     ], 
     'Daisy': [
-        ('RS 130', 0.55, 'User Daisy is from the same city as manufacturer of RS 130.'), 
+        ('RS 130', 0.55, 'User Daisy is from the same city as the manufacturer of RS 130.'), 
     ]
 }
 """Recommndations when the expectancy limit is 0.5"""
@@ -227,4 +227,23 @@ class TestGetRecommendations(TestEntities):
         
         # assert it throws an error
         assert_raises(InvalidParameterError, ShoeRecommender.get_recommendations, unknown)    
+
+class TestRecommendErrors(DBTestCase):
+    """Test errors thrown when trying to recommend"""
     
+    def test_unbuilt_get_recommendations(self):
+        """Test throwing error when getting recommendations from an unbuilt recommender"""
+
+        a = User.objects.get(name='Alice')
+        
+        assert_raises(RecommenderNotBuiltError, ShoeRecommender.get_recommendations, a)
+        
+
+    def test_unbuilt_predict_relationship(self):
+        """Test throwing error when predicting relationship on an unbuilt recommender"""
+
+        a = User.objects.get(name='Alice')
+        
+        r = ShoePair.objects.get(name='Rubber Shoes')
+        
+        assert_raises(RecommenderNotBuiltError, ShoeRecommender.get_recommendations, a, r)    

@@ -50,7 +50,7 @@ class TestEntities(TestBuild):
             'RS 130': ShoePair.objects.get(name='RS 130'),
         }
         
-        rm = ShoeRecommender.recommender_model
+        rm = ShoeRecommender._get_recommender_model()
         self.universal_entities = {
             'Alice': SubjectObject.get_domain_neutral_entity(
                             domain_specific_entity=self.specific_entities['Alice'], 
