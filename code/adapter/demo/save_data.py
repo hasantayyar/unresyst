@@ -36,7 +36,8 @@ def save_data():
     sneakers = ShoePair(
         name="Sneakers",
         manufacturer=diesel,
-        for_winter=False        
+        for_winter=False,
+        image_path='/images/Trainers.gif'
     )
     sneakers.save()
     sneakers.keywords.add(comfortable,trainers, cool)
@@ -45,7 +46,8 @@ def save_data():
     rubber_shoes = ShoePair(
         name="Rubber Shoes",
         manufacturer=diesel,
-        for_winter=False
+        for_winter=False,
+        image_path='/images/Rubber_Boots.gif'
     )
     rubber_shoes.save()
     rubber_shoes.keywords.add(comfortable)
@@ -54,7 +56,8 @@ def save_data():
     ski_boots = ShoePair(
         name='RS 130',
         manufacturer=lange,
-        for_winter=True
+        for_winter=True,
+        image_path='/images/ski-boot.jpg'        
     )
     ski_boots.save()
     ski_boots.keywords.add(sporty, cool)
