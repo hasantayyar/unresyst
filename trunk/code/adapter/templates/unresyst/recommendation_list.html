@@ -13,17 +13,25 @@
                     <div class="link-item">
                         {% with item.object_.get_absolute_url as object_url %}
                             {% block item %}
-                                {# <a href="{{ item.get_absolute_url }}"><img src="{{ item.get_avatar_path }}" alt="avatar" /></a> #}
+                                {% if object_url %}
+                                <a href="{{ object_url }}">
+                                {% endif %}
+                                <img src="{{ MEDIA_URL }}{{ item.object_.get_avatar_path }}" alt="image" />
+                                {% if object_url %}
+                                </a> 
+                                {% endif %}
                             {% endblock %}
                             {% block item_description %}
                                 {% if object_url %}
-                                    <a href="{{ object_url }}">{{ item.object_ }}</a>: 
-                                {% else %}
-                                    <b>{{ item.object_ }}</b>:
+                                    <a href="{{ object_url }}"> 
                                 {% endif %}
-                                <em>{{ item.explanation }}</em> 
+                                    <b>{{ item.object_ }}</b><br/>
+                                {% if object_url %}
+                                    </a> 
+                                {% endif %}
+                                Reason: <em>{{ item.explanation }}</em> 
                                 {% if show_expectancy %}
-                                    Recommended with expectancy {{ item.expectancy }}.
+                                    <br/>Recommended with expectancy {{ item.expectancy }}.
                                 {% endif %}
                             {% endblock %}
                         {% endwith %}

@@ -1,0 +1,17 @@
+{% comment %}
+    A demo system home page containing links to recommendations.
+    Variables: user_list
+{% endcomment %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+    <head>
+        <title>Home Page</title>
+    </head>
+    <body>
+        <h1> Demo system home page</h1>
+        <h3> Shoe recommendations for users: </h3>
+        {% for u in user_list %}
+            <a href="{% url demo:recommendations u.name %}">{{ u }}</a>
+        {% endfor %}
+    </body>
+</html>

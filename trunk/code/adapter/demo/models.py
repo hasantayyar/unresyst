@@ -19,6 +19,12 @@ class ShoePair(models.Model):
     keywords = models.ManyToManyField('Keyword')
     """The keywords associated with the shoes."""
 
+    image_path = models.CharField(max_length=MAX_LENGTH_IMAGE_PATH)
+    """The path to the shoe image, relative to the MEDIA_ROOT"""
+    
+    def get_avatar_path(self):
+        return self.image_path
+    
     def __unicode__(self):
         """Return a printable representation of the instance"""
         return self.name    
