@@ -175,8 +175,9 @@ Supervisor's e-mail address: \vedoucimail\\
     
     Recommender systems are programs operating on large amount of data in software systems. Recommender systems try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
     
-    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and a prediction of any type of relationship between the objects in the domains. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships.
+    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and a prediction of any type of relationship between the entities in the domains. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships.
     
+    %tohle opravit
     In the introductory chapter we describe the basic structure of the thesis. Then we give a formal definition of a recommender system. Finally we review projects and papers that have been created on the universal recommender topic.
     
     \section{Thesis Structure}
@@ -186,26 +187,94 @@ Supervisor's e-mail address: \vedoucimail\\
     \section{Thesis Concepts}
         The section describes the main concepts of the thesis. We list the most important features, establish the purpose of the thesis and briefly show the distinction from the existing work.
         
+        \subsection{Main Features}
         The main concepts of the thesis are:
         \begin{description}
                 \item[Problem analysis and design of a solution.] The main goal of the work is to analyze the problem of a universal recommender, to create an architecture of the recommender system, design its interfaces and provide an implementation draft. The intefaces should be usable in real-world applications.
                 \item[Domain independence.] The recommender should work on any domain it's addapted to. It can't rely on any domain-specific assumptions. 
                 \item[Using various relationships.] For the recommendation, the recommender should be able to use any number of relationships available in the domain.
                 \item[Recommending given relationship.] The recommender should be able to predict any given relationship, not just the ``rating'' relationship as most recommenders do.
-                \item[A recommender, not a framework.] The adaptation to the given domain should be simple and without any need for programming. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be addapted and used on an arbitrary domain.
-                \item[Pluggable user interface.] The recommender should contain a web-based user interface for presenting the recommendations. The interface should be pluggable an existing web application, so that it can look like a part of the system and the user doesn't have to leave system web pages. 
+                \item[A recommender, not a framework.] The adaptation to the given domain should be simple and should require minumum changes in the parent system. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be addapted and used on an arbitrary domain.
+                \item[Pluggable user interface.] The recommender should contain a web-based user interface for presenting the recommendations. The interface should be pluggable to an existing web application, so that it can look like a part of the system and the user doesn't have to leave system web pages to see his/her recommendations. 
                 \item[Verification on various domains.] The recommender should be addapted to at least three domains to verify its universality and usability of the recommender interfaces. 
         \end{description}
         \subsection{Out of Scope}
         The section lists features that are relevant but out of the thesis scope. 
         \begin{description}
             \item[] preciznost a skalovatelnost implementace, optimalizace a rychlost dane implemetnace
-            \item[]dalsi hustoficury, ktere nestihnu, 
             \item[]nebudu merit vykon v case jenom nejak plus minus asymptoticky
             \item[Central server for multiple systems.] A single Unresyst instance isn't intended to be used as a central server for multiple domains - a Unresyst instance always refers to a single domain. Unresyst doesn't deal with matching the same subjects and objects appearing in multiple systems. 
-            \item[Collecting user preference] Unresyst doesn't help the system collecting any user actions for recommending. Implicit and explicit user feedback can be used for generating recommendations in Unresyst, but it has to be handled by the outer system and passed to Unresyst in the form of business rules and relationships. 
+            \item[Collecting user preference] Unresyst doesn't help the system collecting any user actions for recommending. Implicit and explicit user feedback can be used for generating recommendations in Unresyst, but it has to be handled by the outer system and passed to Unresyst in the form of business rules and relationships.
+            %\item[]dalsi hustoficury, ktere nestihnu, 
         \end{description}
 
+\chapter{Recommender Analysis}
+    \label{recommender_analysis}
+    In the chapter we discuss the circumstances under which recommender systems are a preferrable option both for users and system holders. Later in the chapter we describe the reasons for using our universal recommender (\emph{Unresyst}), we compare our recommender to existing solutions. Finally we formally define the problem of recommending.
+    
+    Recommender system is a part of a web-based application, that uses data about users and their behaviour to provide users with  items which are the most relevant to them. The recommended items are typically things that are liable to user taste, like books, music, news, etc.
+    
+    \section{Recommender System Benefits}
+        \label{recommender_system_usage}
+        The section summarizes reasons why recommender systems are useful for both users and system holders.
+        
+        \subsection{Benefits for System Users}
+            \label{benefits_for_users}
+            In a web-system like an e-shop or an internet radio a user is overloaded with items. The system database typically contains thousands of items divided into several categories. The recommender provides user with items that are likely to be interesting without requiring him/her to search for them. This saves user's time and helps him/her spend more time exploring the interesting items than messing around uninteresting items. The provided recommendations are personalized, they reflect the past user's behaviour and available data, so the recommendations are likely to be much accurate. 
+            
+            Recommender systems help users find novel items. When a user only browses and searches the system items, he/she usually gets stuck on a relatively small group of items. The recommendations usually contain items chosen by various criteria, so that they contain both items the user is familiar with and items that are likely to be interesting for the user, but the user wouldn't otherwise discover them.
+            
+            Apart from that, a recommender system can predict user's interest for a particular item. E.g. the last.fm festival recommender can predict user's interest in a particular festival based on the user's taste and the festival lineup \ref{lastfm_festivals}. This also saves user's time, he/she doesn't have to examine details of the items he/she that aren't likely to be interesting for him/her.
+        
+        \subsection{Benefits for a System Holder}
+            \label{benefits_for_holders}
+            A satisfied user is a key for the success of a web-system business. If the user easily finds interesting items in the system, he/she tends to return to the system regularly, which results in a high visit rate. 
+            
+            In an e-shop, if a user easily finds items that are appropriate for him/her, he/she is more likely to buy them. In a non-retail system like an internet radio, the system holder can also profit from a user finding appropriate items quickly. The user spends more time on pages that provide interesting information for him/her, which leads to more appropriate context advertisements with higher earnings.
+            
+            Another interesting feature recommender systems provide to e-shop holders is the ability to include promoted items to recommendations. E-shop holders can artificially increase the recommendation rates of the promoted goods in order they apeear in recommendations for more users. However, this feature should be used moderately because it distorts the results of the recommender algorithm. A massive propagation of items that are promoted by the system holder but are not very interesting for particular users may lead to a loss of user's trust for the recommender.
+            
+            And last but not least, a recommender system provieds a competitive advantage. Web business leaders like Google or Amazon have already implemented recommenders in their systems, for smaller companies a recommender system may be a key advantage over their rivals.
+    
+    \section{Universal Recommender Analysis}
+        \label{universal_recommender_analysis}
+        In the section we describe the position of the proposed recommender system (\emph{Unresyst}) on the market. We depict advantages and disadvantages of the Unresyst recommdender, we compare Unresyst to existing sollutions. Finally we propose processes for incorporating Unresyst to a web-based system and for running a system involving Unresyst.
+        
+        The proposed Unresyst recommender is a domain-independent recommender system that is able to use various relationships between the domain entities. Unresyst is an independent software component that logically stands outside the web-based parent system. It comminicates with the parent system through a defined API. Detailed information on the system architecture can be found in the section \ref{architecture}. 
+        
+        Unresyst itself doesn't contain any domain-specific data or methods. In order to work correctly on the given domain, it has to be addapted to it. Addaptation data make Unresyst use domain knowledge for making recommendations. Addaptation is designed so that it's as easy as possible. Adaptation data are stored in the parent system and are used during the communication with Unresyst. Detailed description on the adaptation can be found in the section \ref{adaptation_data}. 
+        
+        In order to provide high quality recommendations, Unresyst can take use of any \emph{relationships} between the entities in the system domain. Additionally, the business knowledge can be transformed to \emph{rules} and used for generating recommendations. Both rules and relationships are stored in the addaptation data. See sections \ref{representing_rules}, \ref{representing_relationships} for details on rule and relationship representation.
+        
+        \subsection{Universal Recommender Applicability}
+            \label{universal_recommender_applicability}
+            
+            Compaines that run big global web-systems generally have enough resources to develop their own recommender systems that are specifically designed for their needs. Therefore, Unresyst is aimed at small and mid-size web systems. The goal of the Unresyst concept is to provide companies a way to implement a recommender system without having to develop their own recommender solution, which is often both time and money consuming. With a bit of configuration, Unresyst provides the recommending accuracy comparable to a custom-made recommender system.
+            
+            Data that can be used by Unresyst include but are not limited to:
+            \begin{description}
+                \item[Demographic information] both user and items
+                \item[User behaviour]
+                \item[Explicit feedback]
+                \item[Social relations]
+                \item[Other user attributes]
+                \item[Other item attributes]
+             \end{description}
+        \subsection{Comparison to Existing Solutions}
+        
+        \subsection{Unresyst Process Proposal}
+            depends on particular company, environment, brief
+        
+        
+        
+
+    \section{Comparison}
+        \subsection{Advanced Search}
+        Some systems provide advanced item search 
+        - user activity
+        - user knows what he wants
+        - taste 
+        - sorted by relevance to search criteria not by preference
         
     \section{Definitions}
         \label{definitions}
@@ -236,7 +305,7 @@ Supervisor's e-mail address: \vedoucimail\\
             There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an adressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
             
         \subsection{Relationship Prediction}
-            \label{relationship_prediction}
+            \label{def_relationship_prediction}
             \emph{Relationship Prediction} $\hat{u}$ is an approximation of the utility function $u$: 
             \begin{equation}
                 \label{eq_relationship_prediction}
@@ -246,7 +315,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
             For a given subject-object pair, $\hat{u}$ gives:
             \begin{description}
-                \item[Expectancy:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ aren't presented to the subject. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented to the subject.
+                \item[Expectancy:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ usually aren't presented. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented.
                 \item[Explanation:] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
                 %\item[Relationship metadata values]: coming soon
             \end{description}
@@ -255,18 +324,22 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Our concept is similar to the one used in the Duine framework \cite{duine}. The prediction techniques in Duine give a \emph{Prediction}, \emph{Validity indicators} and an \emph{Explanation} for each subject-object pair. \emph{Prediction} is an estimation of subject's rating of the object. \emph{Validity indicators} determine the \emph{confidence} of the techinque when predicting the rating. Low values mean, that the technique isn't confident about the \emph{Prediction} for the given subject-object pair, e.g. it doesn't have enough information to make a valid prediction. \emph{Explanation} has the same meaning as the one in our recommender. 
              
-            In a universal recommender we can't assume there will be a rating relationship between subjects and objects. Moreover, we are supposed to be able to predict any given relationship between subjects and objects, not just the preference expressed by the rating. In a Universal recommender, we only predict a $0/1$ indicator: the predicted relationship is between the given the subject and object, or it isn't. Hence we can shrink the prediction and confidence concepts into one - relationship expectance. 
+            In a universal recommender we can't assume there will be a rating relationship between subjects and objects. Moreover, we are supposed to be able to predict any given relationship between subjects and objects, not just the preference expressed by the rating. In a Universal recommender, we only predict a $0/1$ indicator: there is the predicted relationship between the given subject and object, or there isn't. Hence we can shrink the prediction and confidence concepts into one - relationship \emph{expectancy}. 
             
-            Let's show the reduction on an example. A recommender predicts, that \emph{Bob} will like the \emph{Five Days In Paris} book with $20\%$ probability. The like expectancy is $0.2$, which can be rewritten as giving prediction $1$ (Bob will like it) with the prediction confidence $0.2$. For us, this is the same as predicting that Bob won't like it with $80\%$ probability - giving a prediction $0$ with prediction confidence $0.8$. This is because, in our relationship representation, Bob either likes the book, or he doesn't. The events ``Bob likes the book'' and ``Bob doesn't like the book'' are complementary.
+            Let's show the reduction on an example. A recommender predicts, that \emph{Bob} will like the \emph{Five Days In Paris} book with $20\%$ probability. The like expectancy is $0.2$. For us, this is the same as predicting that Bob won't like it with $80\%$ probability. This is because, in our relationship representation, Bob either likes the book, or he doesn't. The events ``Bob likes the book'' and ``Bob doesn't like the book'' are complementary.
             
-            In other words, low relationship expectance can mean low prediction value with high confidence as well as high prediction value with low confidence. But as the predicted indicator is of a $0/1$ type, we don't have to differentiate these cases. 
+	    % like s 20% confidence neni to samy jako like s 20% expectancy. Confidence u like musi zacinat na 0.5. Pod 0.5 je to dislike - pomoci confidence se nejde prepnout z like do dislike.
             
             % napr. prediction 0, confidence 0.75 je to samy jako prediction 1, confidence 0.25. Protoze P(0) = 0.75 = 1-0.25 - protoze jevy 0 a 1 se vylucuji. 
             
-            The dependency between relationship expectancy and prediction confidence is illustrated on the figure \ref{pic_expectancy_confidence}. Let prediction confidence be a function to $[0,1]$ determining how sure the recommender is about the given relationship prediction. Expectancy values just above zero indicate that the recommender is quite sure that there won't be the given relationship between the given subject-object pair. Expectancy values near $0.5$ mean low confidence for the prediction. Especially $0.5$ means that according to the recommender, the probability of the relationship occurence is the same as for non-occurence. Expectancy values close to $1$ mean that recommender is quite sure, that there be the given subject-object pair will be connected by the given relationship. 
+            The dependency between relationship expectancy and prediction confidence is illustrated on the figure \ref{pic_expectancy_confidence}. Let prediction confidence be a function to $[0,1]$ determining how sure the recommender is about the given relationship prediction. Expectancy values just above zero indicate that the recommender is quite sure that there won't be the given relationship between the given subject-object pair. Expectancy values near $0.5$ mean low confidence for the prediction. Especially $0.5$ means that according to the recommender, the probability of the relationship occurence is the same as for non-occurence. Expectancy values close to $1$ mean that recommender is quite sure, that the given subject-object pair will be connected by the given relationship. 
 
-            \fig[9]{pics/expectancy_confidence.png}{The dependency between relationship expectancy and prediction confidecne.}{pic_expectancy_confidence}
-
+            \fig[9]{pics/expectancy_confidence.png}{The dependency between relationship expectancy and prediction confidence.}{pic_expectancy_confidence}
+	    
+	    Expectancy can be useful for ordering the obtained recommended objects. For example, let's suppose we are predicting the ``like`` relationship and the list of recommended objects is ordered by the expectancy. At the beginning of the list there are objects the subject will probably like (the expectancy is close to $1$). Then there are objects the recommender is not sure about (the expectancy is around $0.5$). At the bottom of the list there are objects that will be probably disliked by the subject (the expectancy is close to $0$).
+	    
+	    On the other hand, expectancy isn't much intuitive for specifying the relationships in a system, so giving positiveness and confidence are used there (see \ref{representing_relationships}, \ref{representing_rules}).
+	    
             In our universal recommender we don't support rating prediction directly. But as subject-object rating means a level of subject-object preference, we can estimate rating using our relationship expectancy. We only need to define mapping from relationship expectancy values to rating. Taking the subject and object from the previous example (Bob and Five Days in Paris), we can interpret Bob's $0.2$ like relationship expectation, to the rating 1 star on a 0 to 5 star scale. 
 
         \subsection{Recommendation}
@@ -280,7 +353,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
             The recommender always chooses exactly $N$ objects, except the case where there are less than $N$ objects available for recommendation. The chosen objects are presented to the subject ordered by the Recommendation Rate.
             
-            For instance, using the example in \ref{relationship_prediction}, the friendship recommender presents ten other community server users to Alice. The users are sorted by the relationship prediction rate which reflects the number of mutual friends.
+            For instance, using the example in \ref{def_relationship_prediction}, the friendship recommender presents ten other community server users to Alice. The users are sorted by the relationship prediction rate which reflects the number of mutual friends.
         
         \subsection{Adaptation}
         \subsection{Relationship for Recommender}
@@ -532,7 +605,8 @@ Supervisor's e-mail address: \vedoucimail\\
         obrazek class diagram:
 	    Classes are displayed as rectangles, objects as rectangles with round corners. All the classes are \emph{purely static} - there are no instances of the classes, the classes contain only class methods. They act as singleton objects.
 	    The diamond relationships mean that the given class/object can be accessed only from the containing class. 
-        
+    \section{Adaptation Data}
+        \label{adaptation_data}
         \subsection{Representing Rules}
             \label{representing_rules}
             
@@ -540,7 +614,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
             The RACOFI framework \cite{racofi} uses two types of actions: \emph{Modify} that modifies the predicted subject's object rating by a given constant and \emph{Not Offered} that excludes an object from subject's recommendation.
             
-            Our rules aren't modifying predictions, but they serve as an input for predicting. Therefore we will use absolute  relationship expectancy, not relative values as in RACOFI \emph{Modify} rules. The \emph{Not Offered} rule type can be represented by a rule giving the minimal possible expectancy, so we won't have a special rule type for it. 
+            Our rules aren't modifying predictions, but they serve as an input for the predicting algorithm. Therefore we will use absolute values, not relative values as in RACOFI \emph{Modify} rules. The \emph{Not Offered} rule type can be represented by a rule giving minimal value, so we won't have a special rule type for it. 
             
             In our rules we would also like to represent inter-entity similarity. Hence we will use the following types of rules:
             \begin{description}
@@ -555,18 +629,31 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Another option would be to directly use a logic programming language as \emph{Prolog}. This option has the same drawbacks in over-generality and user-unfriedliness as RuleML. Additionally we would have to incorporate a logic programming language interpreter to Unresyst.  
             
-            A better option is to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the addaptation phase, the domain expert instantiates the pre-defined class to create a business rule.
+            A better option is to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the addaptation phase, the domain expert instantiates the pre-defined classes to create  business rules.
             
             In the figure \ref{pic_semantic_network} there is an example of a semantic network that can be a part of the parent system. The network belongs to a shoe e-shop. Alice and Bob are users living in the same city. Alice has searched the word ``trainers'' which is a part of the description of the pictured trainers. In the trainer shoe description there's also the word ``comfortable'', which is also a part of the description of the displayed rubber boots. Bob has viewed a profile page of the trainers. The trainers and the rubber boots were made by a manufacturer seating in the city where Alice and Bob lives.
             
             \fig{pics/semantic_network.png}{A sample semantic network for demonstrating rules and relationships.}{pic_semantic_network}
             
+            The \emph{expectancy} concept (\ref{def_relationship_prediction}) is powerful but not very intuitive for defining the impact of the rules on predicting relationships. By defining a rule with expectancy we would be able to indicate positive as well as negative impact on predicting the given relationship because low values of expectancy have negative impact on preference and high values positive. Defining directly the expectancy of a rule would result in complicated functions and could lead to confusion and misinterpretation. Hence, for rule definition, we use a less general but more intuitive concept of \emph{confidence} and \emph{positiveness}.
+            
+            Each rule is either defined as \emph{positive} or \emph{negative}. Positive rules increase the prediction of the given relationship, negative rules decrease it. Each rule additionally has a confidence function defining how strong (positive resp. negative) the rule is for the given pair of entities. Events that can have both positive and negative impact should be represented by two rules.
+%             synergic
+            
+            % kdyz chces udelat relationship ktere kdyz neni, tak je to negative, tak si udelej dve relationships
+            
+            %to samy u rules - idea je aby to pocitalo jenom s tim co mu explicitne zadas. to ze mu reknes, nedoporucuj zimni boty jizanum jeste neznamena doporucuj zimni boty severanum - pokud to chce, at si na to explicitne zada pravidlo.
+            
+            %expectancy mu vubec nedovolim zadavat - to si budu pocitat sam.
+            
             In the examples, we will be predicting the \emph{like} relationship, representing the preference of the user to the given shoe pair. We will demonstrate the rule definition on the following rules:
             \begin{enumerate}
-                \item \label{ex_s_o} If a user is from a city in the south, we won't recommend him/her winter shoes.
-                \item \label{ex_s_s} If two users are about the same age, they are considered similar. 
-                \item \label{ex_o_o} When two pairs of shoes have in their description some common words, they are considered similar.
+                \item \label{ex_s_o} If a user is from a city in the south, we won't recommend him/her winter shoes (negative).
+                \item \label{ex_s_s} If two users are about the same age, they are considered similar (positive).
+                \item \label{ex_o_o} When two pairs of shoes have in their description some common words, they are considered similar (positive).
             \end{enumerate}
+            
+            Note that we define only one side of the rules (either positive or negative). E.g. by defining that we won't recommend winter shoes for southern users, we don't say that we would like to recommend winter shoes to northern users. If we wanted to extend the rule this way we would define a new positive rule. 
             
             For our object-oriented rule representation we need to define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible actions are determining the expectancy of the subject-object relationship and determining inter-entity similarity. Therefore actions will be represented as functions giving an expectancy or similarity respectively. The rule objects contain:
             \begin{description}
@@ -576,41 +663,44 @@ Supervisor's e-mail address: \vedoucimail\\
                     \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. Example \ref{ex_s_s}: If we know the age of both of the users, the condition is \emph{True}, otherwise it's \emph{False}.
                     \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. Example \ref{ex_o_o}: If the descriptions of the shoes share some words, the condition is \emph{True}, otherwise it's \emph{False}. 
                 \end{description}
-                \item[Expectancy:] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity.
+                \item[Is Positive:] A  boolean constant (\emph{True} or \emph{False}) for determining whether the rule is positive for the predicted relationship or negative.
+                \item[Confidence:] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity in a positive or negative way.
                 \begin{description}
-                    \item[Subject-object relationship expectancy] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and estimates a probability, that the \emph{predicted relationship} appears between the subject and the object. Values close to $1$ mean that, according to the rule, the object should be recommended to the subject. Low values close to $0$ mean that the object shouldn't be recommended to the object. Values in the middle (near $0.5$) mean that the rule is unsure about recommending the given object to the given subject - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example \ref{ex_s_o}: We can use a linear function. The more southern the city is, the lower is the resulting expectancy. Or we can simply remove the shoes from the user's recommendation by always returning zero.
+                    \item[Subject-object relationship confidence] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and gives a confidence, that the \emph{predicted relationship} appears (when positive) or doesn't appear (when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) for the given subject-object relationship - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example \ref{ex_s_o}: We can use a linear function. The more southern the city is, the higher is the resulting confidence. Or we can simply remove the shoes from the user's recommendation by always returning $1$.
                     \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the expectancy, the more similar the subjects are, according to the rule. Example \ref{ex_s_s}: Our function returns a normalized difference between the age of the two users. 
-                    \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity between the subjects. The higher the expectancy, the more similar the objects are, according to the rule. Example \ref{ex_o_o}: We can use a function returning the number of common words divided by the number of words in the description.
+                    \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity or dissimilarity between the subjects. The higher the confidence, the more similar (or dissimilar when negative) the objects are, according to the rule. Example \ref{ex_o_o}: We can use a function returning the number of common words divided by the number of words in the description.
                 \end{description}
-                \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike Expectancy, is independent of the particular entities on which the rule is evalutated. In our example, the number \ref{ex_s_o} will have a high weight (e.g. $0.8$), because it is quite specific. Other rules would have lower weight, e.g. $0.1$.
+                \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike confidence, is independent of the particular entities on which the rule is evalutated. In our example, the number \ref{ex_s_o} will have a high weight (e.g. $0.8$), because it is quite specific. Other rules would have lower weight, e.g. $0.1$.
                 \item[Description:] A text explaining the meaning of the rule. Descriptions can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_o_o} can have a description ``The shoe pairs \{object1\} and \{object2\} are similar because their descriptions contain some words in common.''
             \end{description}
             
-            Such rules can represent each of knowledge types described in \cite{knowledge_spain}, described in the section \ref{knowledge_based}. Catalog knowledge can be represented by rules accessing object properties in their Condition and Expectancy functions. Functional and user knowledge can be representing by rules using the relatioships between subjects and objects. 
+            Such rules can represent each of knowledge types described in \cite{knowledge_spain}, described in the section \ref{knowledge_based}. Catalog knowledge can be represented by rules accessing object properties in their Condition and Confidence functions. Functional and user knowledge can be representing by rules using the relatioships between subjects and objects. 
 
         \subsection{Representing Relationships}
             \label{representing_relationships}
             
-            Apart from defining business rules, the domain expert has to define which relationships are relevant for performing the prediction. This is done when adapting a system to Unresyst.
+            Apart from defining business rules, the domain expert can define which relationships are relevant for performing the prediction. This is done when adapting a system to Unresyst.
             
-            We have some specific requirements on the relationship representation. In the system there can be various entities, not only subjects and objects. The relationships can also span such entities. In our example on the figure \ref{pic_semantic_network} there're are the ``city'' entities, which aren't subjects nor objects but we use them in rules. Secondly, the relationships can have various relevance for predicting the given relationship. This should be implemented by assigning weights to relationships. 
+            We have some specific requirements on the relationship representation. In the system there can be various entities, not only subjects and objects. The relationships can also span such entities. In our example on the figure \ref{pic_semantic_network} there're are the ``city`` entities, which aren't subjects nor objects but we use them in rules. Secondly, the relationships can have various relevance for predicting the given relationship. This should be implemented by assigning weights to relationships. 
             
             We would like to represent relationships of the following types. The relationships don't have to be direct - on the path from subject/object to subject/object there can be an entity of any type. 
             
+            As for the rules, there can be both positive and negative relationships. Positive relationships increase the preference or similarity for the relevant entity pairs, negative relationships decrease it.
+            
             The following examples are related to the figure \ref{pic_semantic_network}.
             \begin{description}
-                \item[Subject-object relationships] indicate a subject's preference for the given object in means of the predicted relationship. In our example, if Bob has viewed a profile page of the trainers, we suppose he is quite interested in them.
-                \item[Subject-subject relationships] indicate similarity among subjects. For example if Alice and Bob live in the same city they are considered similar. 
-                \item[Object-object relationships] indicate similarity among objects. For example if the trainers and the rubber shoes were made by the same manufacturer they are considered kind of similar. 
+                \item[Subject-object relationships] indicate a subject's preference for the given object in means of the predicted relationship. In our example, if Bob has viewed a profile page of the trainers, we suppose he is quite interested in them (positive).
+                \item[Subject-subject relationships] indicate similarity among subjects. For example if Alice and Bob live in the same city they are considered similar (positive).
+                \item[Object-object relationships] indicate similarity among objects. For example if the trainers and the rubber shoes were made by the same manufacturer they are considered kind of similar (positive).
             \end{description}
 
             Obviously, the requirenemts on the relationship representation are very similar to the requirements we have set on rule representation. Hence, we can use the rule representation for relationships with some corrections:
             \begin{description}
                 \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. In the subject-object example, the Condition is a function returning \emph{True} if the user has viewed the profile page of the shoes, otherwise it returns \emph{False}.
-                \item[Expectancy:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair is surely in a relationship. Hence, such a function would always return $1$ for relationhips.
+                \item[Is Positive: ] A  boolean constant for determining whether the relationship is positive for the predicted relationship or negative. Works analogously to the Is Positive value in rules.
+                \item[Confidence:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair surely is (when positive) or isn't (when negative) in a relationship. Hence, such a function would always return $1$ for relationhips.
                 \item[Weight:] We need a way how to define the relevance of the relationship for predicting the relationship. Weight can be used on this purpose. In our example the ``viewed profile'' relationship would have higher weight than the others because it's the most specific relationship out of the three. 
                 \item[Description:] The textual explanation can be used for clarifying the meaning of the relationship. ``\{subject\} has viewed the profile of \{object\}.
-                 
              \end{description}
             
             Such a representation can use semantics of a system independently of its data model. There doesn't have to be a direct link between subjects/objects in the data model to define a relationship. For example Alice has searched for the word ``trainers'' which is in the description of the displayed trainers. Even though there isn't a direct connection in the data model, we can represent such a relationship in our system. Moreover, the relationships can be taken from various sources, e.g. multiple databases, data stores, or log files. The only thing that has to be provided to Unresyst is an implementation of a function returning whether the given subjects/objects are in the relationship.
@@ -716,6 +806,7 @@ http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
 \bibitem{ruleml}\verb!http://ruleml.org/!
 \bibitem{ruleml_short}\verb!http://ruleml.org/submission/ruleml-shortation.html!
 \bibitem{ruleml_prolog}\verb!http://centria.di.fct.unl.pt/~cd/projectos/w4/ruleml/index.htm!
+\bibitem{lastfm_festivals}\verb!http://www.last.fm/festivals!
 
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
