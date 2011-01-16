@@ -175,9 +175,9 @@ Supervisor's e-mail address: \vedoucimail\\
     
     Recommender systems are programs operating on large amount of data in software systems. Recommender systems try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
     
-    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and a prediction of any type of relationship between the entities in the domains. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships.
+    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and a prediction of any type of relationship between the entities in the domains. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships. Our recommender adds a new layer above algorithms implemented in recommender frameworks, making the recommender easily applicable to any domain and system.
     
-    %tohle opravit
+    %TODO tohle opravit
     In the introductory chapter we describe the basic structure of the thesis. Then we give a formal definition of a recommender system. Finally we review projects and papers that have been created on the universal recommender topic.
     
     \section{Thesis Structure}
@@ -205,26 +205,33 @@ Supervisor's e-mail address: \vedoucimail\\
             \item[]nebudu merit vykon v case jenom nejak plus minus asymptoticky
             \item[Central server for multiple systems.] A single Unresyst instance isn't intended to be used as a central server for multiple domains - a Unresyst instance always refers to a single domain. Unresyst doesn't deal with matching the same subjects and objects appearing in multiple systems. 
             \item[Collecting user preference] Unresyst doesn't help the system collecting any user actions for recommending. Implicit and explicit user feedback can be used for generating recommendations in Unresyst, but it has to be handled by the outer system and passed to Unresyst in the form of business rules and relationships.
-            %\item[]dalsi hustoficury, ktere nestihnu, 
+            %TODO\item[]dalsi hustoficury, ktere nestihnu, 
         \end{description}
 
-\chapter{Recommender Analysis}
-    \label{recommender_analysis}
-    In the chapter we discuss the circumstances under which recommender systems are a preferrable option both for users and system holders. Later in the chapter we describe the reasons for using our universal recommender (\emph{Unresyst}), we compare our recommender to existing solutions. Finally we formally define the problem of recommending.
+\chapter{Analysis}
+    \label{analysis}
+    In the chapter we discuss the circumstances under which recommender systems are a preferrable option both for users and system holders. Later we describe the reasons for using our universal recommender (\emph{Unresyst}), we compare our recommender to existing solutions. We propose draft of a process model for activities related to running Unresyst. Finally we formally define the problem of recommending.
     
-    Recommender system is a part of a web-based application, that uses data about users and their behaviour to provide users with  items which are the most relevant to them. The recommended items are typically things that are liable to user taste, like books, music, news, etc.
+    Recommender system is a part of a web-based application, that uses data about users and their behaviour to provide them with items which are the most relevant to them. The recommended items are typically things that are liable to user taste, like books, music, news, etc.
+    
+    \section{Recommender System Applicability}
+        \label{recommender_system_applicability}
+        viz Collaborative filtering recommender systems: vyber zalezi na vkusu, jsou tam homogenni prvky, ...
     
     \section{Recommender System Benefits}
-        \label{recommender_system_usage}
+        \label{recommender_system_benefits}
         The section summarizes reasons why recommender systems are useful for both users and system holders.
         
         \subsection{Benefits for System Users}
             \label{benefits_for_users}
             In a web-system like an e-shop or an internet radio a user is overloaded with items. The system database typically contains thousands of items divided into several categories. The recommender provides user with items that are likely to be interesting without requiring him/her to search for them. This saves user's time and helps him/her spend more time exploring the interesting items than messing around uninteresting items. The provided recommendations are personalized, they reflect the past user's behaviour and available data, so the recommendations are likely to be much accurate. 
             
-            Recommender systems help users find novel items. When a user only browses and searches the system items, he/she usually gets stuck on a relatively small group of items. The recommendations usually contain items chosen by various criteria, so that they contain both items the user is familiar with and items that are likely to be interesting for the user, but the user wouldn't otherwise discover them.
+            In comparison to advanced multi-criteria search, recommender systems are better at reflecting users' preference in criteria that aren't easy to express and depend on the taste of the user. The advantage of recommender system is their user-friendliness - they don't require any explicit search terms, they just use the facts they already know about the user. This can be a significant advantage for inexperienced internet users. 
+            Opposed to search engines, recommender systems present items ordered by the expected preference, which can be more accurate when taste is important. However, multi-criteria search can act as a supplement to a recommender system, for performing well defined search queries. E.g. if the user is absolutely certain he/she wants a red lap-top with the given display size at the lowest price, the multi-criteria search is the best option to find such a product.
             
-            Apart from that, a recommender system can predict user's interest for a particular item. E.g. the last.fm festival recommender can predict user's interest in a particular festival based on the user's taste and the festival lineup \ref{lastfm_festivals}. This also saves user's time, he/she doesn't have to examine details of the items he/she that aren't likely to be interesting for him/her.
+            Recommender systems help users find novel items. When a user only browses and searches the system items, he/she usually gets stuck to a relatively small group of items. The recommendations usually contain items chosen by various criteria, so that they contain both items the user is familiar with and items that are likely to be interesting for the user, but the user wouldn't otherwise discover them.
+            
+            Apart from that, a recommender system can predict user's interest for a particular item. E.g. the last.fm festival recommender can predict user's interest in a particular festival based on the user's taste and the festival lineup \cite{lastfm_festivals}. This also saves user's time, he/she doesn't have to examine details of the items that aren't likely to be interesting for him/her.
         
         \subsection{Benefits for a System Holder}
             \label{benefits_for_holders}
@@ -232,13 +239,13 @@ Supervisor's e-mail address: \vedoucimail\\
             
             In an e-shop, if a user easily finds items that are appropriate for him/her, he/she is more likely to buy them. In a non-retail system like an internet radio, the system holder can also profit from a user finding appropriate items quickly. The user spends more time on pages that provide interesting information for him/her, which leads to more appropriate context advertisements with higher earnings.
             
-            Another interesting feature recommender systems provide to e-shop holders is the ability to include promoted items to recommendations. E-shop holders can artificially increase the recommendation rates of the promoted goods in order they apeear in recommendations for more users. However, this feature should be used moderately because it distorts the results of the recommender algorithm. A massive propagation of items that are promoted by the system holder but are not very interesting for particular users may lead to a loss of user's trust for the recommender.
+            Another interesting feature recommender systems provide to e-shop holders is the ability to include promoted items to recommendations. E-shop holders can artificially increase the recommendation rates of the promoted goods so that they apeear in recommendations for more users. However, this feature should be used moderately because it distorts the results of the recommender algorithm. A massive propagation of items that are promoted by the system holder but are not very interesting for particular users may lead to a loss of user's trust for the recommender.
             
-            And last but not least, a recommender system provieds a competitive advantage. Web business leaders like Google or Amazon have already implemented recommenders in their systems, for smaller companies a recommender system may be a key advantage over their rivals.
+            And last but not least, a recommender system provides a competitive advantage. Web business leaders like Google or Amazon have already implemented recommenders in their systems, for smaller companies a recommender system may be a key advantage over their rivals.
     
     \section{Universal Recommender Analysis}
         \label{universal_recommender_analysis}
-        In the section we describe the position of the proposed recommender system (\emph{Unresyst}) on the market. We depict advantages and disadvantages of the Unresyst recommdender, we compare Unresyst to existing sollutions. Finally we propose processes for incorporating Unresyst to a web-based system and for running a system involving Unresyst.
+        In the section we describe the position of the proposed recommender system (\emph{Unresyst}) on the market. We depict advantages and disadvantages of the Unresyst recommender, we compare Unresyst to existing sollutions. Finally we propose processes for incorporating Unresyst to a web-based system and for running a system with Unresyst.
         
         The proposed Unresyst recommender is a domain-independent recommender system that is able to use various relationships between the domain entities. Unresyst is an independent software component that logically stands outside the web-based parent system. It comminicates with the parent system through a defined API. Detailed information on the system architecture can be found in the section \ref{architecture}. 
         
@@ -251,30 +258,80 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Compaines that run big global web-systems generally have enough resources to develop their own recommender systems that are specifically designed for their needs. Therefore, Unresyst is aimed at small and mid-size web systems. The goal of the Unresyst concept is to provide companies a way to implement a recommender system without having to develop their own recommender solution, which is often both time and money consuming. With a bit of configuration, Unresyst provides the recommending accuracy comparable to a custom-made recommender system.
             
-            Data that can be used by Unresyst include but are not limited to:
+            Unresyst can take use of any attributes and relationships that can be tracked in the parent system. Data that can be used by Unresyst include but are not limited to:
             \begin{description}
-                \item[Demographic information] both user and items
-                \item[User behaviour]
-                \item[Explicit feedback]
-                \item[Social relations]
-                \item[Other user attributes]
-                \item[Other item attributes]
+                \item[User behaviour:] In recommendations we can use data about user viewing item pages, the time users spent on each page, analysis of user's mouse move and any other implicit feedback provided by users.
+                \item[Explicit feedback:] We can also use the explicit user feedback, like rating on a scale, thumb up/thumb down rating, in systems where such mechanisms are available.
+                \item[Demographic information:] In systems where demographic data are available, we can use them for making recommendations. For users we can use attributes like age, place of residence, or education. For items we can use the data about their manufacturers like country or size of the company.
+                \item[Social relations:] In systems, where users interact between each other, the social data can be used for providing recommendations. We can use relationships between users like friends, sent personal messages or viewing other user's profile.
+                \item[Other relationships:] Any other relationships between entities of the system can be used for making recommendations. Such relationships include user-defined tags which can be used for determining similarity of the entities marked with the same tag, or user's preference for items marked with a particular tag.
              \end{description}
-        \subsection{Comparison to Existing Solutions}
+             
+             Recommendations produced by Unresyst can take into account both objective and subjective criteria. Objective criteria for recommending can be expressed in business rules (e.g. not recommending expensive items to users with low income). Subjective criteria, as the expressed preference for an item are used both for the user and users that are observerd to have similar taste.
+             
+             The most common operations for a recommender ,providing recommendations and prediciting the preference for a particular item, are performed in time independent of the number of the entities in the system. The exact recommendation and prediction time may vary between the recommender algorithms. However most of the presented current algorithm use some kind of recommendation index which enables them to perform recommendations in constant time.
+             
+             The Unresyst software component is logically independent of the parent system, it provides an API for all common operations. The API and the domain-specific configuration is made so that the adaptation to the domain and to the parent system is as easy as possible. Unresyst also contains a pluggable user interface for presenting recommendations to the user. The user interface can be incorporated into the parent system user interface so that the user doesn't have to leave the parent system in order to see the recommendations.
+             
+             % casem by tu mohlo pribyt neco kouzelneho - dynamika domeny, extrahovani netusenych vztahu a souvislosti a jine
+             
+        \subsection{Comparison to Other Solutions}
+            \label{comparison_to_other_solutions}
+            In the section we compare Unresyst to other solutions that are available for a small to mid-size company that likes to implement a recommender system at a reasonable time and cost. Unresyst is laying somewhere between the two presented options, using the advantages of both and minimizing their drawbacks.
+            
+            \subsubsection{Filtering Items in Queries}
+                \label{filtering_items_in_queries}
+                For a system holder, a minimalistic approach to item recommending is to implement item filtering in a query language (e.g. SQL) above the system database. This approach can be very efficient when the holder wishes to implement a small set of well-defined filtering rules, that don't imply user's taste. Such an implementation can be fast and cheap, as it doesn't require any significant changes to the system, nor incorporation of a third party component to the system. 
+                
+                However this approach works well only for well-defined and static filtering criteria that aren't costly to evaluate. With an increased size of the rule set, the maintainance of the queries becomes difficult. When the system holder wishes to implement some kind of evaluation of user taste, the situation even complicates. Complex queries combining various data can take a long time to evaluate, which results in slow generating of the system web pages and nervous users.
+                
+                Simple hard coded filtering queries don't allow exceptions to the expressed rules. E.g. if we set up a hard coded query for not recommending an item to users with the given demographic data, the item won't be recommended even if we have a high preference signs from other sources such as user behaviour.
+                
+                The Unresyst recommender offers a transparent way of managing the business knowledge that is used for generating recommendations. The rules and relationships aren't written in query language but in a more human-friendly form. The business knowledge is kept in one place and is separated from the recommender algorithm. Changing the significance of the rules and relationships can be done there too. All recommendations are produced using the given business knowledge. The rules and relationships are combined according to their significance.
+                
+                The recommender algorithm which is one of the Unresyst layers, can use complex techniques to exploit the business knowledge. Therefore the recommendations produced by Unresyst are generally more accurate. At the same time the algorithm uses a recommender index that makes the prediction time independent of the number of entities in the system. 
+                
+                The main disadvantage of Unresyst compared to the minimalistic option is the required initiatory effort required to start producing recommendations. Firstly, Unresyst has to be configurated for the system, which means specifying the subject and object domain, definition of the predicted relationship  and finally writing down the business knowledge in the form of rules and relationships. Then the recommendations have to be incorporated to the parent system - calling of Unresyst methods has to be added to neccessary places, the recommender user interface has to be incorporated to the system. However the initial effort pays off as the latter changes in recommender configuration can be done easily at one place.
+                
+                To summarize the comparison, Unresyst is a better option than filtering items in queries unless the system holder only whishes to implement a small set of fixed filtering rules, that don't need to be changed over time and he/she isn't interested in exploiting the rules by a recommender algorithm.
+                
+            \subsubsection{Using a Recommender Framework}
+                \label{using_a_recommender_framework}
+                The system holder can choose to implement a recommender based on a recommender framework library like Duine \cite{duine} or Mahout \cite{mahout}. These are software libraries providing implementations of common present-day algoritms like collaborative filtering or content-based algorithms. For details on recommender algorithms see the section \ref{algorithms}.
+                
+                Recommender frameworks aren't real rivals to Unresyst as they can be used in the Algorithm layer of Unresyst. In this section we compare the usage of mere recommendation framework directly incorporated  into the system and the usage of Unresyst with a recommender algorithm below, no matter if the in-built recommender algorithm is used, or if the algorithm implementation is overtaken from a third party library.
+                
+                Most algorithms in recommender frameworks rely on presence of a single explicit preference indicator like rating. If a system holder likes to use more sources of negative or positive preference data, he/she has to care about converting the preference to the rating used in the recommender algorithm. Using multiple sources of preference data, like data about user behaviour, social data or demographic data about users, is necessary for the algorithm to provide good recommendations. Only recommenders that use all available knowledge can produce high quality recommendations.
+                
+                The API of most of the present-day recommender frameworks isn't very developer-friendly and let the developer deal with converting between the system entities and recommender entities. This requires additional programming. Moreover, the algorithm API often lacks methods for updating the entities. Therefore in order to propagate the changes in the system data to recommender, the system administrator has to rebuild the index of the recommender algorithm. The recommendations can't be made ``on-line'' from the current system data. Unresyst brings up a simple and complete interface for using the recommender in the parent system.
+                
+                %TODO overit, doplnit odkazy na konkretni knihovny, algoritmy
+                
+                In addition, Unresyst enables system holders to run multiple instances of a recommender in one parent system. E.g. there can be a product recommender and user group recommender in the system, that is working in one Unresyst installation, but is independent of each other and can be using different rules and relationships to produce recommendations. Moreover in Unresyst the domain of the recommended objects can be  equal to domain of subjects, so Unresyst can be used e.g. as a friend recommender.
+                
+                To summarize the comparison, incorporating a recommender framework is usually complicated both techically and intellectually. This may be one of the reasons why the present-day recommender frameworks haven't been widely used in real world web-based systems. Unresyst adds a new layer above the algorithms that solves the problems with combining different sources of preference data and enables the system holder to incorporate the business knowledge to recommendations.
         
-        \subsection{Unresyst Process Proposal}
-            depends on particular company, environment, brief
-        
-        
-        
+        \subsection{Unresyst Process Model Proposal}
+            \label{unresyst_process_proposal}
+            In the section we propose a design of processes related to Unresyst setup and maintainance. Note that this is only a brief simplyfied sketch illustrating how real processes could possibly look like. The actual usage of the system would be highly dependent on particular company, its environment and people. A more technical view on Unresyst setup and evaluation can be found in chapters about Unresyst architecture (\ref{architecture}) and evaluation (\ref{evaluating_recommender_results}).
 
-    \section{Comparison}
-        \subsection{Advanced Search}
-        Some systems provide advanced item search 
-        - user activity
-        - user knows what he wants
-        - taste 
-        - sorted by relevance to search criteria not by preference
+            \subsubsection{Unresyst Setup}
+                \label{unresyst_setup}
+                After the system holder or the company management agrees on using Unresyst for recommending in their system, the setup activities may begin. One of the main roles in the recommender operation is the \emph{Domain Expert}. He/She is familiar with the business the system is operating in, knows a lot about entites and their relationships both in the real world and in the system. 
+                
+                Firstly, the \emph{Business Analyst} interviews the \emph{Domain Expert} in order to find out the requirements for the recommender and type and ammount of data that is available for making recommendations.  The output of this activity is a report that thoroughly describes the purpose of the recommender and knowledge that is available for recommending in the parent system. The report should at least include the list of recommender instances that will be incorporated to the system and for each recommender it should describe the subjects and objects of recommendations, the description of the predicted relationship and finally a description of all relationships and business rules that are available for the domain. The report is prepared by the \emph{Business Analyst}, is approved by the \emph{Domain Expert} and is imperative for the later activities. This activity should be done properly, multiple iterations of interviewing and recording will be needed.
+                
+                The report is delivered to the \emph{Data Specialist}. \emph{Data Specialist} is a person highly familiar with the data model of the system. He/she transforms the report into an Unresyst configuration, which formally defines subjects, objects, rules and relationships for each recommender. After the configuration, the \emph{Data Specialist} performs the recommender build, evaluates the results of the recommender and verifies sample recommendations with the \emph{Domain Expert}. \emph{Data Specialist} tries improving the recommender evaluation by tuning the rule and relationship parameters, until a given accuracy threshold is reached.
+                
+                The \emph{Developer} is next to come. \emph{Developer} is familiar with the implementation of the parent system. He/she incorporates the Unrest API calls to the appropriate parts of the system, includes the recommender user interface into the parent system interface.
+                
+                After enough tests have been performed, the version of the parent system using Unresyst is put into operation. Tests should include user-testing inquiring real users of the system.
+                
+            \subsubsection{Unresyst Maintainance}
+                \label{unresyst_maintainance}
+                Running a recommender system isn't just a matter of setup. Keeping the recommendation quality high requires a regular maintainance activity. The frequency of the maintainance tasks depend on many factors such as  domain dynamics and internal capacities of the company. It should be done at least a few times a year.
+                
+                Maintainance activites follow selected setup activities in order to improve accuracy of the recommender. \emph{Business Analyst} interviews the \emph{Domain Expert} to find out what has happened in the domain business since the last maintainance activity. The news are delivered to the \emph{Data Specialist}, who incorporates them to the recommender configuration. He/she evalutes the recommender with the new configuration and tunes the parameters until the desired evaluation is obtained. The new Unresyst configuration and sample recommendations are consulted with the \emph{Domain Expert}. The new configuration is finally tested and put into operation.
         
     \section{Definitions}
         \label{definitions}
@@ -736,8 +793,8 @@ Supervisor's e-mail address: \vedoucimail\\
         \subsection{Bikebook}
         ...
 
-\chapter{Recommender Practice}
-    \label{practice}
+\chapter{Evaluating Recommender Results}
+    \label{evaluating_recommender_results}
     In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. 
 
     \section{Comparison to Other Recommenders}
@@ -749,11 +806,13 @@ Supervisor's e-mail address: \vedoucimail\\
 \chapter{Conclusion and Future Work}
 \label{conclusion}
 
-zahrnul jsem knowledge-based recommender do matrix factorization (ale na to prijdu az v kapitole algorithms).
+% zahrnul jsem knowledge-based recommender do matrix factorization (ale na to prijdu az v kapitole algorithms).
+% navrhnul jsem expectancy - miru relevance rekomendace nezavislou na hodnoceni, navrhnul jsem jak ji zadavat aby to bylo user-friendly
 
 \chapter{Software tools}
 \label{tools}
  - gedit, http://www.timtim.com (obrazky), Kile (latex),  pdfTeXk version 1.40.3 (Web2C 7.5.6)
+ - django 1.2, python 2.7
     
     
 %%% Seznam literatury
@@ -807,6 +866,7 @@ http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
 \bibitem{ruleml_short}\verb!http://ruleml.org/submission/ruleml-shortation.html!
 \bibitem{ruleml_prolog}\verb!http://centria.di.fct.unl.pt/~cd/projectos/w4/ruleml/index.htm!
 \bibitem{lastfm_festivals}\verb!http://www.last.fm/festivals!
+\bibitem{mahout}\verb!http://mahout.apache.org/!
 
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
