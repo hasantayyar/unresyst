@@ -216,11 +216,21 @@ Supervisor's e-mail address: \vedoucimail\\
     
     \section{Recommender System Applicability}
         \label{recommender_system_applicability}
-        viz Collaborative filtering recommender systems: vyber zalezi na vkusu, jsou tam homogenni prvky, ...
+        For a successful implementation of a recommender system, several conditions which have to be fulfilled. A summary of applicability conditions for a collaborative filtering recommender can be found in \cite{collaborative_filtering}. We list some of them that are valid for any recommender, independently of the recommender algorithm.
+        
+        \begin{description}
+            \item[Many items:] In the domain there are many items that might be interesting for a user. It is not possible for the user to browse all of them.
+            \item[Choice based on taste:] The choice of the items depends on the taste of each user. If there were some objective criteria for recommending items to users the recommender system wouldn't be much helpful.
+            \item[Taste data:] In the system there have to be some data about the users interacting with items that can be interpreted as expressing taste. It doesn't matter if these are explicit rating data or implicit capture of user behaviour, but there have to be some.
+            \item[Homogenous items:] The items in the domain have some common attributes, they can all be covered by taste data, e.g. they can all be viewed or rated.
+        \end{description}
+
     
     \section{Recommender System Benefits}
         \label{recommender_system_benefits}
         The section summarizes reasons why recommender systems are useful for both users and system holders.
+        
+        \fig[8]{pics/use_case_recommender.png}{Use cases for a recommender system.}{pic_use_case_recommender}
         
         \subsection{Benefits for System Users}
             \label{benefits_for_users}
@@ -292,6 +302,8 @@ Supervisor's e-mail address: \vedoucimail\\
                 The recommender algorithm which is one of the Unresyst layers, can use complex techniques to exploit the business knowledge. Therefore the recommendations produced by Unresyst are generally more accurate. At the same time the algorithm uses a recommender index that makes the prediction time independent of the number of entities in the system. 
                 
                 The main disadvantage of Unresyst compared to the minimalistic option is the required initiatory effort required to start producing recommendations. Firstly, Unresyst has to be configurated for the system, which means specifying the subject and object domain, definition of the predicted relationship  and finally writing down the business knowledge in the form of rules and relationships. Then the recommendations have to be incorporated to the parent system - calling of Unresyst methods has to be added to neccessary places, the recommender user interface has to be incorporated to the system. However the initial effort pays off as the latter changes in recommender configuration can be done easily at one place.
+                
+                Running a system that uses a recommender involves some additional effort. The index of the recommender algorithm has to be built before the recommender is used. This can be a time-consuming action, depending on the algorithm and number of entities in the system. The recommender index has to be kept up to date by either rebuilding now and then or by continuously calling methods for index update. These methods keep update the index with every change in the system but they require some additional time during save and update of the system entites and they might be inavailable for some recommender algorithms. The issues of the recommender index however occur when running any recommender that takes constant time for recommending items.
                 
                 To summarize the comparison, Unresyst is a better option than filtering items in queries unless the system holder only whishes to implement a small set of fixed filtering rules, that don't need to be changed over time and he/she isn't interested in exploiting the rules by a recommender algorithm.
                 
@@ -808,6 +820,7 @@ Supervisor's e-mail address: \vedoucimail\\
 
 % zahrnul jsem knowledge-based recommender do matrix factorization (ale na to prijdu az v kapitole algorithms).
 % navrhnul jsem expectancy - miru relevance rekomendace nezavislou na hodnoceni, navrhnul jsem jak ji zadavat aby to bylo user-friendly
+% oddelil jsem business knowledge od recommender algorithm
 
 \chapter{Software tools}
 \label{tools}
@@ -867,6 +880,7 @@ http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
 \bibitem{ruleml_prolog}\verb!http://centria.di.fct.unl.pt/~cd/projectos/w4/ruleml/index.htm!
 \bibitem{lastfm_festivals}\verb!http://www.last.fm/festivals!
 \bibitem{mahout}\verb!http://mahout.apache.org/!
+\bibitem{collaborative_filtering}Collaborative filtering recommender systems \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.130.4520&rep=rep1&type=pdf!
 
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
