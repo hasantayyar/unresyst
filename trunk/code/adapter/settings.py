@@ -94,6 +94,7 @@ NOSE_ARGS = ['--with-doctest','-v', '--stop']
 
 INSTALLED_APPS = (
     'demo',
+    'lastfm',
     'unresyst',
     'django.contrib.auth',
     'django.contrib.contenttypes',
