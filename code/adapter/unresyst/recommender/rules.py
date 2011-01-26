@@ -14,7 +14,7 @@ class _Relationship(object):
     between the entities that are in the given relationship.
     """
     
-    def __init__(self, name, condition, description=None):
+    def __init__(self, name, condition, description=None, generator=None):
         """The constructor."""
         
         self.name = name
@@ -38,6 +38,12 @@ class _Relationship(object):
             subject domain is the same as object domain        
         """
         
+        self.generator = generator
+        """A generator returning pairs of objects that are in the relationship/
+        the rule applies to them.
+        For performance reasons - if given, the pairs will be taken from it 
+        without the need for evaluating the condition for each possible pair.
+        """
     
     DESCRIPTION_FORMAT_DICT = {
         RELATIONSHIP_TYPE_SUBJECT_OBJECT: 
@@ -130,15 +136,15 @@ class _Relationship(object):
         return {}
     
     
-    def evaluate_on_args(self, arg1, arg2, definition):        
+    def evaluate_on_dn_args(self, dn_arg1, dn_arg2, definition):        
         """Evaluates the rule on the given arguments. If evaluated positively,
         a new rule/relationship instance is saved.
        
-        @type arg1: models.SubjectObject
-        @param arg1: a domain neutral representation of the first entity.
+        @type dn_arg1: models.SubjectObject
+        @param dn_arg1: a domain neutral representation of the first entity.
 
-        @type arg2: models.SubjectObject
-        @param arg2: a domain neutral representation of the second entity.
+        @type dn_arg2: models.SubjectObject
+        @param dn_arg2: a domain neutral representation of the second entity.
         
         @type definition: models.abstractor.RuleRelationshipDefinition
         @param definition: the model representing the rule/relationship 
@@ -147,27 +153,81 @@ class _Relationship(object):
   
         # get the domain specific objects for our universal representations
         #
-        arg1_manager = self.recommender._get_entity_manager(arg1.entity_type)
-        ds_arg1 = arg1.get_domain_specific_entity(entity_manager=arg1_manager)
+        arg1_manager = self.recommender._get_entity_manager(dn_arg1.entity_type)
+        ds_arg1 = dn_arg1.get_domain_specific_entity(entity_manager=arg1_manager)
         
-        arg2_manager = self.recommender._get_entity_manager(arg2.entity_type)
-        ds_arg2 = arg2.get_domain_specific_entity(entity_manager=arg2_manager)
+        arg2_manager = self.recommender._get_entity_manager(dn_arg2.entity_type)
+        ds_arg2 = dn_arg2.get_domain_specific_entity(entity_manager=arg2_manager)
 
         # if the condition is satisfied
         if self.condition(ds_arg1, ds_arg2):
             
+            self._perform_save_instance(definition, ds_arg1, ds_arg2, dn_arg1, dn_arg2)
+
+
+    def _perform_save_instance(self, definition, ds_arg1, ds_arg2, dn_arg1, dn_arg2):
+        """Perform the action of creating and saving the instance"""
+        
+        # if the second argument has lower id than the first, swap them
+        if dn_arg2.pk < dn_arg1.pk:            
+            dn_arg1, dn_arg2 = dn_arg2, dn_arg1
+            ds_arg1, ds_arg2 = ds_arg2, ds_arg1
+                       
+        add_kwargs = self.get_additional_instance_kwargs(ds_arg1, ds_arg2)
+        
+        # create a rule/relationship instance
+        instance = self.InstanceClass(
+                        definition=definition,
+                        subject_object1=dn_arg1,
+                        subject_object2=dn_arg2,
+                        description=self.get_filled_description(dn_arg1, dn_arg2),
+                        **add_kwargs)
+        
+        instance.save()
+
+
+    def save_instance(self, ds_arg1, ds_arg2, definition):        
+        """Save an instance of the rule/relationship for the given args.
+       
+        @type ds_arg1: domain specific subject/object
+        @param ds_arg1: a domain specific representation of the first entity.
+
+        @type ds_arg2: domain specific subject/object
+        @param ds_arg2: a domain specific representation of the second entity.
+        
+        @type definition: models.abstractor.RuleRelationshipDefinition
+        @param definition: the model representing the rule/relationship 
+            definition
             
-            add_kwargs = self.get_additional_instance_kwargs(ds_arg1, ds_arg2)
-            
-            # create a rule/relationship instance
-            instance = self.InstanceClass(
-                            definition=definition,
-                            subject_object1=arg1,
-                            subject_object2=arg2,
-                            description=self.get_filled_description(arg1, arg2),
-                            **add_kwargs)
-            
-            instance.save()
+        @raise ConfigurationError: thrown if the condition doesn't evaluate 
+            to true on the given pair
+        """
+        if not (self.condition is None) and not self.condition(ds_arg1, ds_arg2):
+            raise ConfigurationError(
+                message=("The condition wasn't evaluated as true for the pair " + 
+                    "%s, %s, even though it was returned by the generator.") % (ds_arg1, ds_arg2), 
+                recommender=self.recommender, 
+                parameter_name='rules/relationships', 
+                parameter_value=self.name)
+        
+        # convert the domain specific to domain neutral        
+        #
+        arg1_ent_type, arg2_ent_type = self.relationship_type.split(RELATIONSHIP_TYPE_SEPARATOR) 
+
+        dn_arg1 = SubjectObject.get_domain_neutral_entity(
+                    domain_specific_entity=ds_arg1, 
+                    entity_type=arg1_ent_type, 
+                    recommender=definition.recommender)
+
+        dn_arg2 = SubjectObject.get_domain_neutral_entity(
+                    domain_specific_entity=ds_arg2, 
+                    entity_type=arg2_ent_type, 
+                    recommender=definition.recommender)
+        
+        # create and save the instance
+        self._perform_save_instance(definition, ds_arg1, ds_arg2, dn_arg1, dn_arg2)                  
+                    
+                            
     
     def evaluate(self):
         """Evaluate the rule on all subjects/objects - pairs.
@@ -182,6 +242,19 @@ class _Relationship(object):
         # create and save the definition
         definition = self.DefinitionClass(**def_kwargs)
         definition.save()
+        
+        # if we have a generator, use it for looping through pairs
+        if not (self.generator is None):
+            
+            # loop through pairs, save the rule/relationship instances
+            for ds_arg1, ds_arg2 in self.generator():
+                self.save_instance(ds_arg1, ds_arg2, definition)
+            
+            # that's it
+            return
+            
+        
+        # otherwise take the entities one by one
             
         # parse what should be used as condition args
         arg1_s, arg2_s = self.relationship_type.split(RELATIONSHIP_TYPE_SEPARATOR)        
@@ -194,7 +267,7 @@ class _Relationship(object):
                                 recommender=self.recommender._get_recommender_model(),
                                 entity_type=arg1_s):                          
                 # evaluate it
-                self.evaluate_on_args(arg1, arg2, definition)
+                self.evaluate_on_dn_args(arg1, arg2, definition)
             
         else:
             # filter subjectobjects for my recommender
@@ -206,7 +279,7 @@ class _Relationship(object):
                 for arg2 in qs_recommender.filter(entity_type=arg2_s).iterator():
                
                     # evaluate the rule/relationship on the given args
-                    self.evaluate_on_args(arg1, arg2, definition)
+                    self.evaluate_on_dn_args(arg1, arg2, definition)
 
   
 class PredictedRelationship(_Relationship):
@@ -220,10 +293,10 @@ class PredictedRelationship(_Relationship):
 class _WeightedRelationship(_Relationship):
     """A class representing a relationship with a weight."""
 
-    def __init__(self, name, condition, is_positive, weight, description=None):
+    def __init__(self, name, condition, is_positive, weight, description=None, generator=None):
         """The constructor."""
         
-        super(_WeightedRelationship, self).__init__(name, condition, description)
+        super(_WeightedRelationship, self).__init__(name, condition, description, generator)
         
         self.is_positive = is_positive
         """Is the relationship positive to the predicted relationship?"""
@@ -317,10 +390,10 @@ class _BaseRule(_WeightedRelationship):
     """The model class used for representing instances of 
     the rule/relationship"""
     
-    def __init__(self, name, condition, is_positive, weight, confidence, description=None):
+    def __init__(self, name, condition, is_positive, weight, confidence, description=None, generator=None):
         """The constructor.""" 
 
-        super(_BaseRule, self).__init__(name, condition, is_positive, weight, description)
+        super(_BaseRule, self).__init__(name, condition, is_positive, weight, description, generator)
         
         self.confidence = confidence
         """A float function giving values from [0, 1] representing the 

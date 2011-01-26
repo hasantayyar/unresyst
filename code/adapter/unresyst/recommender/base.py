@@ -183,3 +183,6 @@ class BaseRecommender(object):
     objects.
     """
     
+    verbose_build = None
+    """Should messages be printed during the build?"""
+    

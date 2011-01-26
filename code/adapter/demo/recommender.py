@@ -32,8 +32,28 @@ def _keyword_set_similarity(o1, o2):
     
     #the final measure
     return float(len(keyword_intersection))/min_len
-  
 
+def _likes_shoes_generator():
+    """A generator for the user likes shoes  relationship"""    
+    for u in User.objects.iterator():
+        for s in u.likes_shoes.iterator():
+            yield (u, s)
+
+def _viewed_shoes_generator():
+    """A generator for the user has viewed shoes relationship"""    
+    for u in User.objects.iterator():
+        for s in u.viewed_shoes.iterator():
+            yield (u, s)
+
+def _south_generator():
+    """A generator for the rule: if user is from south don't recommend 
+    him/her winter shoes.
+    """
+    for u in User.objects.filter(home_city__in_south=True).iterator():
+        for s in ShoePair.objects.filter(for_winter=True).iterator():
+            yield (u, s)
+    
+            
 class ShoeRecommender(Recommender):
     """A BaseRecommender subclass holding all domain-specific data"""
 
@@ -50,7 +70,8 @@ class ShoeRecommender(Recommender):
         name="User likes shoes.",
         condition=lambda s, o: 
             o in s.likes_shoes.all(), 
-        description="""User %(subject)s likes shoes %(object)s."""
+        description="""User %(subject)s likes shoes %(object)s.""",
+        generator=_likes_shoes_generator
     )
     """The relationship that will be predicted"""
     
@@ -67,7 +88,9 @@ class ShoeRecommender(Recommender):
                 
             weight=0.4,                       
             
-            description="User %(subject)s has viewed %(object)s."
+            description="User %(subject)s has viewed %(object)s.",
+            
+            generator=_viewed_shoes_generator
         ),
         
         # if the user is from the same city as the shoe manufacturer, he might like it
@@ -132,7 +155,9 @@ class ShoeRecommender(Recommender):
             confidence=lambda s, o: 1,             
             
             description="%(subject)s is from south, so %(object)s can't " + 
-                "be recommended to him/her."
+                "be recommended to him/her.",
+
+            generator=_south_generator
         ),
         
         # if users are the same age +- year they are similar

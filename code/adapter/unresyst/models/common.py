@@ -36,7 +36,7 @@ class Recommender(models.Model):
 class SubjectObject(models.Model):
     """The common representation for a subject and an object."""
     
-    id_in_specific = models.IntegerField()
+    id_in_specific = models.CharField(max_length=MAX_LENGTH_ID)
     """The id of the subject/object in the domain-specific system."""
     
     name = models.CharField(max_length=MAX_LENGTH_NAME)
@@ -88,7 +88,7 @@ class SubjectObject(models.Model):
             the given entity does not exist
         """
         return cls.objects.get(
-            id_in_specific=domain_specific_entity.id,
+            id_in_specific=domain_specific_entity.pk,
             entity_type=entity_type,
             recommender=recommender)
     
@@ -108,7 +108,7 @@ class SubjectObject(models.Model):
         @raise DoesNotExist: when the domain specific entity for 
             this universal entity does not exist
         """
-        return entity_manager.get(id=self.id_in_specific)
+        return entity_manager.get(pk=self.id_in_specific)
 
     @classmethod
     def unique_pairs(cls, recommender, entity_type):

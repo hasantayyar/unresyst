@@ -106,7 +106,9 @@ class Recommender(BaseRecommender):
             )
         
         # rules and relationships don't have to be given
-
+        
+        cls._print('Recommender validated, deleting old objects...')
+        
         # if the recommender with the given name exists, delete it,
         RecommenderModel.objects.filter(class_name=cls.__name__).delete()
                 
@@ -123,7 +125,7 @@ class Recommender(BaseRecommender):
         # build the recommender model
         #
         #
-        
+        cls._print("Old objects deleted. Creating universal subjectobjects...")
         
         # Abstractor
         #
@@ -135,26 +137,35 @@ class Recommender(BaseRecommender):
             objects=cls.objects
         )
         
+        cls._print("Universal subject and object representations created. Creating predicted_relationship instances...")
+        
         # create the relationship instances for the predicted relationship
         cls.Abstractor.create_predicted_relationship_instances(           
             predicted_relationship=cls.predicted_relationship            
         )
         
+        cls._print("Predicted relationship instances created. Creating relationship instances...")
+        
         # create relationship instances between subjects/objects 
         cls.Abstractor.create_relationship_instances(
             relationships=cls.relationships
         )    
+        
+        cls._print("Relationship instances created. Creating rule instances...")
                
         # evaluate rules and make rule instances between the affected 
         # subjects/objects
         cls.Abstractor.create_rule_instances(rules=cls.rules)
         
+        cls._print("Rule instances created. Aggregating...")
 
         # Aggregator
         # 
         
         # aggregate the relationships and rules
         cls.Aggregator.aggregate(recommender_model=recommender_model)        
+        
+        cls._print("Rules and relationships aggregated. Building the algorithm...")
         
         # Algorithm
         #        
@@ -163,6 +174,8 @@ class Recommender(BaseRecommender):
             recommender_model=recommender_model, 
             remove_predicted=cls.remove_predicted_from_recommendations
         )
+        
+        cls._print("Algorithm built. Done.")
         
         # mark the recommender as built, save it and keep it in the class
         recommender_model.is_built = True
@@ -429,6 +442,9 @@ class Recommender(BaseRecommender):
     """The description for random recommendations Can be overriden in
     subclass"""
     
+    verbose_build = True
+    """Should messages be printed during the build?"""
+    
     # Auxiliary methods - not to be used from outside the application
     #    
     @classmethod
@@ -472,3 +488,8 @@ class Recommender(BaseRecommender):
         }
         
         return manager_dict[entity_type]
+        
+    @classmethod
+    def _print(cls, msg):
+        if cls.verbose_build:
+            print msg        
