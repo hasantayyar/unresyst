@@ -14,6 +14,9 @@ MAX_LENGTH_ENTITY_TYPE = 2
 MAX_LENGTH_RELATIONSHIP_TYPE = 5
 """The maximum length of the relationship type string"""
 
+MAX_LENGTH_ID = 50
+"""The maximum length of the id in parent system"""
+
 ENTITY_TYPE_SUBJECT = 'S'
 """The subject entity type"""
 

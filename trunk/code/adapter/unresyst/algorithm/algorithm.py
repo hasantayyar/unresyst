@@ -29,12 +29,14 @@ class SimpleAlgorithm(BaseAlgorithm):
         RelationshipPredictionInstance model where there is some simple 
         prediction available. Where there isn't, leave it.
         """
-        
+        print "hotovo0"
         # for available aggregates create an instance with the aggregated result
         # 
         cls._build_aggregates(recommender_model)
         
-        # if subjects==objects
+        print "hotovo1"
+        
+        # if subjects == objects
         if recommender_model.are_subjects_objects:
 
             # take similar on both sides
@@ -44,15 +46,19 @@ class SimpleAlgorithm(BaseAlgorithm):
         
             # take similar to the ones we already have (content-based recommender)
             cls._build_similar_objects(recommender_model)
-            
+            print "hotovo1.5"
+            # tady to zmrzne, ^ je posledni co je videt
             # take liked objects of similar users (almost collaborative filtering)
             cls._build_similar_subjects(recommender_model)                
+        
+        print "hotovo2"
         
         # remove the ones that are already in the predicted_relationship 
         # (if it should be done) - add them with zero expectancy.
         if remove_predicted:
             cls._build_remove_predicted(recommender_model)
         
+        print "hotovo3"
 
     @classmethod        
     def _build_aggregates(cls, recommender_model):
@@ -246,8 +252,8 @@ class SimpleAlgorithm(BaseAlgorithm):
                 # create and save the prediction with zero
                 # use the description of the predicted relationship
                 prediction = RelationshipPredictionInstance(
-                                subject_object1=aggr.subject_object1,
-                                subject_object2=aggr.subject_object2,
+                                subject_object1=pred_rel_inst.subject_object1,
+                                subject_object2=pred_rel_inst.subject_object2,
                                 description=pred_rel_inst.description,
                                 expectancy=0,
                                 recommender=recommender_model)

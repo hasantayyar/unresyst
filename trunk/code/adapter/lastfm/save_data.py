@@ -7,10 +7,18 @@ from dateutil.parser import parse
 
 from models import *
 
+"""
+7141 artists
+992 users
+19903 tracks
+22666 scrobbles
+"""
+
+
 # relative paths to the dataset files
 filename_scrobbles =  '../../datasets/lastfm/1K/tracks30000.tsv'
 filename_users = '../../datasets/lastfm/1K/userid-profile.tsv'
-filename_tags = '../../datasets/lastfm/Lastfm-ArtistTags2007/artist_tags.tsv'
+filename_tags = '../../datasets/lastfm/Lastfm-ArtistTags2007/artist_tags200K.tsv'
 separator = '\t'
 
 def save_data():
@@ -121,19 +129,25 @@ def _parse_tags(filename):
     
     reader = csv.reader(open(filename, "rb"), delimiter=separator, quoting=csv.QUOTE_NONE)
     
+    last_artist = Artist.objects.all()[0]
+    
     for artist_guid, artist_name, tag_name, count in reader:
 
         if reader.line_num % 1000 == 0:
             print '%s lines processed' % reader.line_num 
+                
+        # some caching for more speed
+        if artist_guid == last_artist.guid:
+            artist = last_artist
+        else:                    
+            # try finding the artist
+            qs_artist = Artist.objects.filter(guid=artist_guid)
             
-        # try finding the artist
-        qs_artist = Artist.objects.filter(guid=artist_guid)
-        
-        # if not found go ahead
-        if not qs_artist:
-            continue
+            # if not found go ahead
+            if not qs_artist:
+                continue
             
-        artist = qs_artist[0]
+            artist = qs_artist[0]
         
         # if the name is strange, go ahead
         if artist.name != artist_name:
@@ -149,7 +163,8 @@ def _parse_tags(filename):
                         count=count)
                         
         artist_tag.save()   
-                            
+        
+        last_artist = artist                    
         
         
 def _get_abs_path(filename):

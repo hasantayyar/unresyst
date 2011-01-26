@@ -44,59 +44,86 @@ class LinearAggregator(BaseAggregator):
         
         # take all rule/relationship instances, that don't belong 
         # to the predicted_relationship
+        # order them by the first and the second
         predicted_def = PredictedRelationshipDefinition.objects.get(
                             recommender=recommender_model)
         instance_qs = RelationshipInstance.objects\
                         .exclude(definition=predicted_def)\
-                        .filter(definition__recommender=recommender_model)
-                                            
+                        .filter(definition__recommender=recommender_model)\
+                        .order_by('subject_object1__id', 'subject_object2__id')
         
-        # for all pairs of subjectobjects no matter if they're subjects,
-        # objects or both, take all pairs once
-        for ent1, ent2 in SubjectObject.unique_pairs(
-                             recommender=recommender_model,
-                             entity_type=None):
+        # if there's nothing to aggregate, schluss
+        if not instance_qs:
+            return
             
-            # get rules and relationships between ent1 and ent2
-            pairs_qs = RelationshipInstance.filter_relationships(
-                        object1=ent1,
-                        object2=ent2,
-                        queryset=instance_qs)
+        first_inst = instance_qs[0]
+        
+        # continuously built aggregated instance
+        # initialize it wit the first instance
+        cont_inst = AggregatedRelationshipInstance(
+                subject_object1=first_inst.subject_object1,
+                subject_object2=first_inst.subject_object2, 
+                relationship_type=first_inst.definition.as_leaf_class().relationship_type,
+                recommender=recommender_model)
 
-            if not pairs_qs:
-                continue
+        exp = first_inst.get_expectancy()
+        exp_sum = exp
+        count = 1    
+        # a list of pairs (expectancy, description)            
+        desc_list =  [(exp, first_inst.description), ]
+                    
+        # go through the rel instances                        
+        for instance in instance_qs.exclude(pk=first_inst.pk).iterator():            
             
-            # if there're some relationship instances, create an aggregated
-            # instance and save it
+            # if the pair has chnged from the last pair, save what we've got and 
+            # start anew
+            if cont_inst.subject_object1 <> instance.subject_object1 \
+                or cont_inst.subject_object2 <> instance.subject_object2:
+                
+                # count the average expectancy
+                cont_inst.expectancy = float(exp_sum) / count
+                
+                # sort the description list by expectancy and join it
+                desc_list.sort(key=lambda pair: pair[0], reverse=True)                
+                cont_inst.description = ' '.join([desc for x, desc in desc_list])
+
+                # save the current instance
+                cont_inst.save()
+                
+                # start a new continuously aggregated instance
+                cont_inst = AggregatedRelationshipInstance(
+                    subject_object1=instance.subject_object1,
+                    subject_object2=instance.subject_object2, 
+                    relationship_type=instance.definition.as_leaf_class().relationship_type,
+                    recommender=recommender_model)
+                
+                exp = instance.get_expectancy()
+                exp_sum = exp
+                count = 1                    
+                
+                # a list of pairs (expectancy, description)            
+                desc_list =  [(exp, instance.description), ]
             
-            pairs_qs = list(pairs_qs)
-            
-            # count expectancies
-            for pair in pairs_qs:
-                pair.exp = pair.get_expectancy()
-            
-            # sort the list by expectancy
-            pairs_qs.sort(key=lambda pair: pair.exp, reverse=True)
-            
-            # description are joined descriptions of the relationships
-            desc = ' '.join([pair.description for pair in pairs_qs])
-            
-            # expectancy is an average expectancy
-            exp = sum([pair.exp for pair in pairs_qs]) / len(pairs_qs)
-            
-            # take the relationship type from the definition of the first 
-            # rule/relationship
-            rel_type = pairs_qs[0].definition.as_leaf_class().relationship_type
-            
-            aggr_inst = AggregatedRelationshipInstance(
-                            subject_object1=ent1,
-                            subject_object2=ent2, 
-                            description=desc,
-                            expectancy=exp,
-                            relationship_type=rel_type,
-                            recommender=recommender_model)
-            
-            aggr_inst.save()
-            
-            
+            # otherwise aggregate                    
+            else:         
+                exp = instance.get_expectancy()                         
+                exp_sum += exp
+                count += 1
+                
+                desc_list.append((exp, instance.description))
+                
+                
+        # count and save the last we have
+        # 
+                                                        
+        # count the average expectancy
+        cont_inst.expectancy = float(exp_sum) / count
         
+        # sort the description list by expectancy and join it
+        desc_list.sort(key=lambda pair: pair[0], reverse=True)                
+        cont_inst.description = ' '.join([desc for x, desc in desc_list])
+
+        # save the last instance
+        cont_inst.save()
+        
+ 

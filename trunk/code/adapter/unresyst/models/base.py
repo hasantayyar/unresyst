@@ -75,7 +75,12 @@ class BaseRelationshipInstance(SymmetricalRelationship):
 
     class Meta:
         abstract = True                
-        app_label = 'unresyst'        
+        app_label = 'unresyst'   
+
+        
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"(%s, %s)" % (self.subject_object1, self.subject_object2)              
 
 
 class BaseRelationshipDefinition(ContentTypeModel):
