@@ -46,7 +46,7 @@ class User(models.Model):
     name = models.CharField(max_length=MAX_LENGTH_NAME)
     """The user's name"""
 
-    age = models.IntegerField(null=True, default=None)
+    age = models.PositiveIntegerField(null=True, default=None)
     """The age of the user."""
     
     likes_shoes = models.ManyToManyField('ShoePair', related_name='likers')
