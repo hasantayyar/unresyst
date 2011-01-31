@@ -90,3 +90,4 @@ available"""
 
 MIN_WEIGHT = 0.0
 MAX_WEIGHT = 1.0
+"""Weight limits"""

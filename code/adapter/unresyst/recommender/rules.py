@@ -164,14 +164,24 @@ class _Relationship(object):
             
             self._perform_save_instance(definition, ds_arg1, ds_arg2, dn_arg1, dn_arg2)
 
+    def _order_in_pair(self, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
+        """Swap the arguments in the rule/relationships so that the first
+        has a lower id than the second
+        """
+
+        # if the second argument has lower id than the first, swap them
+        if dn_arg2.pk < dn_arg1.pk: 
+            return (dn_arg2, dn_arg1, ds_arg2, ds_arg1)
+
+        # otherwise not
+        return (dn_arg1, dn_arg2, ds_arg1, ds_arg2)
+        
 
     def _perform_save_instance(self, definition, ds_arg1, ds_arg2, dn_arg1, dn_arg2):
         """Perform the action of creating and saving the instance"""
         
-        # if the second argument has lower id than the first, swap them
-        if dn_arg2.pk < dn_arg1.pk:            
-            dn_arg1, dn_arg2 = dn_arg2, dn_arg1
-            ds_arg1, ds_arg2 = ds_arg2, ds_arg1
+        # order the instances in pairs as the class requires
+        dn_arg1, dn_arg2, ds_arg1, ds_arg2 = self._order_in_pair(dn_arg1, dn_arg2, ds_arg1, ds_arg2)
                        
         add_kwargs = self.get_additional_instance_kwargs(ds_arg1, ds_arg2)
         
@@ -288,8 +298,27 @@ class PredictedRelationship(_Relationship):
     DefinitionClass = PredictedRelationshipDefinition
     """The model class used for representing the definition of the 
     rule/relationship
-    """    
+    """
+    
+    def _order_in_pair(self, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
+        """Swap the arguments in the relationship so that the first
+        is always a subject and second the object.
+        """    
+        
+        # for the SO entities we apply the normal policy
+        if dn_arg1.entity_type == ENTITY_TYPE_SUBJECTOBJECT:
+            return super(PredictedRelationship, self)._order_in_pair(dn_arg1, dn_arg2, ds_arg1, ds_arg2)
 
+        # otherwise we put subjects as first
+        
+        # if the first is object, swap
+        if dn_arg1.entity_type == ENTITY_TYPE_OBJECT:
+            return (dn_arg2, dn_arg1, ds_arg2, ds_arg1)
+        
+        # if not, keep
+        return (dn_arg1, dn_arg2, ds_arg1, ds_arg2)
+
+        
 class _WeightedRelationship(_Relationship):
     """A class representing a relationship with a weight."""
 

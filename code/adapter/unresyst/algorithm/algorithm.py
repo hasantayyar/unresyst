@@ -77,9 +77,12 @@ class SimpleAlgorithm(BaseAlgorithm):
         # go through the aggregates, create predictions and save them
         for aggr in qs_aggr.iterator():
 
+            # order the arguments as they should be    
+            so1, so2 = cls._order_in_pair(aggr.subject_object1, aggr.subject_object2)
+
             prediction = RelationshipPredictionInstance(
-                            subject_object1=aggr.subject_object1,
-                            subject_object2=aggr.subject_object2,
+                            subject_object1=so1,
+                            subject_object2=so2,
                             description=aggr.description,
                             expectancy=aggr.expectancy,
                             recommender=recommender_model)
@@ -137,6 +140,15 @@ class SimpleAlgorithm(BaseAlgorithm):
     is the relationship type that should be traversed for similarity.
     """
     
+    ORDERING = {
+        ENTITY_TYPE_OBJECT: "subject_object1__pk",
+        ENTITY_TYPE_SUBJECT: "subject_object2__pk",
+        ENTITY_TYPE_SUBJECTOBJECT: "subject_object1__pk",
+    }
+    """Dictinary entity type (starting) - name of the attribute in PredictedRelationship, 
+    that should be used for sorting"""
+    
+    
     @classmethod
     def _build_similar_entities(cls, recommender_model, start_entity_type, reverse=False):
         """Create predictions from start_entity_type objects, looking for 
@@ -159,11 +171,19 @@ class SimpleAlgorithm(BaseAlgorithm):
         # get the predictions for this recommender
         qs_predictions = RelationshipPredictionInstance.objects.filter(
                             recommender=recommender_model)
-        
+
+        ordering = cls.ORDERING[start_entity_type]
+                   
         # go through the predicted relationship instances 
         # (objects that subjects liked)
-        qs_pred_rel_instances = RelationshipInstance.filter_predicted(recommender_model)        
+        # ordered as needed
+        qs_pred_rel_instances = RelationshipInstance\
+            .filter_predicted(recommender_model)\
+            .order_by(ordering)
         
+        # the caching variable    
+        last_fin = None       
+        last_qs = None         
         
         for pred_inst in qs_pred_rel_instances.iterator():
 
@@ -177,11 +197,19 @@ class SimpleAlgorithm(BaseAlgorithm):
                 start, fin = fin, start
             
             similarity_relationship_type = cls.SIMILARITY_RELATIONSHIP_TYPES[start_entity_type]
-                
-            # get objects similar to obj (whole relationships)
-            qs_similar_rels = AggregatedRelationshipInstance\
-                .get_relationships(fin)\
-                .filter(relationship_type=similarity_relationship_type)
+            
+            # if the ending entity is the same as the last time, use the cached qs
+            if last_fin == fin:
+                qs_similar_rels = last_qs
+            else:                
+                # get objects similar to obj (whole relationships)            
+                qs_similar_rels = AggregatedRelationshipInstance\
+                    .get_relationships(fin)\
+                    .filter(relationship_type=similarity_relationship_type)
+
+            # keep it for the next time
+            last_fin = fin
+            last_qs = qs_similar_rels
             
             # go through them 
             for similar_rel in qs_similar_rels.iterator():
@@ -199,12 +227,15 @@ class SimpleAlgorithm(BaseAlgorithm):
                 # if exists, keep it there, ignore
                 if qs_pair_predictions.exists():
                     continue
+                
+                # order the arguments as they should be    
+                so1, so2 = cls._order_in_pair(start, similar_fin)                    
 
                 # if not, create it with the attributes of the similarity 
                 # relationship instance
                 prediction = RelationshipPredictionInstance(
-                            subject_object1=start,
-                            subject_object2=similar_fin,
+                            subject_object1=so1,
+                            subject_object2=so2,
                             description=similar_rel.description,
                             expectancy=similar_rel.expectancy,
                             recommender=recommender_model)
@@ -219,46 +250,39 @@ class SimpleAlgorithm(BaseAlgorithm):
         
         # go through the predicted relationship instances, save with zero 
         # expectancy
-        
+                
         # get the predicted relationship instances
         qs_pred_rel_instances = RelationshipInstance.filter_predicted(recommender_model)
 
         # get the predictions for this recommender
-        qs_predictions = RelationshipPredictionInstance.objects.filter(
-                            recommender=recommender_model)
-        
+        qs_predictions = RelationshipPredictionInstance.objects\
+                        .filter(recommender=recommender_model)\
+                        .select_related('subject_object1', 'subject_object2')
+        i=0
         for pred_rel_inst in qs_pred_rel_instances.iterator():
 
             # if the pair is already predicted somehow, zeroize it
-            #                        
+            # if not, define a new zero prediction 
             
-            # get pairs that are already in prediction
-            pair_predictions = RelationshipPredictionInstance.filter_relationships(
-                            object1=pred_rel_inst.subject_object1,
-                            object2=pred_rel_inst.subject_object2,
-                            queryset=qs_predictions)
+            # order the arguments as they should be    
+            so1, so2 = cls._order_in_pair(pred_rel_inst.subject_object1, pred_rel_inst.subject_object2)
             
-            pred_count = pair_predictions.count()
-
-            if pred_count > 0:
-                # if the are multiple predictions for one recommender and pair, it's 
-                # an internal error
-                assert pred_count == 1
-                
-                prediction = pair_predictions[0]
-                prediction.description = pred_rel_inst.description
-                prediction.expectancy = 0
-            else:                    
-                # create and save the prediction with zero
-                # use the description of the predicted relationship
-                prediction = RelationshipPredictionInstance(
-                                subject_object1=pred_rel_inst.subject_object1,
-                                subject_object2=pred_rel_inst.subject_object2,
-                                description=pred_rel_inst.description,
-                                expectancy=0,
-                                recommender=recommender_model)
-
-            prediction.save()
+            instance, created = RelationshipPredictionInstance.objects.get_or_create(
+                recommender=recommender_model,
+                subject_object1=so1,
+                subject_object2=so2,
+                defaults={'description': pred_rel_inst.description, 'expectancy': 0}
+            )
+            
+            # if it was found update it to a zero expectancy
+            if not created:
+                instance.description = pred_rel_inst.description
+                instance.expectancy = 0
+                instance.save()                      
+            i+=1
+            if i % 1000 == 0:
+                print "%d objects done" % i
+            
 
     # Recommend phase:
     #
@@ -366,4 +390,22 @@ class SimpleAlgorithm(BaseAlgorithm):
                 description=recommender_model.random_recommendation_description,
                 recommender=recommender_model,
                 expectancy=UNCERTAIN_PREDICTION_VALUE
-            )        
+            ) 
+            
+    @classmethod
+    def _order_in_pair(cls, arg1, arg2):
+        """Swap the arguments in the rule/relationships so that the first
+        has a lower id than the second (for subjectobjects), or the subject
+        is the first (for others)
+        """
+        # for subjectobject return ordered by pk
+        if arg1.entity_type == ENTITY_TYPE_SUBJECTOBJECT:
+            if arg2.pk < arg1.pk:
+                return (arg2, arg1)
+            return (arg1, arg2)
+        # for others return subject first            
+        if arg2.entity_type == ENTITY_TYPE_OBJECT:
+            return (arg2, arg1)
+        return (arg1, arg2)
+
+
