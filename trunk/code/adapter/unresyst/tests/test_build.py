@@ -352,7 +352,7 @@ class TestAbstractor(TestEntities):
 
 
 class TestAbstractorRecommenderErrors(DBTestCase):
-    """Test various errors thrown by Abstractor and/or Recommender"""
+    """Test various errors thrown by Abstractor and/or Recommender and/or Algorithm"""
 
     def test_invalid_relationship_weight(self):
         """Test if the exception is raised for a relatioship with invalid weight"""
@@ -461,6 +461,23 @@ class TestAbstractorRecommenderErrors(DBTestCase):
         
         # restore the original 
         ShoeRecommender.rules[2].description = d
+        
+    def test_empty_rules_rels(self):
+        """Test building the recommender with empty rules and relationships"""
+        
+        # save and delete rules and relationships
+        rules = ShoeRecommender.rules
+        relationships = ShoeRecommender.relationships
+        
+        ShoeRecommender.rules = ()
+        ShoeRecommender.relationships = ()
+        
+        # build it, test it doesn't freeze
+        ShoeRecommender.build()        
+        
+        # restore
+        ShoeRecommender.rules = rules
+        ShoeRecommender.relationships = relationships
                      
 def _count_exp(conf):
     return 0.5 + conf/2
