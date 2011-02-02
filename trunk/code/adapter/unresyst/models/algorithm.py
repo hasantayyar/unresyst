@@ -22,4 +22,7 @@ class RelationshipPredictionInstance(BaseRelationshipInstance):
     """The recommender it belongs to"""
     
     class Meta:
-        app_label = 'unresyst'    
+        app_label = 'unresyst'  
+
+    def __unicode__(self):
+        return "(%s, %s), %f" % (self.subject_object1, self.subject_object2, self.expectancy)

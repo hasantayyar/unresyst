@@ -170,10 +170,7 @@ class Recommender(BaseRecommender):
         # Algorithm
         #        
         # build the algorithm model from the aggregated relationships
-        cls.Algorithm.build(
-            recommender_model=recommender_model, 
-            remove_predicted=cls.remove_predicted_from_recommendations
-        )
+        cls.Algorithm.build(recommender_model=recommender_model)
         
         cls._print("Algorithm built. Done.")
         
@@ -240,7 +237,8 @@ class Recommender(BaseRecommender):
         prediction_model = cls.Algorithm.get_relationship_prediction(
             recommender_model=recommender_model,
             dn_subject=dn_subject,
-            dn_object=dn_object
+            dn_object=dn_object,
+            remove_predicted=cls.remove_predicted_from_recommendations
         )
         
         # create and return the outer-world object
@@ -298,7 +296,8 @@ class Recommender(BaseRecommender):
             recommender_model=recommender_model,
             dn_subject=dn_subject,
             count=count,
-            expectancy_limit=limit
+            expectancy_limit=limit,
+            remove_predicted=cls.remove_predicted_from_recommendations
         )
         
         recommendations = []

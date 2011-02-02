@@ -584,11 +584,11 @@ class TestAlgorithm(TestEntities):
         # S-O
         ('Alice', 'RS 130'): _count_neg_exp(0.85), # 0.075
         ('Alice', 'Rubber Shoes'): (_count_exp(0.4) + _count_exp(0.1))/2, # 0.625
-        ('Alice', 'Sneakers'): 0, 
+        ('Alice', 'Sneakers'): _count_exp(0.1),  # 0.55
         
         ('Bob', 'RS 130'): _count_neg_exp(0.85), # 0.075
         ('Bob', 'Rubber Shoes'): _count_exp(0.1), # 0.55
-        ('Bob', 'Sneakers'): 0, 
+        ('Bob', 'Sneakers'): (_count_exp(0.4) + _count_exp(0.1))/2, # 0.625
 
         ('Cindy', 'RS 130'): _count_exp(0.1), # 0.55
         ('Cindy', 'Rubber Shoes'): _count_exp(0.4), # 0.7        

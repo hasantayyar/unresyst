@@ -88,6 +88,10 @@ UNCERTAIN_PREDICTION_VALUE = 0.5
 """The value that is returned when the prediction for the pair isn't 
 available"""
 
+ALREADY_IN_REL_PREDICTION_VALUE = 0.0
+"""The value that is returned when the pair already is in the 
+predicted_relationship"""
+
 MIN_WEIGHT = 0.0
 MAX_WEIGHT = 1.0
 """Weight limits"""
