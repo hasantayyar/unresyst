@@ -36,3 +36,11 @@ class RelationshipPrediction(object):
         
         self.explanation = explanation
         """The explanation for the prediction"""
+
+    def __unicode__(self):
+        return u"%s <- %s: %f, %s" % (
+            self.subject, 
+            self.object_, 
+            self.expectancy, 
+            self.explanation
+        )

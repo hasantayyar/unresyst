@@ -8,7 +8,7 @@ class BaseAlgorithm(object):
     #
     
     @classmethod
-    def build(cls, recommender_model, remove_predicted):
+    def build(cls, recommender_model):
         """Build the recommender, so that the given relationship can be
         predicted easily.
         
@@ -16,9 +16,6 @@ class BaseAlgorithm(object):
         @param recommender_model: the recommender whose instances should
             be aggregated. 
 
-        @type remove_predicted: bool
-        @param remove_predicted: should pairs already having 
-            predicted_relationship between them be removed from recommendations?
         """
         pass
     
@@ -27,7 +24,7 @@ class BaseAlgorithm(object):
     #
     
     @classmethod
-    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object):
+    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object, remove_predicted):
         """Get the prediction of the appearance of the predicted_relationship.
 
         @type recommender_model: models.common.Recommender
@@ -39,7 +36,11 @@ class BaseAlgorithm(object):
         
         @type dn_object: models.common.SubjectObject
         @param dn_object: the domain neutral object
-                    
+
+        @type remove_predicted: bool
+        @param remove_predicted: should pairs already having 
+            predicted_relationship between them get the special expectancy value?
+            
         @rtype: models.algorithm.RelationshipPredictionInstance
         @return: the model instance for the prediction 
         """
@@ -47,7 +48,7 @@ class BaseAlgorithm(object):
 
         
     @classmethod
-    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit):
+    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):
         """Get the recommendations for the given subject
 
         @type recommender_model: models.common.Recommender
@@ -64,6 +65,10 @@ class BaseAlgorithm(object):
         @param expectancy_limit: the lower limit for object expectancy, only
             objects with expectancy higher than limit are recommended.
         
+        @type remove_predicted: bool
+        @param remove_predicted: should pairs already having 
+            predicted_relationship between them be removed from recommendations?
+            
         @rtype: a list of models.algorithm.RelationshipPredictionInstance
         @return: the predictions of the objects recommended to the subject
         """

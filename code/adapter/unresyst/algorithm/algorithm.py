@@ -24,7 +24,7 @@ class SimpleAlgorithm(BaseAlgorithm):
     #
     
     @classmethod
-    def build(cls, recommender_model, remove_predicted):
+    def build(cls, recommender_model):
         """Build the recommender - create the instances of the 
         RelationshipPredictionInstance model where there is some simple 
         prediction available. Where there isn't, leave it.
@@ -47,18 +47,12 @@ class SimpleAlgorithm(BaseAlgorithm):
             # take similar to the ones we already have (content-based recommender)
             cls._build_similar_objects(recommender_model)
             print "hotovo1.5"
-            # tady to zmrzne, ^ je posledni co je videt
+
             # take liked objects of similar users (almost collaborative filtering)
             cls._build_similar_subjects(recommender_model)                
         
         print "hotovo2"
-        
-        # remove the ones that are already in the predicted_relationship 
-        # (if it should be done) - add them with zero expectancy.
-        if remove_predicted:
-            cls._build_remove_predicted(recommender_model)
-        
-        print "hotovo3"
+                
 
     @classmethod        
     def _build_aggregates(cls, recommender_model):
@@ -241,56 +235,40 @@ class SimpleAlgorithm(BaseAlgorithm):
                             recommender=recommender_model)
                             
                 prediction.save()                                 
-
-        
-    @classmethod        
-    def _build_remove_predicted(cls, recommender_model):
-        """Make zero instances that are already in the predicted_relationship.
-        """
-        
-        # go through the predicted relationship instances, save with zero 
-        # expectancy
-                
-        # get the predicted relationship instances
-        qs_pred_rel_instances = RelationshipInstance.filter_predicted(recommender_model)
-
-        # get the predictions for this recommender
-        qs_predictions = RelationshipPredictionInstance.objects\
-                        .filter(recommender=recommender_model)\
-                        .select_related('subject_object1', 'subject_object2')
-        i=0
-        for pred_rel_inst in qs_pred_rel_instances.iterator():
-
-            # if the pair is already predicted somehow, zeroize it
-            # if not, define a new zero prediction 
-            
-            # order the arguments as they should be    
-            so1, so2 = cls._order_in_pair(pred_rel_inst.subject_object1, pred_rel_inst.subject_object2)
-            
-            instance, created = RelationshipPredictionInstance.objects.get_or_create(
-                recommender=recommender_model,
-                subject_object1=so1,
-                subject_object2=so2,
-                defaults={'description': pred_rel_inst.description, 'expectancy': 0}
-            )
-            
-            # if it was found update it to a zero expectancy
-            if not created:
-                instance.description = pred_rel_inst.description
-                instance.expectancy = 0
-                instance.save()                      
-            i+=1
-            if i % 1000 == 0:
-                print "%d objects done" % i
-            
+                    
 
     # Recommend phase:
     #
-    
+
     @classmethod
-    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object):
+    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object, remove_predicted):
         """See the base class for the documentation.
         """
+        # if predicted should be removed and the pair is in the predicted_rel, 
+        # return the special expectancy value
+        if remove_predicted:            
+            # all predicted relationships
+            qs_predicted = RelationshipInstance.filter_predicted(recommender_model)
+
+            # the relationship between dn_subject and dn_object
+            qs_predicted_rel = RelationshipInstance.filter_relationships(dn_subject, dn_object, queryset=qs_predicted)
+
+            # if the prediction for the pair exists
+            if qs_predicted_rel:
+                
+                # return the special expectancy value                
+                assert len(qs_predicted_rel) == 1
+                predicted = qs_predicted_rel[0]
+
+                return RelationshipPredictionInstance(
+                    subject_object1=dn_subject,
+                    subject_object2=dn_object,
+                    description=predicted.description,
+                    recommender=recommender_model,
+                    expectancy=ALREADY_IN_REL_PREDICTION_VALUE
+                ) 
+            
+        
         # filter the predictions for recommender
         qs_rec_pred = RelationshipPredictionInstance.objects.filter(
                         recommender=recommender_model)
@@ -315,16 +293,49 @@ class SimpleAlgorithm(BaseAlgorithm):
         return qs_pred[0]
         
     @classmethod
-    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit):
+    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):
         """See the base class for documentation.
-        """
+        """                
         
         # get the recommendations ordered by the expectancy from the largest
         recommendations = RelationshipPredictionInstance\
                             .get_relationships(obj=dn_subject)\
-                            .filter(recommender=recommender_model)\
+                            .filter(recommender=recommender_model, 
+                                expectancy__gt=expectancy_limit)\
                             .order_by('-expectancy')                            
+        
+        # remove the predicted from the recommendations if it should be done        
+        if remove_predicted:
+            
+            # get objects that are already liked
+            #
+                        
+            qs_predicted = RelationshipInstance.filter_predicted(recommender_model)            
 
+            # get ids of subjectobjects where dn_subject appears
+            qs_predicted = qs_predicted.filter( 
+                Q(subject_object1=dn_subject) | Q(subject_object2=dn_subject)           
+            ).values_list('subject_object1__pk', 'subject_object2__pk')
+            
+            # flatten it and take only the objects
+            import itertools                
+            predicted_obj_ids = [i for i in itertools.chain(*qs_predicted) if i <> dn_subject.pk]            
+
+            # remove the already liked objects
+            #
+            
+            # if it is a subjectobject we have to take both places
+            if dn_subject.entity_type == ENTITY_TYPE_SUBJECTOBJECT:
+                recommendations = recommendations.exclude(
+                    Q(subject_object1__id__in=predicted_obj_ids) 
+                        | Q(subject_object2__id__in=predicted_obj_ids)
+                )
+            # otherwise one field is enough
+            else:
+                recommendations = recommendations.exclude(
+                    subject_object2__id__in=predicted_obj_ids
+                )
+                    
         # if there should be more recommendations than we have and 
         # the expectancy limit is below the uncertain, add uncertain 
         # predictions
@@ -343,6 +354,10 @@ class SimpleAlgorithm(BaseAlgorithm):
                 .exclude(relationshippredictioninstance_relationships1__subject_object2=dn_subject)\
                 .exclude(relationshippredictioninstance_relationships2__subject_object1=dn_subject)\
                 .exclude(pk=dn_subject.pk)
+            
+            # if predicted should be removed remove them
+            if remove_predicted:
+                uncertain_objects = uncertain_objects.exclude(id__in=predicted_obj_ids)
             
             # divide the recommendations into groups exp => uncertain, exp < uncertain
             positive_preds = recommendations.filter(
@@ -377,8 +392,9 @@ class SimpleAlgorithm(BaseAlgorithm):
                 uncertain_preds.append(pred)
 
             return list(positive_preds) + uncertain_preds + list(negative_preds)
-        # apply the limit for expectancy and count
-        return list(recommendations.filter(expectancy__gt=expectancy_limit)[:count])
+
+        # apply the limit for count
+        return list(recommendations[:count])
                          
     @staticmethod
     def _get_uncertain_prediction(recommender_model, dn_subject, dn_object):
@@ -404,7 +420,7 @@ class SimpleAlgorithm(BaseAlgorithm):
                 return (arg2, arg1)
             return (arg1, arg2)
         # for others return subject first            
-        if arg2.entity_type == ENTITY_TYPE_OBJECT:
+        if arg2.entity_type == ENTITY_TYPE_SUBJECT:
             return (arg2, arg1)
         return (arg1, arg2)
 
