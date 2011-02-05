@@ -19,6 +19,9 @@ class SimpleAlgorithm(BaseAlgorithm):
     The get_recommendation function returns only recommendations with expectancy
     above zero or the expectancy_limit.
     """
+    
+    N_NEIGHBOURHOOD = 10
+    """The maximum size of the neighbourhood, from which the similar items are taken"""
 
     # Build phase:
     #
@@ -29,12 +32,12 @@ class SimpleAlgorithm(BaseAlgorithm):
         RelationshipPredictionInstance model where there is some simple 
         prediction available. Where there isn't, leave it.
         """
-        print "hotovo0"
+        print "Building aggregates."
         # for available aggregates create an instance with the aggregated result
         # 
         cls._build_aggregates(recommender_model)
         
-        print "hotovo1"
+        print "Done. Building similar objects."
         
         # if subjects == objects
         if recommender_model.are_subjects_objects:
@@ -46,12 +49,12 @@ class SimpleAlgorithm(BaseAlgorithm):
         
             # take similar to the ones we already have (content-based recommender)
             cls._build_similar_objects(recommender_model)
-            print "hotovo1.5"
+            print "Done. Building similar subjects."
 
             # take liked objects of similar users (almost collaborative filtering)
             cls._build_similar_subjects(recommender_model)                
         
-        print "hotovo2"
+        print "Done."
                 
 
     @classmethod        
@@ -179,8 +182,12 @@ class SimpleAlgorithm(BaseAlgorithm):
         last_fin = None       
         last_qs = None         
         
+        print "Predicted relationship count: %d" % qs_pred_rel_instances.count()
+        i = 0
+        
         for pred_inst in qs_pred_rel_instances.iterator():
-
+            
+            i += 1
             # get the subject and object from the relationship instance
             start, fin = (pred_inst.subject_object1, pred_inst.subject_object2) \
                 if pred_inst.subject_object1.entity_type == start_entity_type \
@@ -196,14 +203,19 @@ class SimpleAlgorithm(BaseAlgorithm):
             if last_fin == fin:
                 qs_similar_rels = last_qs
             else:                
-                # get objects similar to obj (whole relationships)            
+                # get objects similar to obj (whole relationships) - only N_NEIGHBOURHOOD highest
                 qs_similar_rels = AggregatedRelationshipInstance\
                     .get_relationships(fin)\
-                    .filter(relationship_type=similarity_relationship_type)
+                    .filter(relationship_type=similarity_relationship_type)\
+                    .order_by('-expectancy')[:cls.N_NEIGHBOURHOOD]
 
             # keep it for the next time
             last_fin = fin
             last_qs = qs_similar_rels
+            
+            count = qs_similar_rels.count()
+            if count and i % 1000 == 0:
+                print "similar count: %d; relationships processed: %d" % (count, i)
             
             # go through them 
             for similar_rel in qs_similar_rels.iterator():
