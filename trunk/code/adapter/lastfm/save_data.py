@@ -12,13 +12,32 @@ from models import *
 992 users
 19903 tracks
 22666 scrobbles
-"""
+
 
 
 # relative paths to the dataset files
 filename_scrobbles =  '../../datasets/lastfm/1K/tracks30000.tsv'
 filename_users = '../../datasets/lastfm/1K/userid-profile.tsv'
 filename_tags = '../../datasets/lastfm/Lastfm-ArtistTags2007/artist_tags200K.tsv'
+"""
+
+"""
+2348 artists
+100 users
+5057 tracks
+5532 scrobbles
+9120 tags
+28588 tagartists
+322 tagged artists
+
+max age 38
+min age 17
+"""
+# relative paths to the dataset files
+filename_scrobbles =  '../../datasets/lastfm/mini/scrobbles.tsv'
+filename_users = '../../datasets/lastfm/mini/users.tsv'
+filename_tags = '../../datasets/lastfm/mini/tags.tsv'
+
 separator = '\t'
 
 def save_data():

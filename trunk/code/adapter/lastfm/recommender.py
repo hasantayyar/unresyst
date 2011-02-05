@@ -4,6 +4,8 @@ from unresyst import *
 
 from models import *
 
+AGE_DIFFERENCE = 38 - 17
+
 def _listens_artist_generator():
     """The generator to the predicted relationship"""
     for u in User.objects.iterator():
@@ -30,7 +32,14 @@ class ArtistRecommender(Recommender):
         generator=_listens_artist_generator
     )
     """The relationship that will be predicted"""
-    
+
+    """
+    clusters:
+    user:
+     - country
+     - gender
+    """
+     
     relationships = ()
     """                              
         
@@ -56,15 +65,14 @@ class ArtistRecommender(Recommender):
     """Relationships among the subjects and objects in the domain"""
     
     
-    rules = ()       
-    """    
+    rules = (          
         # if users are the same age +- year they are similar
         SubjectSimilarityRule(
             name="Users with similar age.",
             
             # both users have given their age
             condition=lambda s1, s2: 
-                s1.age and s2.age and s1.age -1 <= s2.age <= s2.age + 1,
+                s1.age and s2.age and abs(s1.age - s2.age) <= 5,
                 
             is_positive=True,   
                 
@@ -72,17 +80,14 @@ class ArtistRecommender(Recommender):
             
             # a magic linear confidence function
             confidence=lambda s1, s2: 
-                1 - 0.25 * abs(s1.age - s2.age),
+                1 - float(abs(s1.age - s2.age))/AGE_DIFFERENCE,
             
             description="Users %(subject1)s and %(subject2)s are about " + 
                 "the same age."
-        ),
-        
-        # tags
-        # TODO
+        ),        
         
     )
-    """
+
     """Rules that can be applied to the domain"""
 
     random_recommendation_description = "Recommending a random artist to the user."
