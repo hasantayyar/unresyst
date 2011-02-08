@@ -25,6 +25,12 @@ def save_data():
     helsinki = City(name="Helsinki", in_south=False)        
     helsinki.save()
     
+    almaty = City(name="Almaty", in_south=False)
+    almaty.save()
+    
+    bishkek = City(name="Bishkek", in_south=False)
+    bishkek.save()
+    
     # manufacturers    
     diesel = Manufacturer(name="Diesel", home_city=hollywood)
     diesel.save()
@@ -95,6 +101,7 @@ def save_data():
     cindy.viewed_shoes.add(rubber_shoes)
     cindy.save()
     
+    # a user with usable demography info
     daisy = User(
         name="Daisy",
         age=32,
@@ -102,4 +109,20 @@ def save_data():
     )
     daisy.save()
     
-                    
+    # a user to test recommending similar shoes to liked
+    edgar = User(
+        name="Edgar",
+        age=42,
+        home_city=almaty
+    )
+    edgar.save()
+    edgar.likes_shoes.add(rubber_shoes)
+    edgar.save()
+    
+    # a user to test recommending by cf (shoes liked by a similar user)
+    fionna = User(
+        name="Fionna",
+        age=42,
+        home_city=bishkek,
+    )
+    fionna.save()

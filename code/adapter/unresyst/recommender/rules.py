@@ -6,7 +6,7 @@ from unresyst.models.abstractor import *
 from unresyst.models.common import SubjectObject
 from unresyst.exceptions import DescriptionKeyError, ConfigurationError
 
-class _Relationship(object):
+class BaseRelationship(object):
     """A base class for representing all relationships and rules.
     
     A subclass for all classes representing a relationship between entities (not necessarily 
@@ -164,7 +164,15 @@ class _Relationship(object):
             
             self._perform_save_instance(definition, ds_arg1, ds_arg2, dn_arg1, dn_arg2)
 
-    def _order_in_pair(self, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
+    @classmethod
+    def order_arguments(cls, dn_arg1, dn_arg2):
+        """Order the arguments as they appear in the relationship."""
+        a1, a2, x, x = cls._order_in_pair(dn_arg1, dn_arg2, None, None)
+        
+        return (a1, a2)
+
+    @classmethod
+    def _order_in_pair(cls, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
         """Swap the arguments in the rule/relationships so that the first
         has a lower id than the second
         """
@@ -292,7 +300,7 @@ class _Relationship(object):
                     self.evaluate_on_dn_args(arg1, arg2, definition)
 
   
-class PredictedRelationship(_Relationship):
+class PredictedRelationship(BaseRelationship):
     """A class for representing the predicted relationship."""
 
     DefinitionClass = PredictedRelationshipDefinition
@@ -300,14 +308,15 @@ class PredictedRelationship(_Relationship):
     rule/relationship
     """
     
-    def _order_in_pair(self, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
+    @classmethod
+    def _order_in_pair(cls, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
         """Swap the arguments in the relationship so that the first
         is always a subject and second the object.
         """    
         
         # for the SO entities we apply the normal policy
         if dn_arg1.entity_type == ENTITY_TYPE_SUBJECTOBJECT:
-            return super(PredictedRelationship, self)._order_in_pair(dn_arg1, dn_arg2, ds_arg1, ds_arg2)
+            return super(PredictedRelationship, cls)._order_in_pair(dn_arg1, dn_arg2, ds_arg1, ds_arg2)
 
         # otherwise we put subjects as first
         
@@ -319,7 +328,7 @@ class PredictedRelationship(_Relationship):
         return (dn_arg1, dn_arg2, ds_arg1, ds_arg2)
 
         
-class _WeightedRelationship(_Relationship):
+class _WeightedRelationship(BaseRelationship):
     """A class representing a relationship with a weight."""
 
     def __init__(self, name, condition, is_positive, weight, description=None, generator=None):
