@@ -9,6 +9,7 @@ from unresyst.models.abstractor import PredictedRelationshipDefinition, \
 from unresyst.models.aggregator import AggregatedRelationshipInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance
 from unresyst.models.common import SubjectObject
+from unresyst.recommender.rules import BaseRelationship
 
 class SimpleAlgorithm(BaseAlgorithm):
     """A simple implementation of a recommender algorithm.
@@ -176,7 +177,8 @@ class SimpleAlgorithm(BaseAlgorithm):
         # ordered as needed
         qs_pred_rel_instances = RelationshipInstance\
             .filter_predicted(recommender_model)\
-            .order_by(ordering)
+            .order_by(ordering)\
+            .select_related(depth=1)
         
         # the caching variable    
         last_fin = None       
@@ -207,7 +209,8 @@ class SimpleAlgorithm(BaseAlgorithm):
                 qs_similar_rels = AggregatedRelationshipInstance\
                     .get_relationships(fin)\
                     .filter(relationship_type=similarity_relationship_type)\
-                    .order_by('-expectancy')[:cls.N_NEIGHBOURHOOD]
+                    .order_by('-expectancy')[:cls.N_NEIGHBOURHOOD]\
+                    .select_related(depth=1)
 
             # keep it for the next time
             last_fin = fin
@@ -216,6 +219,7 @@ class SimpleAlgorithm(BaseAlgorithm):
             count = qs_similar_rels.count()
             if count and i % 1000 == 0:
                 print "similar count: %d; relationships processed: %d" % (count, i)
+                import gc; gc.collect()
             
             # go through them 
             for similar_rel in qs_similar_rels.iterator():
@@ -290,19 +294,55 @@ class SimpleAlgorithm(BaseAlgorithm):
                         object1=dn_subject,
                         object2=dn_object,
                         queryset=qs_rec_pred)        
+                
+        # if available return it
+        if qs_pred:                   
+            assert len(qs_pred) == 1
+            return qs_pred[0]
         
-        # if not available return the uncertain                        
-        if not qs_pred:
-            return cls._get_uncertain_prediction(
+        # if it's not available, maybe it wasn't in the N_NEIGHBOURHOOD, 
+        # so try finding it in aggregates
+        
+
+        so1, so2 = BaseRelationship.order_arguments(dn_subject, dn_object)
+
+        # the Subject-object aggregate (just in case it hasn't been built)                
+        qs_rels = AggregatedRelationshipInstance.objects.filter(
+                    subject_object1=so1,
+                    subject_object2=so2,
+                    recommender=recommender_model)
+        
+        # if found return it
+        if qs_rels:
+            assert len(qs_rels) == 1
+            return qs_rels[0]                    
+        
+        # try finding the similar entity to the one liked by so1
+        qs_sim1 = AggregatedRelationshipInstance.objects.filter(
+                    subject_object1=so1,
+                    subject_object1__aggregatedrelationshipinstance_relationships1__subject_object2=so2,
+                    recommender=recommender_model)
+
+        # if found return
+        if qs_sim1:
+            assert len(qs_sim1) == 1
+            return qs_sim1
+        
+        # try finding the similar entity to entity that liked so2
+        qs_sim2 = AggregatedRelationshipInstance.objects.filter(
+                    subject_object2=so2,
+                    subject_object2__aggregatedrelationshipinstance_relationships2__subject_object1=so1,
+                    recommender=recommender_model)
+
+        # if found return it                    
+        if qs_sim2:
+            assert len(qs_sim2) == 1
+            return qs_sim2                    
+        return cls._get_uncertain_prediction(
                 recommender_model=recommender_model, 
                 dn_subject=dn_subject, 
                 dn_object=dn_object
             )
-        
-        # otherwise return the found one
-        assert len(qs_pred) == 1
-
-        return qs_pred[0]
         
     @classmethod
     def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):

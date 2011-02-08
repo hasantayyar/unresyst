@@ -21,6 +21,7 @@ user_000011	m	21	Finland	Sep 8, 2005
 """
 
 from django.db import models
+from constants import *
 
 class User(models.Model):
     """The user"""
@@ -46,7 +47,7 @@ class User(models.Model):
 class Country(models.Model):
     """A model for a country."""    
         
-    name = models.CharField(max_length=40, unique=True)
+    name = models.CharField(max_length=MAX_LENGTH_NAME, unique=True)
     """The name of the city."""    
     
     def __unicode__(self):
@@ -60,7 +61,7 @@ class Track(models.Model):
     guid = models.CharField(primary_key=True, max_length=40)
     """The id of the track in the musicbrainz database"""
     
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
     """The name of the track."""
 
     artist = models.ForeignKey('Artist')
@@ -77,7 +78,7 @@ class Artist(models.Model):
     guid = models.CharField(primary_key=True, max_length=40)
     """The id of the singer in the musicbrainz database"""
     
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
     """The name of the track."""
 
     def __unicode__(self):
@@ -114,7 +115,7 @@ class ArtistTag(models.Model):
 class Tag(models.Model):
     """A representation of a tag (label) in the system"""
     
-    name = models.CharField(max_length=80, unique=True)
+    name = models.CharField(max_length=MAX_LENGTH_NAME, unique=True)
     """The label."""
 
     def __unicode__(self):

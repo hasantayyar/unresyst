@@ -4,8 +4,12 @@ import csv
 import os
 from datetime import datetime
 from dateutil.parser import parse
+from dateutil.tz import tzutc
 
 from models import *
+
+TZ = tzutc()
+"""The used timezone"""
 
 """
 7141 artists
@@ -112,8 +116,8 @@ def _parse_scrobbles(filename):
         user_id = _parse_user_id(user_id)
         user = User.objects.get(id=user_id)
         
-        # parse the date 
-        timestamp = parse(timestamp)        
+        # parse the date and put it to the UTC timezone
+        timestamp = parse(timestamp).astimezone(TZ).replace(tzinfo=None)
         
         # get or create the artist
         artist, created = Artist.objects.get_or_create(

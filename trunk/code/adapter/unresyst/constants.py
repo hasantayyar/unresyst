@@ -2,7 +2,7 @@
 
 _ = lambda x: x
 
-MAX_LENGTH_NAME = 40
+MAX_LENGTH_NAME = 80
 """The maximum length of the name in the universal representation."""
 
 MAX_LENGTH_CLASS_NAME = 20
@@ -88,7 +88,7 @@ UNCERTAIN_PREDICTION_VALUE = 0.5
 """The value that is returned when the prediction for the pair isn't 
 available"""
 
-ALREADY_IN_REL_PREDICTION_VALUE = 0.0
+ALREADY_IN_REL_PREDICTION_VALUE = 1.0
 """The value that is returned when the pair already is in the 
 predicted_relationship"""
 

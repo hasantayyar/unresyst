@@ -9,7 +9,7 @@ Each layer has a separate test:
 The tests are always started by running the recommender.build method.
 """
 
-from nose.tools import eq_, assert_raises
+from nose.tools import eq_, assert_raises, assert_almost_equal
 from django.db.models import Q
 
 from unresyst import Recommender
@@ -24,6 +24,8 @@ from unresyst.exceptions import ConfigurationError, DescriptionKeyError
 from demo.recommender import ShoeRecommender
 from demo.models import User, ShoePair
 
+PLACES = 4
+"""How many places are counted for expectancy accuracy"""
 
 class TestRecommender(TestBuild):
     """Test case for the recommender class"""
@@ -146,6 +148,7 @@ class TestAbstractor(TestEntities):
     EXPECTED_PREDICTED_RELATIONSHIP_INSTANCES = (
             ('Alice', 'Sneakers', "User Alice likes shoes Sneakers."),
             ('Bob', 'Sneakers', "User Bob likes shoes Sneakers."),
+            ('Edgar', 'Rubber Shoes', "User Edgar likes shoes Rubber Shoes."),
     ) 
 
     
@@ -244,6 +247,8 @@ class TestAbstractor(TestEntities):
         "Users with similar age.": (
             ('Alice', 'Bob', ("Users Alice and Bob are about the same age.", 
                 "Users Bob and Alice are about the same age."), 0.75),
+            ('Edgar', 'Fionna', ("Users Edgar and Fionna are about the same age.", 
+                "Fionna and Edgar are about the same age."), 1),
         ),
         "Shoes with common keywords.": (
             ('Rubber Shoes', 'Sneakers', ("The shoe pairs Rubber Shoes and Sneakers share some keywords.",
@@ -521,6 +526,9 @@ class TestAggregator(TestEntities):
         ('Cindy', 'Daisy'): (_count_exp(0.3), 'S-S', (
             "Users Cindy and Daisy live in the same city.",
             "Users Daisy and Cindy live in the same city.")), #0.65
+        ('Edgar', 'Fionna'): (_count_exp(1 * 0.2), 'S-S', (
+            "Users Edgar and Fionna are about the same age.",
+            "Users Fionna and Edgar are about the same age.")),
         
         # O-O
         ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'O-O', (
@@ -561,7 +569,7 @@ class TestAggregator(TestEntities):
                         (pair1 + (aggr_inst.expectancy, ))
 
             # assert the expectancy is as expected    
-            eq_(aggr_inst.expectancy, expected_expectancy,
+            assert_almost_equal(aggr_inst.expectancy, expected_expectancy, PLACES,
                 "Expectancy is '%f' should be '%f' for the pair %s, %s" % \
                     ((aggr_inst.expectancy, expected_expectancy) + pair1)) 
         
@@ -594,6 +602,10 @@ class TestAlgorithm(TestEntities):
         ('Cindy', 'Rubber Shoes'): _count_exp(0.4), # 0.7        
         
         ('Daisy', 'RS 130'): _count_exp(0.1), # 0.55
+        
+        ('Edgar', 'Sneakers'): (_count_exp(0.1) + _count_exp(0.4))/2, # 0.625 
+        
+        ('Fionna', 'Rubber Shoes'): _count_exp(0.2),
     }     
     
     def test_predictions_created(self):
@@ -623,7 +635,7 @@ class TestAlgorithm(TestEntities):
                         (pair1 + (pred_inst.expectancy, ))
 
             # assert the expectancy is as expected    
-            eq_(pred_inst.expectancy, expected_prediction,
+            assert_almost_equal(pred_inst.expectancy, expected_prediction, PLACES, 
                 "Prediction is '%f' should be '%f' for the pair %s, %s" % \
                     ((pred_inst.expectancy, expected_prediction) + pair1)) 
         
