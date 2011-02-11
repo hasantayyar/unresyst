@@ -94,7 +94,7 @@ class ArtistRecommender(Recommender):
 
     random_recommendation_description = "Recommending a random artist to the user."
     
-    #Algorithm = PredictOnlyAlgorithm
+    Algorithm = PredictOnlyAlgorithm
     
     ValidationPairClass = ArtistRecommenderValidationPair
     

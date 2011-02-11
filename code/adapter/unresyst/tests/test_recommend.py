@@ -115,7 +115,7 @@ class TestPredictRelationshipLimitedNeighbourhood(TestEntities):
         
         n = ShoeRecommender.Algorithm.N_NEIGHBOURHOOD
         
-        ShoeRecommender.Algorithm.N_NEIGHBOURHOOD = 1
+        ShoeRecommender.Algorithm.N_NEIGHBOURHOOD = 0
         
         super(TestPredictRelationshipLimitedNeighbourhood, self).setUp()
         

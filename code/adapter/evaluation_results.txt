@@ -6,6 +6,8 @@
 28588 tagartists
 322 tagged artists
 
+For starting entity type O, 29053 out of 120908 possible relationships created
+
 AggregatedRelationshipInstance.objects.count()
 1755 determined user similarities
 
@@ -29,95 +31,58 @@ v build vypis kolik to ceho udelalo
 upravit v algoritmu, abych na to prisel
 
 userovi 14 to nechytlo zadny scrobble, userum > 93 taky ne.
-{'subject_object1__name': u'user_2'}
-{'subject_object1__name': u'user_1'}
-{'subject_object1__name': u'user_3'}
-{'subject_object1__name': u'user_5'}
-{'subject_object1__name': u'user_4'}
-{'subject_object1__name': u'user_8'}
-{'subject_object1__name': u'user_7'}
-{'subject_object1__name': u'user_6'}
-{'subject_object1__name': u'user_12'}
-{'subject_object1__name': u'user_11'}
-{'subject_object1__name': u'user_10'}
-{'subject_object1__name': u'user_9'}
-{'subject_object1__name': u'user_16'}
-{'subject_object1__name': u'user_15'}
-{'subject_object1__name': u'user_13'}
-{'subject_object1__name': u'user_17'}
-{'subject_object1__name': u'user_19'}
-{'subject_object1__name': u'user_18'}
-{'subject_object1__name': u'user_21'}
-{'subject_object1__name': u'user_20'}
-{'subject_object1__name': u'user_22'}
-{'subject_object1__name': u'user_23'}
-{'subject_object1__name': u'user_25'}
-{'subject_object1__name': u'user_24'}
-{'subject_object1__name': u'user_27'}
-{'subject_object1__name': u'user_26'}
-{'subject_object1__name': u'user_29'}
-{'subject_object1__name': u'user_28'}
-{'subject_object1__name': u'user_31'}
-{'subject_object1__name': u'user_30'}
-{'subject_object1__name': u'user_33'}
-{'subject_object1__name': u'user_32'}
-{'subject_object1__name': u'user_35'}
-{'subject_object1__name': u'user_34'}
-{'subject_object1__name': u'user_39'}
-{'subject_object1__name': u'user_38'}
-{'subject_object1__name': u'user_37'}
-{'subject_object1__name': u'user_36'}
-{'subject_object1__name': u'user_41'}
-{'subject_object1__name': u'user_40'}
-{'subject_object1__name': u'user_44'}
-{'subject_object1__name': u'user_43'}
-{'subject_object1__name': u'user_42'}
-{'subject_object1__name': u'user_51'}
-{'subject_object1__name': u'user_50'}
-{'subject_object1__name': u'user_49'}
-{'subject_object1__name': u'user_48'}
-{'subject_object1__name': u'user_47'}
-{'subject_object1__name': u'user_46'}
-{'subject_object1__name': u'user_45'}
-{'subject_object1__name': u'user_52'}
-{'subject_object1__name': u'user_54'}
-{'subject_object1__name': u'user_53'}
-{'subject_object1__name': u'user_56'}
-{'subject_object1__name': u'user_55'}
-{'subject_object1__name': u'user_60'}
-{'subject_object1__name': u'user_59'}
-{'subject_object1__name': u'user_58'}
-{'subject_object1__name': u'user_57'}
-{'subject_object1__name': u'user_63'}
-{'subject_object1__name': u'user_62'}
-{'subject_object1__name': u'user_65'}
-{'subject_object1__name': u'user_64'}
-{'subject_object1__name': u'user_67'}
-{'subject_object1__name': u'user_66'}
-{'subject_object1__name': u'user_68'}
-{'subject_object1__name': u'user_69'}
-{'subject_object1__name': u'user_72'}
-{'subject_object1__name': u'user_71'}
-{'subject_object1__name': u'user_70'}
-{'subject_object1__name': u'user_74'}
-{'subject_object1__name': u'user_73'}
-{'subject_object1__name': u'user_75'}
-{'subject_object1__name': u'user_79'}
-{'subject_object1__name': u'user_78'}
-{'subject_object1__name': u'user_77'}
-{'subject_object1__name': u'user_76'}
-{'subject_object1__name': u'user_84'}
-{'subject_object1__name': u'user_83'}
-{'subject_object1__name': u'user_82'}
-{'subject_object1__name': u'user_81'}
-{'subject_object1__name': u'user_80'}
-{'subject_object1__name': u'user_86'}
-{'subject_object1__name': u'user_85'}
-{'subject_object1__name': u'user_89'}
-{'subject_object1__name': u'user_88'}
-{'subject_object1__name': u'user_87'}
-{'subject_object1__name': u'user_91'}
-{'subject_object1__name': u'user_90'}
-{'subject_object1__name': u'user_93'}
-{'subject_object1__name': u'user_92'}
 
+uspesni po buildu:
+
+= evaluace v predict - only iterace 1 =
+
+>>> Recommender validated, deleting old objects...
+Old objects deleted. Creating universal subjectobjects...
+    100 subjects created
+    2348 objects created
+Universal subject and object representations created. Creating predicted_relationship instances...
+    3027 instances of rule/rel User listens to artist's tracks. created
+Predicted relationship instances created. Creating relationship instances...
+Relationship instances created. Creating rule instances...
+    1755 instances of rule/rel Users with similar age. created
+Rule instances created. Aggregating...
+    1755 aggregates created
+Rules and relationships aggregated. Building the algorithm...
+Algorithm built. Done.
+Success rate: 0.583559 (646/1107)
+130 of 646 successful predictions were non-trivial.
+RMSE: 0.352181
+
+
+= evaluace po full buildu - iterace 1 =
+
+>>> ArtistRecommender.build()
+Recommender validated, deleting old objects...
+Old objects deleted. Creating universal subjectobjects...
+    100 subjects created
+    2348 objects created
+Universal subject and object representations created. Creating predicted_relationship instances...
+    3027 instances of rule/rel User listens to artist's tracks. created
+Predicted relationship instances created. Creating relationship instances...
+Relationship instances created. Creating rule instances...
+    1755 instances of rule/rel Users with similar age. created
+Rule instances created. Aggregating...
+    1755 aggregates created
+Rules and relationships aggregated. Building the algorithm...
+  Building aggregates.
+    0 aggregated predictions created
+  Done. Building similar objects.
+Predicted relationship count: 3027
+For starting entity type S, 0 out of 0 possible relationships created
+  Done. Building similar subjects.
+Predicted relationship count: 3027
+similar count: 10; relationships processed: 1000
+similar count: 10; relationships processed: 2000
+similar count: 10; relationships processed: 3000
+For starting entity type O, 24544 out of 101974 possible relationships created
+  Building algorithm done.
+Algorithm built. Done.
+>>> ArtistRecommender.evaluate()
+Success rate: 0.514002 (569/1107)
+53 of 569 successful predictions were non-trivial.
+RMSE: 0.359528

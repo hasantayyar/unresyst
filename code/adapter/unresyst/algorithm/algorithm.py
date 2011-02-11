@@ -1,6 +1,7 @@
 """The main classes of the algorithm package"""
 
 from django.db.models import Q
+from django.db.models import Avg
 
 from base import BaseAlgorithm
 from unresyst.constants import *
@@ -33,12 +34,12 @@ class SimpleAlgorithm(BaseAlgorithm):
         RelationshipPredictionInstance model where there is some simple 
         prediction available. Where there isn't, leave it.
         """
-        print "Building aggregates."
+        print "  Building aggregates."
         # for available aggregates create an instance with the aggregated result
         # 
         cls._build_aggregates(recommender_model)
         
-        print "Done. Building similar objects."
+        print "  Done. Building similar objects."
         
         # if subjects == objects
         if recommender_model.are_subjects_objects:
@@ -50,12 +51,12 @@ class SimpleAlgorithm(BaseAlgorithm):
         
             # take similar to the ones we already have (content-based recommender)
             cls._build_similar_objects(recommender_model)
-            print "Done. Building similar subjects."
+            print "  Done. Building similar subjects."
 
             # take liked objects of similar users (almost collaborative filtering)
             cls._build_similar_subjects(recommender_model)                
         
-        print "Done."
+        print "  Building algorithm done."
                 
 
     @classmethod        
@@ -345,43 +346,95 @@ class SimpleAlgorithm(BaseAlgorithm):
                 )
             pred.save()
             return pred
+
+        # the definition of the predicted relationship
+        d = PredictedRelationshipDefinition.objects.get(recommender=recommender_model)
         
         # try finding the similar entity to the one liked by so1
-        qs_sim1 = AggregatedRelationshipInstance.objects.filter(
-                    subject_object1=so1,
-                    subject_object1__aggregatedrelationshipinstance_relationships1__subject_object2=so2,
-                    recommender=recommender_model)
+        # content-based                
+        
+        # get similarities starting the traverse with the similarity.
+        qs_sim1 = AggregatedRelationshipInstance.objects\
+            .filter(recommender=recommender_model)\
+            .filter(
+                Q(
+                    # take so2 as stable - in the subject_object2 position of the similarity
+                    subject_object2=so2,
+                    
+                    # traverse from the other object in similarity (subject_object1) through
+                    # the relationship instance, its subject (subject_object1) must be so1
+                    subject_object1__relationshipinstance_relationships2__subject_object1=so1,
+                    
+                    # the relationship instance definition must be the predicted relationship def
+                    subject_object1__relationshipinstance_relationships2__definition=d) | \
+                Q(  
+                    # take so2 as stable again, now in the subject_object1 position of the similarity
+                    subject_object1=so2, 
+                    
+                    # traverse from the other through relationship to so1
+                    subject_object2__relationshipinstance_relationships2__subject_object1=so1,
+                    
+                    # the definition again must be the predicted
+                    subject_object2__relationshipinstance_relationships2__definition=d))
 
         # if found return
         if qs_sim1:
-            assert len(qs_sim1) == 1
+
+            # if found return the average TODO nejak jinak
+            avg = qs_sim1.aggregate(Avg('expectancy'))
+
             pred = RelationshipPredictionInstance(
                     subject_object1=dn_subject,
                     subject_object2=dn_object,
                     description=qs_sim1[0].description,
                     recommender=recommender_model,
-                    expectancy=qs_sim1[0].expectancy
+                    expectancy=avg['expectancy__avg']
                 )
             pred.save()
-            return pred
-        
-        # try finding the similar entity to entity that liked so2
-        qs_sim2 = AggregatedRelationshipInstance.objects.filter(
-                    subject_object2=so2,
-                    subject_object2__aggregatedrelationshipinstance_relationships2__subject_object1=so1,
-                    recommender=recommender_model)
+            return pred                    
 
-        # if found return it                    
+        
+        # try finding the similar entity (user) to entity that liked so2
+        # cf
+        qs_sim2 = AggregatedRelationshipInstance.objects\
+            .filter(recommender=recommender_model)\
+            .filter(
+                Q(
+                    # take so1 as stable - in the subject_object2 position of the similarity
+                    subject_object2=so1,
+                    
+                    # traverse from the other object in similarity (subject_object1) through
+                    # the relationship instance, its object (subject_object2) must be so2
+                    subject_object1__relationshipinstance_relationships1__subject_object2=so2,
+                    
+                    # the relationship instance definition must be the predicted relationship def
+                    subject_object1__relationshipinstance_relationships1__definition=d) | \
+                Q(  
+                    # take so1 as stable again, now in the subject_object1 position of the similarity
+                    subject_object1=so1, 
+                    
+                    # traverse from the other through relationship to so2
+                    subject_object2__relationshipinstance_relationships1__subject_object2=so2,
+                    
+                    # the definition again must be the predicted
+                    subject_object2__relationshipinstance_relationships1__definition=d))
+
+
+        #import pdb; pdb.set_trace()
+
+        # if found return the average TODO nejak jinak
         if qs_sim2:
-            assert len(qs_sim2) == 1
+            avg = qs_sim2.aggregate(Avg('expectancy'))
+            
             pred = RelationshipPredictionInstance(
                     subject_object1=dn_subject,
                     subject_object2=dn_object,
                     description=qs_sim2[0].description,
                     recommender=recommender_model,
-                    expectancy=qs_sim2[0].expectancy
+                    expectancy=avg['expectancy__avg']
                 )
             pred.save()
+
             return pred                    
         
         
