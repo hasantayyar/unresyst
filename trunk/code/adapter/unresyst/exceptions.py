@@ -216,3 +216,7 @@ class SymmetryError(UnresystError):
                "    first object in relationship: %s\n" + \
                "    second object in relationship: %s") \
                % (self.message, self.object1, self.object2)    
+               
+class EmptyTestSetError(UnresystError):
+    """An error indicating that the test set is empty."""
+    pass               

@@ -1,8 +1,10 @@
 """The configuration for the last.fm recommender"""
 
 from unresyst import *
+from unresyst.algorithm.algorithm import PredictOnlyAlgorithm
 
 from models import *
+from constants import *
 
 AGE_DIFFERENCE = 38 - 17
 
@@ -91,6 +93,10 @@ class ArtistRecommender(Recommender):
     """Rules that can be applied to the domain"""
 
     random_recommendation_description = "Recommending a random artist to the user."
+    
+    #Algorithm = PredictOnlyAlgorithm
+    
+    ValidationPairClass = ArtistRecommenderValidationPair
     
 """
 ObjectSimilarityRule(
