@@ -29,7 +29,8 @@ class ValidationPair(models.Model):
     def __unicode__(self):
         """Return a textual representation."""    
         
-        return u"%s - %s" % (self.subj, self.obj)
+        return u"%s - %s: exp: %f, got: %f" % \
+            (self.subj, self.obj, self.expected_expectancy, self.obtained_expectancy)
     
     @classmethod
     def select_validation_pairs(cls, i=0):

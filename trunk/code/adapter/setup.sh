@@ -27,6 +27,7 @@ done
 if [ $DONTDROP = false ]
 then
     # drop and create database
+    echo "Dropping and creating database."
     echo "DROP DATABASE IF EXISTS adapter; CREATE DATABASE adapter CHARACTER SET utf8;" | mysql --user=root mysql
 fi
 
