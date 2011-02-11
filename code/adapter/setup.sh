@@ -1,15 +1,13 @@
 #!/bin/sh
 
-# parametry: co chces vlozit do databaze: lastfm, demo
+# parametry: 
+#  co chces vlozit do databaze: lastfm, demo
+#  dontdrop: pokud se preda, nedropuje se databaze
 
-# drop and create database
-echo "DROP DATABASE IF EXISTS adapter; CREATE DATABASE adapter CHARACTER SET utf8;" | mysql --user=root mysql
-
-# syncdb
-python ./manage.py syncdb --noinput > /dev/null
 
 LASTFM=false
 DEMO=false
+DONTDROP=false
 
 for param in $*;
 do    
@@ -20,8 +18,21 @@ do
     'demo')
         DEMO=true
         ;;
+    'dontdrop')
+        DONTDROP=true
+        ;;
     esac
 done
+
+if [ $DONTDROP = false ]
+then
+    # drop and create database
+    echo "DROP DATABASE IF EXISTS adapter; CREATE DATABASE adapter CHARACTER SET utf8;" | mysql --user=root mysql
+fi
+
+# syncdb
+python ./manage.py syncdb --noinput > /dev/null
+
 
 if [ $DEMO = true ]
 then

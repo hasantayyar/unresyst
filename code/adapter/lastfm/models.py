@@ -21,6 +21,9 @@ user_000011	m	21	Finland	Sep 8, 2005
 """
 
 from django.db import models
+
+from unresyst.models import ValidationPair
+
 from constants import *
 
 class User(models.Model):
@@ -121,3 +124,43 @@ class Tag(models.Model):
     def __unicode__(self):
         """Return a printable representation of the instance"""
         return self.name     
+
+        
+class ArtistRecommenderValidationPair(ValidationPair):
+    """An artist - user pair for validation purposes"""
+    
+    subj = models.ForeignKey('lastfm.User')
+    """The subject"""
+    
+    obj = models.ForeignKey('lastfm.Artist')
+    """The object"""
+    
+
+    @classmethod
+    def select_validation_pairs(cls, i=0):
+        """See the base class for the documentation."""
+
+        scrobble_count = Scrobble.objects.all().count()
+        
+        # get a queryset containing every n-th scrobble
+        id_list = range(1 + i, scrobble_count, CROSS_VALIDATION_COUNT)
+        qs_validation_scrobbles = Scrobble.objects.filter(id__in=id_list)
+        
+        # remove the scrobbles and add them to the class
+        for scrobble in qs_validation_scrobbles.iterator():
+            
+            # create and save the validation pair
+            val_pair = cls(
+                subj=scrobble.user,
+                obj=scrobble.track.artist,
+                expected_expectancy=EXPECTED_EXPECTANCY_LISTENED)                
+            val_pair.save()
+            
+            # remove the scrobble
+            scrobble.delete()
+
+
+    def get_success(self):
+        """See the base class for the documentation."""
+        return self.obtained_expectancy > SUCCESS_LIMIT
+

@@ -149,6 +149,9 @@ class BaseRelationship(object):
         @type definition: models.abstractor.RuleRelationshipDefinition
         @param definition: the model representing the rule/relationship 
             definition
+            
+        @rtype: int
+        @return: 1 if something has benn created, 0 if not
         """
   
         # get the domain specific objects for our universal representations
@@ -163,6 +166,9 @@ class BaseRelationship(object):
         if self.condition(ds_arg1, ds_arg2):
             
             self._perform_save_instance(definition, ds_arg1, ds_arg2, dn_arg1, dn_arg2)
+            return 1
+        
+        return 0
 
     @classmethod
     def order_arguments(cls, dn_arg1, dn_arg2):
@@ -260,13 +266,18 @@ class BaseRelationship(object):
         # create and save the definition
         definition = self.DefinitionClass(**def_kwargs)
         definition.save()
-        
+
+        i = 0        
         # if we have a generator, use it for looping through pairs
         if not (self.generator is None):
             
+
             # loop through pairs, save the rule/relationship instances
             for ds_arg1, ds_arg2 in self.generator():
                 self.save_instance(ds_arg1, ds_arg2, definition)
+                i += 1
+            
+            print "    %d instances of rule/rel %s created" % (i, self.name)
             
             # that's it
             return
@@ -281,11 +292,14 @@ class BaseRelationship(object):
                                                            
             # loop only through the matrix members below the diagonal 
             # 
+            i = 0
             for arg1, arg2 in SubjectObject.unique_pairs(
                                 recommender=self.recommender._get_recommender_model(),
                                 entity_type=arg1_s):                          
                 # evaluate it
-                self.evaluate_on_dn_args(arg1, arg2, definition)
+                i += self.evaluate_on_dn_args(arg1, arg2, definition)
+            
+
             
         else:
             # filter subjectobjects for my recommender
@@ -297,7 +311,9 @@ class BaseRelationship(object):
                 for arg2 in qs_recommender.filter(entity_type=arg2_s).iterator():
                
                     # evaluate the rule/relationship on the given args
-                    self.evaluate_on_dn_args(arg1, arg2, definition)
+                    i += self.evaluate_on_dn_args(arg1, arg2, definition)
+
+        print "    %d instances of rule/rel %s created" % (i, self.name)
 
   
 class PredictedRelationship(BaseRelationship):

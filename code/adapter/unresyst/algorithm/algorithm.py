@@ -86,6 +86,8 @@ class SimpleAlgorithm(BaseAlgorithm):
                             recommender=recommender_model)
                             
             prediction.save()                            
+        
+        print "    %d aggregated predictions created" % qs_aggr.count()
                             
         
     @classmethod        
@@ -185,7 +187,14 @@ class SimpleAlgorithm(BaseAlgorithm):
         last_qs = None         
         
         print "Predicted relationship count: %d" % qs_pred_rel_instances.count()
+        
         i = 0
+        
+        # count neighbourhood
+        count_n = 0
+        
+        # count all        
+        count_all = 0
         
         for pred_inst in qs_pred_rel_instances.iterator():
             
@@ -209,14 +218,24 @@ class SimpleAlgorithm(BaseAlgorithm):
                 qs_similar_rels = AggregatedRelationshipInstance\
                     .get_relationships(fin)\
                     .filter(relationship_type=similarity_relationship_type)\
-                    .order_by('-expectancy')[:cls.N_NEIGHBOURHOOD]\
+                    .order_by('-expectancy')
+                
+                # current count of theoretically available predictions
+                cur_count_all = qs_similar_rels.count()
+                
+                qs_similar_rels = qs_similar_rels[:cls.N_NEIGHBOURHOOD]\
                     .select_related(depth=1)
 
             # keep it for the next time
             last_fin = fin
             last_qs = qs_similar_rels
             
+
             count = qs_similar_rels.count()
+
+            count_all += cur_count_all
+            count_n += count
+            
             if count and i % 1000 == 0:
                 print "similar count: %d; relationships processed: %d" % (count, i)
                 import gc; gc.collect()
@@ -252,6 +271,9 @@ class SimpleAlgorithm(BaseAlgorithm):
                             
                 prediction.save()                                 
                     
+        print "For starting entity type %s, %d out of %d possible relationships created" \
+                 % (start_entity_type, count_n, count_all)
+
 
     # Recommend phase:
     #
@@ -301,9 +323,7 @@ class SimpleAlgorithm(BaseAlgorithm):
             return qs_pred[0]
         
         # if it's not available, maybe it wasn't in the N_NEIGHBOURHOOD, 
-        # so try finding it in aggregates
-        
-
+        # so try finding it in aggregates        
         so1, so2 = BaseRelationship.order_arguments(dn_subject, dn_object)
 
         # the Subject-object aggregate (just in case it hasn't been built)                
@@ -315,7 +335,16 @@ class SimpleAlgorithm(BaseAlgorithm):
         # if found return it
         if qs_rels:
             assert len(qs_rels) == 1
-            return qs_rels[0]                    
+
+            pred = RelationshipPredictionInstance(
+                    subject_object1=dn_subject,
+                    subject_object2=dn_object,
+                    description=qs_rels[0].description,
+                    recommender=recommender_model,
+                    expectancy=qs_rels[0].expectancy
+                )
+            pred.save()
+            return pred
         
         # try finding the similar entity to the one liked by so1
         qs_sim1 = AggregatedRelationshipInstance.objects.filter(
@@ -326,7 +355,15 @@ class SimpleAlgorithm(BaseAlgorithm):
         # if found return
         if qs_sim1:
             assert len(qs_sim1) == 1
-            return qs_sim1
+            pred = RelationshipPredictionInstance(
+                    subject_object1=dn_subject,
+                    subject_object2=dn_object,
+                    description=qs_sim1[0].description,
+                    recommender=recommender_model,
+                    expectancy=qs_sim1[0].expectancy
+                )
+            pred.save()
+            return pred
         
         # try finding the similar entity to entity that liked so2
         qs_sim2 = AggregatedRelationshipInstance.objects.filter(
@@ -337,7 +374,18 @@ class SimpleAlgorithm(BaseAlgorithm):
         # if found return it                    
         if qs_sim2:
             assert len(qs_sim2) == 1
-            return qs_sim2                    
+            pred = RelationshipPredictionInstance(
+                    subject_object1=dn_subject,
+                    subject_object2=dn_object,
+                    description=qs_sim2[0].description,
+                    recommender=recommender_model,
+                    expectancy=qs_sim2[0].expectancy
+                )
+            pred.save()
+            return pred                    
+        
+        
+        # return the uncertain
         return cls._get_uncertain_prediction(
                 recommender_model=recommender_model, 
                 dn_subject=dn_subject, 
@@ -476,4 +524,17 @@ class SimpleAlgorithm(BaseAlgorithm):
             return (arg2, arg1)
         return (arg1, arg2)
 
+
+class PredictOnlyAlgorithm(SimpleAlgorithm):
+    """An algorithm that doesn't need to be built, performs only predictions."""
+    
+    @classmethod
+    def build(cls, recommender_model):
+        """Do nothing"""
+        return
+
+    @classmethod
+    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):    
+        """Raise an error"""
+        raise NotImplementedError()    
 

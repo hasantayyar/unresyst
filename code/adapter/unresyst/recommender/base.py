@@ -114,7 +114,19 @@ class BaseRecommender(object):
         """Remove the object from the recommender, including its relationships
         and applied rules"""
         pass      
-                  
+
+        
+    # Evaluate phase:
+    #         
+    @classmethod 
+    def evaluate(cls):
+        """Evalauate the recommender using the cls.ValidationPairClass pairs.
+        
+        Sets the rmse and success_rate attributes of the recommender.
+        """
+        pass                  
+        
+        
     # Domain specific data. empty, will be overriden in the domain specific recommender
     #
 

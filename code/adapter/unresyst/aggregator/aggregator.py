@@ -126,4 +126,7 @@ class LinearAggregator(BaseAggregator):
         # save the last instance
         cont_inst.save()
         
+        print "    %d aggregates created" % \
+            AggregatedRelationshipInstance.objects.filter(recommender=recommender_model).count()
+        
  

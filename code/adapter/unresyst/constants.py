@@ -95,3 +95,7 @@ predicted_relationship"""
 MIN_WEIGHT = 0.0
 MAX_WEIGHT = 1.0
 """Weight limits"""
+
+TRIVIAL_EXPECTANCY = 1.0
+"""The expectancy that is given for the trivial cases - already 
+listened to the artist."""

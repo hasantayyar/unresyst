@@ -27,6 +27,8 @@ class BasicAbstractor(BaseAbstractor):
             
             # save it
             subob.save()
+        
+        print "    %d subjects created" % subjects.count()
             
         # for recommenders where subjects==objects, that's it
         if so:
@@ -45,6 +47,8 @@ class BasicAbstractor(BaseAbstractor):
             
             # save it
             subob.save()
+            
+        print "    %d objects created" % objects.count()
 
 
     # tyhle tri se budou asi delat jednotne - jedna metoda, kterou zavolaj  
