@@ -36,7 +36,12 @@ class RuleRelationshipDefinition(BaseRelationshipDefinition):
     class Meta:
         app_label = 'unresyst' 
 
+    def __unicode__(self):
+        """Return a printable representation of the instance"""        
+        ret = super(RuleRelationshipDefinition, self).__unicode__()
 
+        return ret + "%f, positive: %s" % (self.weight, self.is_positive)
+        
 # instances:
 #
 
@@ -162,3 +167,88 @@ class RuleInstance(RelationshipInstance):
         
     class Meta:
         app_label = 'unresyst'
+        
+# clusters:
+# 
+
+class ClusterSet(models.Model):
+    """A set of clusters defined by the user. E.g. 'Gender'."""
+
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """A textual characterization of the cluster set."""    
+    
+    recommender = models.ForeignKey('unresyst.Recommender')
+    """The recommender to which the cluster set belongs."""    
+
+    entity_type = models.CharField(max_length=MAX_LENGTH_ENTITY_TYPE, \
+                    choices=ENTITY_TYPE_CHOICES)
+    """A string indicating whether the contained clusters are for subjects,
+    objects or both.s/o/so"""
+
+    weight = models.FloatField()
+    """The weight of the similarity inferred from two subject/objects 
+    belonging to one cluster. A number from [0, 1].
+    """
+
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name  
+        
+    class Meta:
+        app_label = 'unresyst'    
+        
+        unique_together = ('name', 'recommender')
+        """There can be only one cluster set with the given name for 
+        a recommender.
+        """
+
+
+class Cluster(models.Model):
+    """A cluster (class of subjects/objects) defined by the user.
+    E.g. 'Female'"""
+    
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """A textual characterization of the cluster"""
+    
+    cluster_set = models.ForeignKey('unresyst.ClusterSet')
+    """The set the cluster belongs to"""
+        
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"%s - %s" % (self.cluster_set, self.name)
+        
+    class Meta:
+        app_label = 'unresyst'    
+        
+        unique_together = ('name', 'cluster_set')
+        """There can be only one cluster cluster set of the given name in the 
+        cluster set.
+        """
+
+class ClusterMember(models.Model):
+    """A membership of a subject/object in the cluster."""
+    
+    cluster = models.ForeignKey('unresyst.Cluster')
+    """The cluster"""
+    
+    member = models.ForeignKey('unresyst.SubjectObject')
+    """The cluster member"""
+    
+    confidence = models.FloatField()
+    """The confidence of the given rule being positive/negative (depending on
+    definition.is_positive) in means of the predicted_relationship
+    A number from [0, 1].
+    """
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"(%s, %s): %f" % (self.cluster, self.member, self.confidence)
+        
+        
+    class Meta:
+        app_label = 'unresyst'    
+        
+        unique_together = ('cluster', 'member')
+        """There can be only one membership for a subjectobject in the given 
+        cluster.
+        """    

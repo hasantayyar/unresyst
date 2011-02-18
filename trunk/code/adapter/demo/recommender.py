@@ -4,9 +4,11 @@
 
 from unresyst import *
 
-from models import *
+from models import *  
 
-
+# helper functions:    
+#
+    
 def _get_keyword_set(o):
     """Get set of keywords for the given shoepair
     """
@@ -52,8 +54,10 @@ def _south_generator():
     for u in User.objects.filter(home_city__in_south=True).iterator():
         for s in ShoePair.objects.filter(for_winter=True).iterator():
             yield (u, s)
-    
-            
+
+# the recommender:
+# 
+
 class ShoeRecommender(Recommender):
     """A BaseRecommender subclass holding all domain-specific data"""
 
@@ -98,7 +102,7 @@ class ShoeRecommender(Recommender):
             name='User lives in the same city as the shoe manufacturer.',
             
             condition=lambda s, o:
-                o.manufacturer.home_city == s.home_city,
+                o.manufacturer and s.home_city and o.manufacturer.home_city == s.home_city,
 
             is_positive=True,            
                 
@@ -112,7 +116,7 @@ class ShoeRecommender(Recommender):
             name="Users live in the same city.",
             
             condition=lambda s1, s2:
-                s1.home_city == s2.home_city, 
+                s1.home_city and s1.home_city == s2.home_city, 
                 
             is_positive=True,               
             
@@ -127,7 +131,7 @@ class ShoeRecommender(Recommender):
             name="Shoes were made by the same manufacturer.",
             
             condition=lambda o1, o2:
-                o1.manufacturer == o2.manufacturer,
+                o1.manufacturer and o1.manufacturer == o2.manufacturer,
                 
             is_positive=True,                
             
@@ -200,8 +204,22 @@ class ShoeRecommender(Recommender):
         ),
     )
     """Rules that can be applied to the domain"""
+    
+    cluster_sets = (
+        # shoe category cluster
+        ObjectClusterSet(
+
+            name="Shoe category cluster set.",
+
+            weight=0.3,
+            
+            filter_entities=ShoePair.objects.filter(category__isnull=False),
+            
+            get_cluster_confidence_pairs=lambda shoe: ((shoe.category.name, 1),),
+        ),
+    )
 
     random_recommendation_description = "Recommending a random shoe pair to the user."
-    
+
 
 

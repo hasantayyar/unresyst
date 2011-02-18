@@ -72,7 +72,7 @@ class Track(models.Model):
 
     def __unicode__(self):
         """Return a printable representation of the instance"""
-        return self.name  
+        return u"%s: %s" % (self.artist, self.name)
 
 
 class Artist(models.Model):
@@ -100,6 +100,10 @@ class Scrobble(models.Model):
     
     timestamp = models.DateTimeField()
     """The data and time the track was played"""
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"(%s, %s)" % (self.user, self.track)
 
 
 class ArtistTag(models.Model):
@@ -113,6 +117,11 @@ class ArtistTag(models.Model):
     
     count = models.PositiveIntegerField()
     """How many times the artist was tagged by the tag"""
+
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"(%s, %s: %d)" % (self.artist, self.tag, self.count)    
+    
 
     
 class Tag(models.Model):
@@ -135,6 +144,9 @@ class ArtistRecommenderValidationPair(ValidationPair):
     obj = models.ForeignKey('lastfm.Artist')
     """The object"""
     
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"%s - %s" % (self.subj, self.obj)
 
     @classmethod
     def select_validation_pairs(cls, i=0):

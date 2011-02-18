@@ -53,15 +53,12 @@ class BaseAbstractor(object):
 
     
     @classmethod
-    def create_rule_instances(cls, recommender, rules):
+    def create_rule_instances(cls, rules):
         """Create the instances of rules.
         
         Create bindings on pairs of subject/objects, for pairs between where 
         the rule applies.
 
-        @type recommender: models.Recommender
-        @param recommender: the recommender model instance                
-        
         @type rules: list of rules._BaseRule subclass instances
         @param rules: recommender rules to be instantiated
         
@@ -69,50 +66,26 @@ class BaseAbstractor(object):
             or some confidence function returns a value outside [0, 1].
         """
         pass
+
     
-    
-    # Recommend phase:
-    # Neblaaaaazni
-    
-    
-    @classmethod
-    def get_dn_subject(cls, recommender, subject):
-        """Get a domain neutral SubjectObject for the given domain-specific
-        subject.
-        
-        @rtype: SubjectObject
-        @return: the domain neutral subject
-        """
-        pass
         
     @classmethod
-    def get_dn_object(cls, recommender, object_):
-        """Get a domain neutral SubjectObject for the given domain-specific
-        object.
+    def create_clusters(cls, cluster_sets):
+        """Create clusters defined in the given sets
         
-        @rtype: SubjectObject
-        @return: the domain neutral object
-        """
-        pass
+        Crates the cluster sets in the database, their clusters, bindings 
+        of subjectobjects to the clusters.
         
-    @classmethod        
-    def get_subject(cls, recommender, dn_subject):
-        """Get a domain specific subject for the given SubjectObject.
+        @type cluster_sets: a list of clusters.BaseClusterSet subclass instances
+        @param cluster_sets: recommender cluster sets to be evaluated
         
-        @rtype: domain specific Subject
-        @return: the domain specific subject
-        """
-        pass
-    
-    @classmethod
-    def get_object(cls, recommender, dn_object):
-        """Get the domain specific object for the given SubjectObject.
-        
-        @rtype: domain specific Object
-        @return: the domain specific object
+        @raise ConfigurationError: if the weight of some cluster set is outside [0, 1]
+            or some cluster memger confidence is outside [0, 1].
         """
         pass
 
+
+    
     # Update phase:
     # 
     

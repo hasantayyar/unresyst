@@ -50,6 +50,8 @@ class TestEntities(TestBuild):
             'Sneakers': ShoePair.objects.get(name="Sneakers"),
             "Rubber Shoes": ShoePair.objects.get(name="Rubber Shoes"),
             'RS 130': ShoePair.objects.get(name='RS 130'),
+            'Design Shoes': ShoePair.objects.get(name='Design Shoes'),
+            'Octane SL': ShoePair.objects.get(name='Design Shoes'),                        
         }
         
         rm = ShoeRecommender._get_recommender_model()
@@ -90,4 +92,12 @@ class TestEntities(TestBuild):
                             domain_specific_entity=self.specific_entities['RS 130'], 
                             entity_type='O', 
                             recommender=rm),
-        }         
+            'Design Shoes': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Design Shoes'], 
+                            entity_type='O', 
+                            recommender=rm),                            
+            'Octane SL': SubjectObject.get_domain_neutral_entity(
+                            domain_specific_entity=self.specific_entities['Octane SL'], 
+                            entity_type='O', 
+                            recommender=rm),                            
+        }                 

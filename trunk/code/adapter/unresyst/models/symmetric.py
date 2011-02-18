@@ -40,6 +40,13 @@ class SymmetricalRelationship(models.Model):
     class Meta:
         abstract = True
         
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        object1 = getattr(self, self.attr_name1)
+        object2 = getattr(self, self.attr_name2)
+        
+        return u"%s - %s" % (object1, object2)
+        
     def save(self, *args, **kwargs):
         """Overrides the save method in order to control the symmetricity.
 

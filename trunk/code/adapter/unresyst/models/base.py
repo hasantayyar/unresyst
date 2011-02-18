@@ -41,6 +41,7 @@ class ContentTypeModel(models.Model):
 
     def save(self,*args, **kwargs):
         """Save with the right content type"""
+        
         if not self.content_type:
             self.content_type = ContentType.objects.get_for_model(self.__class__)
         

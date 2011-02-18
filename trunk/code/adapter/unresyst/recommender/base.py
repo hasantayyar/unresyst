@@ -153,11 +153,14 @@ class BaseRecommender(object):
     predicted_relationship = None
     """The relationship that will be predicted"""
     
-    relationships = None
+    relationships = ()
     """Relationships among the subjects and objects in the domain"""
         
-    rules = None
+    rules = ()
     """Rules that can be applied to the domain"""
+    
+    cluster_sets = ()
+    """Clusters to which subjects and objects can be divided"""
 
     random_recommendation_description = None
     """The description that will be used as a description 

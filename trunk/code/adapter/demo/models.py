@@ -22,13 +22,27 @@ class ShoePair(models.Model):
     image_path = models.CharField(max_length=MAX_LENGTH_IMAGE_PATH)
     """The path to the shoe image, relative to the MEDIA_ROOT"""
     
+    category = models.ForeignKey('ShoeCategory', null=True)
+    """The category where the shoe pair belongs"""
+    
     def get_avatar_path(self):
         return self.image_path
     
     def __unicode__(self):
         """Return a printable representation of the instance"""
         return self.name    
+
+
+class ShoeCategory(models.Model):    
+    """A category of shoes, like casual, sport, ..."""
     
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """The shoe category name"""
+
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return self.name
+
 
 class Keyword(models.Model):
     """A model for a keyword associated with shoe pair."""

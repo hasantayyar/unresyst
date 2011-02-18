@@ -15,7 +15,7 @@ from django.db.models import Q
 from unresyst import Recommender
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
-    RelationshipInstance, RuleInstance, RuleRelationshipDefinition
+    RelationshipInstance, RuleInstance, RuleRelationshipDefinition, ClusterSet
 from unresyst.models.aggregator import AggregatedRelationshipInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance    
 from test_base import TestBuild, TestEntities, DBTestCase
@@ -356,6 +356,49 @@ class TestAbstractor(TestEntities):
             eq_(rmodel.relationship_type, r.relationship_type)      
 
 
+    EXP_CLUSTER_SETS = {
+        "Shoe category cluster set.": 
+            (
+                {'For Sports': (('RS 130', 1), ("Octane SL", 1)),
+                'Casual': (("Design Shoes", 1), ("Sneakers", 1)),},
+                'O', 0.3),
+    }
+    """A dictionary: cluster set name: contained clusters, entity type, weight"""
+    
+    def test_clusters(self):
+        """Test that the clusters are created as expected"""
+        
+        # get cluster sets from db
+        cluster_sets = ClusterSet.objects.filter(
+            recommender=ShoeRecommender._get_recommender_model())
+        
+        # assert there are as many as expected
+        eq_(len(self.EXP_CLUSTER_SETS), cluster_sets.count())
+        
+        for cs in cluster_sets:
+
+            # get the expected contents
+            clusters, ent_type, weight = self.EXP_CLUSTER_SETS[cs.name]
+                        
+            eq_(ent_type, cs.entity_type)
+            eq_(weight, cs.weight)
+            eq_(len(clusters), cs.cluster_set.count())
+            
+            # go through the clusters
+            for c in cs.cluster_set.all():
+
+                 cluster_members = clusters[c.name]
+                 
+                 eq_(len(cluster_members), c.clustermember_set.count())
+                 
+                 for cm in c.clustermember_set.all():
+                     # expect the combination of entity and confidence is 
+                     # in the expected
+                     assert (cm.member.name, cm.confidence) in cluster_members, \
+                        "The member '%s' with confidence '%f' isn't one of the expected %s" % (
+                            cm.member, cm.confidence, cluster_members)
+                 
+                            
 class TestAbstractorRecommenderErrors(DBTestCase):
     """Test various errors thrown by Abstractor and/or Recommender and/or Algorithm"""
 
