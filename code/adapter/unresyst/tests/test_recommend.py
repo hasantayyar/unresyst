@@ -159,30 +159,42 @@ expectancy in reverse order, the zero expectancy recommendations are removed.
 EXPECTED_RECOMMENDATIONS = {
     'Bob': [
         ('Rubber Shoes', 0.55, 'User Bob is from the same city as the manufacturer of Rubber Shoes.'),
-        ('RS 130', 0.075000000000000011, "Bob is from south, so RS 130 can't be recommended to him/her.")
+        ('Design Shoes', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Octane SL', 0.5, 'Recommending a random shoe pair to the user.'),           
+        ('RS 130', 0.075, "Bob is from south, so RS 130 can't be recommended to him/her."),
     ], 
     'Alice': [
         ('Rubber Shoes', 0.625, 'User Alice has viewed Rubber Shoes. User Alice is from the same city as the manufacturer of Rubber Shoes.'), 
-        ('RS 130', 0.075, "Alice is from south, so RS 130 can't be recommended to him/her.")
+        ('Design Shoes', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Octane SL', 0.5, 'Recommending a random shoe pair to the user.'),           
+        ('RS 130', 0.075, "Alice is from south, so RS 130 can't be recommended to him/her."),
     ], 
     'Cindy': [
         ('Rubber Shoes', 0.7, 'User Cindy has viewed Rubber Shoes.'), 
         ('RS 130', 0.55, 'User Cindy is from the same city as the manufacturer of RS 130.'), 
-        ('Sneakers', 0.5, 'Recommending a random shoe pair to the user.')
+        ('Sneakers', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Design Shoes', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Octane SL', 0.5, 'Recommending a random shoe pair to the user.'),           
     ], 
     'Daisy': [
         ('RS 130', 0.55, 'User Daisy is from the same city as the manufacturer of RS 130.'), 
         ('Sneakers', 0.5, 'Recommending a random shoe pair to the user.'), 
-        ('Rubber Shoes', 0.5, 'Recommending a random shoe pair to the user.')
+        ('Rubber Shoes', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Design Shoes', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Octane SL', 0.5, 'Recommending a random shoe pair to the user.'),           
     ],
     'Edgar': [
         ('Sneakers', 0.625, ""), # too many possible strings to test    
         ('RS 130', 0.5, 'Recommending a random shoe pair to the user.'), 
+        ('Design Shoes', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Octane SL', 0.5, 'Recommending a random shoe pair to the user.'),   
     ],
     'Fionna': [
         ('Rubber Shoes', _count_exp(0.2), ""), # too many possible strings to test    
         ('Sneakers', 0.5, 'Recommending a random shoe pair to the user.'),
         ('RS 130', 0.5, 'Recommending a random shoe pair to the user.'),  
+        ('Design Shoes', 0.5, 'Recommending a random shoe pair to the user.'),
+        ('Octane SL', 0.5, 'Recommending a random shoe pair to the user.'),            
     ],
 }
 """The same but a bit more explicit"""

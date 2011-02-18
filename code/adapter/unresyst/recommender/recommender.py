@@ -45,7 +45,12 @@ class MetaRecommender(type):
         # finally to the relationships
         if cls.relationships:
             for relationship in cls.relationships:
-                relationship.recommender = cls        
+                relationship.recommender = cls   
+        
+        # moreover to the cluster sets
+        if cls.cluster_sets:
+            for cluster_set in cls.cluster_sets:
+                cluster_set.recommender = cls                     
 
 
 class Recommender(BaseRecommender):
@@ -159,7 +164,12 @@ class Recommender(BaseRecommender):
         # subjects/objects
         cls.Abstractor.create_rule_instances(rules=cls.rules)
         
-        cls._print("Rule instances created. Aggregating...")
+        cls._print("Rule instances created.")
+        
+        # evaluate the clusters and their members
+        cls.Abstractor.create_clusters(cluster_sets=cls.cluster_sets)
+        
+        cls._print("Clusters created. Aggregating...")
 
         # Aggregator
         # 

@@ -51,10 +51,6 @@ class BasicAbstractor(BaseAbstractor):
         print "    %d objects created" % objects.count()
 
 
-    # tyhle tri se budou asi delat jednotne - jedna metoda, kterou zavolaj  
-    # promenne: 
-    # trida, ktera se ma vytvaret
-    # typy ktere do toho budou vstupovat
     
     @classmethod            
     def create_predicted_relationship_instances(cls, predicted_relationship):
@@ -80,3 +76,11 @@ class BasicAbstractor(BaseAbstractor):
         # eveluate all rules
         for rule in rules:
             rule.evaluate()
+
+    @classmethod
+    def create_clusters(cls, cluster_sets):
+        """See the base class for documentation."""
+        
+        # evaluate all cluster sets
+        for cluster_set in cluster_sets:
+            cluster_set.evaluate()                    

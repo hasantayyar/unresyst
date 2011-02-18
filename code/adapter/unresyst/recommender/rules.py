@@ -466,7 +466,7 @@ class _BaseRule(_WeightedRelationship):
 
         confidence = self.confidence(ds_arg1, ds_arg2)
         
-        if not (0.0 <= confidence <= 1.0):
+        if not (MIN_CONFIDENCE <= confidence <= MAX_CONFIDENCE):
             raise ConfigurationError(
                 message=("The rule '%s' has a confidence %f, for the" + \
                     "  pair (%s, %s). Should be between 0 and 1.") % \

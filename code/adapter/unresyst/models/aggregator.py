@@ -29,7 +29,13 @@ class AggregatedRelationshipInstance(BaseRelationshipInstance):
     
     additional_unique = ('recommender', )
     """There can be multiple pairs for one recommender"""
-    
+
+    def __unicode__(self):
+        """Return a printable representation of the instance"""        
+        ret = super(RuleRelationshipDefinition, self).__unicode__()
+
+        return ret + ", %f" % (self.expectancy)    
+ 
     class Meta:
         app_label = 'unresyst' 
         

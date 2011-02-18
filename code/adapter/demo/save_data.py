@@ -38,12 +38,20 @@ def save_data():
     lange = Manufacturer(name="Lange", home_city=helsinki)
     lange.save()
     
+    # categories
+    for_sports = ShoeCategory(name='For Sports')
+    for_sports.save()
+    
+    casual = ShoeCategory(name='Casual')
+    casual.save()
+    
     # shoes
     sneakers = ShoePair(
         name="Sneakers",
         manufacturer=diesel,
         for_winter=False,
-        image_path='/images/Trainers.gif'
+        image_path='/images/Trainers.gif',
+        category=casual
     )
     sneakers.save()
     sneakers.keywords.add(comfortable,trainers, cool)
@@ -63,11 +71,26 @@ def save_data():
         name='RS 130',
         manufacturer=lange,
         for_winter=True,
-        image_path='/images/ski-boot.jpg'        
+        image_path='/images/ski-boot.jpg',
+        category=for_sports       
     )
     ski_boots.save()
     ski_boots.keywords.add(sporty, cool)
     ski_boots.save()
+    
+    design_shoes = ShoePair(
+        name="Design Shoes",
+        category=casual,
+        for_winter=False
+    )
+    design_shoes.save()
+    
+    octane_sl = ShoePair(
+        name="Octane SL",
+        category=for_sports,
+        for_winter=False
+    )
+    octane_sl.save()
     
     # users    
     alice = User(
