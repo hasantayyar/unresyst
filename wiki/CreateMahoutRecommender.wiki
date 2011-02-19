@@ -192,37 +192,39 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 
 public class UnresystBoolRecommend {
-	
-	public static void main(String... args) throws FileNotFoundException, TasteException, IOException, OptionException {
-		
-		// create data source (model) - from the csv file    		
+    
+    public static void main(String... args) throws FileNotFoundException, TasteException, IOException, OptionException {
+        
+        // create data source (model) - from the csv file            
         File ratingsFile = new File("datasets/dummy-bool.csv");                        
-		DataModel model = new FileDataModel(ratingsFile);
-		
-		// create a simple recommender on our data
-		CachingRecommender cachingRecommender = new CachingRecommender(new SlopeOneRecommender(model));
+        DataModel model = new FileDataModel(ratingsFile);
+        
+        // create a simple recommender on our data
+        CachingRecommender cachingRecommender = new CachingRecommender(new SlopeOneRecommender(model));
 
         // for all users
         for (LongPrimitiveIterator it = model.getUserIDs(); it.hasNext();){
             long userId = it.nextLong();
             
             // get the recommendations for the user
-		    List<RecommendedItem> recommendations = cachingRecommender.recommend(userId, 10);
-		    
-		    // if empty write something
-		    if (recommendations.size() == 0){
-		        System.out.print(userId);
-		        System.out.println(": no recommendations");
-		    }
-		        		    
-		    // print the list of recommendations for each 
-		    for (RecommendedItem recommendedItem : recommendations) {
-		        System.out.print(userId);
-		        System.out.print(": ");
-			    System.out.println(recommendedItem);
-		    }
-		}		
-	}
+            List<RecommendedItem> recommendations = cachingRecommender.recommend(userId, 10);
+            
+            // if empty write something
+            if (recommendations.size() == 0){
+                System.out.print("User ");
+                System.out.print(userId);
+                System.out.println(": no recommendations");
+            }
+                            
+            // print the list of recommendations for each 
+            for (RecommendedItem recommendedItem : recommendations) {
+                System.out.print("User ");
+                System.out.print(userId);
+                System.out.print(": ");
+                System.out.println(recommendedItem);
+            }
+        }        
+    }
 }
 }}}
 Some notes to that:
