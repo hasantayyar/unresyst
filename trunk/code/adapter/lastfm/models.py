@@ -22,7 +22,7 @@ user_000011	m	21	Finland	Sep 8, 2005
 
 from django.db import models
 
-from unresyst.models import ValidationPair
+from unresyst.models import BaseEvaluationPair
 
 from constants import *
 
@@ -61,7 +61,7 @@ class Country(models.Model):
 class Track(models.Model):
     """A track (song)"""
     
-    guid = models.CharField(primary_key=True, max_length=40)
+    guid = models.CharField(unique=True, max_length=40)
     """The id of the track in the musicbrainz database"""
     
     name = models.CharField(max_length=MAX_LENGTH_NAME)
@@ -78,7 +78,7 @@ class Track(models.Model):
 class Artist(models.Model):
     """An artist (band or singer)"""
     
-    guid = models.CharField(primary_key=True, max_length=40)
+    guid = models.CharField(unique=True, max_length=40)
     """The id of the singer in the musicbrainz database"""
     
     name = models.CharField(max_length=MAX_LENGTH_NAME)
@@ -135,7 +135,7 @@ class Tag(models.Model):
         return self.name     
 
         
-class ArtistRecommenderValidationPair(ValidationPair):
+class ArtistRecommenderEvaluationPair(BaseEvaluationPair):
     """An artist - user pair for validation purposes"""
     
     subj = models.ForeignKey('lastfm.User')
@@ -149,7 +149,7 @@ class ArtistRecommenderValidationPair(ValidationPair):
         return u"%s - %s" % (self.subj, self.obj)
 
     @classmethod
-    def select_validation_pairs(cls, i=0):
+    def select(cls, i=0):
         """See the base class for the documentation."""
 
         scrobble_count = Scrobble.objects.all().count()

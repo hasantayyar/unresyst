@@ -5,7 +5,7 @@ _ = lambda x: x
 MAX_LENGTH_NAME = 80
 """The maximum length of the name in the universal representation."""
 
-MAX_LENGTH_CLASS_NAME = 20
+MAX_LENGTH_CLASS_NAME = 40
 """The maximum length of the class name."""
 
 MAX_LENGTH_ENTITY_TYPE = 2
@@ -103,3 +103,5 @@ MAX_CONFIDENCE = 1.0
 TRIVIAL_EXPECTANCY = 1.0
 """The expectancy that is given for the trivial cases - already 
 listened to the artist."""
+
+CONFIDENCE_KWARG_NAME = 'confidence'

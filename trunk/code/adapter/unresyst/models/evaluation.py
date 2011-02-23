@@ -2,13 +2,13 @@
 
 from django.db import models
 
-class ValidationPair(models.Model):
+class BaseEvaluationPair(models.Model):
     """An abstract base class for a test set pair. To be used for
     testing the correctness of the predicted expectancy.
     
     The subclass has to have attributes:
-     - subject - a foreign key to subject
-     - object_ - a foreign key to object    
+     - subj - a foreign key to subject
+     - obj - a foreign key to object    
     """    
     
     obtained_expectancy = models.FloatField(null=True)
@@ -33,7 +33,32 @@ class ValidationPair(models.Model):
             (self.subj, self.obj, self.expected_expectancy, self.obtained_expectancy)
     
     @classmethod
-    def select_validation_pairs(cls, i=0):
+    def export(cls, f):
+        """Export evaluation pairs to a csv file of the given name.
+        
+        @type f: file
+        @param f: open file to write to        
+        """                
+        i = 0
+        
+        # loop through the pairs, 
+        for pair in cls.objects.all():
+                        
+            # create the common part
+            linestr = "%s,%s\n" % (pair.subj.pk, pair.obj.pk)                        
+            
+            # write it to the file
+            f.write(linestr)
+            
+            i += 1
+        
+        print "    %d evaluation pairs exported" % i
+            
+    # to be implemented by subclasses
+    #            
+    
+    @classmethod
+    def select(cls, i=0):
         """Select the pairs for a validation, save them to the database and
         remove them from the system data. The method is called in every 
         iteration.
@@ -46,7 +71,7 @@ class ValidationPair(models.Model):
         """
         raise NotImplementedError() 
 
-    def get_success(self):
+    def get_prediction_success(self):
         """Count whether the pair was successful. The obtained expectancy has
         to be filled first.
         

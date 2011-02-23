@@ -96,7 +96,7 @@ class ArtistRecommender(Recommender):
     
     Algorithm = PredictOnlyAlgorithm
     
-    ValidationPairClass = ArtistRecommenderValidationPair
+    
     
 """
 ObjectSimilarityRule(

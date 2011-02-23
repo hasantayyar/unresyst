@@ -315,6 +315,58 @@ class BaseRelationship(object):
 
         print "    %d instances of rule/rel %s created" % (i, self.name)
 
+    
+    def export(self, f):
+        """Export the relationship as lines to the given file object.
+        
+        Exports the relationship in form:
+        subject_id, object_id[,confidence]\n
+        
+        confidence is exported only if it's relevant,
+        no matter if it's positive or not
+        
+        @type f: file
+        @param f: the file to write to
+        
+        @raise: ConfigurationError: if the rule/relationship doesn't have
+            a generator.
+        """
+        
+        # if we don't have a generator raise an error
+        if self.generator is None:
+            raise ConfigurationError(
+                message="The relationship to export is missing the generator.", 
+                recommender=cls, 
+                parameter_name='?', 
+                parameter_value=cls.name)
+            
+        i = 0
+        
+        # loop through pairs, export the rule/relationship instances
+        for ds_arg1, ds_arg2 in self.generator():
+                        
+            # create the common part
+            linestr = "%s,%s" % (ds_arg1.pk, ds_arg2.pk)
+            
+            # get the confidence if provided
+            adkwargs = self.get_additional_instance_kwargs(ds_arg1, ds_arg2)
+            
+            # if confidence provided, append it
+            if adkwargs.has_key(CONFIDENCE_KWARG_NAME):
+                linestr += ",%f" % adkwargs[CONFIDENCE_KWARG_NAME]
+            
+            linestr += '\n'
+            
+            # write it to the file
+            f.write(linestr)
+            
+            i += 1
+        
+        print "    %d instances of rule/rel %s exported" % (i, self.name)
+        
+
+            
+        
   
 class PredictedRelationship(BaseRelationship):
     """A class for representing the predicted relationship."""
@@ -322,7 +374,7 @@ class PredictedRelationship(BaseRelationship):
     DefinitionClass = PredictedRelationshipDefinition
     """The model class used for representing the definition of the 
     rule/relationship
-    """
+    """    
     
     @classmethod
     def _order_in_pair(cls, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
@@ -463,7 +515,8 @@ class _BaseRule(_WeightedRelationship):
         """
         ret_dict = super(_BaseRule, self).get_additional_instance_kwargs(
                                             ds_arg1, ds_arg2)
-
+        
+        # call the user-defined confidence method
         confidence = self.confidence(ds_arg1, ds_arg2)
         
         if not (MIN_CONFIDENCE <= confidence <= MAX_CONFIDENCE):
@@ -476,7 +529,7 @@ class _BaseRule(_WeightedRelationship):
                 parameter_value=self.recommender.rules
             )
         
-        ret_dict['confidence'] = confidence
+        ret_dict[CONFIDENCE_KWARG_NAME] = confidence
         return ret_dict
         
         

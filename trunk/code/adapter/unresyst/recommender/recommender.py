@@ -423,62 +423,7 @@ class Recommender(BaseRecommender):
             object_=object_
         )
         # pak nejak podobne - asi na to udelat fci.                 
-
-    ###
-    # Evaluate phase:
-    
-    @classmethod 
-    def evaluate(cls):
-        """For documentation, see the base class"""        
-        
-        # get the dataset and test if not empty
-        all_obj = cls.ValidationPairClass.objects.all()        
-        all_count = all_obj.count()
-        
-        if not all_count:
-            raise EmptyTestSetError("Call the select_validation_pairs()"+ \
-                " method on your ValidationPair class first")
-        
-        # initialize
-        square_sum = 0
-        succ_count = 0
-        non_triv_count = 0
-        
-        # go through the pairs
-        for pair in all_obj.iterator():
-            
-            # evaluate
-            pair.obtained_expectancy = cls.predict_relationship(pair.subj, pair.obj).expectancy           
-            pair.is_successful = pair.get_success()
-            pair.save()
-            
-            # count the residual and success
-            square_sum += math.pow(pair.obtained_expectancy - pair.expected_expectancy, 2)
-            
-            # count successful and non-trivial hits
-            if pair.is_successful:
-                succ_count += 1
-                
-                if pair.obtained_expectancy < TRIVIAL_EXPECTANCY:
-                    non_triv_count += 1
-                
-            
-        
-        # count and print the success rate        
-        cls.success_rate = float(succ_count)/ all_count
-
-        print "Success rate: %f (%d/%d)" % (cls.success_rate, succ_count, all_count)
-        print "%d of %d successful predictions were non-trivial." % (non_triv_count, succ_count)
-        
-        # count the RMSE
-        cls.rmse = math.sqrt(square_sum / all_count)
-        print "RMSE: %f" % cls.rmse
-
-
-    ValidationPairClass = None
-    """The model of the class containing testing pairs. To be overriden.
-    A ValidationPair subclass.
-    """
+   
     
     # Class configuration - the behaviour of the layers below the recommender
     # Can be overriden in user defined subclasses

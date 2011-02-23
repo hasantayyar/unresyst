@@ -20,7 +20,7 @@ class RelationshipPrediction(object):
     @ivar explanation: the explanation for the prediction        
     """
     
-    def __init__(self, subject, object_, expectancy, explanation):
+    def __init__(self, subject, object_, expectancy, explanation=''):
         """The initializer"""
         
         self.subject = subject
