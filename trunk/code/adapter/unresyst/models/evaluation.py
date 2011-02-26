@@ -40,12 +40,13 @@ class BaseEvaluationPair(models.Model):
         @param f: open file to write to        
         """                
         i = 0
+        f.write("# userId, itemId\n")
         
         # loop through the pairs, 
-        for pair in cls.objects.all():
+        for subj_id, obj_id in cls.values_list('subj__pk', 'obj__pk'):
                         
-            # create the common part
-            linestr = "%s,%s\n" % (pair.subj.pk, pair.obj.pk)                        
+            # create the line
+            linestr = "%s,%s\n" % (subj_id, obj_id)                        
             
             # write it to the file
             f.write(linestr)

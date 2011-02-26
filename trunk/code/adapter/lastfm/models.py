@@ -99,7 +99,7 @@ class Scrobble(models.Model):
     """The played track"""
     
     timestamp = models.DateTimeField()
-    """The data and time the track was played"""
+    """The date and time the track was played"""
     
     def __unicode__(self):
         """Return a printable representation of the instance"""

@@ -75,6 +75,8 @@ class ExternalRecommender(BaseRecommender):
         )        
         recommender_model.save() 
         
+        cls._print('Importing new predictions...')
+        
         # open the csv reader
         reader = csv.reader(open(filename, "rb"), delimiter=',', quoting=csv.QUOTE_NONE)
         
@@ -96,6 +98,8 @@ class ExternalRecommender(BaseRecommender):
         
         recommender_model.is_built=True
         recommender_model.save()            
+        
+        cls._print('Done.')
 
                 
     # recommend phase

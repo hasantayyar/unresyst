@@ -53,7 +53,30 @@ class BaseEvaluator(object):
     
     # methods to be called after the build:
     # 
-            
+    
+    @classmethod
+    def _get_cleared_pairs(cls):
+        """Get the test pairs, check whether they aren't empty and
+        clear the results.
+        
+        @rtype: QuerySet
+        @return: the test pairs
+        
+        @raise EmptyTestSetError: if the set is empty
+        """
+        # get the dataset and test if not empty
+        qs_pairs = cls.EvaluationPairModel.objects.all() 
+        
+        # remove all previous success and obtained expectancies
+        qs_pairs.update(obtained_expectancy=None, is_successful=None)            
+        
+        if not qs_pairs:
+            raise EmptyTestSetError("Call the select_validation_pairs()"+ \
+                " method first")     
+        
+        return qs_pairs
+
+
     @classmethod
     def evaluate_predictions(cls, recommender):
         """Evaluate each evaluation pair by calling the predict_relationship
@@ -66,21 +89,16 @@ class BaseEvaluator(object):
             should be evaluated                   
             
         @rtype: float
-        @return: the result of the metric                
+        @return: the result of the metric            
+
+        @raise EmptyTestSetError: if the test set is empty            
         """
         
-        # get the dataset and test if not empty
-        qs_pairs = cls.EvaluationPairModel.objects.all() 
-        
-        # remove all previous success and obtained expectancies
-        qs_pairs.update(obtained_expectancy=None, is_successful=None)
-          
-        all_count = qs_pairs.count()     
-        
-        if not qs_pairs:
-            raise EmptyTestSetError("Call the select_validation_pairs()"+ \
-                " method first")        
-        
+        # get the pairs
+        qs_pairs = cls._get_cleared_pairs()
+        all_count = qs_pairs.count()   
+
+        # initialize        
         i = 0
         succ_count = 0
         non_triv_count = 0
@@ -91,7 +109,9 @@ class BaseEvaluator(object):
         for pair in qs_pairs.iterator():
             
             # evaluate
-            pair.obtained_expectancy = recommender.predict_relationship(pair.subj, pair.obj).expectancy           
+            prediction = recommender.predict_relationship(pair.subj, pair.obj)
+            
+            pair.obtained_expectancy = prediction.expectancy
             pair.is_successful = pair.get_success()
             pair.save()                            
             
@@ -118,7 +138,7 @@ class BaseEvaluator(object):
 
     
     @classmethod
-    def evaluate_recommendations(cls, recommender, count, metric):
+    def evaluate_recommendations(cls, recommender, count):
         """Evaluate recommendations obtained for the subjects in the test
         pairs.
         
@@ -127,26 +147,55 @@ class BaseEvaluator(object):
             should be evaluated
         
         @type count: int
-        @param count: the number of recommendations to get
-        
-        @type metric: function taking the test pair model
-        @param metric: the function that is called on the evaluated pairs
-            to obtain a number    
+        @param count: the number of recommendations to get           
             
         @rtype: float
         @return: the result of the metric                    
         """
-        #TODO: dodelat
-        # remove all previous values of obtained expectancy
         
-        # order the test pairs by subject
+        # get the cleared pair dataset 
+        qs_pairs = cls._get_cleared_pairs()
+                
+        # take ids of subjects from the test pairs        
+        subj_id_list = qs_pairs.values_list('subj__pk',flat=True).distinct()
+        
+        # take the whole subjects
+        qs_subjects = recommender.subjects.filter(pk__in=subj_id_list)        
 
-        # for each subject in the test pair get its recommendations
+        i = 0 
+        hit_count = 0       
+        for subj in qs_subjects:            
         
-        # mark the pairs that are in the recommendation list as successful
+            i += 1
+            
+            if i % 10 == 0:
+                print "%d subjects processed" % i
+                
+            # for each subject in the test pair get its recommendations
+            recommendations = recommender.get_recommendations(subj, count)
+            
+            # mark each recommended object that is in the test set as successful
+            #
+            for rec in recommendations:
+
+                obj = rec.object_
+                
+                # filter the test pair
+                qs_pair = cls.EvaluationPairModel.objects.filter(subj=subj, obj=obj)
+                
+                # if it's in the test pair mark it as successful
+                for pair in qs_pair:
+                                    
+                    hit_count += 1
+                    
+                    pair.is_successful = True
+                    pair.save()
+            
+        print "%d hits recorded, counting metric..." % hit_count
         
-        # call the metric
-        pass
+        # count the metric        
+        return cls.recommendation_metric(count)
+        
     
     
 
