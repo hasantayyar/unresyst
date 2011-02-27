@@ -80,10 +80,23 @@ class BaseAbstractor(object):
         @param cluster_sets: recommender cluster sets to be evaluated
         
         @raise ConfigurationError: if the weight of some cluster set is outside [0, 1]
-            or some cluster memger confidence is outside [0, 1].
+            or some cluster member confidence is outside [0, 1].
         """
         pass
-
+        
+    @classmethod
+    def create_biases(cls, biases):
+        """Create biases defined by the user.
+        
+        Creates bias definitions and instances in the database.
+        
+        @type biases: a list of bias._BaseBias instances
+        @param biases: biases to be evaluated
+        
+        @raise ConfigurationError: if the weight of some cluster set is outside [0, 1]
+            or some cluster member confidence is outside [0, 1].                 
+        """
+        pass
 
     
     # Update phase:

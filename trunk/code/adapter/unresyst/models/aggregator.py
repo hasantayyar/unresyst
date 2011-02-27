@@ -41,3 +41,26 @@ class AggregatedRelationshipInstance(BaseRelationshipInstance):
         
         unique_together = ('subject_object1', 'subject_object2', 'recommender')
         """For each recommender there can be only one subject-object pair."""
+        
+class AggregatedBiasInstance(models.Model):
+    """An aggregated bias of a subjectobject"""        
+    
+    expectancy = models.FloatField()
+    """The probability of the subject/object being in the predicted_relationship
+    A number from [0, 1].
+    """
+    
+    subject_object = models.ForeignKey('unresyst.SubjectObject')
+    """The biased subject/object."""    
+    
+    recommender = models.ForeignKey('unresyst.Recommender')
+    """The recommender it belongs to"""
+    
+    description = models.TextField(default='', blank=True)
+    """The filled description of the aggregated bias."""       
+    
+    class Meta:
+        app_label = 'unresyst' 
+        
+        unique_together = ('subject_object', 'recommender')
+        """For each recommender there can be only one subject-object pair."""    

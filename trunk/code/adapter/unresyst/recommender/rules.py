@@ -96,16 +96,19 @@ class BaseRelationship(object):
             format_strings[0]: arg1,
             format_strings[1]: arg2
         }
-        try:
-            desc = self.description % format_dict
-        except KeyError, e:
-            raise DescriptionKeyError(
-                message="There's an invalid key in description",
-                recommender=self.recommender,
-                name=self.name, 
-                key=e.__str__(), 
-                permitted_keys=format_dict.keys()
-            )
+        if self.description is None:
+            desc = ''
+        else:
+            try:        
+                desc = self.description % format_dict
+            except KeyError, e:
+                raise DescriptionKeyError(
+                    message="There's an invalid key in description",
+                    recommender=self.recommender,
+                    name=self.name, 
+                    key=e.__str__(), 
+                    permitted_keys=format_dict.keys()
+                )
         
         return desc
         
@@ -335,7 +338,7 @@ class BaseRelationship(object):
         # if we don't have a generator raise an error
         if self.generator is None:
             raise ConfigurationError(
-                message="The relationship to export is missing the generator.", 
+                message="The relationship to export is missing a generator.", 
                 recommender=cls, 
                 parameter_name='?', 
                 parameter_value=cls.name)
@@ -571,5 +574,4 @@ class SubjectObjectSimilarityRule(_SimilarityRelationship):
     relationship_type = RELATIONSHIP_TYPE_SUBJECTOBJECT_SUBJECTOBJECT
     """The type of the relationship SO-SO"""
 
-class Bias(object):
-    pass    
+   

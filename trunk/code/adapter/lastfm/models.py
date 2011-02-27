@@ -144,12 +144,43 @@ class ArtistRecommenderEvaluationPair(BaseEvaluationPair):
     obj = models.ForeignKey('lastfm.Artist')
     """The object"""
     
+    test_ratio = 0.2
+    """The ratio of pairs to select to test pairs"""
+    
     def __unicode__(self):
         """Return a printable representation of the instance"""
         return u"%s - %s" % (self.subj, self.obj)
 
-    @classmethod
+    @classmethod 
     def select(cls, i=0):
+        """See the base class for the documentation."""
+        count = int(cls.test_ratio * Scrobble.objects.count())
+        
+        # take 1/5 of the scrobbles, remove them and put them to test data
+        qs_to_test = Scrobble.objects.order_by('-timestamp')[:count]
+        
+        trivial_count = 0
+        
+        # save to test, remove from build
+        for scrobble in qs_to_test.iterator():
+            val_pair = cls(
+                subj=scrobble.user,
+                obj=scrobble.track.artist,
+                expected_expectancy=EXPECTED_EXPECTANCY_LISTENED,
+            )
+            val_pair.save()
+            
+            scrobble.delete()
+            
+            # if the pair is still in the database, count it as trivial
+            if Scrobble.objects.filter(user=scrobble.user, track__artist=scrobble.track.artist):
+                trivial_count += 1
+        
+        print "Test pair selected, %d of %d are trivial" % (count, trivial_count)                
+
+
+    @classmethod
+    def select_random(cls, i=0):
         """See the base class for the documentation."""
 
         scrobble_count = Scrobble.objects.all().count()

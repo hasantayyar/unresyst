@@ -88,6 +88,11 @@ class ExternalRecommender(BaseRecommender):
             obj_id = int(obj_id)
             expectancy = float(expectancy)
             
+            # if it's already imported, go to the next pair
+            if cls.PredictionModel.objects.filter(
+                subj_id=subj_id, obj_id=obj_id, recommender=recommender_model):
+                continue
+            
             # create a prediction
             cls.PredictionModel.objects.create(
                 subj_id=subj_id,

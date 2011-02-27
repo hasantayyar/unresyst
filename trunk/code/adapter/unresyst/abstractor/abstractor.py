@@ -83,4 +83,14 @@ class BasicAbstractor(BaseAbstractor):
         
         # evaluate all cluster sets
         for cluster_set in cluster_sets:
-            cluster_set.evaluate()                    
+            cluster_set.evaluate()          
+            
+    @classmethod
+    def create_biases(cls, biases):
+        """See the base class for documentation."""                      
+        
+        # evaluate the biases
+        for bias in biases:
+            bias.evaluate()
+            
+            

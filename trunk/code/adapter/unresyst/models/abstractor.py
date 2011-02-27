@@ -9,6 +9,33 @@ from unresyst.constants import *
 from base import BaseRelationshipInstance, ContentTypeModel, \
     BaseRelationshipDefinition
 
+
+def _count_expectancy(is_positive, weight, confidence=1):
+    """Count the expectancy for the instance as 1/2 +- weighted_confidence/2 
+    .. depending on is_positive.
+    
+    @type is_positive: bool
+    @param is_positive: is the rule/relationship/bias positive for the 
+        predicted_relationship?
+    
+    @type weight: float
+    @param weight: the static weight of the rule/relationship/bias
+
+    @type confidence: float
+    @param confidence: the confidence of the rule/relationship/bias depending
+        on the entity
+    
+    @rtype: float
+    @return: the probability of the predicted_relationship appearing between
+        the entities in the pair.
+    """
+    
+    # get factor 
+    factor = 1 if is_positive else -1        
+    
+    return 0.5 + factor * ((weight * confidence) / 2)
+
+
 # Definitions:
 #      
 
@@ -70,28 +97,6 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
         unique_together = ('subject_object1', 'subject_object2', 'definition')
         """For each definition there can be only one subject-object pair."""
 
-    def _count_expectancy(self, weighted_confidence):
-        """Count the expectancy for the instance as 1/2 +- weighted_confidence/2 
-        .. depending on whether the rule/relationship is positive.
-        
-        @type weighted_confidence: float
-        @param weighted_confidence: the confidence of the rule/relationship 
-            including the effect of weight.
-        
-        @rtype: float
-        @return: the probability of the predicted_relationship appearing between
-            the entities in the pair.
-        """
-
-        # get the whole object for definition
-        leaf_definition = self.definition.as_leaf_class()
-        
-        # get factor 
-        factor = 1 if leaf_definition.is_positive else -1        
-        
-        return 0.5 + factor * (weighted_confidence / 2)
-
-
     def get_expectancy(self, _redirect_to_leaf=True):
         """Get the instance expectancy counted 
         
@@ -109,12 +114,11 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
             return self.as_leaf_class().get_expectancy(_redirect_to_leaf=False)
         
         # get the whole object for definition
-        leaf_definition = self.definition.as_leaf_class()
+        leaf_definition = self.definition.as_leaf_class()        
         
-        # get factor and weight
-        weight = leaf_definition.weight        
-        
-        return self._count_expectancy(weighted_confidence=weight)
+        return _count_expectancy(
+            is_positive=leaf_definition.is_positive,
+            weight=leaf_definition.weight)
 
     @classmethod
     def filter_predicted(cls, recommender_model):
@@ -158,12 +162,10 @@ class RuleInstance(RelationshipInstance):
         # get the whole object for definition
         leaf_definition = self.definition.as_leaf_class()
         
-        # get factor and weight
-        weight = leaf_definition.weight        
-        
-        return self._count_expectancy(weight * self.confidence)
-        
-
+        return _count_expectancy(
+            is_positive=leaf_definition.is_positive,            
+            weight=leaf_definition.weight,
+            confidence=self.confidence)        
         
     class Meta:
         app_label = 'unresyst'
@@ -252,3 +254,84 @@ class ClusterMember(models.Model):
         """There can be only one membership for a subjectobject in the given 
         cluster.
         """    
+
+# Bias:
+#
+        
+class BiasDefinition(models.Model):
+    """The definition of a bias"""
+    
+    name = models.CharField(max_length=MAX_LENGTH_NAME)
+    """The name of the bias"""  
+    
+    recommender = models.ForeignKey('unresyst.Recommender')
+    """The recommender to which the definition belongs. 
+    """
+    
+    weight = models.FloatField()
+    """The weight of the bias
+    belonging to one cluster. A number from [0, 1].
+    """
+    
+    entity_type = models.CharField(max_length=MAX_LENGTH_ENTITY_TYPE, \
+                    choices=ENTITY_TYPE_CHOICES)
+    """A string indicating whether the contained bias is for subjects,
+    objects or both.s/o/so"""
+    
+    is_positive = models.BooleanField()
+    """Is the bias positive (adding a probability) for the predicted_relationship?"""
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance."""
+        return self.name
+                
+    class Meta:
+        app_label = 'unresyst'   
+        unique_together = ('name', 'recommender')
+        """There can be only one bias definition with the given name for 
+        a recommender.
+        """
+ 
+        
+class BiasInstance(models.Model):
+    """A bias for a particular subject/object.""" 
+    
+    confidence = models.FloatField()
+    """The confidence of the given bias being positive/negative (depending on
+    definition.is_positive) in means of the predicted_relationship
+    A number from [0, 1].
+    """          
+            
+    subject_object = models.ForeignKey('unresyst.SubjectObject')
+    """The biased subject/object."""
+    
+    definition = models.ForeignKey('unresyst.BiasDefinition')
+    """The definition of the bias.
+    """
+    
+    description = models.TextField(default='', blank=True)
+    """The filled description of the bias."""           
+
+                
+    class Meta:
+        app_label = 'unresyst'        
+        unique_together = ('definition', 'subject_object')
+        """There can be only one bias for each definition on one subjectobject
+        a recommender.
+        """        
+        
+    def __unicode__(self):
+        """Return a printable representation of the instance."""
+        return u"%s: %s" % (self.definition, self.subject_object)
+
+    def get_expectancy(self):
+        """Get the expectancy (probability that the subjectobject will be 
+        in the predicted_relationship, according to the bias).
+        
+        @rtype: float
+        @return: expectancy
+        """
+        return _count_expectancy(
+            is_positive=self.definition.is_positive,
+            weight=self.definition.weight,
+            confidence=self.confidence)
