@@ -7,7 +7,7 @@ class BaseAggregator(object):
     #
     
     @classmethod
-    def aggregate(cls, recommender_model):
+    def aggregate_rules_relationships(cls, recommender_model):
         """Aggregate the rule and relationship instances.
         
         Aggregates instances of the relationships and rules from 
@@ -19,6 +19,20 @@ class BaseAggregator(object):
             be aggregated. 
         """
         pass
+        
+    @classmethod
+    def aggregate_biases(cls, recommender_model):
+        """Aggregate bias instances.
+        
+        Aggregates instances of the biases from the recommender_model 
+        to create AggregatedBiasInstance instances. Instances are saved to db.
+        
+        @type recommender_model: models.common.Recommender
+        @param recommender_model: the recommender whose instances should
+            be aggregated. 
+        """
+        pass
+
 
     # Update phase:
     # 

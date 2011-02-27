@@ -1,9 +1,11 @@
 """The main class of the aggregator package - Aggregator"""
+from django.db.models import Count
 
 from base import BaseAggregator
 from unresyst.models.abstractor import RelationshipInstance, \
     PredictedRelationshipDefinition
-from unresyst.models.aggregator import AggregatedRelationshipInstance
+from unresyst.models.aggregator import AggregatedRelationshipInstance, \
+    AggregatedBiasInstance
 from unresyst.models.common import SubjectObject
 from unresyst.exceptions import InvalidParameterError
 
@@ -18,7 +20,7 @@ class LinearAggregator(BaseAggregator):
     """
 
     @classmethod
-    def aggregate(cls, recommender_model):
+    def aggregate_rules_relationships(cls, recommender_model):
         """For documentation see the base class.
         
         Linearly combines the rule and relationship instances.
@@ -126,7 +128,73 @@ class LinearAggregator(BaseAggregator):
         # save the last instance
         cont_inst.save()
         
-        print "    %d aggregates created" % \
+        print "    %d rule/relationship aggregates created" % \
             AggregatedRelationshipInstance.objects.filter(recommender=recommender_model).count()
         
- 
+    @classmethod
+    def aggregate_biases(cls, recommender_model):
+        """For documentation see the base class.
+        
+        Linearly combines the bias instances.
+        
+        The descriptions of the aggregates are made by joining the descriptions
+        of the aggregated instances. The descriptions are ordered by the expectancy
+        of their owners, the highest expectancy comes first.
+        """
+        
+        # if there's something in the database for the recommender
+        # throw an error
+        if  AggregatedBiasInstance.objects\
+            .filter(recommender=recommender_model).exists():
+            
+            raise InvalidParameterError(
+                message="There're unexpected aggregated instances for the recommender.", 
+                recommender=cls,
+                parameter_name="recommender_model", 
+                parameter_value=recommender_model)
+
+        # aggregate it
+        # 
+        
+        # take all subjectobjects that have some biases
+        qs_biased_so = SubjectObject.objects\
+            .annotate(num_bias=Count('biasinstance'))\
+            .filter(num_bias__gt=0)
+              
+        count = 0
+                            
+        # go through the biased subjectobjects
+        for so in qs_biased_so.iterator(): 
+        
+            # a list of pairs (expectancy, description)            
+            desc_list =  []     
+               
+            exp_sum = 0
+            # go through their biases
+            for bias in so.biasinstance_set.all():
+
+                # count the expectancy for the bias
+                exp = bias.get_expectancy()
+                
+                exp_sum += exp
+                
+                desc_list.append((exp, bias.description))
+
+            # count the average expectancy
+            avg_exp = float(exp_sum) / so.biasinstance_set.count()
+            
+            # sort the description list by expectancy and join it
+            desc_list.sort(key=lambda pair: pair[0], reverse=True)                
+            desc = ' '.join([d for x, d in desc_list])
+            
+            # create and save the model
+            AggregatedBiasInstance.objects.create(
+                expectancy=avg_exp,
+                subject_object=so,
+                recommender=recommender_model,
+                description=desc
+            )
+        
+        print "    %d bias aggregates created" % \
+            AggregatedBiasInstance.objects.filter(recommender=recommender_model).count()
+                        

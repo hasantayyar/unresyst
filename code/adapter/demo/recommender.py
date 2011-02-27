@@ -1,9 +1,9 @@
 """The recommender used in the parent system 
 (the unresyst.BaseRecommender subclass)
 """
+from django.db.models import Count
 
 from unresyst import *
-
 from models import *  
 
 # helper functions:    
@@ -40,6 +40,17 @@ def _likes_shoes_generator():
     for u in User.objects.iterator():
         for s in u.likes_shoes.iterator():
             yield (u, s)
+
+def _shoelikers():
+    """A generator returning users liking at least one shoepair"""
+    for u in User.objects.annotate(num_shoes=Count('likes_shoes')).filter(num_shoes__gte=1):
+        yield u
+
+
+def _popular_shoes():
+    """A generator returning shoes that are liked by at least one user"""
+    for s in ShoePair.objects.annotate(num_likers=Count('likers')).filter(num_likers__gte=1):
+        yield s
 
 def _viewed_shoes_generator():
     """A generator for the user has viewed shoes relationship"""    
@@ -216,6 +227,38 @@ class ShoeRecommender(Recommender):
             filter_entities=ShoePair.objects.filter(category__isnull=False),
             
             get_cluster_confidence_pairs=lambda shoe: ((shoe.category.name, 1),),
+        ),
+    )
+    
+    biases = (
+        # people liking many shoepairs are more likely to like some more
+        SubjectBias(
+            name="Users liking many shoes.",
+            
+            description="User %(subject)s likes many shoe pairs.",
+            
+            weight=0.4,           
+            
+            is_positive=True,
+            
+            generator=_shoelikers,            
+            
+            confidence=lambda user: float(user.likes_shoes.count())/3
+        ),
+        
+        # multiply liked shoes are more likely to be liked
+        ObjectBias(
+            name="Popular shoes",
+            
+            description="Shoe pair %(object)s is popular",
+            
+            weight=0.8,
+            
+            is_positive=True,
+            
+            generator=_popular_shoes,
+            
+            confidence=lambda shoe: float(shoe.likers.count())/3
         ),
     )
 

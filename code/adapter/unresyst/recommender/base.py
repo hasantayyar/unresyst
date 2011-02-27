@@ -151,6 +151,9 @@ class BaseRecommender(object):
     
     cluster_sets = ()
     """Clusters to which subjects and objects can be divided"""
+    
+    biases = ()
+    """Bias - predisposition of subjects/objects to be in the predicted_relationship"""
 
     random_recommendation_description = None
     """The description that will be used as a description 

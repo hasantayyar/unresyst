@@ -15,8 +15,8 @@ from django.db.models import Q
 from unresyst import Recommender
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
-    RelationshipInstance, RuleInstance, RuleRelationshipDefinition, ClusterSet
-from unresyst.models.aggregator import AggregatedRelationshipInstance
+    RelationshipInstance, RuleInstance, RuleRelationshipDefinition, ClusterSet, BiasDefinition
+from unresyst.models.aggregator import AggregatedRelationshipInstance, AggregatedBiasInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance    
 from test_base import TestBuild, TestEntities, DBTestCase
 from unresyst.exceptions import ConfigurationError, DescriptionKeyError
@@ -397,6 +397,56 @@ class TestAbstractor(TestEntities):
                      assert (cm.member.name, cm.confidence) in cluster_members, \
                         "The member '%s' with confidence '%f' isn't one of the expected %s" % (
                             cm.member, cm.confidence, cluster_members)
+
+    EXP_BIASES = {
+        "Users liking many shoes.": 
+            {
+                'Alice': (0.333333, "User Alice likes many shoe pairs."),
+                'Bob': (0.333333, "User Bob likes many shoe pairs."),
+                'Edgar': (0.333333, "User Edgar likes many shoe pairs."),
+            },
+        "Popular shoes":
+            {
+                'Sneakers': (0.6666666, "Shoe pair Sneakers is popular"),
+                'Rubber Shoes': (0.333333, "Shoe pair Rubber Shoes is popular"),
+            },
+    }
+    """A dictionary: cluster set name: contained clusters, entity type, weight"""    
+    
+    def test_bias(self):
+        """Test that biases were created as expected"""
+        
+        # get bias definitions from db
+        bias_defs = BiasDefinition.objects.filter(
+            recommender=ShoeRecommender._get_recommender_model())
+        
+        # assert there are as many as expected
+        eq_(len(self.EXP_BIASES), bias_defs.count())
+        
+        for bias_def in bias_defs:
+            
+            # assert it's in the expected
+            assert self.EXP_BIASES.has_key(bias_def.name)
+
+            # get the expected contents            
+            exp_biases = self.EXP_BIASES[bias_def.name]
+            
+            eq_(len(exp_biases), bias_def.biasinstance_set.count(), 
+                "Wrong count for definition '%s' should be %s, is %s" % \
+                (bias_def.name, exp_biases, bias_def.biasinstance_set.all()))
+            
+            # go through the instances connected to definition
+            for bias in bias_def.biasinstance_set.all():
+                
+                # assert it's in the expected biases
+                assert exp_biases.has_key(bias.subject_object.name)
+                
+                # assert the properties are as expected
+                exp_conf, exp_desc = exp_biases[bias.subject_object.name]
+                
+                assert_almost_equal(exp_conf, bias.confidence, PLACES)
+                eq_(exp_desc, bias.description)                        
+                                    
                  
                             
 class TestAbstractorRecommenderErrors(DBTestCase):
@@ -625,7 +675,37 @@ class TestAggregator(TestEntities):
             assert aggr_inst.description in expected_descs, \
                 "Description is '%s' should be one of '%s' for the pair %s, %s" % \
                     ((aggr_inst.description, expected_descs) + pair1) 
-                            
+
+    EXP_AGGR_BIASES = {
+        'Alice': (_count_exp(0.4 * 0.333333), "User Alice likes many shoe pairs."),
+        'Bob': (_count_exp(0.4 * 0.333333), "User Bob likes many shoe pairs."),
+        'Edgar': (_count_exp(0.4 * 0.333333), "User Edgar likes many shoe pairs."),
+        'Sneakers': (_count_exp(0.8 * 0.6666666), "Shoe pair Sneakers is popular"),
+        'Rubber Shoes': (_count_exp(0.8 * 0.333333), "Shoe pair Rubber Shoes is popular"),
+    }
+    
+    def test_aggregated_biases_created(self):
+        """Test that the bias aggregates were created as expected"""
+        
+        # get the aggregates, check count
+        #        
+        aggregates = AggregatedBiasInstance.objects.all()        
+        eq_(aggregates.count(), len(self.EXP_AGGR_BIASES))
+        
+        # go through created aggregates, assert its in expected and 
+        # with expected attrs
+        for aggr in aggregates:
+               
+            assert self.EXP_AGGR_BIASES.has_key(aggr.subject_object.name)
+            exp_expectancy, exp_desc = self.EXP_AGGR_BIASES[aggr.subject_object.name]
+            
+            assert_almost_equal(aggr.expectancy, exp_expectancy, PLACES,
+                "Expected expectancy %f, got %f for %s" % \
+                (exp_expectancy, aggr.expectancy, aggr.subject_object.name) )
+                
+            eq_(aggr.description, exp_desc) 
+        
+                                    
 
 class TestAlgorithm(TestEntities):
     """Testing the building phase of the SimpleAlgorithm"""       

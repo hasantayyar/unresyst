@@ -38,6 +38,17 @@ class BaseClusterSet(object):
         """Crate the cluster set in the database, its clusters, bindings 
         of subjectobjects to the clusters.
         """
+        
+        if not (MIN_WEIGHT <= self.weight <= MAX_WEIGHT):
+            raise ConfigurationError(
+                message=("The set '%s' provides weight %f," + 
+                    " should be between 0 and 1. ."
+                    ) % (self.name, self.weight),
+                recommender=self.recommender,
+                parameter_name="Recommender.cluster_sets",
+                parameter_value=(self.recommender.cluster_sets)
+            )
+            
         recommender_model = self.recommender._get_recommender_model()
 
         # create the cluster set in the database
@@ -71,7 +82,7 @@ class BaseClusterSet(object):
                     raise ConfigurationError(
                         message=("The cluster set '%s' provides confidence %f," + 
                             " should be between 0 and 1. For cluster %s."
-                            ) % (self.name, self.confidence, cluster_name),
+                            ) % (self.name, confidence, cluster_name),
                         recommender=self.recommender,
                         parameter_name="Recommender.cluster_sets",
                         parameter_value=(self.recommender.cluster_sets)

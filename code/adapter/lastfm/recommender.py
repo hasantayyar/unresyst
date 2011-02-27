@@ -15,10 +15,10 @@ def _listens_artist_generator():
             yield (u, a)
     
 
-class ArtistRecommender(Recommender):
-    """A BaseRecommender subclass holding all domain-specific data"""
+class NovelArtistRecommender(Recommender):
+    """A recommender for discovering previously unheard artists"""    
 
-    name = "Artist Recommender"
+    name = "Novel Artist Recommender"
     """The name"""    
     
     subjects = User.objects
@@ -96,7 +96,31 @@ class ArtistRecommender(Recommender):
     
     #Algorithm = PredictOnlyAlgorithm
     
+
+class ArtistRecommender(NovelArtistRecommender):
+    """A recommender for recommending items no matter if they were heard or not."""
+
+    name = "Artist Recommender"
+    """The name"""     
     
+    remove_predicted_from_recommendations = False   
+    """The already heard artists can appear in recommendations"""
+    
+    rules = NovelArtistRecommender.rules + ((SubjectObjectRule(
+        name="User has listened to the artist.",
+        condition=None,
+        weight=0.85,
+        is_positive=True,
+
+        # the number of user's scrobbles on artist divided by the number of
+        # user's scrobbles overall
+        confidence=lambda s, o: 
+            float(Scrobble.objects.filter(user=s, track__artist=o).count())\
+                /Scrobble.objects.filter(user=s).count(),
+        
+        generator=_listens_artist_generator,
+        )),
+    )
     
 """
 ObjectSimilarityRule(

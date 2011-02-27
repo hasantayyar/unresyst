@@ -43,7 +43,7 @@ class BaseEvaluationPair(models.Model):
         f.write("# userId, itemId\n")
         
         # loop through the pairs, 
-        for subj_id, obj_id in cls.values_list('subj__pk', 'obj__pk'):
+        for subj_id, obj_id in cls.objects.values_list('subj__pk', 'obj__pk'):
                         
             # create the line
             linestr = "%s,%s\n" % (subj_id, obj_id)                        

@@ -6,6 +6,7 @@ Contents:
  - MetaRecommender: the metaclass for creating recommender classes
 """
 import math
+import copy
 
 from base import BaseRecommender
 from predictions import RelationshipPrediction
@@ -17,11 +18,37 @@ from unresyst.aggregator import LinearAggregator
 from unresyst.algorithm import SimpleAlgorithm
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 
+def _assign_recommender(list_rels, recommender):
+    """Go throuth the list, if the items have the "recommender" attribute,
+    create a copy to the returning list, if not put it there directly
+    
+    @param list_rels: the list of rules/relationships
+    
+    @param recommender: the recommender they belong to 
+    
+    @rtype: tuple of rules/relationships
+    @return: the tuple of new or copied rules/relationships
+    """
+    new_rels = []
+    
+    # go through the rels            
+    for rel in list_rels:
+        
+        # if they already have a recommender assigned, copy them
+        if hasattr(rel, "recommender"):
+            rel = copy.copy(rel)
+        
+        # assign the recommender and append it    
+        rel.recommender = recommender
+        new_rels.append(rel)
+    
+    return tuple(new_rels)
 
 class MetaRecommender(type):
     """The meta-class adding a reference to the class for the contained
     rules and relationships.
     """
+    
     def __init__(cls, name, bases, dct):        
         """The class initializer.
         
@@ -35,22 +62,34 @@ class MetaRecommender(type):
         
         # add the recommender class to the predicted relationship
         if cls.predicted_relationship:       
+
+            # if it already has a recommender assigned, create a copy.
+            if hasattr(cls.predicted_relationship, 'recommender'):
+                cls.predicted_relationship = copy.copy(cls.predicted_relationship)
+                
             cls.predicted_relationship.recommender = cls
         
         # then to the rules
         if cls.rules:
-            for rule in cls.rules:
-                rule.recommender = cls
+            cls.rules = _assign_recommender(list_rels=cls.rules, recommender=cls)            
             
         # finally to the relationships
         if cls.relationships:
-            for relationship in cls.relationships:
-                relationship.recommender = cls   
+            cls.relationships = _assign_recommender(
+                list_rels=cls.relationships, 
+                recommender=cls)
         
         # moreover to the cluster sets
         if cls.cluster_sets:
-            for cluster_set in cls.cluster_sets:
-                cluster_set.recommender = cls                     
+            cls.cluster_sets = _assign_recommender(
+                list_rels=cls.cluster_sets,
+                recommender=cls)  
+                
+        # and to the biases
+        if cls.biases:
+            cls.biases = _assign_recommender(
+                list_rels=cls.biases,
+                recommender=cls)                                
 
 
 class Recommender(BaseRecommender):
@@ -164,20 +203,28 @@ class Recommender(BaseRecommender):
         # subjects/objects
         cls.Abstractor.create_rule_instances(rules=cls.rules)
         
-        cls._print("Rule instances created.")
+        cls._print("Rule instances created. Creating clusters...")
         
         # evaluate the clusters and their members
         cls.Abstractor.create_clusters(cluster_sets=cls.cluster_sets)
         
-        cls._print("Clusters created. Aggregating...")
+        cls._print("Clusters created. Creating biases...")
+        
+        # evaluate the biases
+        cls.Abstractor.create_biases(biases=cls.biases)
+        
+        cls._print("Biases created. Aggregating...")
 
         # Aggregator
         # 
         
         # aggregate the relationships and rules
-        cls.Aggregator.aggregate(recommender_model=recommender_model)        
+        cls.Aggregator.aggregate_rules_relationships(recommender_model=recommender_model)        
         
-        cls._print("Rules and relationships aggregated. Building the algorithm...")
+        # aggregate the biases
+        cls.Aggregator.aggregate_biases(recommender_model=recommender_model)
+        
+        cls._print("Rules, relationships and biases aggregated. Building the algorithm...")
         
         # Algorithm
         #        

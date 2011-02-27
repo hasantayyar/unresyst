@@ -77,6 +77,7 @@ FORMAT_STR_SUBJECT1 = "subject1"
 FORMAT_STR_SUBJECT2 = "subject2"
 FORMAT_STR_OBJECT1 =  "object1"
 FORMAT_STR_OBJECT2 = "object2"
+FORMAT_STR_SUBJECTOBJECT = 'subjectobject'
 FORMAT_STR_SUBJECTOBJECT1 =  "subjectobject1"
 FORMAT_STR_SUBJECTOBJECT2 = "subjectobject2"
 """Format strings used in the explanation field."""
