@@ -213,6 +213,21 @@ class ShoeRecommender(Recommender):
             description="The shoe pairs %(object1)s and %(object2)s " + 
                 "share some keywords."
         ),
+        
+        # explicit rating
+        ExplicitSubjectObjectRule(
+            name="Shoe rating.",
+            
+            condition=None,
+            
+            description="User %(subject)s has rated %(object)s.",
+            
+            # all pairs user, rated shoes
+            generator=lambda: [(r.user, r.shoe_pair) for r in ShoeRating.objects.all()],
+            
+            # the number of stars divided by five
+            expectancy=lambda s, o:float(ShoeRating.objects.get(user=s, shoe_pair=o).stars) / 5,
+        ),
     )
     """Rules that can be applied to the domain"""
     

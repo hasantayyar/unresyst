@@ -43,7 +43,13 @@ class PredictedRelationshipDefinition(BaseRelationshipDefinition):
     """A definition of a the predicted relationship"""
 
     class Meta:
-        app_label = 'unresyst'          
+        app_label = 'unresyst'    
+        
+class ExplicitRuleDefinition(BaseRelationshipDefinition):
+    """A definition of an explicit feedback rule"""
+    
+    class Meta:
+        app_label = 'unresyst'              
 
 
 class RuleRelationshipDefinition(BaseRelationshipDefinition):
@@ -137,6 +143,44 @@ class RelationshipInstance(BaseRelationshipInstance, ContentTypeModel):
                         recommender=recommender_model)
         
         return cls.objects.filter(definition=pred_rel_def)                        
+
+
+class ExplicitRuleInstance(BaseRelationshipInstance):
+    """The explicit preference of a subject to an object.
+    
+    The relationship isn't weighted.        
+    """
+    
+    definition = models.ForeignKey('unresyst.ExplicitRuleDefinition')
+    """The definition of the relationship.         
+    """
+
+    expectancy = models.FloatField()
+    """The normalized explicit preference of the given subject to the given 
+    object.
+    A number from [0, 1].
+    """
+    
+    additional_unique = ('definition', )
+    """There can be multiple pairs for one recommender"""
+    
+    class Meta:
+        app_label = 'unresyst' 
+        
+        unique_together = ('subject_object1', 'subject_object2', 'definition')
+        """For each definition there can be only one subject-object pair."""
+
+    def get_expectancy(self, _redirect_to_leaf=True):
+        """Get the instance expectancy counted 
+        
+        @type redirect_to_leaf: bool
+        @param redirect_to_leaf: to stay compatible with other classes
+        
+        @rtype: float from [0, 1]
+        @return: the expectancy.
+        """        
+        return self.expectancy    
+
 
 class RuleInstance(RelationshipInstance):
     """The rule applied to a pair of subjects/objects.""" 

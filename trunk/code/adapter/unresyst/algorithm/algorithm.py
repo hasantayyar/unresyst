@@ -419,9 +419,6 @@ class SimpleAlgorithm(BaseAlgorithm):
                     # the definition again must be the predicted
                     subject_object2__relationshipinstance_relationships1__definition=d))
 
-
-        #import pdb; pdb.set_trace()
-
         # if found return the average TODO nejak jinak
         if qs_sim2:
             avg = qs_sim2.aggregate(Avg('expectancy'))

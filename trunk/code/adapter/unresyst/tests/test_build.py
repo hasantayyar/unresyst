@@ -15,11 +15,13 @@ from django.db.models import Q
 from unresyst import Recommender
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.models.abstractor import PredictedRelationshipDefinition, \
-    RelationshipInstance, RuleInstance, RuleRelationshipDefinition, ClusterSet, BiasDefinition
+    RelationshipInstance, RuleInstance, RuleRelationshipDefinition, ClusterSet, \
+    BiasDefinition, ExplicitRuleDefinition, ExplicitRuleInstance
 from unresyst.models.aggregator import AggregatedRelationshipInstance, AggregatedBiasInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance    
 from test_base import TestBuild, TestEntities, DBTestCase
 from unresyst.exceptions import ConfigurationError, DescriptionKeyError
+from unresyst.recommender.rules import ExplicitSubjectObjectRule
 
 from demo.recommender import ShoeRecommender
 from demo.models import User, ShoePair
@@ -234,7 +236,9 @@ class TestAbstractor(TestEntities):
     def test_create_rule_definitions(self):
         """Test creating the definitions of the rules"""
         
-        self._test_definitions(ShoeRecommender.rules)
+        # explicit rules are tested separately
+        rules = filter(lambda r: r.__class__ != ExplicitSubjectObjectRule, ShoeRecommender.rules)
+        self._test_definitions(rules)
 
 
     EXPECTED_RULE_DICT = {
@@ -260,9 +264,12 @@ class TestAbstractor(TestEntities):
 
     def test_create_rule_instances(self):
         """Test creating instances of all the defined rules."""
-        
+
+        # explicit rules are tested separately
+        rules = filter(lambda r: r.__class__ != ExplicitSubjectObjectRule, ShoeRecommender.rules)
+                
         self._test_instances(
-            def_list=ShoeRecommender.rules,
+            def_list=rules,
             expected_dict=self.EXPECTED_RULE_DICT,
             instance_manager=RuleInstance.objects)
             
@@ -339,10 +346,13 @@ class TestAbstractor(TestEntities):
         """
         # get definitions related to the shoe recommender
         qs = RuleRelationshipDefinition.objects.filter(
-            recommender=ShoeRecommender._get_recommender_model())
+            recommender=ShoeRecommender._get_recommender_model()) 
+        
+        # explicit rules are tested separately
+        rules = filter(lambda r: r.__class__ != ExplicitSubjectObjectRule, ShoeRecommender.rules)
         
         # assert the number of definitions is right
-        eq_(qs.count(), len(ShoeRecommender.relationships) + len(ShoeRecommender.rules))
+        eq_(qs.count(), len(ShoeRecommender.relationships) + len(rules))
         
         # for each defined type there should be a model definition in db
         for r in def_list:
@@ -446,8 +456,48 @@ class TestAbstractor(TestEntities):
                 
                 assert_almost_equal(exp_conf, bias.confidence, PLACES)
                 eq_(exp_desc, bias.description)                        
-                                    
-                 
+    
+    EXP_EXPLICIT_RULES = {
+        "Shoe rating.": 
+            {
+                ('Alice', 'Design Shoes'): (0.8, "User Alice has rated Design Shoes."),
+                ('Bob', 'Design Shoes'): (0.2, "User Bob has rated Design Shoes."),
+            },
+    }
+                
+    def test_explicit_rules(self):
+        """Test the explicit rules and their definitions 
+        were created as expected"""
+        
+        rule_defs = ExplicitRuleDefinition.objects.all()
+        
+        # expect the definition count fits
+        eq_(len(self.EXP_EXPLICIT_RULES), rule_defs.count())
+        
+        for rule_def in rule_defs:
+            
+            # assert the def is there
+            assert self.EXP_EXPLICIT_RULES.has_key(rule_def.name)
+            
+            # get its expected rules
+            exp_rules = self.EXP_EXPLICIT_RULES[rule_def.name]
+            
+            rules = ExplicitRuleInstance.objects.filter(definition=rule_def)
+            
+            for rule in rules:
+                
+                # assert the pair is expected
+                if exp_rules.has_key((rule.subject_object1.name, rule.subject_object2.name)):
+                    exp_rule = exp_rules[(rule.subject_object1.name, rule.subject_object2.name)]
+                elif exp_rules.has_key((rule.subject_object2.name, rule.subject_object1.name)):
+                    exp_rule = exp_rules[(rule.subject_object2.name, rule.subject_object1.name)]
+                else:
+                    assert False, "The pair %s, %s isn't expected" \
+                        % (rule.subject_object1.name, rule.subject_object2.name)
+                
+                assert_almost_equal(exp_rule[0], rule.expectancy, PLACES)
+                eq_(exp_rule[1], rule.description)
+                
                             
 class TestAbstractorRecommenderErrors(DBTestCase):
     """Test various errors thrown by Abstractor and/or Recommender and/or Algorithm"""

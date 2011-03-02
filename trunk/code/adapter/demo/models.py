@@ -78,7 +78,27 @@ class User(models.Model):
     def __unicode__(self):
         """Return a printable representation of the instance"""
         return self.name
+
+class ShoeRating(models.Model):
+    """An explicit rating by user to a shoe pair"""
     
+    user = models.ForeignKey('User')
+    """The rater"""
+    
+    shoe_pair = models.ForeignKey('ShoePair')
+    """The rated shoe pair"""
+    
+    stars = models.PositiveIntegerField()
+    """Number of stars from 0 to 5 given to the shoepair"""
+
+    class Meta:
+        unique_together = ('user', 'shoe_pair')
+        """There can be only one rating from a user to a shoe pair"""
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"%s: %s (%d)" % (self.user, self.shoe_pair, self.stars)    
+            
 
 class Manufacturer(models.Model):
     """A model for a shoe manufacturer"""
