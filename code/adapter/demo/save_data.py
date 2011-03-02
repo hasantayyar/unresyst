@@ -104,6 +104,11 @@ def save_data():
     alice.words_searched.add(trainers)
     alice.save()
     
+    ShoeRating.objects.create(
+        user=alice,
+        shoe_pair=design_shoes,
+        stars=4)
+    
     bob = User(
         name="Bob",
         age=18,
@@ -115,6 +120,11 @@ def save_data():
     bob.likes_shoes.add(sneakers)
     bob.save()
     
+    ShoeRating.objects.create(
+        user=bob,
+        shoe_pair=design_shoes,
+        stars=1)
+    
     cindy = User(
         name="Cindy",
         age=25,
@@ -124,7 +134,7 @@ def save_data():
     cindy.viewed_shoes.add(rubber_shoes)
     cindy.save()
     
-    # a user with usable demography info
+    # a user with usable demographic info
     daisy = User(
         name="Daisy",
         age=32,

@@ -366,11 +366,8 @@ class BaseRelationship(object):
             i += 1
         
         print "    %d instances of rule/rel %s exported" % (i, self.name)
-        
 
-            
         
-  
 class PredictedRelationship(BaseRelationship):
     """A class for representing the predicted relationship."""
 
@@ -398,10 +395,67 @@ class PredictedRelationship(BaseRelationship):
         # if not, keep
         return (dn_arg1, dn_arg2, ds_arg1, ds_arg2)
 
+class ExplicitSubjectObjectRule(BaseRelationship):
+    """A class for representing explicit preference like rating, for attributes where
+    the user can express both positive and negative preference."""
+
+    relationship_type = RELATIONSHIP_TYPE_SUBJECT_OBJECT
+    """The type of the relationship S-O""" 
+
+    DefinitionClass = ExplicitRuleDefinition
+    """The model class used for representing the definition of the 
+    rule/relationship
+    """  
+    
+    InstanceClass = ExplicitRuleInstance
+    """The model class used for representing instances of 
+    the rule/relationship"""
+    
+            
+    def __init__(self, name, condition, expectancy, description=None, generator=None):
+        """The constructor."""
+        
+        super(ExplicitSubjectObjectRule, self).__init__(name, condition, description, generator)
+        
+        self.expectancy = expectancy
+        """A function taking a subject and an object, giving the explicit preference
+        normalized to [0, 1].
+        """
+        
+    def get_additional_instance_kwargs(self, ds_arg1, ds_arg2):
+        """See the base class for documentation
+        
+        @raise ConfigurationError: if the confidence function returns a value
+            outside [0, 1]
+        """
+        ret_dict = super(ExplicitSubjectObjectRule, self)\
+            .get_additional_instance_kwargs(ds_arg1, ds_arg2)
+        
+        # call the user-defined confidence method
+        expectancy = self.expectancy(ds_arg1, ds_arg2)
+        
+        if not (MIN_EXPECTANCY <= expectancy <= MAX_EXPECTANCY):
+            raise ConfigurationError(
+                message=("The rule '%s' has expectancy %f, for the" + \
+                    "  pair (%s, %s). Should be between 0 and 1.") % \
+                        (self.name, expectancy, ds_arg1, ds_arg2),
+                recommender=self.recommender,
+                parameter_name="Recommender.rules",
+                parameter_value=self.recommender.rules
+            )
+        
+        ret_dict[EXPECTANCY_KWARG_NAME] = expectancy
+        return ret_dict        
+
         
 class _WeightedRelationship(BaseRelationship):
     """A class representing a relationship with a weight."""
 
+    DefinitionClass = RuleRelationshipDefinition
+    """The model class used for representing the definition of the 
+    rule/relationship
+    """  
+    
     def __init__(self, name, condition, is_positive, weight, description=None, generator=None):
         """The constructor."""
         
@@ -444,10 +498,7 @@ class _WeightedRelationship(BaseRelationship):
         
         return ret_dict
         
-    DefinitionClass = RuleRelationshipDefinition
-    """The model class used for representing the definition of the 
-    rule/relationship
-    """    
+  
         
 
 class SubjectObjectRelationship(_WeightedRelationship):

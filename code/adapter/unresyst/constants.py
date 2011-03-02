@@ -101,8 +101,13 @@ MIN_CONFIDENCE = 0.0
 MAX_CONFIDENCE = 1.0
 """Confidence limits"""
 
+MIN_EXPECTANCY = 0.0
+MAX_EXPECTANCY = 1.0
+"""Expectancy limits"""
+
 TRIVIAL_EXPECTANCY = 1.0
 """The expectancy that is given for the trivial cases - already 
 listened to the artist."""
 
 CONFIDENCE_KWARG_NAME = 'confidence'
+EXPECTANCY_KWARG_NAME = 'expectancy'
