@@ -222,7 +222,7 @@ Supervisor's e-mail address: \vedoucimail\\
             \item[Many items:] In the domain there are many items that might be interesting for a user. It is not possible for the user to browse all of them.
             \item[Choice based on taste:] The choice of the items depends on the taste of each user. If there were some objective criteria for recommending items to users the recommender system wouldn't be much helpful.
             \item[Taste data:] In the system there have to be some data about the users interacting with items that can be interpreted as expressing taste. It doesn't matter if these are explicit rating data or implicit capture of user behaviour, but there have to be some.
-            \item[Homogenous items:] The items in the domain have some common attributes, they can all be covered by taste data, e.g. they can all be viewed or rated.
+            \item[Homogeneous items:] The items in the domain have some common attributes, they can all be covered by taste data, e.g. they can all be viewed or rated.
         \end{description}
 
     
@@ -342,6 +342,8 @@ Supervisor's e-mail address: \vedoucimail\\
             \subsubsection{Unresyst Maintainance}
                 \label{unresyst_maintainance}
                 Running a recommender system isn't just a matter of setup. Keeping the recommendation quality high requires a regular maintainance activity. The frequency of the maintainance tasks depend on many factors such as  domain dynamics and internal capacities of the company. It should be done at least a few times a year.
+                
+                xx changes in the system that affect recommendation sources, use of newly available data
                 
                 Maintainance activites follow selected setup activities in order to improve accuracy of the recommender. \emph{Business Analyst} interviews the \emph{Domain Expert} to find out what has happened in the domain business since the last maintainance activity. The news are delivered to the \emph{Data Specialist}, who incorporates them to the recommender configuration. He/she evalutes the recommender with the new configuration and tunes the parameters until the desired evaluation is obtained. The new Unresyst configuration and sample recommendations are consulted with the \emph{Domain Expert}. The new configuration is finally tested and put into operation.
         
@@ -790,6 +792,8 @@ Supervisor's e-mail address: \vedoucimail\\
                 During the adaptation phase, the domain expert has to define which relationship should be predicted. For example, if we want Unresyst to predict which pair of shoes a user would like, we need to tell Unresyst somehow.
                 
                 This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the description remains as described in the section \ref{representing_relationships}. 
+            \subsection{Representing Bias}
+                mam subject/object bias, subject v podstate neovlivni doporuceni/nedoporuceni, jen upravuje vysi expectancy. Object naopak ovlivni
 
     \section{Recommendation Viewer}
         \label{viewer}
@@ -802,6 +806,7 @@ Supervisor's e-mail address: \vedoucimail\\
     Minimalne tri. The process of adapting the Universal Recommender to some existing systems is described in the chapter. The chosen systems work on various domains. Each system has some API, so that the Universal Recommender can easily get data about the objects, subjects and their relationships. The way how to run the Universal Recommender in several instances for a system is described here. Some basic rules for the Universal Recommender configuration are given.
         \subsection{MovieLens data set}
         \subsection{Last.fm}
+            zpusob vyberu z megadatasetu
         \subsection{Bikebook}
         
 \chapter{Universal Recommender Prototype Implementation}
@@ -815,6 +820,32 @@ Supervisor's e-mail address: \vedoucimail\\
 \chapter{Evaluating Recommender Results}
     \label{evaluating_recommender_results}
     In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. 
+    
+    zpusob vyberu test dat z datasetu - nakonec asi podle casu
+    
+    timestampy at si resi v pravidlech - to je business vec - jestli plati nejaky decay nebo tak neco, do toho algoritmus nema stourat. 
+    
+    \section{Metrics}
+        je jich hafo, viz clanek. Kdyz nemam negativni hodnoceni, tak je mi RMSE uplne na pytel. Jak jsem dosel k tomu precision recall na urovni usera - je potreba to nejak omezit aby nevyhraval recommender konstantni 1. Rozumna operace pro omezeni je recommende - per user. 
+    \section{Last.fm dataset}
+        Ze mam dva recommendery - jeden novel - objevovani novych artistu
+        druhy nenovel - napr. hrani v personalized radiu, nezalezi na tom jestli hral nebo ne. Tohle nesrovnam s Mahoutem, protoze ten vyrazuje zname dvojice z recommendations
+        
+        u novel test pairu beru distinct subj, obj. u nenovel beru jak mi to prijde. Pokud recommender trefi objekt, ktery je v test setu vickrat, tak do precision to pocitam jenom jednou (recommended item byla zahrana), do recall vickrat (trefil vic polozek z moznych). 
+        
+        Results:
+        test set randomly chosen, 516 trivial hits
+        - unresyst with age rule: prediction Success rate: 0.583559 (646/1107); recommendation: 4 hits recorded, precision, recall (0.0046511627906976744, 0.0042393410852713176)
+        - mahout slope one: prediction Success rate: 0.708220 (784/1107), 7 hits recorded, precision/recall (0.0069767441860465115, 0.014426910808489757)
+        
+        test set taken as the latest scrobbles (non-novel): XXX trivial hits
+        - unresyst with age rule and scrobble count rule:
+            prediction: Success rate: 0.527125 (583/1106), RMSE: 0.475152
+            recommendation: 65 hits recorded, (0.050724637681159424, 0.052776203958823528)
+        - mahout slope one (binary):  
+            prediction: 0.536166 (593/1106) RMSE: 0.340527
+            recommendation: 3 hits recorded, (0.0043478260869565218, 0.0056051034311903883)
+
 
     \section{Comparison to Other Recommenders}
         \label{comparison_to_other}
