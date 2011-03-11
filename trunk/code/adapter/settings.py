@@ -96,6 +96,8 @@ INSTALLED_APPS = (
     'demo',
     'lastfm',
     'unresyst',
+    'flixster',
+    'travel',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

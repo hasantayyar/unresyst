@@ -6,8 +6,8 @@ class BaseAbstractor(object):
     # Build phase:
     #
     
-    @classmethod
-    def create_subjectobjects(cls, recommender_model, subjects, objects):
+    
+    def create_subjectobjects(self, recommender_model, subjects, objects):
         """Create abstract representation of subjects and objects.
         
         @type recommender_model: models.Recommender
@@ -23,8 +23,8 @@ class BaseAbstractor(object):
         pass
         
     
-    @classmethod            
-    def create_predicted_relationship_instances(cls, predicted_relationship):
+                
+    def create_predicted_relationship_instances(self, predicted_relationship):
         """Create the instances of the predicted relationship.
         
         Create bindings on subject-object pairs for pairs between which there's
@@ -36,8 +36,8 @@ class BaseAbstractor(object):
         pass
 
     
-    @classmethod        
-    def create_relationship_instances(cls, relationships):
+            
+    def create_relationship_instances(self, relationships):
         """Create the instances of relationships relevant for recommendation.
         
         Create bindings on pairs of subject/objects, for pairs between where 
@@ -52,8 +52,8 @@ class BaseAbstractor(object):
         pass
 
     
-    @classmethod
-    def create_rule_instances(cls, rules):
+    
+    def create_rule_instances(self, rules):
         """Create the instances of rules.
         
         Create bindings on pairs of subject/objects, for pairs between where 
@@ -69,8 +69,8 @@ class BaseAbstractor(object):
 
     
         
-    @classmethod
-    def create_clusters(cls, cluster_sets):
+    
+    def create_clusters(self, cluster_sets):
         """Create clusters defined in the given sets
         
         Crates the cluster sets in the database, their clusters, bindings 
@@ -84,8 +84,8 @@ class BaseAbstractor(object):
         """
         pass
         
-    @classmethod
-    def create_biases(cls, biases):
+    
+    def create_biases(self, biases):
         """Create biases defined by the user.
         
         Creates bias definitions and instances in the database.
@@ -102,8 +102,8 @@ class BaseAbstractor(object):
     # Update phase:
     # 
     
-    @classmethod
-    def add_subject(cls, recommender, subject):
+    
+    def add_subject(self, recommender, subject):
         """Add the subject to the abstract subjects, to the relationship and
         rule instances.
         
@@ -112,8 +112,8 @@ class BaseAbstractor(object):
         """
         pass
     
-    @classmethod
-    def add_object(cls, recommender, object_):
+    
+    def add_object(self, recommender, object_):
         """Add the object to the abstract objects, to the relationship and
         rule instances.
         
@@ -122,8 +122,8 @@ class BaseAbstractor(object):
         """
         pass
     
-    @classmethod
-    def update_subject(cls, recommender, subject):
+    
+    def update_subject(self, recommender, subject):
         """Update the subject in the abstract subjects, in the relationship and
         rule instances.
         
@@ -132,8 +132,8 @@ class BaseAbstractor(object):
         """
         pass
     
-    @classmethod
-    def update_object(cls, recommender, object_):
+    
+    def update_object(self, recommender, object_):
         """Update the object in the abstract objects, in the relationship and
         rule instances.
         
@@ -142,8 +142,8 @@ class BaseAbstractor(object):
         """
         pass    
         
-    @classmethod
-    def remove_subject(cls, recommender, subject):
+    
+    def remove_subject(self, recommender, subject):
         """Remove the subject from the abstract subjects, its relationships and
         rule instances.
         
@@ -152,8 +152,8 @@ class BaseAbstractor(object):
         """
         pass
     
-    @classmethod
-    def remove_object(cls, recommender, object_):
+    
+    def remove_object(self, recommender, object_):
         """Update the object from the abstract objects, its relationship and
         rule instances.
         

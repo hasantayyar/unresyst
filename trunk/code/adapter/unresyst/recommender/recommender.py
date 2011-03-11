@@ -14,9 +14,11 @@ from unresyst.constants import *
 from unresyst.exceptions import ConfigurationError, InvalidParameterError, \
     RecommenderNotBuiltError
 from unresyst.abstractor import BasicAbstractor 
-from unresyst.aggregator import LinearAggregator
-from unresyst.algorithm import SimpleAlgorithm
+from unresyst.aggregator import LinearAggregator, CombiningAggregator
+from unresyst.algorithm import SimpleAlgorithm, AggregatingAlgorithm, CompilingAlgorithm
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
+from unresyst.compilator import Compilator
+from unresyst.combinator.combinator import FunctionCombinator
 
 def _assign_recommender(list_rels, recommender):
     """Go throuth the list, if the items have the "recommender" attribute,
@@ -177,7 +179,7 @@ class Recommender(BaseRecommender):
         #
         
         # create the domain neutral representation for objects and subjects
-        cls.Abstractor.create_subjectobjects(
+        cls.abstractor.create_subjectobjects(
             recommender_model=recommender_model,
             subjects=cls.subjects, 
             objects=cls.objects
@@ -186,14 +188,14 @@ class Recommender(BaseRecommender):
         cls._print("Universal subject and object representations created. Creating predicted_relationship instances...")
         
         # create the relationship instances for the predicted relationship
-        cls.Abstractor.create_predicted_relationship_instances(           
+        cls.abstractor.create_predicted_relationship_instances(           
             predicted_relationship=cls.predicted_relationship            
         )
         
         cls._print("Predicted relationship instances created. Creating relationship instances...")
         
         # create relationship instances between subjects/objects 
-        cls.Abstractor.create_relationship_instances(
+        cls.abstractor.create_relationship_instances(
             relationships=cls.relationships
         )    
         
@@ -201,35 +203,26 @@ class Recommender(BaseRecommender):
                
         # evaluate rules and make rule instances between the affected 
         # subjects/objects
-        cls.Abstractor.create_rule_instances(rules=cls.rules)
+        cls.abstractor.create_rule_instances(rules=cls.rules)
         
         cls._print("Rule instances created. Creating clusters...")
         
         # evaluate the clusters and their members
-        cls.Abstractor.create_clusters(cluster_sets=cls.cluster_sets)
+        cls.abstractor.create_clusters(cluster_sets=cls.cluster_sets)
         
         cls._print("Clusters created. Creating biases...")
         
         # evaluate the biases
-        cls.Abstractor.create_biases(biases=cls.biases)
+        cls.abstractor.create_biases(biases=cls.biases)
         
         cls._print("Biases created. Aggregating...")
 
-        # Aggregator
-        # 
         
-        # aggregate the relationships and rules
-        cls.Aggregator.aggregate_rules_relationships(recommender_model=recommender_model)        
-        
-        # aggregate the biases
-        cls.Aggregator.aggregate_biases(recommender_model=recommender_model)
-        
-        cls._print("Rules, relationships and biases aggregated. Building the algorithm...")
         
         # Algorithm
         #        
         # build the algorithm model from the aggregated relationships
-        cls.Algorithm.build(recommender_model=recommender_model)
+        cls.algorithm.build(recommender_model=recommender_model)
         
         cls._print("Algorithm built. Done.")
         
@@ -475,17 +468,22 @@ class Recommender(BaseRecommender):
     # Class configuration - the behaviour of the layers below the recommender
     # Can be overriden in user defined subclasses
     
-    Abstractor = BasicAbstractor
+    abstractor = BasicAbstractor()
     """The class that will be used for the abstractor level. Can be 
-    overriden in suclasses"""
+    overriden in suclasses"""    
     
-    Aggregator = LinearAggregator  
-    """The class that will be used for the aggregator level. Can be 
-    overriden in suclasses"""
-    
-    Algorithm = SimpleAlgorithm
+    algorithm = AggregatingAlgorithm(
+                    inner_algorithm=CompilingAlgorithm(
+                        inner_algorithm=SimpleAlgorithm(
+                            inner_algorithm=None
+                        ),
+                        compilator=Compilator(combinator=FunctionCombinator())
+                    ),
+                    aggregator=LinearAggregator()
+                    #aggregator=CombiningAggregator(combinator=FunctionCombinator())
+                )
     """The class that will be used for the algorithm level. Can be 
-    overriden in suclasses"""
+    overriden in subclasses"""    
     
     default_recommendation_count = DEFAULT_RECOMMENDATION_COUNT
     """The defaul count of the obtained recommended objects"""
