@@ -21,28 +21,9 @@ class CompilingAlgorithm(BaseAlgorithm):
         """        
         print "  Compiling aggregates."
         
-        # for available aggregates create an instance with the aggregated result
-        # 
-        self.compilator.compile_aggregates(recommender_model)
-        
-        print "  Done. Compiling similar objects."
-        
-        # if subjects == objects
-        if recommender_model.are_subjects_objects:
-
-            # take similar on both sides
-            self.compilator.compile_similar_subjectobjects(recommender_model)
-
-        else:
-        
-            # take similar to the ones we already have (content-based recommender)
-            self.compilator.compile_similar_objects(recommender_model)
-            print "  Done. Compiling similar subjects."
-
-            # take liked objects of similar users (almost collaborative filtering)
-            self.compilator.compile_similar_subjects(recommender_model)                
+        self.compilator.compile_all(recommender_model)             
         
 
-        print "Predictions compiled. Compiling the inner algorithm..."
+        print "Predictions compiled. Building the inner algorithm..."
         
         super(CompilingAlgorithm, self).build(recommender_model=recommender_model)        

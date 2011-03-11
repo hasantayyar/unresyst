@@ -5,7 +5,7 @@
 class BaseCombinator(object):
     """The empty base class defining the interface of all combinators."""
     
-    def aggregate_pair_similarities(self, pair_similarities, 
+    def combine_pair_similarities(self, pair_similarities, 
             cluster_member_expectancies):
         """Aggregate similarities of the given pair S-S, O-O, or SO-SO. 
         
@@ -27,7 +27,7 @@ class BaseCombinator(object):
         pass
         
 
-    def aggregate_entity_biases(self, entitiy_biases):
+    def combine_entity_biases(self, entitiy_biases):
         """Aggregate biases of the given entity S, O, or SO.
         
         @type entitiy_biases: QuerySet, each member having a get_expectancy()

@@ -8,6 +8,10 @@ class BaseCompilator(object):
 
         self.combinator = combinator
         """The combinator that should be used during compiling"""        
+
+    def compile_all(self, recommender_model):
+        """Compile preferences, known relationships + similarities.        
+        """
+        pass
         
-        
-           
+
