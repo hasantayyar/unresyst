@@ -18,7 +18,7 @@ from unresyst.aggregator import LinearAggregator, CombiningAggregator
 from unresyst.algorithm import SimpleAlgorithm, AggregatingAlgorithm, CompilingAlgorithm
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.compilator import Compilator
-from unresyst.combinator.combinator import FunctionCombinator
+from unresyst.combinator import FunctionCombinator
 
 def _assign_recommender(list_rels, recommender):
     """Go throuth the list, if the items have the "recommender" attribute,

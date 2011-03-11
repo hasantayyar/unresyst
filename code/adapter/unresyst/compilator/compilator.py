@@ -19,8 +19,34 @@ class Compilator(BaseCompilator):
         self.breadth = breadth
         """The number of neighbours that will be taken during the compilation"""
 
-    #TODO sem narvat vsechno co je ted v algorithm s nejakym rozumnym rozhranim
-    
+
+    def compile_all(self, recommender_model):
+        """Compile preferences, known relationships + similarities.
+        """
+        #TODO pryc:
+        self.compile_aggregates(recommender_model)
+
+        print "  Compiling similar objects."
+        
+        # if subjects == objects
+        if recommender_model.are_subjects_objects:
+
+            # take similar on both sides
+            self._mark_similar_subjectobjects(recommender_model)
+
+        else:
+        
+            # take similar to the ones we already have (content-based recommender)
+            self._mark_similar_objects(recommender_model)
+            print "  Done. Compiling similar subjects."
+
+            # take liked objects of similar users (almost collaborative filtering)
+            self._mark_similar_subjects(recommender_model)   
+            
+        # after the marks have been made, pass it all to the combinator
+        #TODO zavolat combinator.            
+
+    #TODO pryc, asi nebude potreba
     def compile_aggregates(self, recommender_model):
         """Create predictions from aggregates"""        
         
@@ -51,33 +77,33 @@ class Compilator(BaseCompilator):
         
         print "    %d aggregated predictions created" % qs_aggr.count()
                             
-        
-    def compile_similar_objects(self, recommender_model):
+    
+    def _mark_similar_objects(self, recommender_model):
         """Create predictions by adding objects similar to ones the objects
         in predicted_relationship - that's a content-based recommender
         """   
         
-        self._compile_similar_entities(
+        self._mark_similar_entities(
                 recommender_model=recommender_model,
                 start_entity_type=ENTITY_TYPE_SUBJECT)
     
-    def compile_similar_subjects(self, recommender_model):
+    def _mark_similar_subjects(self, recommender_model):
         """Create predictions by adding objects that similar subjects liked
         - that's collaborative filtering
         """                
         
-        self._compile_similar_entities(
+        self._mark_similar_entities(
                 recommender_model=recommender_model,
                 start_entity_type=ENTITY_TYPE_OBJECT)
 
 
-    def compile_similar_subjectobjects(self, recommender_model):
+    def _mark_similar_subjectobjects(self, recommender_model):
         """Create predictions based on similarity for recommenders where 
         subjects==objects
         """
         
         # firstly the normal direction
-        self._compile_similar_entities(
+        self._mark_similar_entities(
                 recommender_model=recommender_model,
                 start_entity_type=ENTITY_TYPE_SUBJECTOBJECT,
                 reverse=False)
@@ -122,7 +148,7 @@ class Compilator(BaseCompilator):
     that should be used for sorting"""
     
     
-    def _compile_similar_entities(self, recommender_model, start_entity_type, reverse=False):
+    def _mark_similar_entities(self, recommender_model, start_entity_type, reverse=False):
         """Create predictions from start_entity_type objects, looking for 
         similar entities in end_entity_type
         

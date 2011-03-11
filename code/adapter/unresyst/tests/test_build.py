@@ -789,7 +789,9 @@ class TestAlgorithm(TestEntities):
                             recommender=ShoeRecommender._get_recommender_model())
         
         # assert it has the expected length 
-        eq_(pred_instances.count(), len(self.EXPECTED_PREDICTIONS))
+        eq_(pred_instances.count(), len(self.EXPECTED_PREDICTIONS), 
+            "expected: %d, obtained: %d, obtained instances: %s" % \
+                (len(self.EXPECTED_PREDICTIONS), pred_instances.count(), pred_instances))
         
         for pred_inst in pred_instances.iterator():
             pair1 = (pred_inst.subject_object1.name, pred_inst.subject_object2.name)
