@@ -1,5 +1,11 @@
-"""The main class of the aggregator package - Aggregator"""
+"""The classes of the aggregator package:
+ - LinearAggregator: everything is combined linearly
+ - CombiningAggregator: uses the Combinator class for aggregating
+"""
+
 from django.db.models import Count
+from django.db.models import Q
+
 
 from base import BaseAggregator
 from unresyst.models.abstractor import RelationshipInstance, \
@@ -19,8 +25,7 @@ class LinearAggregator(BaseAggregator):
     expectances somehow.
     """
 
-    @classmethod
-    def aggregate_rules_relationships(cls, recommender_model):
+    def aggregate_rules_relationships(self, recommender_model):
         """For documentation see the base class.
         
         Linearly combines the rule and relationship instances.
@@ -37,7 +42,7 @@ class LinearAggregator(BaseAggregator):
             
             raise InvalidParameterError(
                 message="There're unexpected aggregated instances for the recommender.", 
-                recommender=cls,
+                recommender=recomender_model,
                 parameter_name="recommender_model", 
                 parameter_value=recommender_model)
 
@@ -131,8 +136,8 @@ class LinearAggregator(BaseAggregator):
         print "    %d rule/relationship aggregates created" % \
             AggregatedRelationshipInstance.objects.filter(recommender=recommender_model).count()
         
-    @classmethod
-    def aggregate_biases(cls, recommender_model):
+
+    def aggregate_biases(self, recommender_model):
         """For documentation see the base class.
         
         Linearly combines the bias instances.
@@ -149,7 +154,7 @@ class LinearAggregator(BaseAggregator):
             
             raise InvalidParameterError(
                 message="There're unexpected aggregated instances for the recommender.", 
-                recommender=cls,
+                recommender=recommender_model,
                 parameter_name="recommender_model", 
                 parameter_value=recommender_model)
 
@@ -198,3 +203,4 @@ class LinearAggregator(BaseAggregator):
         print "    %d bias aggregates created" % \
             AggregatedBiasInstance.objects.filter(recommender=recommender_model).count()
                         
+

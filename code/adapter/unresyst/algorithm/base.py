@@ -4,11 +4,16 @@ class BaseAlgorithm(object):
     """The interface provided to the other packages. The methods in the interface
     are implemented by the subclasses"""
     
+    def __init__(self, inner_algorithm=None):
+        """The initializer"""
+        
+        self.inner_algorithm = inner_algorithm
+        """The inner algorithm"""
+        
     # Build phase:
     #
     
-    @classmethod
-    def build(cls, recommender_model):
+    def build(self, recommender_model):
         """Build the recommender, so that the given relationship can be
         predicted easily.
         
@@ -17,14 +22,14 @@ class BaseAlgorithm(object):
             be aggregated. 
 
         """
-        pass
+        if self.inner_algorithm:
+            self.inner_algorithm.build(recommender_model=recommender_model)
     
     
     # Recommend phase:
     #
     
-    @classmethod
-    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object, remove_predicted):
+    def get_relationship_prediction(self, recommender_model, dn_subject, dn_object, remove_predicted):
         """Get the prediction of the appearance of the predicted_relationship.
 
         @type recommender_model: models.common.Recommender
@@ -44,11 +49,15 @@ class BaseAlgorithm(object):
         @rtype: models.algorithm.RelationshipPredictionInstance
         @return: the model instance for the prediction 
         """
-        pass
+        if self.inner_algorithm:
+            return self.get_relationship_prediction(
+                recommender_model=recommender_model, 
+                dn_subject=dn_subject, 
+                dn_object=dn_object, 
+                remove_predicted=remove_predicted)
 
         
-    @classmethod
-    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):
+    def get_recommendations(self, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):
         """Get the recommendations for the given subject
 
         @type recommender_model: models.common.Recommender
@@ -72,12 +81,18 @@ class BaseAlgorithm(object):
         @rtype: a list of models.algorithm.RelationshipPredictionInstance
         @return: the predictions of the objects recommended to the subject
         """
-        pass
+        if self.inner_algorithm:
+            return self.get_recommendations(
+                recomender_model=recommender_model,
+                dn_subject=dn_subject,
+                count=count,
+                expectancy_limit=expectancy_limit,
+                remove_predicted=remove_predicted)
 
     # Update phase:
     #         
     
-    def update(recommender, aggregated_changes):
+    def update(self, recommender, aggregated_changes):
         """Update the recommender algorithm structures according to the changes
         in the aggregated relationships.
         

@@ -167,18 +167,14 @@ class BaseRecommender(object):
     # Empty, will be overriden by the Recommender class
     #
     
-    Abstractor = None
+    abstractor = None
     """The class that will be used for the abstractor level. Can be 
-    overriden in subclasses"""
+    overriden in subclasses"""    
     
-    Aggregator = None
-    """The class that will be used for the aggregator level. Can be 
-    overriden in subclasses"""
-    
-    Algorithm = None
+    algorithm = None
     """The class that will be used for the algorithm level. Can be 
     overriden in subclasses"""
-    
+        
     remove_predicted_from_recommendations = None
     """Should the instances of the predicted_relationship be removed from
     recommendation list?

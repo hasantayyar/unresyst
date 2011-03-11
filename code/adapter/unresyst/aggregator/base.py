@@ -5,8 +5,14 @@ class BaseAggregator(object):
     
     # Build phase:
     #
-    
-    @classmethod
+
+    def __init__(self, combinator=None):
+        """The initializer"""
+        
+        self.combinator = combinator
+        """The combinator that should be used during aggregating"""
+
+        
     def aggregate_rules_relationships(cls, recommender_model):
         """Aggregate the rule and relationship instances.
         
@@ -16,11 +22,10 @@ class BaseAggregator(object):
         
         @type recommender_model: models.common.Recommender
         @param recommender_model: the recommender whose instances should
-            be aggregated. 
+            be aggregated.                              
         """
         pass
         
-    @classmethod
     def aggregate_biases(cls, recommender_model):
         """Aggregate bias instances.
         
@@ -29,7 +34,7 @@ class BaseAggregator(object):
         
         @type recommender_model: models.common.Recommender
         @param recommender_model: the recommender whose instances should
-            be aggregated. 
+            be aggregated.  
         """
         pass
 

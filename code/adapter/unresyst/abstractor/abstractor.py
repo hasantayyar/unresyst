@@ -7,8 +7,8 @@ from unresyst.constants import *
 class BasicAbstractor(BaseAbstractor):
     """The basic implementation of the Abstractor class"""
 
-    @classmethod
-    def create_subjectobjects(cls, recommender_model, subjects, objects):
+
+    def create_subjectobjects(self, recommender_model, subjects, objects):
         """See the base class for documentation."""
         
         # if subjects are the same as objects, use the "so" entity type 
@@ -52,16 +52,14 @@ class BasicAbstractor(BaseAbstractor):
 
 
     
-    @classmethod            
-    def create_predicted_relationship_instances(cls, predicted_relationship):
+    def create_predicted_relationship_instances(self, predicted_relationship):
         """See the base class for documentation."""        
         
         # evaluate the relationship for all possible subjectobjects
         predicted_relationship.evaluate()
        
     
-    @classmethod        
-    def create_relationship_instances(cls, relationships):
+    def create_relationship_instances(self, relationships):
         """See the base class for documentation."""
 
         # evaluate all relationships
@@ -69,24 +67,21 @@ class BasicAbstractor(BaseAbstractor):
             rel.evaluate()
 
     
-    @classmethod
-    def create_rule_instances(cls, rules):
+    def create_rule_instances(self, rules):
         """See the base class for documentation."""
         
         # eveluate all rules
         for rule in rules:
             rule.evaluate()
 
-    @classmethod
-    def create_clusters(cls, cluster_sets):
+    def create_clusters(self, cluster_sets):
         """See the base class for documentation."""
         
         # evaluate all cluster sets
         for cluster_set in cluster_sets:
             cluster_set.evaluate()          
             
-    @classmethod
-    def create_biases(cls, biases):
+    def create_biases(self, biases):
         """See the base class for documentation."""                      
         
         # evaluate the biases
