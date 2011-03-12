@@ -135,7 +135,7 @@ class BaseCombinator(object):
         
         return list(set(
             top_bias_objs 
-            #+ top_rel_objs 
+            + top_rel_objs 
             #+ top_sim_objs 
             + cluster_objs
             ))

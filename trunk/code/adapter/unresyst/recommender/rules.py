@@ -447,6 +447,9 @@ class ExplicitSubjectObjectRule(BaseRelationship):
         ret_dict[EXPECTANCY_KWARG_NAME] = expectancy
         return ret_dict        
 
+    @classmethod
+    def _order_in_pair(cls, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
+        return PredictedRelationship._order_in_pair(dn_arg1, dn_arg2, ds_arg1, ds_arg2)
         
 class _WeightedRelationship(BaseRelationship):
     """A class representing a relationship with a weight."""
@@ -507,6 +510,9 @@ class SubjectObjectRelationship(_WeightedRelationship):
     relationship_type = RELATIONSHIP_TYPE_SUBJECT_OBJECT
     """The type of the relationship S-O""" 
 
+    @classmethod
+    def _order_in_pair(cls, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
+        return PredictedRelationship._order_in_pair(dn_arg1, dn_arg2, ds_arg1, ds_arg2)
 
 class _SimilarityRelationship(_WeightedRelationship):
     """A base class (abstract) for all relationships operating between the same type 
@@ -617,6 +623,10 @@ class SubjectObjectRule(_BaseRule):
     relationship_type = RELATIONSHIP_TYPE_SUBJECT_OBJECT
     """The type of the relationship S-O"""    
 
+    @classmethod
+    def _order_in_pair(cls, dn_arg1, dn_arg2, ds_arg1, ds_arg2):
+        return PredictedRelationship._order_in_pair(dn_arg1, dn_arg2, ds_arg1, ds_arg2)
+        
 class SubjectObjectSimilarityRule(_SimilarityRelationship):
     """A class used only when subject domain equals object domain. 
     For representing inter-entity rule.

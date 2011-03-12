@@ -168,10 +168,8 @@ class TestAbstractor(TestEntities):
 
             # instances that have either one or another order of the subjobjects
             rel_instance = instances.filter(
-                Q(subject_object1=self.universal_entities[expected_data[0]], 
-                    subject_object2=self.universal_entities[expected_data[1]]) | \
-                Q(subject_object1=self.universal_entities[expected_data[1]], 
-                    subject_object2=self.universal_entities[expected_data[0]])
+                subject_object1=self.universal_entities[expected_data[0]], 
+                subject_object2=self.universal_entities[expected_data[1]]
             )
                       
             # there should be one
@@ -314,12 +312,19 @@ class TestAbstractor(TestEntities):
                         subject_object2=self.universal_entities[expected_data[1]]) | \
                     Q(subject_object1=self.universal_entities[expected_data[1]], 
                         subject_object2=self.universal_entities[expected_data[0]])
-                )
+                )                
                           
                 # there should be one
                 eq_(rel_instance.count(), 1)
                     
                 instance = rel_instance[0]
+                
+                # assert the right order in the relationship
+                if instance.definition.as_leaf_class().relationship_type == 'S-O':   
+                    eq_(instance.subject_object1.entity_type, 'S')
+                    eq_(instance.subject_object2.entity_type, 'O')
+                else:
+                    assert instance.subject_object1.id < instance.subject_object2.id
             
                 # test it has the right description
                 # the diferentiation for symmetric relationships - the order 
@@ -490,13 +495,10 @@ class TestAbstractor(TestEntities):
             for rule in rules:
                 
                 # assert the pair is expected
-                if exp_rules.has_key((rule.subject_object1.name, rule.subject_object2.name)):
-                    exp_rule = exp_rules[(rule.subject_object1.name, rule.subject_object2.name)]
-                elif exp_rules.has_key((rule.subject_object2.name, rule.subject_object1.name)):
-                    exp_rule = exp_rules[(rule.subject_object2.name, rule.subject_object1.name)]
-                else:
-                    assert False, "The pair %s, %s isn't expected" \
-                        % (rule.subject_object1.name, rule.subject_object2.name)
+                assert exp_rules.has_key((rule.subject_object1.name, rule.subject_object2.name)), \
+                   "The pair %s, %s isn't expected" % (rule.subject_object1.name, rule.subject_object2.name)
+
+                exp_rule = exp_rules[(rule.subject_object1.name, rule.subject_object2.name)]
                 
                 assert_almost_equal(exp_rule[0], rule.expectancy, PLACES)
                 eq_(exp_rule[1], rule.description)
@@ -713,7 +715,13 @@ class TestAggregator(TestEntities):
                     assert False, \
                         "Unexpected aggregate between '%s' and '%s' expectancy: %f" % \
                         (pair1 + (aggr_inst.expectancy, ))
-
+            
+            # assert the order in the aggregate is right
+            if aggr_inst.relationship_type == 'S-O':
+                assert aggr_inst.subject_object1.entity_type == 'S' and aggr_inst.subject_object2.entity_type == 'O'
+            else:
+                assert aggr_inst.subject_object1.id < aggr_inst.subject_object2.id
+            
             # assert the expectancy is as expected    
             assert_almost_equal(aggr_inst.expectancy, expected_expectancy, PLACES,
                 "Expectancy is '%f' should be '%f' for the pair %s, %s" % \
@@ -797,20 +805,13 @@ class TestAlgorithm(TestEntities):
                 (len(self.EXPECTED_PREDICTIONS), pred_instances.count(), pred_instances))
         
         for pred_inst in pred_instances.iterator():
-            pair1 = (pred_inst.subject_object1.name, pred_inst.subject_object2.name)
-            pair2 = (pred_inst.subject_object2.name, pred_inst.subject_object1.name)            
+            pair1 = (pred_inst.subject_object1.name, pred_inst.subject_object2.name)          
             
             # try getting the instance from expected in both directions
-            if self.EXPECTED_PREDICTIONS.has_key(pair1):
-                expected_prediction = self.EXPECTED_PREDICTIONS[pair1]
-            else:
-                if self.EXPECTED_PREDICTIONS.has_key(pair2):
-                    expected_prediction = self.EXPECTED_PREDICTIONS[pair2]
-                else:
-                    # if not found it's unexpected.
-                    assert False, \
+            assert self.EXPECTED_PREDICTIONS.has_key(pair1), \
                         "Unexpected prediction between '%s' and '%s' expectancy: %f" % \
                         (pair1 + (pred_inst.expectancy, ))
+            expected_prediction = self.EXPECTED_PREDICTIONS[pair1]
 
             # assert the expectancy is as expected    
             assert_almost_equal(pred_inst.expectancy, expected_prediction, PLACES, 
