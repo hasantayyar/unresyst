@@ -369,11 +369,14 @@ class TestAbstractor(TestEntities):
     EXP_CLUSTER_SETS = {
         "Shoe category cluster set.": 
             (
-                {'For Sports': (('RS 130', 1), ("Octane SL", 1)),
-                'Casual': (("Design Shoes", 1), ("Sneakers", 1)),},
+                {'For Sports': (('RS 130', 1, "RS 130 belong to the For Sports category."), 
+                    ("Octane SL", 1, "Octane SL belong to the For Sports category.")),
+                'Casual': (("Design Shoes", 1, "Design Shoes belong to the Casual category."), 
+                    ("Sneakers", 1, "Sneakers belong to the Casual category.")),},
                 'O', 0.3),
     }
-    """A dictionary: cluster set name: contained clusters, entity type, weight"""
+    """A dictionary: cluster set name: contained clusters, entity type, weight,
+    the members: object name, confidence, description."""
     
     def test_clusters(self):
         """Test that the clusters are created as expected"""
@@ -404,9 +407,9 @@ class TestAbstractor(TestEntities):
                  for cm in c.clustermember_set.all():
                      # expect the combination of entity and confidence is 
                      # in the expected
-                     assert (cm.member.name, cm.confidence) in cluster_members, \
-                        "The member '%s' with confidence '%f' isn't one of the expected %s" % (
-                            cm.member, cm.confidence, cluster_members)
+                     assert (cm.member.name, cm.confidence, cm.description) in cluster_members, \
+                        "The member '%s' with confidence '%f' and description '%s' isn't one of the expected %s" % (
+                            cm.member, cm.confidence, cm.description, cluster_members)
 
     EXP_BIASES = {
         "Users liking many shoes.": 

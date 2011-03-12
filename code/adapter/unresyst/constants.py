@@ -80,7 +80,14 @@ FORMAT_STR_OBJECT2 = "object2"
 FORMAT_STR_SUBJECTOBJECT = 'subjectobject'
 FORMAT_STR_SUBJECTOBJECT1 =  "subjectobject1"
 FORMAT_STR_SUBJECTOBJECT2 = "subjectobject2"
+FORMAT_STR_CLUSTER = "cluster"
 """Format strings used in the explanation field."""
+
+COMPILATOR_DEPTH_ONE_UNSURE = 1
+"""One unsure relationship is used [+ predicted_relationship]"""
+
+COMPILATOR_DEPTH_COMING_SOON = 2
+"""Uvidime"""
 
 DEFAULT_RECOMMENDATION_COUNT = 10
 """The defaul count of the obtained recommended objects"""
@@ -88,7 +95,7 @@ DEFAULT_RECOMMENDATION_COUNT = 10
 DEFAULT_COMPILATOR_BREADTH = 10
 """The default neighbourhood size for the compilator"""
 
-DEFAULT_COMPILATOR_DEPTH = 1
+DEFAULT_COMPILATOR_DEPTH = COMPILATOR_DEPTH_ONE_UNSURE
 """Take only one unsure relationship"""
 
 UNCERTAIN_PREDICTION_VALUE = 0.5

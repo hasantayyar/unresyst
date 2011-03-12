@@ -17,7 +17,7 @@ from unresyst.abstractor import BasicAbstractor
 from unresyst.aggregator import LinearAggregator, CombiningAggregator
 from unresyst.algorithm import SimpleAlgorithm, AggregatingAlgorithm, CompilingAlgorithm
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
-from unresyst.compilator import Compilator
+from unresyst.compilator import GetFirstCompilator
 from unresyst.combinator import FunctionCombinator
 
 def _assign_recommender(list_rels, recommender):
@@ -477,7 +477,8 @@ class Recommender(BaseRecommender):
                         inner_algorithm=SimpleAlgorithm(
                             inner_algorithm=None
                         ),
-                        compilator=Compilator(combinator=FunctionCombinator())
+                        compilator=GetFirstCompilator()
+                        # compilator=CombiningCompilator(combinator=FunctionCombinator())
                     ),
                     aggregator=LinearAggregator()
                     #aggregator=CombiningAggregator(combinator=FunctionCombinator())

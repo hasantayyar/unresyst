@@ -19,7 +19,7 @@ class CompilingAlgorithm(BaseAlgorithm):
         
         Compiles and calls the inner algorithm build
         """        
-        print "  Compiling aggregates."
+        print "  Compiling aggregates and predictions."
         
         self.compilator.compile_all(recommender_model)             
         

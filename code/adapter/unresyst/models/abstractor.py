@@ -280,11 +280,22 @@ class ClusterMember(models.Model):
     member = models.ForeignKey('unresyst.SubjectObject')
     """The cluster member"""
     
+    description = models.TextField(default='', blank=True)
+    """The description of the membership."""  
+    
     confidence = models.FloatField()
-    """The confidence of the given rule being positive/negative (depending on
-    definition.is_positive) in means of the predicted_relationship
+    """The confidence of the member belonging to the cluster.
     A number from [0, 1].
     """
+    
+    def get_expectancy(self):
+        """Return the expectancy that will be used for similarity counting 
+        for cluster members"""
+        
+        return _count_expectancy(
+            is_positive=True,
+            weight=self.cluster.cluster_set.weight,
+            confidence=self.confidence)
     
     def __unicode__(self):
         """Return a printable representation of the instance"""

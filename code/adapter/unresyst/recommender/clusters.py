@@ -10,9 +10,12 @@ class BaseClusterSet(object):
     e.g. cluster set 'Gender' contains clusters 'Male', 'Female'."""
     
     entity_type = None
-    """The type of the entities in the clusters"""
+    """The type of the entities in the clusters"""  
     
-    def __init__(self, name, weight, filter_entities, get_cluster_confidence_pairs):
+    entity_format_str = None
+    """Formating string used in the description"""  
+    
+    def __init__(self, name, weight, filter_entities, get_cluster_confidence_pairs, description=None):
         """The initializer"""
 
         self.name = name
@@ -33,6 +36,11 @@ class BaseClusterSet(object):
         Parameters: domain specific entity
         Return: the pairs: (name of the cluster, confidence - number from [0, 1])
         """
+        
+        self.description = description
+        """The description of the membership. Can contain: placeholders for 
+        subject/object/subjectobject and cluster."""
+
    
     def evaluate(self):
         """Crate the cluster set in the database, its clusters, bindings 
@@ -92,12 +100,21 @@ class BaseClusterSet(object):
                 cluster, x = Cluster.objects.get_or_create(
                     name=cluster_name,
                     cluster_set=cluster_set)
+
+                # evaluate the description
+                if self.description:
+                    description = self.description % {
+                        self.entity_format_str: dn_entity.name,
+                        FORMAT_STR_CLUSTER: cluster_name}                        
+                else:
+                    description = ''        
                 
                 # save the binding of the cluster to the dn_entity
                 member = ClusterMember.objects.create(
                     cluster=cluster,
                     member=dn_entity,
-                    confidence=confidence)
+                    confidence=confidence,
+                    description=description)
         
         
    
@@ -106,6 +123,8 @@ class SubjectClusterSet(BaseClusterSet):
     """Cluster set for subjects"""
     
     entity_type = ENTITY_TYPE_SUBJECT
+    
+    entity_format_str = FORMAT_STR_SUBJECT
 
     
 class ObjectClusterSet(BaseClusterSet):
@@ -113,11 +132,13 @@ class ObjectClusterSet(BaseClusterSet):
     
     entity_type = ENTITY_TYPE_OBJECT
 
+    entity_format_str = FORMAT_STR_OBJECT
     
 class SubjectObjectClusterSet(BaseClusterSet):
     """Clusters for recommenders where subject domain == object domain"""
     
     entity_type = ENTITY_TYPE_SUBJECTOBJECT
     
+    entity_format_str = FORMAT_STR_SUBJECTOBJECT
         
         

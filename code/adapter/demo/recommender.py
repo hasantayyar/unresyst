@@ -5,6 +5,10 @@ from django.db.models import Count
 
 from unresyst import *
 from models import *  
+from unresyst.algorithm import *
+from unresyst.compilator import *
+from unresyst.aggregator import *
+from unresyst.combinator import *
 
 # helper functions:    
 #
@@ -242,6 +246,8 @@ class ShoeRecommender(Recommender):
             filter_entities=ShoePair.objects.filter(category__isnull=False),
             
             get_cluster_confidence_pairs=lambda shoe: ((shoe.category.name, 1),),
+            
+            description="%(object)s belong to the %(cluster)s category.",
         ),
     )
     
@@ -278,6 +284,32 @@ class ShoeRecommender(Recommender):
     )
 
     random_recommendation_description = "Recommending a random shoe pair to the user."
+    
+    algorithm = AggregatingAlgorithm(
+                inner_algorithm=CompilingAlgorithm(
+                    inner_algorithm=SimpleAlgorithm(
+                        inner_algorithm=None
+                    ),
+                    compilator=GetFirstCompilator()
+                ),
+                aggregator=LinearAggregator()
+            )
+    """The most basic algorithm is used"""
+
+class AdvancedRecommender(ShoeRecommender):
+    
+    name = "Advanced shoe recommender"
+    
+    algorithm = AggregatingAlgorithm(
+                inner_algorithm=CompilingAlgorithm(
+                    inner_algorithm=SimpleAlgorithm(
+                        inner_algorithm=None
+                    ),
+                    compilator=CombiningCompilator(combinator=FunctionCombinator())
+                ),
+                aggregator=CombiningAggregator(combinator=FunctionCombinator())
+            )
+    """The normal algorithm is used"""
 
 
 

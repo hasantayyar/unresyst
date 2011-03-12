@@ -2,6 +2,7 @@
 
 LASTFM=false
 DEMO=false
+ADEMO=false
 
 for param in $*;
 do    
@@ -12,12 +13,20 @@ do
     'demo')
         DEMO=true
         ;;
+    'ademo')
+        ADEMO=true
+        ;;        
     esac
 done
 
 if [ $DEMO = true ]
 then
     echo "from demo.recommender import ShoeRecommender; ShoeRecommender.build(); quit();" | python ./manage.py shell
+fi
+
+if [ $ADEMO = true ]
+then
+    echo "from demo.recommender import AdvancedRecommender; AdvancedRecommender.build(); quit();" | python ./manage.py shell
 fi
 
 if [ $LASTFM = true ]
