@@ -1,3 +1,4 @@
 """The layer making predictions from aggregates"""
 
-from compilator import Compilator
+from get_first_compilator import GetFirstCompilator
+from combining_compilator import CombiningCompilator

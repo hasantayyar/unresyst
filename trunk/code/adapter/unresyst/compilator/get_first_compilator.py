@@ -6,18 +6,13 @@ from unresyst.models.aggregator import AggregatedRelationshipInstance
 from unresyst.models.abstractor import RelationshipInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance
 
-class Compilator(BaseCompilator):
+class GetFirstCompilator(BaseCompilator):
+    """Compilator using the first relationship it finds to create a prediction"""
     
-    def __init__(self, combinator, depth=DEFAULT_COMPILATOR_DEPTH, breadth=DEFAULT_COMPILATOR_BREADTH):
+    def __init__(self, depth=DEFAULT_COMPILATOR_DEPTH, breadth=DEFAULT_COMPILATOR_BREADTH):
         """The initializer"""    
         
-        super(Compilator, self).__init__(combinator=combinator)
-        
-        self.depth = depth
-        """The depth until where the comiplates should be done"""
-        
-        self.breadth = breadth
-        """The number of neighbours that will be taken during the compilation"""
+        super(GetFirstCompilator, self).__init__(depth=depth, breadth=breadth)        
 
 
     def compile_all(self, recommender_model):
@@ -32,19 +27,17 @@ class Compilator(BaseCompilator):
         if recommender_model.are_subjects_objects:
 
             # take similar on both sides
-            self._mark_similar_subjectobjects(recommender_model)
+            self._compile_similar_subjectobjects(recommender_model)
 
         else:
         
             # take similar to the ones we already have (content-based recommender)
-            self._mark_similar_objects(recommender_model)
+            self._compile_similar_objects(recommender_model)
             print "  Done. Compiling similar subjects."
 
             # take liked objects of similar users (almost collaborative filtering)
-            self._mark_similar_subjects(recommender_model)   
+            self._compile_similar_subjects(recommender_model)   
             
-        # after the marks have been made, pass it all to the combinator
-        #TODO zavolat combinator.            
 
     #TODO pryc, asi nebude potreba
     def compile_aggregates(self, recommender_model):
@@ -78,32 +71,32 @@ class Compilator(BaseCompilator):
         print "    %d aggregated predictions created" % qs_aggr.count()
                             
     
-    def _mark_similar_objects(self, recommender_model):
+    def _compile_similar_objects(self, recommender_model):
         """Create predictions by adding objects similar to ones the objects
         in predicted_relationship - that's a content-based recommender
         """   
         
-        self._mark_similar_entities(
+        self._compile_similar_entities(
                 recommender_model=recommender_model,
                 start_entity_type=ENTITY_TYPE_SUBJECT)
     
-    def _mark_similar_subjects(self, recommender_model):
+    def _compile_similar_subjects(self, recommender_model):
         """Create predictions by adding objects that similar subjects liked
         - that's collaborative filtering
         """                
         
-        self._mark_similar_entities(
+        self._compile_similar_entities(
                 recommender_model=recommender_model,
                 start_entity_type=ENTITY_TYPE_OBJECT)
 
 
-    def _mark_similar_subjectobjects(self, recommender_model):
+    def _compile_similar_subjectobjects(self, recommender_model):
         """Create predictions based on similarity for recommenders where 
         subjects==objects
         """
         
         # firstly the normal direction
-        self._mark_similar_entities(
+        self._compile_similar_entities(
                 recommender_model=recommender_model,
                 start_entity_type=ENTITY_TYPE_SUBJECTOBJECT,
                 reverse=False)
@@ -148,7 +141,7 @@ class Compilator(BaseCompilator):
     that should be used for sorting"""
     
     
-    def _mark_similar_entities(self, recommender_model, start_entity_type, reverse=False):
+    def _compile_similar_entities(self, recommender_model, start_entity_type, reverse=False):
         """Create predictions from start_entity_type objects, looking for 
         similar entities in end_entity_type
         

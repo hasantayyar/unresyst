@@ -32,7 +32,7 @@ class AggregatedRelationshipInstance(BaseRelationshipInstance):
 
     def __unicode__(self):
         """Return a printable representation of the instance"""        
-        ret = super(RuleRelationshipDefinition, self).__unicode__()
+        ret = super(AggregatedRelationshipInstance, self).__unicode__()
 
         return ret + ", %f" % (self.expectancy)    
  
@@ -58,6 +58,10 @@ class AggregatedBiasInstance(models.Model):
     
     description = models.TextField(default='', blank=True)
     """The filled description of the aggregated bias."""       
+
+    def __unicode__(self):
+        """Return a printable representation of the instance""" 
+        return u"%s: %f" % (self.subject_object, self.expectancy)
     
     class Meta:
         app_label = 'unresyst' 
