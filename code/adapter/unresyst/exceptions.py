@@ -10,6 +10,10 @@ class UnresystError(Exception):
     def _set_message(self, message): 
         self._message = message
     message = property(_get_message, _set_message)
+
+class CombinatorError(UnresystError):
+    """An error in combinator"""
+    pass
     
 class RecommenderError(UnresystError):
     """The base class for exceptions related to a recommender.

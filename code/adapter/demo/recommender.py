@@ -296,7 +296,7 @@ class ShoeRecommender(Recommender):
             )
     """The most basic algorithm is used"""
 
-class AdvancedRecommender(ShoeRecommender):
+class AverageRecommender(ShoeRecommender):
     
     name = "Advanced shoe recommender"
     
@@ -305,9 +305,9 @@ class AdvancedRecommender(ShoeRecommender):
                     inner_algorithm=SimpleAlgorithm(
                         inner_algorithm=None
                     ),
-                    compilator=CombiningCompilator(combinator=FunctionCombinator())
+                    compilator=CombiningCompilator(combinator=AverageCombinator())
                 ),
-                aggregator=CombiningAggregator(combinator=FunctionCombinator())
+                aggregator=CombiningAggregator(combinator=AverageCombinator())
             )
     """The normal algorithm is used"""
 

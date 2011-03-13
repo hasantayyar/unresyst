@@ -163,6 +163,7 @@ class LinearAggregator(BaseAggregator):
         
         # take all subjectobjects that have some biases
         qs_biased_so = SubjectObject.objects\
+            .filter(recommender=recommender_model)\
             .annotate(num_bias=Count('biasinstance'))\
             .filter(num_bias__gt=0)
               

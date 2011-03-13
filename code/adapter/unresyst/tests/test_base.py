@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from unresyst.models.common import SubjectObject 
 
-from demo.recommender import ShoeRecommender
+from demo.recommender import ShoeRecommender, AverageRecommender
 from demo.models import User, ShoePair
 
 class DBTestCase(TestCase):
@@ -16,29 +16,12 @@ class DBTestCase(TestCase):
         # insert test data
         from demo.save_data import save_data
         save_data()
-
-class TestBuild(DBTestCase):
-    """The base class performing build in the setup."""
-
-    def setUp(self):
-        """The setup for all tests - build the recommender"""
-        super(TestBuild, self).setUp()
-
-        # call the tested function        
-        ShoeRecommender.build()
-
-
-class TestEntities(TestBuild):
-    """The base class adding universal and specific entitits 
-    to the test instance
-    """
-    
-    def setUp(self):
-        """Obtain specific and universal subject objects 
-        and store them in the test instance
-        """ 
         
-        super(TestEntities, self).setUp()
+    def save_entities(self):
+        """Save instances of the entities to the testcase isntance
+        to be called in subclasses.
+        
+        Not distinguishing the recommender."""
         
         self.specific_entities = {
             'Alice': User.objects.get(name="Alice"),
@@ -54,7 +37,7 @@ class TestEntities(TestBuild):
             'Octane SL': ShoePair.objects.get(name='Design Shoes'),                        
         }
         
-        rm = ShoeRecommender._get_recommender_model()
+        rm = self.recommender._get_recommender_model()
         self.universal_entities = {
             'Alice': SubjectObject.get_domain_neutral_entity(
                             domain_specific_entity=self.specific_entities['Alice'], 
@@ -100,4 +83,47 @@ class TestEntities(TestBuild):
                             domain_specific_entity=self.specific_entities['Octane SL'], 
                             entity_type='O', 
                             recommender=rm),                            
-        }                 
+        }                         
+
+class TestBuild(DBTestCase):
+    """The base class performing build in the setup."""
+
+    def setUp(self):
+        """The setup for all tests - build the recommender"""
+        super(TestBuild, self).setUp()
+
+        # call the tested function        
+        ShoeRecommender.build()
+
+        self.recommender = ShoeRecommender
+
+class TestBuildAverage(DBTestCase):
+    """The base class performing AverageRecommender build in the setup"""
+    
+    def setUp(self):
+        """The setup for all tests - build the recommender"""
+        super(TestBuildAverage, self).setUp()
+
+        # call the tested function        
+        AverageRecommender.build()
+        
+        self.recommender = AverageRecommender
+        
+        self.save_entities()
+            
+
+class TestEntities(TestBuild):
+    """The base class adding universal and specific entitits 
+    to the test instance
+    """
+    
+    def setUp(self):
+        """Obtain specific and universal subject objects 
+        and store them in the test instance
+        """ 
+        
+        super(TestEntities, self).setUp()
+        
+        self.save_entities()
+        
+

@@ -90,7 +90,13 @@ class BaseCombinator(object):
         @rtype: iterable of SubjectObject
         @return: the promising objects
         """
+        
+        
         recommender_model = dn_subject.recommender
+        
+        object_ent_type =  ENTITY_TYPE_SUBJECTOBJECT \
+            if recommender_model.are_subjects_objects else \
+                ENTITY_TYPE_OBJECT
         
         # aggregated object bias
         #
@@ -99,7 +105,9 @@ class BaseCombinator(object):
         if self.top_bias_objects is None:
             
             qs_biases = AggregatedBiasInstance.objects\
-                .filter(recommender=recommender_model)\
+                .filter(recommender=recommender_model, 
+                    subject_object__entity_type=object_ent_type,
+                    expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
                 .order_by('-expectancy')[:min_count]
                 
             self.top_bias_objects = [b.subject_object for b in qs_biases]
@@ -108,22 +116,22 @@ class BaseCombinator(object):
         
         # s-o rules, relationships, explicit rules
         #
-        """
+        
         top_rel_objs = self._get_promising_objects_rules_relationships(
                             dn_subject=dn_subject,
                             min_count=min_count,
                             recommender_model=recommender_model)
-        """
+        
             
         # predicted_relationship + object_similarities
         # predicted_relationship + subject similarities
-        """
+        
         top_sim_objs = self._get_promising_objects_similarities(
                             dn_subject=dn_subject,
                             min_count=min_count,
                             recommender_model=recommender_model)
         
-        """
+        
 
         # predicted_relationship + subject cluster memberships 
         # predicted_relationship + object cluster memberships
@@ -136,7 +144,7 @@ class BaseCombinator(object):
         return list(set(
             top_bias_objs 
             + top_rel_objs 
-            #+ top_sim_objs 
+            + top_sim_objs 
             + cluster_objs
             ))
 
@@ -176,7 +184,7 @@ class BaseCombinator(object):
         return sim_subj_objs + sim_obj_objs
         
     def _get_promising_objects_rules_relationships(self, dn_subject, min_count, recommender_model):
-        """Get promising objects from rules, relationships, explicit rules"""
+        """Get promising objects from subject-object rules, relationships, explicit rules"""
         
         # get what is available in instances
 
@@ -185,26 +193,29 @@ class BaseCombinator(object):
             if recommender_model.are_subjects_objects else \
                 RELATIONSHIP_TYPE_SUBJECT_OBJECT 
         
-        # relationship instances by weight
+        # relationship instances by weight, some rules also may be chosen
         qs_rel = RelationshipInstance.objects.filter(
                     definition__recommender=recommender_model,
                     definition__rulerelationshipdefinition__relationship_type=rel_type,
-                    subject_object1=dn_subject)\
+                    subject_object1=dn_subject,
+                    definition__rulerelationshipdefinition__is_positive=True)\
                     .order_by('-definition__rulerelationshipdefinition__weight')[:min_count]
 
         # rule instances by confidence
         qs_rule = RuleInstance.objects.filter(
                     definition__recommender=recommender_model,
                     definition__rulerelationshipdefinition__relationship_type=rel_type,
-                    subject_object1=dn_subject)\
+                    subject_object1=dn_subject,
+                    definition__rulerelationshipdefinition__is_positive=True)\
                     .order_by('-confidence')[:min_count]                    
 
         # explicit feedback                    
         qs_exp_rel = ExplicitRuleInstance.objects.filter(                    
                     definition__recommender=recommender_model,
-                    subject_object1=dn_subject)\
+                    subject_object1=dn_subject,
+                    expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
                     .order_by('-expectancy')[:min_count]
-        
+
         return [rel.subject_object2 for rel in qs_rel] + \
             [rel.subject_object2 for rel in qs_rule] + \
             [rel.subject_object2 for rel in qs_exp_rel]        
@@ -221,7 +232,7 @@ class BaseCombinator(object):
         
         # get similarities starting the traverse with the similarity.
         cont_qs_sim1 = AggregatedRelationshipInstance.objects\
-            .filter(recommender=recommender_model)\
+            .filter(recommender=recommender_model, expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
             .filter(
                 # traverse from the other object in similarity (subject_object1) through
                 # the relationship instance, its subject (subject_object1) must be so1
@@ -234,7 +245,7 @@ class BaseCombinator(object):
         cont_objs_sim1 = [sim.subject_object2 for sim in cont_qs_sim1]
 
         cont_qs_sim2 = AggregatedRelationshipInstance.objects\
-            .filter(recommender=recommender_model)\
+            .filter(recommender=recommender_model, expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
             .filter(
                 # traverse from the other through relationship to so1
                 subject_object2__relationshipinstance_relationships2__subject_object1=dn_subject,
@@ -250,7 +261,7 @@ class BaseCombinator(object):
         
         # when subject is in the second position in similarity
         cf_qs_sim1 = AggregatedRelationshipInstance.objects\
-            .filter(recommender=recommender_model)\
+            .filter(recommender=recommender_model, expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
             .filter(
                 # take dn_subject as stable - in the subject_object2 position of the similarity
                 subject_object2=dn_subject,
@@ -266,7 +277,7 @@ class BaseCombinator(object):
 
         # when subject is in the first position in similarity                            
         cf_qs_sim2 = AggregatedRelationshipInstance.objects\
-            .filter(recommender=recommender_model)\
+            .filter(recommender=recommender_model, expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
             .filter(
                 # take dn_subject as stable again, now in the subject_object1 position of the similarity
                 subject_object1=dn_subject, 
