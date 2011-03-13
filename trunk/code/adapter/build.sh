@@ -26,7 +26,7 @@ fi
 
 if [ $ADEMO = true ]
 then
-    echo "from demo.recommender import AdvancedRecommender; AdvancedRecommender.build(); quit();" | python ./manage.py shell
+    echo "from demo.recommender import AverageRecommender; AverageRecommender.build(); quit();" | python ./manage.py shell
 fi
 
 if [ $LASTFM = true ]

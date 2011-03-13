@@ -6,9 +6,8 @@ from unresyst.models.abstractor import RelationshipInstance, \
     PredictedRelationshipDefinition, Cluster, BiasInstance
 from unresyst.models.aggregator import AggregatedRelationshipInstance, \
     AggregatedBiasInstance
-
 from unresyst.combinator.combination_element import RelSimilarityCombinationElement, \
-    ClusterSimilarityCombinationElement    
+    ClusterSimilarityCombinationElement, BiasCombinationElement  
 
 class CombiningAggregator(BaseAggregator):
     """A class using unresyst.combinator for creating aggregates"""
@@ -112,9 +111,9 @@ class CombiningAggregator(BaseAggregator):
         for ent_id in qs_ids:
             
             # get the biases for the entity
-            ent_biases = list(qs_biases.filter(subject_object__id=ent_id))
+            ent_biases = [BiasCombinationElement(bias_instance=b) for b in qs_biases.filter(subject_object__id=ent_id)]
             
-            # through them to the combinator
+            # throw them to the combinator
             aggr = self.combinator.combine_entity_biases(entity_biases=ent_biases)
             
             # fill the missing fields and save

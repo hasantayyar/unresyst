@@ -19,7 +19,7 @@ from unresyst.models.abstractor import PredictedRelationshipDefinition, \
     BiasDefinition, ExplicitRuleDefinition, ExplicitRuleInstance
 from unresyst.models.aggregator import AggregatedRelationshipInstance, AggregatedBiasInstance
 from unresyst.models.algorithm import RelationshipPredictionInstance    
-from test_base import TestBuild, TestEntities, DBTestCase
+from test_base import TestBuild, TestEntities, DBTestCase, TestBuildAverage
 from unresyst.exceptions import ConfigurationError, DescriptionKeyError
 from unresyst.recommender.rules import ExplicitSubjectObjectRule
 
@@ -688,14 +688,14 @@ class TestAggregator(TestEntities):
             "The shoe pairs Sneakers and RS 130 share some keywords.",
             "The shoe pairs RS 130 and Sneakers share some keywords.",)), # 0.6        
     }
-    """A dictionary: pair of entities : expectancy, entity_type, description"""
+    """A dictionary: pair of entities : expectancy, entity_type, description"""    
 
     def test_aggregates_created(self):
         """Test that the aggregates were created as expected"""
         
         # filter aggregated instances for my recommender
         aggr_instances = AggregatedRelationshipInstance.objects.filter(
-                            recommender=ShoeRecommender._get_recommender_model())
+                            recommender=self.recommender._get_recommender_model())
         
         # assert it has the expected length 
         eq_(aggr_instances.count(), len(self.EXPECTED_AGGREGATES))
@@ -750,7 +750,7 @@ class TestAggregator(TestEntities):
         
         # get the aggregates, check count
         #        
-        aggregates = AggregatedBiasInstance.objects.all()        
+        aggregates = AggregatedBiasInstance.objects.filter(recommender=self.recommender._get_recommender_model())        
         eq_(aggregates.count(), len(self.EXP_AGGR_BIASES))
         
         # go through created aggregates, assert its in expected and 
@@ -766,8 +766,33 @@ class TestAggregator(TestEntities):
                 
             eq_(aggr.description, exp_desc) 
         
-                                    
+class TestAggregatorAverage(TestBuildAverage): 
+    """Testing the aggregator of the average build"""
 
+    def test_aggregated_biases_created(self):
+        """AverageRecommender: Test that the bias aggregates were created as expected"""    
+        # call the same method on the normal aggregator
+        ta = TestAggregator("test_aggregated_biases_created")
+        ta.recommender = self.recommender
+        ta.test_aggregated_biases_created()
+
+
+    def test_aggregates_created(self):
+        """AverageRecommender: Test that the aggregates were created as expected"""
+        
+        # instantiate the common aggregator
+        ta = TestAggregator("test_aggregates_created")
+        ta.recommender = self.recommender
+
+        # leave in the aggregates only similarity relationship        
+        ta.EXPECTED_AGGREGATES = dict ( [(k, v) for k, v in ta.EXPECTED_AGGREGATES.items() \
+            if self.universal_entities[k[0]].entity_type == self.universal_entities[k[1]].entity_type])
+
+        
+        # call the same method on the normal aggregator
+        ta.test_aggregates_created()
+        
+        
 class TestAlgorithm(TestEntities):
     """Testing the building phase of the SimpleAlgorithm"""       
     

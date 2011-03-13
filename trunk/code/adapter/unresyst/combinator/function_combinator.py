@@ -1,4 +1,4 @@
-"""Concrete combinators"""
+"""Combinator using the magic function."""
 
 from base import BaseCombinator
 

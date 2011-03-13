@@ -517,9 +517,8 @@ class Recommender(BaseRecommender):
         
         # if the recommender was found, assign it to the class and return it
         if models:            
-            assert len(models) == 1
-            cls._recommender_model = models[0]
-            return cls._recommender_model
+            assert len(models) == 1            
+            return models[0]
         
         # if not return None
         return None            
