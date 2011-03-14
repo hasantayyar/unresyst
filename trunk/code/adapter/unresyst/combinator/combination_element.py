@@ -73,11 +73,11 @@ class SubjectObjectRelCombinationElement(BaseCombinationElement):
         return self.rel_instance.description   
                 
     
-class SimilarityCombinationElement(BaseCombinationElement):
+class _SimilarityCombinationElement(BaseCombinationElement):
     """The element of a similarity combination"""
     pass
     
-class RelSimilarityCombinationElement(SimilarityCombinationElement):
+class RelSimilarityCombinationElement(_SimilarityCombinationElement):
     """The similarity coming out of a rule/relationship
     
     For Aggregator.
@@ -103,7 +103,7 @@ class RelSimilarityCombinationElement(SimilarityCombinationElement):
         return self.rel_instance.description        
 
 
-class ClusterSimilarityCombinationElement(SimilarityCombinationElement):
+class ClusterSimilarityCombinationElement(_SimilarityCombinationElement):
     """The similarity coming out of a common cluster memenbership"""
 
     def __init__(self, cluster_members):
@@ -122,8 +122,8 @@ class ClusterSimilarityCombinationElement(SimilarityCombinationElement):
     
     def _get_expectancy(self):
         """Return the product of the reasoning members"""
-        member1, member2 = self.cluster_members
-        return member1.get_expectancy() * member2.get_expectancy()
+                
+        return self.cluster_members[0].get_pair_expectancy(cluster_member_pair=self.cluster_members)
     
     def _get_description(self):
         """Return the concatenaged member descriptions"""
@@ -180,4 +180,94 @@ class BiasAggregateCombinationElement(BaseCombinationElement):
         return self.bias_aggregate.description
 
 
+class _PredictedPlusSimilarityCombinationElement(BaseCombinationElement):
+    """A sign of preference made of known predicted relationship plus similarity.
+    For compilator.
+    """
+    
+    def __init__(self, predicted_rel, similarity_aggregate):
+        """The initializer"""
         
+        super(_PredictedPlusSimilarityCombinationElement, self).__init__()
+        
+        self.predicted_rel = predicted_rel
+        """The predicted relationship to/from some other object/subject
+        @type predicted_rel: RelationshipInstance binded to PredictedRelationshipDefinition
+        """
+        
+        self.similarity_aggregate = similarity_aggregate
+        """The aggregated similarity between the subjects/objects
+        @type similarity_aggregate: AggregatedRelationshipInstance
+        """
+
+    def _get_positiveness(self):   
+        exp = self.get_expectancy()
+        return _get_expectancy_positiveness(exp)
+        
+    def _get_expectancy(self):
+        return self.similarity_aggregate.expectancy
+        
+
+
+class PredictedPlusObjectSimilarityCombinationElement(_PredictedPlusSimilarityCombinationElement):
+    """Predicted relationship plus similarity of objects.
+    For compilator.
+    """
+    def _get_description(self):
+        return "%s And: %s" % (self.predicted_rel.description, self.similarity_aggregate.description)
+
+class PredictedPlusSubjectSimilarityCombinationElement(_PredictedPlusSimilarityCombinationElement):
+    """Predicted relationship plus similarity of subjects.
+    For compilator.
+    """
+    def _get_description(self):
+        return "%s And: %s" % (self.similarity_aggregate.description, self.predicted_rel.description)
+
+
+class _PredictedPlusClusterMemberCombinationElement(BaseCombinationElement):
+    """A sign of preference made of known predicted relationship plus similarity
+    coming out of two cluster memberships.
+
+    For compilator.
+    """
+
+    def __init__(self, predicted_rel, cluster_combination_element):
+        """The initializer"""
+        
+        super(_PredictedPlusClusterMemberCombinationElement, self).__init__()
+        
+        self.predicted_rel = predicted_rel
+        """The predicted relationship to/from some other object/subject
+        @type predicted_rel: RelationshipInstance binded to PredictedRelationshipDefinition
+        """
+        
+        self.cluster_combination_element = cluster_combination_element
+        """The pair of cluster memeberships meaning the similarity. In the order as if coming
+        from the subject to the object.
+        @type cluster_membership_pair: ClusterSimilarityCombinationElement
+        """    
+        
+        
+    def _get_positiveness(self):   
+        return True
+        
+    def _get_expectancy(self):
+        return self.cluster_combination_element.get_expectancy()
+        
+                
+
+class PredictedPlusObjectClusterMemberCombinationElement(_PredictedPlusClusterMemberCombinationElement):
+    """Predicted relationship plus cluster membership of objects.
+
+    For compilator.
+    """
+    def _get_description(self):
+        return "%s And: %s" % (self.predicted_rel.description, self.cluster_combination_element.get_description())
+
+class PredictedPlusSubjectClusterMemberCombinationElement(_PredictedPlusClusterMemberCombinationElement):
+    """Predicted relationship plus cluster membership of subjects.
+
+    For compilator.
+    """
+    def _get_description(self):
+        return "%s And: %s" % (self.cluster_combination_element.get_description(), self.predicted_rel.description)

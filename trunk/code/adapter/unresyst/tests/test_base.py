@@ -34,7 +34,7 @@ class DBTestCase(TestCase):
             "Rubber Shoes": ShoePair.objects.get(name="Rubber Shoes"),
             'RS 130': ShoePair.objects.get(name='RS 130'),
             'Design Shoes': ShoePair.objects.get(name='Design Shoes'),
-            'Octane SL': ShoePair.objects.get(name='Design Shoes'),                        
+            'Octane SL': ShoePair.objects.get(name='Octane SL'),                        
         }
         
         rm = self.recommender._get_recommender_model()

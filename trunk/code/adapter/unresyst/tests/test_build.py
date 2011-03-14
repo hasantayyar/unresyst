@@ -150,7 +150,8 @@ class TestAbstractor(TestEntities):
     EXPECTED_PREDICTED_RELATIONSHIP_INSTANCES = (
             ('Alice', 'Sneakers', "User Alice likes shoes Sneakers."),
             ('Bob', 'Sneakers', "User Bob likes shoes Sneakers."),
-            ('Edgar', 'Rubber Shoes', "User Edgar likes shoes Rubber Shoes."),
+            ('Edgar', 'Rubber Shoes', "User Edgar likes shoes Rubber Shoes."),   
+            ('Edgar', 'RS 130', "User Edgar likes shoes RS 130."),   
     ) 
 
     
@@ -163,6 +164,10 @@ class TestAbstractor(TestEntities):
         
         # get instances of the predicted relationship
         instances = RelationshipInstance.remove_subclass_objects().filter(definition=definition)
+        
+        eq_(len(self.EXPECTED_PREDICTED_RELATIONSHIP_INSTANCES), instances.count(),
+            "Expected: %d, obtained: %d. Obtained: %s" % \
+                (len(self.EXPECTED_PREDICTED_RELATIONSHIP_INSTANCES), instances.count(), instances))
         
         for expected_data in self.EXPECTED_PREDICTED_RELATIONSHIP_INSTANCES:
 
@@ -255,8 +260,8 @@ class TestAbstractor(TestEntities):
         "Shoes with common keywords.": (
             ('Rubber Shoes', 'Sneakers', ("The shoe pairs Rubber Shoes and Sneakers share some keywords.",
                 "The shoe pairs Sneakers and Rubber Shoes share some keywords."), 1),
-            ('Sneakers', 'RS 130', ("The shoe pairs Sneakers and RS 130 share some keywords.",
-                "The shoe pairs RS 130 and Sneakers share some keywords."), 0.5),                
+            ('Sneakers', 'Design Shoes', ("The shoe pairs Sneakers and Design Shoes share some keywords.",
+                "The shoe pairs Design Shoes and Sneakers share some keywords."), 0.5),   
         ),
     }            
 
@@ -340,7 +345,8 @@ class TestAbstractor(TestEntities):
                     
                 # for rules    
                 if len(expected_data) == 4:
-                    eq_(instance.confidence, expected_data[3])
+                    eq_(instance.confidence, expected_data[3], 
+                        "Got confidence: %f, expected: %f for instance: %s" % (instance.confidence, expected_data[3], instance))
                     
 
     def _test_definitions(self, def_list):
@@ -379,6 +385,20 @@ class TestAbstractor(TestEntities):
                 'Casual': (("Design Shoes", 1, "Design Shoes belong to the Casual category."), 
                     ("Sneakers", 1, "Sneakers belong to the Casual category.")),},
                 'O', 0.3),
+        "Keyword search cluster set.":
+            (
+                {'Sporty': (
+                    ('Bob', 0.5, "Bob has searched for the word Sporty."),
+                ),
+                'Comfortable': (
+                    ('Bob', 0.5, "Bob has searched for the word Comfortable."),
+                    ('Cindy', 0.5, "Cindy has searched for the word Comfortable."),
+                ),
+                'Cool':(
+                    ('Cindy', 0.5, "Cindy has searched for the word Cool."),
+                ),
+                },
+                'S', 0.4),
     }
     """A dictionary: cluster set name: contained clusters, entity type, weight,
     the members: object name, confidence, description."""
@@ -421,12 +441,13 @@ class TestAbstractor(TestEntities):
             {
                 'Alice': (0.333333, "User Alice likes many shoe pairs."),
                 'Bob': (0.333333, "User Bob likes many shoe pairs."),
-                'Edgar': (0.333333, "User Edgar likes many shoe pairs."),
+                'Edgar': (0.66666, "User Edgar likes many shoe pairs."),
             },
         "Popular shoes":
             {
                 'Sneakers': (0.6666666, "Shoe pair Sneakers is popular"),
                 'Rubber Shoes': (0.333333, "Shoe pair Rubber Shoes is popular"),
+                'RS 130': (0.333333, "Shoe pair RS 130 is popular"),
             },
     }
     """A dictionary: cluster set name: contained clusters, entity type, weight"""    
@@ -684,9 +705,9 @@ class TestAggregator(TestEntities):
             "The shoe pairs Rubber Shoes and Sneakers share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.",
             "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
             "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")), # 0.625
-        ('Sneakers', 'RS 130'): (_count_exp(0.2), 'O-O',(
-            "The shoe pairs Sneakers and RS 130 share some keywords.",
-            "The shoe pairs RS 130 and Sneakers share some keywords.",)), # 0.6        
+        ('Sneakers', 'Design Shoes'): (_count_exp(0.2), 'O-O',(
+            "The shoe pairs Sneakers and Design Shoes share some keywords.",
+            "The shoe pairs Design Shoes and Sneakers share some keywords.",)), # 0.6        
     }
     """A dictionary: pair of entities : expectancy, entity_type, description"""    
 
@@ -724,8 +745,8 @@ class TestAggregator(TestEntities):
             
             # assert the expectancy is as expected    
             assert_almost_equal(aggr_inst.expectancy, expected_expectancy, PLACES,
-                "Expectancy is '%f' should be '%f' for the pair %s, %s" % \
-                    ((aggr_inst.expectancy, expected_expectancy) + pair1)) 
+                "Expectancy is '%f' should be '%f' for the pair %s, %s, Obtained description: %s" % \
+                    ((aggr_inst.expectancy, expected_expectancy) + pair1 + (aggr_inst.description,))) 
         
             # assert the relationship type is as expected    
             eq_(aggr_inst.relationship_type, expected_rel_type,
@@ -740,9 +761,10 @@ class TestAggregator(TestEntities):
     EXP_AGGR_BIASES = {
         'Alice': (_count_exp(0.4 * 0.333333), "User Alice likes many shoe pairs."),
         'Bob': (_count_exp(0.4 * 0.333333), "User Bob likes many shoe pairs."),
-        'Edgar': (_count_exp(0.4 * 0.333333), "User Edgar likes many shoe pairs."),
+        'Edgar': (_count_exp(0.4 * 0.66666), "User Edgar likes many shoe pairs."),
         'Sneakers': (_count_exp(0.8 * 0.6666666), "Shoe pair Sneakers is popular"),
         'Rubber Shoes': (_count_exp(0.8 * 0.333333), "Shoe pair Rubber Shoes is popular"),
+        'RS 130': (_count_exp(0.8 * 0.333333), "Shoe pair RS 130 is popular"),
     }
     
     def test_aggregated_biases_created(self):
@@ -776,6 +798,32 @@ class TestAggregatorAverage(TestBuildAverage):
         ta.recommender = self.recommender
         ta.test_aggregated_biases_created()
 
+    EXPECTED_AGGREGATES = {
+        # S-S
+        ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, 'S-S', (
+            "Users Alice and Bob live in the same city. Users Alice and Bob are about the same age.",
+            "Users Alice and Bob live in the same city. Users Bob and Alice are about the same age.",
+            "Users Alice and Bob live in the same city. Users Bob and Alice are about the same age.",
+            "Users Bob and Alice live in the same city. Users Bob and Alice are about the same age.")), # 0.6125
+        ('Cindy', 'Daisy'): (_count_exp(0.3), 'S-S', (
+            "Users Cindy and Daisy live in the same city.",
+            "Users Daisy and Cindy live in the same city.")), #0.65
+        ('Edgar', 'Fionna'): (_count_exp(1 * 0.2), 'S-S', (
+            "Users Edgar and Fionna are about the same age.",
+            "Users Fionna and Edgar are about the same age.")),
+        
+        # O-O
+        ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'O-O', (
+            "The shoe pairs Rubber Shoes and Sneakers share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+            "The shoe pairs Rubber Shoes and Sneakers share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.",
+            "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+            "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")), # 0.625
+        ('Sneakers', 'Design Shoes'): (0.625, 'O-O',(
+            "Sneakers belong to the Casual category. Design Shoes belong to the Casual category. The shoe pairs Sneakers and Design Shoes share some keywords.",
+            "Sneakers belong to the Casual category. Design Shoes belong to the Casual category. The shoe pairs Design Shoes and Sneakers share some keywords.",
+            "Design Shoes belong to the Casual category. Sneakers belong to the Casual category. The shoe pairs Sneakers and Design Shoes share some keywords.",
+            "Design Shoes belong to the Casual category. Sneakers belong to the Casual category. The shoe pairs Design Shoes and Sneakers share some keywords.",)), # 0.6        
+    }
 
     def test_aggregates_created(self):
         """AverageRecommender: Test that the aggregates were created as expected"""
@@ -785,8 +833,7 @@ class TestAggregatorAverage(TestBuildAverage):
         ta.recommender = self.recommender
 
         # leave in the aggregates only similarity relationship        
-        ta.EXPECTED_AGGREGATES = dict ( [(k, v) for k, v in ta.EXPECTED_AGGREGATES.items() \
-            if self.universal_entities[k[0]].entity_type == self.universal_entities[k[1]].entity_type])
+        ta.EXPECTED_AGGREGATES = self.EXPECTED_AGGREGATES
 
         
         # call the same method on the normal aggregator
@@ -802,10 +849,12 @@ class TestAlgorithm(TestEntities):
         ('Alice', 'RS 130'): _count_neg_exp(0.85), # 0.075
         ('Alice', 'Rubber Shoes'): (_count_exp(0.4) + _count_exp(0.1))/2, # 0.625
         ('Alice', 'Sneakers'): _count_exp(0.1),  # 0.55
+        ('Alice', 'Design Shoes'): _count_exp(0.2), # 0.6
         
         ('Bob', 'RS 130'): _count_neg_exp(0.85), # 0.075
         ('Bob', 'Rubber Shoes'): _count_exp(0.1), # 0.55
         ('Bob', 'Sneakers'): (_count_exp(0.4) + _count_exp(0.1))/2, # 0.625
+        ('Bob', 'Design Shoes'): _count_exp(0.2), # 0.6
 
         ('Cindy', 'RS 130'): _count_exp(0.1), # 0.55
         ('Cindy', 'Rubber Shoes'): _count_exp(0.4), # 0.7        
@@ -815,6 +864,7 @@ class TestAlgorithm(TestEntities):
         ('Edgar', 'Sneakers'): (_count_exp(0.1) + _count_exp(0.4))/2, # 0.625 
         
         ('Fionna', 'Rubber Shoes'): _count_exp(0.2),
+        ('Fionna', 'RS 130'): _count_exp(0.2), # 0.6        
     }     
     
     def test_predictions_created(self):

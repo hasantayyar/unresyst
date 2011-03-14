@@ -8,7 +8,7 @@ from django.db import models
 from unresyst.constants import *
 from base import BaseRelationshipInstance, ContentTypeModel, \
     BaseRelationshipDefinition
-
+from unresyst.exceptions import InvalidParameterError
 
 def _count_expectancy(is_positive, weight, confidence=1):
     """Count the expectancy for the instance as 1/2 +- weighted_confidence/2 
@@ -288,14 +288,34 @@ class ClusterMember(models.Model):
     A number from [0, 1].
     """
     
-    def get_expectancy(self):
+    @classmethod
+    def get_pair_expectancy(cls, cluster_member_pair):
         """Return the expectancy that will be used for similarity counting 
-        for cluster members"""
+        for cluster members
+        
+        @type cluster_member_pair: a tuple (pair) of ClusterMember
+        @param cluster_member_pair: cluster members for counting the similarity
+            of the members.
+        
+        @rtype: float
+        @return: the expectancy that the members are similar
+        """
+        cm1, cm2 = cluster_member_pair
+        
+        # if they aren't from the same cluster raise an error
+        if cm1.cluster != cm2.cluster:
+            raise InvalidParameterError(
+                message="The members to combine don't belong to the same cluster.",
+                recommender=cm1.cluster.cluster_set.recommender, 
+                parameter_name='cluster_member_pair', 
+                parameter_value=cluster_member_pair)
+        
+        conf = cm1.confidence * cm2.confidence
         
         return _count_expectancy(
             is_positive=True,
-            weight=self.cluster.cluster_set.weight,
-            confidence=self.confidence)
+            weight=cm1.cluster.cluster_set.weight,
+            confidence=conf)
     
     def __unicode__(self):
         """Return a printable representation of the instance"""

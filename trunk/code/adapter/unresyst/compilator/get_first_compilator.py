@@ -12,7 +12,7 @@ class GetFirstCompilator(BaseCompilator):
     def __init__(self, depth=DEFAULT_COMPILATOR_DEPTH, breadth=DEFAULT_COMPILATOR_BREADTH):
         """The initializer"""    
         
-        super(GetFirstCompilator, self).__init__(depth=depth, breadth=breadth)        
+        super(GetFirstCompilator, self).__init__(combinator=None, depth=depth, breadth=breadth)        
 
 
     def compile_all(self, recommender_model):
