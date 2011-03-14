@@ -162,7 +162,7 @@ class BaseCombinator(object):
         for cm1 in dn_subject.clustermember_set.order_by('-confidence')[:min_count/self.DIVISOR]:
 
             # take the most similar subjects
-            for cm2 in cm1.cluster.clustermember_set.exclude(id=cm.id).order_by('-confidence')[:min_count/self.DIVISOR]:
+            for cm2 in cm1.cluster.clustermember_set.exclude(id=cm1.id).order_by('-confidence')[:min_count/self.DIVISOR]:
                 
                 # take objects connected with them
                 for rel in cm2.member.relationshipinstance_relationships1.filter(definition=d)[:min_count/self.DIVISOR]:
@@ -174,7 +174,6 @@ class BaseCombinator(object):
         
         qs_memberships = ClusterMember.objects.filter(
             cluster__cluster_set__recommender=recommender_model,
-            cluster__clustermember__cluster__cluster_set__recommender=recommender_model,
             cluster__clustermember__member__relationshipinstance_relationships2__definition=d,
             cluster__clustermember__member__relationshipinstance_relationships2__subject_object1=dn_subject)\
             .order_by('-confidence', '-cluster__clustermember__confidence')[:min_count]

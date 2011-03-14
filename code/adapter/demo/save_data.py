@@ -17,6 +17,9 @@ def save_data():
     
     cool = Keyword(word='Cool')
     cool.save()
+    
+    trendy = Keyword(word='Trendy')
+    trendy.save()
 
     # cities
     hollywood = City(name="Hollywood", in_south=True)
@@ -75,7 +78,7 @@ def save_data():
         category=for_sports       
     )
     ski_boots.save()
-    ski_boots.keywords.add(sporty, cool)
+    ski_boots.keywords.add(sporty)
     ski_boots.save()
     
     design_shoes = ShoePair(
@@ -84,6 +87,8 @@ def save_data():
         for_winter=False
     )
     design_shoes.save()
+    design_shoes.keywords.add(cool, trendy)
+    sneakers.save()    
     
     octane_sl = ShoePair(
         name="Octane SL",
@@ -101,7 +106,6 @@ def save_data():
     alice.save()
     alice.viewed_shoes.add(rubber_shoes)
     alice.likes_shoes.add(sneakers)
-    alice.words_searched.add(trainers)
     alice.save()
     
     ShoeRating.objects.create(
@@ -132,6 +136,7 @@ def save_data():
     )
     cindy.save()
     cindy.viewed_shoes.add(rubber_shoes)
+    cindy.words_searched.add(comfortable, cool)
     cindy.save()
     
     # a user with usable demographic info
@@ -149,7 +154,7 @@ def save_data():
         home_city=almaty
     )
     edgar.save()
-    edgar.likes_shoes.add(rubber_shoes)
+    edgar.likes_shoes.add(rubber_shoes, ski_boots)
     edgar.save()
     
     # a user to test recommending by cf (shoes liked by a similar user)

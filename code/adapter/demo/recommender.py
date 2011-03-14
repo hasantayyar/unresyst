@@ -249,6 +249,20 @@ class ShoeRecommender(Recommender):
             
             description="%(object)s belong to the %(cluster)s category.",
         ),
+        
+        # searched keywords cluster
+        SubjectClusterSet(
+            name="Keyword search cluster set.",
+            
+            weight=0.4,
+            
+            filter_entities=User.objects.filter(words_searched__isnull=False).distinct(),
+            
+            # clusters are words, confidence is 1/number of searched words for user
+            get_cluster_confidence_pairs=lambda user: [(w, 1.0/user.words_searched.count()) for w in user.words_searched.all()],
+            
+            description="%(subject)s has searched for the word %(cluster)s.",
+        ),
     )
     
     biases = (

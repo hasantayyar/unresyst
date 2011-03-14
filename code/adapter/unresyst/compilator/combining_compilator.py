@@ -10,12 +10,10 @@ class CombiningCompilator(BaseCompilator):
     """        
     
     def __init__(self, combinator, depth=DEFAULT_COMPILATOR_DEPTH, breadth=DEFAULT_COMPILATOR_BREADTH):
-        """The initializer"""    
+        """The initializer, combinator is not optional."""    
         
-        super(CombiningCompilator, self).__init__(depth=depth, breadth=breadth)
+        super(CombiningCompilator, self).__init__(combinator=combinator, depth=depth, breadth=breadth)
         
-        self.combinator = combinator
-        """The combinator that should be used during compiling"""  
 
     def compile_all(self, recommender_model):
         """Compile preferences, known relationships + similarities.
