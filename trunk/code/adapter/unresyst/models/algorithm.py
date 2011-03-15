@@ -21,6 +21,12 @@ class RelationshipPredictionInstance(BaseRelationshipInstance):
     recommender = models.ForeignKey('unresyst.Recommender')
     """The recommender it belongs to"""
     
+    is_uncertain = models.BooleanField(default=False)
+    """Is the prediction uncertain? (We don't know anything about the pair)"""
+    
+    is_trivial = models.BooleanField(default=False)
+    """Is the prediction trivial? (Already contained in the train data)"""
+    
     class Meta:
         app_label = 'unresyst'  
 

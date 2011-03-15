@@ -12,8 +12,10 @@ from unresyst.models.algorithm import RelationshipPredictionInstance
 from unresyst.models.common import SubjectObject
 from unresyst.recommender.rules import BaseRelationship
 
-class SimpleAlgorithm(BaseAlgorithm):
-    """A simple implementation of a recommender algorithm.
+class Algorithm(BaseAlgorithm):
+    """The original deprecated implementation mixing combinator, compilator and algorithm. 
+    
+    A simple implementation of a recommender algorithm.
     
     The remove_predicted_from_recommendations is implemented by adding a zero
     prediction for all pairs in predicted relationship. 
@@ -28,22 +30,19 @@ class SimpleAlgorithm(BaseAlgorithm):
     # Build phase:
     #
     
-    def build(cls, recommender_model):
+    def build(self, recommender_model):
         """Build the recommender - create the instances of the 
         RelationshipPredictionInstance model where there is some simple 
         prediction available. Where there isn't, leave it.
-        """
-        
-                
-
+        """                        
 
 
 
     # Recommend phase:
     #
 
-    @classmethod
-    def get_relationship_prediction(cls, recommender_model, dn_subject, dn_object, remove_predicted):
+
+    def get_relationship_prediction(self, recommender_model, dn_subject, dn_object, remove_predicted):
         """See the base class for the documentation.
         """
         # if predicted should be removed and the pair is in the predicted_rel, 
@@ -62,13 +61,9 @@ class SimpleAlgorithm(BaseAlgorithm):
                 assert len(qs_predicted_rel) == 1
                 predicted = qs_predicted_rel[0]
 
-                return RelationshipPredictionInstance(
-                    subject_object1=dn_subject,
-                    subject_object2=dn_object,
-                    description=predicted.description,
-                    recommender=recommender_model,
-                    expectancy=ALREADY_IN_REL_PREDICTION_VALUE
-                ) 
+                return self._get_already_in_relatinship_prediction(
+                    recommender_model=recommender_model,
+                    predicted_relationship=predicted)
             
         
         # filter the predictions for recommender
@@ -199,14 +194,14 @@ class SimpleAlgorithm(BaseAlgorithm):
         
         
         # return the uncertain
-        return cls._get_uncertain_prediction(
+        return self._get_uncertain_prediction(
                 recommender_model=recommender_model, 
                 dn_subject=dn_subject, 
                 dn_object=dn_object
             )
         
     @classmethod
-    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):
+    def get_recommendations(self, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):
         """See the base class for documentation.
         """                
         
@@ -301,39 +296,27 @@ class SimpleAlgorithm(BaseAlgorithm):
                 
             # construct the uncertain recommendations
             for obj in uncertain_objects[:uncertain_required_count]:
-                pred = cls._get_uncertain_prediction(recommender_model, dn_subject, obj)
+                pred = self._get_uncertain_prediction(recommender_model, dn_subject, obj)
                 uncertain_preds.append(pred)
 
             return list(positive_preds) + uncertain_preds + list(negative_preds)
 
         # apply the limit for count
-        return list(recommendations[:count])
-                         
-    @staticmethod
-    def _get_uncertain_prediction(recommender_model, dn_subject, dn_object):
-        """Get the prediction for a pair for which nothing is known"""
-        
-        return RelationshipPredictionInstance(
-                subject_object1=dn_subject,
-                subject_object2=dn_object,
-                description=recommender_model.random_recommendation_description,
-                recommender=recommender_model,
-                expectancy=UNCERTAIN_PREDICTION_VALUE
-            ) 
+        return list(recommendations[:count])                         
             
 
 
 
-class PredictOnlyAlgorithm(SimpleAlgorithm):
+class PredictOnlyAlgorithm(Algorithm):
     """An algorithm that doesn't need to be built, performs only predictions."""
     
     @classmethod
-    def build(cls, recommender_model):
+    def build(self, recommender_model):
         """Do nothing"""
         return
 
     @classmethod
-    def get_recommendations(cls, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):    
+    def get_recommendations(self, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):    
         """Raise an error"""
         raise NotImplementedError()    
 

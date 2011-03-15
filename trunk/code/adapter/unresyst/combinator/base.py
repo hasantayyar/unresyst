@@ -1,7 +1,7 @@
 """Base classes for the combinator layer:
  - BaseCombinator
 """
-
+from unresyst.exceptions import CombinatorError
 from unresyst.models.abstractor import RelationshipInstance, RuleInstance, \
     ExplicitRuleInstance, PredictedRelationshipDefinition, ClusterMember
 from unresyst.models.aggregator import AggregatedRelationshipInstance, AggregatedBiasInstance
@@ -9,7 +9,19 @@ from unresyst.models.algorithm import RelationshipPredictionInstance
 from unresyst.constants import *
 
 class BaseCombinator(object):
-    """The empty base class defining the interface of all combinators."""
+    """The base class defining the interface of all combinators.
+    interface methods:
+     - combine_pair_similarities
+     - combine_entity_biases
+     - combine_pair_prediction_elements
+     - choose_promising_objects
+        
+    methods to be overriden:
+     - _combine     
+     
+    helper methods for subclasses:
+     - _concat_descriptions        
+    """
     
     DIVISOR = 3
     """A constant for dividing the relationship members that would otherwise be 
@@ -20,6 +32,13 @@ class BaseCombinator(object):
         
         self.top_bias_objects = None
 
+    def _checked_combine(self, combination_elements, ResultClass):
+        """Check if something was given and call the overriden _combine method
+        """
+        if not combination_elements:
+            raise CombinatorError("No combination_elements given")
+        return self._combine(combination_elements, ResultClass)
+                    
     def _combine(self, combination_elements, ResultClass):
         """Combine the combination elements to produce an instance 
         of the ResultClass, filling in its expectancy and description.
@@ -37,6 +56,28 @@ class BaseCombinator(object):
         """
         pass
 
+    @staticmethod
+    def _concat_descriptions(element_list):
+        """Concat descriptions of the elements in the element_list.
+        
+        @type element_list: a list of BaseCombinationElement
+        @param element_list: a list of elements in order that they should
+            appear
+            
+        @rtype: str
+        @return: the string concatenation of the element descriptions
+        """
+        list_len = len(element_list)
+        
+        assert list_len > 0
+        
+        if list_len == 1:
+            return element_list[0].get_description()
+        
+        return ' '.join(["%s: %s" % ((REASON_STR % i), e.get_description()) \
+            for e, i in zip(element_list, range(1, list_len + 1))])
+
+            
 
     def combine_pair_similarities(self, combination_elements):
         """Aggregate similarities of the given pair S-S, O-O, or SO-SO. 
@@ -48,7 +89,7 @@ class BaseCombinator(object):
         @return: the aggregated relationship with filled expectancy and
             description, other fields are empty.
         """ 
-        return self._combine(
+        return self._checked_combine(
             combination_elements=combination_elements, 
             ResultClass=AggregatedRelationshipInstance)
         
@@ -64,10 +105,18 @@ class BaseCombinator(object):
         @return: the expectancy that the entity will be in 
             a predicted_relationship, aggregated from its biases
         """
-        return self._combine(
+        return self._checked_combine(
             combination_elements=entity_biases,
             ResultClass=AggregatedBiasInstance)
 
+
+    def combine_pair_prediction_elements(self, combination_elements):
+        """Combine all preference sources producing predictions"""
+        return self._checked_combine(
+            combination_elements=combination_elements,
+            ResultClass=RelationshipPredictionInstance)
+
+            
     def choose_promising_objects(self, dn_subject, min_count):
         """Choose at least min_count objects that are likely to be interesting
         for the dn_subject, using various preference sources, choosing by 
@@ -293,11 +342,7 @@ class BaseCombinator(object):
         return cont_objs_sim1 + cont_objs_sim2 + cf_objs_sim1 + cf_objs_sim2
         
         
-    def combine_pair_prediction_elements(self, combination_elements):
-        """Combine all preference sources producing predictions"""
-        return self._combine(
-            combination_elements=combination_elements,
-            ResultClass=RelationshipPredictionInstance)
+
             
             
             

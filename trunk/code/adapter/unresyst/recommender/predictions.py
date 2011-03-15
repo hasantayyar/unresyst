@@ -44,3 +44,6 @@ class RelationshipPrediction(object):
             self.expectancy, 
             self.explanation
         )
+        
+    def __repr__(self):
+        return "< %s >" % str(self.__unicode__())

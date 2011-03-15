@@ -34,6 +34,9 @@ class RecommenderError(UnresystError):
         self.recommender = recommender
         """The recommender for which the error is raised""" 
             
+class RecommenderBuildError(RecommenderError):
+    """An error during the build of the recommender."""
+    pass
 
 class RecommenderNotBuiltError(RecommenderError):
     """Exception meaning that the recommender hasn't been built even though
