@@ -286,7 +286,7 @@ class Recommender(BaseRecommender):
                 parameter_value=object_)     
         
         # get the prediction from the algorithm
-        prediction_model = cls.Algorithm.get_relationship_prediction(
+        prediction_model = cls.algorithm.get_relationship_prediction(
             recommender_model=recommender_model,
             dn_subject=dn_subject,
             dn_object=dn_object,

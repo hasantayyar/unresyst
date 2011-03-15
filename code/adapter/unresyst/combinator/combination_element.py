@@ -53,7 +53,9 @@ class BaseCombinationElement(object):
 
 class SubjectObjectRelCombinationElement(BaseCombinationElement):
     """The relationship between a subject and an object meaning the preference
-    in means of the predicted_relationship.    
+    in means of the predicted_relationship. 
+    
+    For compilator.   
     """
     
     def __init__(self, rel_instance):
@@ -104,7 +106,10 @@ class RelSimilarityCombinationElement(_SimilarityCombinationElement):
 
 
 class ClusterSimilarityCombinationElement(_SimilarityCombinationElement):
-    """The similarity coming out of a common cluster memenbership"""
+    """The similarity coming out of a common cluster membership
+
+    For combinator and aggregator.
+    """
 
     def __init__(self, cluster_members):
         """The initializer"""
@@ -131,7 +136,7 @@ class ClusterSimilarityCombinationElement(_SimilarityCombinationElement):
         
 class BiasCombinationElement(BaseCombinationElement):
     """The biase of a subject/object coming to the combination
-    For aggregator
+    For aggregator.
     """
     
     def __init__(self, bias_instance):
@@ -214,14 +219,14 @@ class PredictedPlusObjectSimilarityCombinationElement(_PredictedPlusSimilarityCo
     For compilator.
     """
     def _get_description(self):
-        return "%s And: %s" % (self.predicted_rel.description, self.similarity_aggregate.description)
+        return "%s And similarity: %s" % (self.predicted_rel.description, self.similarity_aggregate.description)
 
 class PredictedPlusSubjectSimilarityCombinationElement(_PredictedPlusSimilarityCombinationElement):
     """Predicted relationship plus similarity of subjects.
     For compilator.
     """
     def _get_description(self):
-        return "%s And: %s" % (self.similarity_aggregate.description, self.predicted_rel.description)
+        return "Similarity: %s And: %s" % (self.similarity_aggregate.description, self.predicted_rel.description)
 
 
 class _PredictedPlusClusterMemberCombinationElement(BaseCombinationElement):
@@ -262,7 +267,7 @@ class PredictedPlusObjectClusterMemberCombinationElement(_PredictedPlusClusterMe
     For compilator.
     """
     def _get_description(self):
-        return "%s And: %s" % (self.predicted_rel.description, self.cluster_combination_element.get_description())
+        return "%s And similarity: %s" % (self.predicted_rel.description, self.cluster_combination_element.get_description())
 
 class PredictedPlusSubjectClusterMemberCombinationElement(_PredictedPlusClusterMemberCombinationElement):
     """Predicted relationship plus cluster membership of subjects.
@@ -270,4 +275,4 @@ class PredictedPlusSubjectClusterMemberCombinationElement(_PredictedPlusClusterM
     For compilator.
     """
     def _get_description(self):
-        return "%s And: %s" % (self.cluster_combination_element.get_description(), self.predicted_rel.description)
+        return "Similarity: %s And: %s" % (self.cluster_combination_element.get_description(), self.predicted_rel.description)

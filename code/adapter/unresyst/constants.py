@@ -124,3 +124,5 @@ listened to the artist."""
 
 CONFIDENCE_KWARG_NAME = 'confidence'
 EXPECTANCY_KWARG_NAME = 'expectancy'
+
+REASON_STR = "Reason %d"
