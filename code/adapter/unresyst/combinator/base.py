@@ -157,9 +157,9 @@ class BaseCombinator(object):
                 .filter(recommender=recommender_model, 
                     subject_object__entity_type=object_ent_type,
                     expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
-                .order_by('-expectancy')[:min_count]
+                .order_by('-expectancy')
                 
-            self.top_bias_objects = [b.subject_object for b in qs_biases]
+            self.top_bias_objects = [(b.subject_object, b.expectancy) for b in qs_biases[:min_count]]
                 
         top_bias_objs = self.top_bias_objects
         
@@ -189,16 +189,19 @@ class BaseCombinator(object):
                             dn_subject=dn_subject,
                             min_count=min_count,
                             recommender_model=recommender_model)
+
+        # concat all the list and sort by expectancy
+        ret_list = top_bias_objs + top_rel_objs + top_sim_objs + cluster_objs
+        ret_list.sort(key=lambda pair: pair[1], reverse=True)                
         
-        return list(set(
-            top_bias_objs 
-            + top_rel_objs 
-            + top_sim_objs 
-            + cluster_objs
-            ))
+        # remove the duplicates and take only some of the first
+        return list(set([obj for obj, x in ret_list[:2*min_count]]))
 
     def _get_promising_objects_clusters(self, dn_subject, min_count, recommender_model):
-        """Get promising objects from predicted_relationship + cluster membership"""
+        """Get promising objects from predicted_relationship + cluster membership
+
+        @return: list of pairs (object, expectancy)
+        """
 
         # the definition of the predicted relationship
         d = PredictedRelationshipDefinition.objects.get(recommender=recommender_model)
@@ -208,15 +211,17 @@ class BaseCombinator(object):
         sim_subj_objs = []
 
         # go through the subject's memberships
-        for cm1 in dn_subject.clustermember_set.order_by('-confidence')[:min_count/self.DIVISOR]:
+        for cm1 in dn_subject.clustermember_set.order_by('-confidence')[:min_count/(2*self.DIVISOR)]:
 
             # take the most similar subjects
-            for cm2 in cm1.cluster.clustermember_set.exclude(id=cm1.id).order_by('-confidence')[:min_count/self.DIVISOR]:
+            for cm2 in cm1.cluster.clustermember_set.exclude(id=cm1.id).order_by('-confidence')[:min_count/(2*self.DIVISOR)]:
                 
                 # take objects connected with them
                 for rel in cm2.member.relationshipinstance_relationships1.filter(definition=d)[:min_count/self.DIVISOR]:
                     
-                    sim_subj_objs.append(rel.subject_object2)
+                    # use a approximation for overall expectancy
+                    sim_subj_objs.append((rel.subject_object2, 
+                        (cm1.confidence * cm2.confidence)/2 + UNCERTAIN_PREDICTION_VALUE))
         
         # taking similar objects from clusters
         #
@@ -225,14 +230,19 @@ class BaseCombinator(object):
             cluster__cluster_set__recommender=recommender_model,
             cluster__clustermember__member__relationshipinstance_relationships2__definition=d,
             cluster__clustermember__member__relationshipinstance_relationships2__subject_object1=dn_subject)\
-            .order_by('-confidence', '-cluster__clustermember__confidence')[:min_count]
+            .order_by('-confidence', '-cluster__clustermember__confidence')
 
-        sim_obj_objs = [cm.member for cm in qs_memberships]
+        sim_obj_objs = [(cm.member, cm.confidence/2 + UNCERTAIN_PREDICTION_VALUE) \
+            for cm in qs_memberships[:min_count]]
         
         return sim_subj_objs + sim_obj_objs
         
     def _get_promising_objects_rules_relationships(self, dn_subject, min_count, recommender_model):
-        """Get promising objects from subject-object rules, relationships, explicit rules"""
+        """Get promising objects from subject-object rules, relationships,
+        explicit rules
+        
+        @return: list of pairs (object, expectancy)        
+        """
         
         # get what is available in instances
 
@@ -247,7 +257,8 @@ class BaseCombinator(object):
                     definition__rulerelationshipdefinition__relationship_type=rel_type,
                     subject_object1=dn_subject,
                     definition__rulerelationshipdefinition__is_positive=True)\
-                    .order_by('-definition__rulerelationshipdefinition__weight')[:min_count]
+                    .distinct()\
+                    .order_by('-definition__rulerelationshipdefinition__weight')
 
         # rule instances by confidence
         qs_rule = RuleInstance.objects.filter(
@@ -255,22 +266,28 @@ class BaseCombinator(object):
                     definition__rulerelationshipdefinition__relationship_type=rel_type,
                     subject_object1=dn_subject,
                     definition__rulerelationshipdefinition__is_positive=True)\
-                    .order_by('-confidence')[:min_count]                    
+                    .distinct()\
+                    .order_by('-confidence')                   
 
         # explicit feedback                    
         qs_exp_rel = ExplicitRuleInstance.objects.filter(                    
                     definition__recommender=recommender_model,
                     subject_object1=dn_subject,
                     expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
-                    .order_by('-expectancy')[:min_count]
+                    .distinct()\
+                    .order_by('-expectancy')
 
-        return [rel.subject_object2 for rel in qs_rel] + \
-            [rel.subject_object2 for rel in qs_rule] + \
-            [rel.subject_object2 for rel in qs_exp_rel]        
+        return [(rel.subject_object2, rel.get_expectancy()) for rel in qs_rel[:min_count]] + \
+            [(rel.subject_object2, rel.get_expectancy()) for rel in qs_rule[:min_count]] + \
+            [(rel.subject_object2, rel.expectancy) for rel in qs_exp_rel[:min_count]]        
 
         
     def _get_promising_objects_similarities(self, dn_subject, min_count, recommender_model):
-        """Get promising objects from predicted_relationship + aggregated similarities"""
+        """Get promising objects from 
+        predicted_relationship + aggregated similarities
+        
+        @return: list of pairs (object, expectancy)
+        """
         
         # the definition of the predicted relationship
         d = PredictedRelationshipDefinition.objects.get(recommender=recommender_model)
@@ -288,9 +305,10 @@ class BaseCombinator(object):
                 
                 # the relationship instance definition must be the predicted relationship def
                 subject_object1__relationshipinstance_relationships2__definition=d)\
-            .order_by('-expectancy')[:min_count]
+            .distinct()\
+            .order_by('-expectancy')
 
-        cont_objs_sim1 = [sim.subject_object2 for sim in cont_qs_sim1]
+        cont_objs_sim1 = [(sim.subject_object2, sim.expectancy) for sim in cont_qs_sim1[:min_count]]
 
         cont_qs_sim2 = AggregatedRelationshipInstance.objects\
             .filter(recommender=recommender_model, expectancy__gt=UNCERTAIN_PREDICTION_VALUE)\
@@ -300,9 +318,10 @@ class BaseCombinator(object):
                 
                 # the definition again must be the predicted
                 subject_object2__relationshipinstance_relationships2__definition=d)\
-            .order_by('-expectancy')[:min_count]
+            .distinct()\
+            .order_by('-expectancy')
         
-        cont_objs_sim2 = [sim.subject_object1 for sim in cont_qs_sim2]
+        cont_objs_sim2 = [(sim.subject_object1, sim.expectancy) for sim in cont_qs_sim2[:min_count]]
         
         # try finding the similar entity (user) to entity that liked so2
         # cf
@@ -316,12 +335,13 @@ class BaseCombinator(object):
                                 
                 # the relationship instance definition must be the predicted relationship def
                 subject_object1__relationshipinstance_relationships1__definition=d)\
-            .order_by('-expectancy')[:min_count/self.DIVISOR]
+            .distinct()\
+            .order_by('-expectancy')
 
         # get the object behind the predicted_relationship            
-        cf_objs_sim1 = [pref.subject_object2 \
-            for sim in cf_qs_sim1 \
-            for pref in sim.subject_object1.relationshipinstance_relationships1.filter(definition=d)]
+        cf_objs_sim1 = [(pref.subject_object2, sim.expectancy) \
+            for sim in cf_qs_sim1[:min_count/self.DIVISOR] \
+            for pref in sim.subject_object1.relationshipinstance_relationships1.filter(definition=d)[:min_count/self.DIVISOR]]
 
         # when subject is in the first position in similarity                            
         cf_qs_sim2 = AggregatedRelationshipInstance.objects\
@@ -332,12 +352,13 @@ class BaseCombinator(object):
                 
                 # the definition again must be the predicted
                 subject_object2__relationshipinstance_relationships1__definition=d)\
-            .order_by('-expectancy')[:min_count/self.DIVISOR]
+            .distinct()\
+            .order_by('-expectancy')
             
         # get the object behind the predicted_relationship                        
-        cf_objs_sim2 = [pref.subject_object2 \
-            for sim in cf_qs_sim2 \
-            for pref in sim.subject_object2.relationshipinstance_relationships1.filter(definition=d)]
+        cf_objs_sim2 = [(pref.subject_object2, sim.expectancy) \
+            for sim in cf_qs_sim2[:min_count/self.DIVISOR] \
+            for pref in sim.subject_object2.relationshipinstance_relationships1.filter(definition=d)[:min_count/self.DIVISOR]]
         
         return cont_objs_sim1 + cont_objs_sim2 + cf_objs_sim1 + cf_objs_sim2
         

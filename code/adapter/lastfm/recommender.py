@@ -111,6 +111,7 @@ class ArtistRecommender(NovelArtistRecommender):
         condition=None,
         weight=0.85,
         is_positive=True,
+        description="%(subject)s listened to %(object)s.",
 
         # the number of user's scrobbles on artist divided by the number of
         # user's scrobbles overall

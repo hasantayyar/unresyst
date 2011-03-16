@@ -57,14 +57,20 @@ class CombiningCompilator(BaseCompilator):
         qs_subjects = SubjectObject.objects.filter(
                         recommender=recommender_model, 
                         entity_type=subject_ent_type)
+
+        print "  Compiling predictions for %d subjects." % qs_subjects.count()
+        i = 0
         
         for subj in qs_subjects.iterator():
             
             # get the most promising objects for the subject
             promising_objects = self.combinator.choose_promising_objects(
                                     dn_subject=subj, 
-                                    min_count=self.depth)  
-            
+                                    min_count=self.breadth)                          
+            if i % 20 == 0:
+                print "    %d subjects processed. Current promising object count: %d" % (i, len(promising_objects))
+            i += 1
+                          
             # go through the promising objects
             for obj in promising_objects:
                 

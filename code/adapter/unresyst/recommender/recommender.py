@@ -17,8 +17,8 @@ from unresyst.abstractor import BasicAbstractor
 from unresyst.aggregator import LinearAggregator, CombiningAggregator
 from unresyst.algorithm import SimpleAlgorithm, AggregatingAlgorithm, CompilingAlgorithm
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
-from unresyst.compilator import GetFirstCompilator
-from unresyst.combinator import FunctionCombinator
+from unresyst.compilator import GetFirstCompilator, CombiningCompilator
+from unresyst.combinator import AverageCombinator
 
 def _assign_recommender(list_rels, recommender):
     """Go throuth the list, if the items have the "recommender" attribute,
@@ -344,7 +344,7 @@ class Recommender(BaseRecommender):
             if not cls.recommendation_expectancy_limit is None else 0
 
         # get the recommendations from the algorithm
-        prediction_models = cls.Algorithm.get_recommendations(
+        prediction_models = cls.algorithm.get_recommendations(
             recommender_model=recommender_model,
             dn_subject=dn_subject,
             count=count,
@@ -473,17 +473,16 @@ class Recommender(BaseRecommender):
     overriden in suclasses"""    
     
     algorithm = AggregatingAlgorithm(
-                    inner_algorithm=CompilingAlgorithm(
-                        inner_algorithm=SimpleAlgorithm(
-                            inner_algorithm=None
-                        ),
-                        compilator=GetFirstCompilator()
-                        # compilator=CombiningCompilator(combinator=FunctionCombinator())
+                inner_algorithm=CompilingAlgorithm(
+                    inner_algorithm=SimpleAlgorithm(
+                        inner_algorithm=None
                     ),
-                    aggregator=LinearAggregator()
-                    #aggregator=CombiningAggregator(combinator=FunctionCombinator())
-                )
-    """The class that will be used for the algorithm level. Can be 
+                    compilator=CombiningCompilator(combinator=AverageCombinator())
+                ),
+                aggregator=CombiningAggregator(combinator=AverageCombinator())
+            )                
+    """The default algorithm setup.
+    The class that will be used for the algorithm level. Can be 
     overriden in subclasses"""    
     
     default_recommendation_count = DEFAULT_RECOMMENDATION_COUNT

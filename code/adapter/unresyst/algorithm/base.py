@@ -86,7 +86,7 @@ class BaseAlgorithm(object):
         """
         if self.inner_algorithm:
             return self.inner_algorithm.get_recommendations(
-                recomender_model=recommender_model,
+                recommender_model=recommender_model,
                 dn_subject=dn_subject,
                 count=count,
                 expectancy_limit=expectancy_limit,
