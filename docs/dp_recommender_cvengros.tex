@@ -180,6 +180,10 @@ Supervisor's e-mail address: \vedoucimail\\
     %TODO tohle opravit
     In the introductory chapter we describe the basic structure of the thesis. Then we give a formal definition of a recommender system. Finally we review projects and papers that have been created on the universal recommender topic.
     
+    Moderni systemy toho sbiraji o uzivateli, jeho chovani, o prvicich v systemu a vubec, porad vic a tudiz vzrusta potreba kombinovat tuhle business knowledge , na ukor klasickeho kolaborativniho filtrovani, ktere se snazi z jednoho preferencniho zdroje (napr. ratingu), exploitovat co se da. Cim vic dat mam, tim vic se na ne muzu spolehat a nemusim to nechavat na tajemnem algoritmu. 
+    
+    ze to je trend i ve vyzkumu doklada ta blazniva korenova soutez, http://kddcup.yahoo.com/datasets.php
+    
     \section{Thesis Structure}
         \label{thesis_structure}
         In the \emph{\ref{introduction} Introduction} chapter we describe some basic ideas of the thesis, give a formal definition of a recommender system and explore the works that have been made on the topic.
@@ -341,9 +345,11 @@ Supervisor's e-mail address: \vedoucimail\\
                 
             \subsubsection{Unresyst Maintainance}
                 \label{unresyst_maintainance}
+                
                 Running a recommender system isn't just a matter of setup. Keeping the recommendation quality high requires a regular maintainance activity. The frequency of the maintainance tasks depend on many factors such as  domain dynamics and internal capacities of the company. It should be done at least a few times a year.
                 
-                xx changes in the system that affect recommendation sources, use of newly available data
+                xxx Decide to collect new data for recommending
+                xxx changes in the system that affect recommendation sources, use of newly available data
                 
                 Maintainance activites follow selected setup activities in order to improve accuracy of the recommender. \emph{Business Analyst} interviews the \emph{Domain Expert} to find out what has happened in the domain business since the last maintainance activity. The news are delivered to the \emph{Data Specialist}, who incorporates them to the recommender configuration. He/she evalutes the recommender with the new configuration and tunes the parameters until the desired evaluation is obtained. The new Unresyst configuration and sample recommendations are consulted with the \emph{Domain Expert}. The new configuration is finally tested and put into operation.
         
@@ -794,7 +800,38 @@ Supervisor's e-mail address: \vedoucimail\\
                 This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the description remains as described in the section \ref{representing_relationships}. 
             \subsection{Representing Bias}
                 mam subject/object bias, subject v podstate neovlivni doporuceni/nedoporuceni, jen upravuje vysi expectancy. Object naopak ovlivni
+    \section{Combining}
+        \begin{equation}
+            \label{eq_expectancy_combination}
+            f(x) = \left\{\begin{array}{ll}
+                    2^{n-1}x^n & \textrm{if $x\in[0,\frac{1}{2}]$}\\
+                    & \\
+                    1-2^{n-1}(x-1)^n & \textrm{if $x\in(\frac{1}{2}, 1]$}\\
+                \end{array} \right.
+        \end{equation}
+        hh\\
+        $C_{so}$: event, $s$ chooses $o$\\
+        $E_{Rso}$ event, rule $R$ covers $s$ - $o$ prediction
+        \begin{equation}
+            \label{eq_bayes1}
+            P(C_{so} | E_{Rso}) = \frac{P(E_{Rso} | C_{so}) P(C_{so})}{P(E_{Rso})}
+        \end{equation}
+        hh\\
+        $CPair$: a set of s-o pairs, s has chosen o\\
+        $Pair_R$: a set of s-o pairs, $R$ predicts s-o expectancy\\
+        $S$: a set of subjects\\
+        $O$: a set of objects\\
+        $P(C_{so}) \simeq$ expectancy given by $R$\\
+        $P(E_{Rso}) \simeq \frac{|Pair_R|}{|S||O|}$\\
+        $P(E_{Rso}|C_{so}) \simeq \frac{|CPair \cap Pair_R|}{CPair}$\\
+        
+        \begin{equation}
+            \label{eq_bayes2}
+            P(C_{so} | E_{R_1so} \cap E_{R_2so}) = \frac{P(C_{so}) P(E_{R_1so} | C_{so}) P(E_{R_2so} | C_{so} \cap E_{R_1so})}{P(E_{R_1so}) P(E_{R_2so}|E_{R_1so})}
+        \end{equation}
 
+    \section{Implementation}
+        Vychytavka se symmetric relations. Poradi: v s-o prvni subject, vsude jinde to co ma mensi id tak to prvni.
     \section{Recommendation Viewer}
         \label{viewer}
         The recommendations made by the Universal Recommender can be viewed in a web based application called \emph{Recommendation Viewer}. The application shows recommendations for a chosen subject. It is independent of the object and subject domain. The page for viewing the recommendations can be easily embedded to a webpage.
@@ -821,7 +858,33 @@ Supervisor's e-mail address: \vedoucimail\\
     \label{evaluating_recommender_results}
     In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. 
     
-    zpusob vyberu test dat z datasetu - nakonec asi podle casu
+    metriky kde se porovnava poradi v listech jsou mi na pytel, jelikoz v test setu nemam poradi. 
+    hh\\
+    $p_{so}$: preference of $s$ to $o$ taken from the test set\\
+    $\widetilde{p}_{so}$: prediction of the preference of $s$ to $o$
+    \begin{equation}
+        \label{rmse}
+        RMSE = \sqrt{\frac{\sum_{(s,o)\in TestPairs}(p_{so} - \widetilde{p}_{so})^2}{|TestPairs|}}
+    \end{equation}
+    
+    hh\\
+    $Prec_s$: precision for subject $s$.\\
+    $Rec_s$: recall for subject $s$\\
+    $R_s$: a set of objects recommended to $s$\\
+    $T_s$: a set of objects in test set for $s$\\
+    $N$: number of recommended objects\\
+    
+    \begin{equation}
+        \label{precision}
+        Prec_s = \frac{|R_s \cap T_s|}{N}
+    \end{equation}
+    
+    \begin{equation}
+        \label{recall}
+        Rec_s = \frac{|R_s \cap T_s|}{|T_s|}
+    \end{equation}
+    
+    zpusob vyberu test dat z datasetu - nakonec asi podle casu (where available)
     
     timestampy at si resi v pravidlech - to je business vec - jestli plati nejaky decay nebo tak neco, do toho algoritmus nema stourat. 
     

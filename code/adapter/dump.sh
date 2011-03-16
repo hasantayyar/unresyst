@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# dump the database to given file
-mysqldump --opt -u root adapter > $1
+# dump the database to given file (relative from ../db/dumps/)
+mysqldump --opt -u root adapter > ../db/dumps/$1

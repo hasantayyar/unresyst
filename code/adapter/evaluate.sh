@@ -43,7 +43,7 @@ ArtistRecommender.build()
 # predictions:
 #
 
-# evaluate unresyst:
+# evaluate unresyst (predictions):
 from lastfm.evaluation import *
 from lastfm.recommender import *
 ArtistRecommenderEvaluator.evaluate_predictions(ArtistRecommender)
@@ -58,6 +58,8 @@ from lastfm.evaluation import *
 ArtistRecommenderEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_test.csv')
 
 # run mahout train, test -> lastfm_predictions.csv
+cd ../mahout/mahoutrec
+./unresystpredict.sh
 
 # import predictions
 from lastfm.mahout_recommender import *
@@ -84,6 +86,8 @@ MahoutArtistRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/
 
 
 # run mahout train, test -> lastfm_recommendations.csv
+cd ../mahout/mahoutrec
+./unresystrecommend.sh
 
 # import predictions
 from lastfm.mahout_recommender import *

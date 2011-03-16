@@ -1,0 +1,1 @@
+mvn -e exec:java -Dexec.mainClass="com.unresyst.UnresystPredict"  -Dexec.args="/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_train.csv /home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_test.csv /home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_predictions.csv" 
