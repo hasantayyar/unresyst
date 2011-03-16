@@ -176,7 +176,7 @@ class ArtistRecommenderEvaluationPair(BaseEvaluationPair):
             if Scrobble.objects.filter(user=scrobble.user, track__artist=scrobble.track.artist):
                 trivial_count += 1
         
-        print "Test pair selected, %d of %d are trivial" % (count, trivial_count)                
+        print "Test pair selected, %d of %d are trivial" % (trivial_count, count)                
 
 
     @classmethod

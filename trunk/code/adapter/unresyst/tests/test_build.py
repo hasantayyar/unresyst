@@ -797,14 +797,13 @@ class TestAggregatorAverage(TestBuildAverage):
         ta = TestAggregator("test_aggregated_biases_created")
         ta.recommender = self.recommender
         ta.test_aggregated_biases_created()
-
     EXPECTED_AGGREGATES = {
         # S-S
         ('Alice', 'Bob'): ((_count_exp(0.75 * 0.2) + _count_exp(0.3))/2, 'S-S', (
-            "Users Alice and Bob live in the same city. Users Alice and Bob are about the same age.",
-            "Users Alice and Bob live in the same city. Users Bob and Alice are about the same age.",
-            "Users Alice and Bob live in the same city. Users Bob and Alice are about the same age.",
-            "Users Bob and Alice live in the same city. Users Bob and Alice are about the same age.")), # 0.6125
+            "Reason 1: Users Alice and Bob live in the same city. Reason 2: Users Alice and Bob are about the same age.",
+            "Reason 1: Users Alice and Bob live in the same city. Reason 2: Users Bob and Alice are about the same age.",
+            "Reason 1: Users Alice and Bob live in the same city. Reason 2: Users Bob and Alice are about the same age.",
+            "Reason 1: Users Bob and Alice live in the same city. Reason 2: Users Bob and Alice are about the same age.")), # 0.6125
         ('Cindy', 'Daisy'): (_count_exp(0.3), 'S-S', (
             "Users Cindy and Daisy live in the same city.",
             "Users Daisy and Cindy live in the same city.")), #0.65
@@ -814,15 +813,15 @@ class TestAggregatorAverage(TestBuildAverage):
         
         # O-O
         ('Rubber Shoes', 'Sneakers'): ((_count_exp(0.4) + _count_exp(0.1))/2, 'O-O', (
-            "The shoe pairs Rubber Shoes and Sneakers share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
-            "The shoe pairs Rubber Shoes and Sneakers share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.",
-            "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
-            "The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")), # 0.625
+            "Reason 1: The shoe pairs Rubber Shoes and Sneakers share some keywords. Reason 2: Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+            "Reason 1: The shoe pairs Rubber Shoes and Sneakers share some keywords. Reason 2: Shoes Rubber Shoes and Sneakers were made by the same manufacturer.",
+            "Reason 1: The shoe pairs Sneakers and Rubber Shoes share some keywords. Reason 2: Shoes Sneakers and Rubber Shoes were made by the same manufacturer.",
+            "Reason 1: The shoe pairs Sneakers and Rubber Shoes share some keywords. Reason 2: Shoes Rubber Shoes and Sneakers were made by the same manufacturer.")), # 0.625
         ('Sneakers', 'Design Shoes'): (0.625, 'O-O',(
-            "Sneakers belong to the Casual category. Design Shoes belong to the Casual category. The shoe pairs Sneakers and Design Shoes share some keywords.",
-            "Sneakers belong to the Casual category. Design Shoes belong to the Casual category. The shoe pairs Design Shoes and Sneakers share some keywords.",
-            "Design Shoes belong to the Casual category. Sneakers belong to the Casual category. The shoe pairs Sneakers and Design Shoes share some keywords.",
-            "Design Shoes belong to the Casual category. Sneakers belong to the Casual category. The shoe pairs Design Shoes and Sneakers share some keywords.",)), # 0.6        
+            "Reason 1: Sneakers belong to the Casual category. Design Shoes belong to the Casual category. Reason 2: The shoe pairs Sneakers and Design Shoes share some keywords.",
+            "Reason 1: Sneakers belong to the Casual category. Design Shoes belong to the Casual category. Reason 2: The shoe pairs Design Shoes and Sneakers share some keywords.",
+            "Reason 1: Design Shoes belong to the Casual category. Sneakers belong to the Casual category. Reason 2: The shoe pairs Sneakers and Design Shoes share some keywords.",
+            "Reason 1: Design Shoes belong to the Casual category. Sneakers belong to the Casual category. Reason 2: The shoe pairs Design Shoes and Sneakers share some keywords.",)), # 0.6        
     }
 
     def test_aggregates_created(self):

@@ -31,6 +31,8 @@ class CompilingAlgorithm(BaseAlgorithm):
         
     def get_relationship_prediction(self, recommender_model, dn_subject, dn_object, remove_predicted):
         """See the base class for the documentation.
+        
+        Get all available info for the pair.
         """
         
         # get what we have from the inner algo
@@ -64,4 +66,23 @@ class CompilingAlgorithm(BaseAlgorithm):
                 recommender_model=recommender_model, 
                 dn_subject=dn_subject, 
                 dn_object=dn_object
-            )                    
+            )   
+            
+    def get_recommendations(self, recommender_model, dn_subject, count, expectancy_limit, remove_predicted):
+        """See the base class for the documentation.                
+
+        Here: fill the recommendations until the count
+        with random predictions, fill all info we know, or create uncertain 
+        predictions.
+        """
+        # get what we have from the inner algo
+        inner_recs = super(CompilingAlgorithm, self).get_recommendations(
+                            recommender_model=recommender_model,
+                            dn_subject=dn_subject,
+                            count=count,
+                            expectancy_limit=expectancy_limit,
+                            remove_predicted=remove_predicted)
+
+        # add there some random and find info for them                            
+        # to samy jako nahore
+        return inner_recs

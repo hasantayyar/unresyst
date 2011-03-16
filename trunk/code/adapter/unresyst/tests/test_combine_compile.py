@@ -46,7 +46,7 @@ class TestCompilator(TestBuildAverage):
             [(0.566667, 'User Alice likes many shoe pairs.'), (0.766667, 'Shoe pair Sneakers is popular')], 
             [(0.550000, 'User Alice is from the same city as the manufacturer of Sneakers.')], 
             [],
-            [(0.612500, 'Users Alice and Bob live in the same city. Users Alice and Bob are about the same age. And: User Bob likes shoes Sneakers.')],
+            [(0.612500, 'Similarity: Reason 1: Users Alice and Bob live in the same city. Reason 2: Users Alice and Bob are about the same age. And: User Bob likes shoes Sneakers.')],
             [],
             [],
         ),
@@ -54,7 +54,7 @@ class TestCompilator(TestBuildAverage):
         ('Alice', 'Rubber Shoes'): (
             [(0.566667, 'User Alice likes many shoe pairs.'), (0.633333, 'Shoe pair Rubber Shoes is popular')], 
             [(0.700000, 'User Alice has viewed Rubber Shoes.'), (0.550000, 'User Alice is from the same city as the manufacturer of Rubber Shoes.')], 
-            [(0.625000, 'User Alice likes shoes Sneakers. And: The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.')],
+            [(0.625000, 'User Alice likes shoes Sneakers. And similarity: Reason 1: The shoe pairs Sneakers and Rubber Shoes share some keywords. Reason 2: Shoes Sneakers and Rubber Shoes were made by the same manufacturer.')],
             [],
             [],
             [],
@@ -72,7 +72,7 @@ class TestCompilator(TestBuildAverage):
         ('Alice', 'Design Shoes'): (
             [(0.566667, 'User Alice likes many shoe pairs.')], 
             [],
-            [(0.625000, 'User Alice likes shoes Sneakers. And: Sneakers belong to the Casual category. Design Shoes belong to the Casual category. The shoe pairs Sneakers and Design Shoes share some keywords.')],
+            [(0.625000, 'User Alice likes shoes Sneakers. And similarity: Reason 1: Sneakers belong to the Casual category. Design Shoes belong to the Casual category. Reason 2: The shoe pairs Sneakers and Design Shoes share some keywords.')],
             [],
             [],
             [],
@@ -91,7 +91,7 @@ class TestCompilator(TestBuildAverage):
             [(0.566667, 'User Bob likes many shoe pairs.'), (0.766667, 'Shoe pair Sneakers is popular')], 
             [(0.700000, 'User Bob has viewed Sneakers.'), (0.550000, 'User Bob is from the same city as the manufacturer of Sneakers.')], 
             [],
-            [(0.612500, 'Users Alice and Bob live in the same city. Users Alice and Bob are about the same age. And: User Alice likes shoes Sneakers.')],
+            [(0.612500, 'Similarity: Reason 1: Users Alice and Bob live in the same city. Reason 2: Users Alice and Bob are about the same age. And: User Alice likes shoes Sneakers.')],
             [],
             [],
         ),            
@@ -99,7 +99,7 @@ class TestCompilator(TestBuildAverage):
         ('Bob', 'Rubber Shoes'): (
             [(0.566667, 'User Bob likes many shoe pairs.'), (0.633333, 'Shoe pair Rubber Shoes is popular')], 
             [(0.550000, 'User Bob is from the same city as the manufacturer of Rubber Shoes.')], 
-            [(0.625000, 'User Bob likes shoes Sneakers. And: The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.')], 
+            [(0.625000, 'User Bob likes shoes Sneakers. And similarity: Reason 1: The shoe pairs Sneakers and Rubber Shoes share some keywords. Reason 2: Shoes Sneakers and Rubber Shoes were made by the same manufacturer.')], 
             [],
             [],            
             [],
@@ -117,7 +117,7 @@ class TestCompilator(TestBuildAverage):
         ('Bob', 'Design Shoes'): (
             [(0.566667, 'User Bob likes many shoe pairs.')], 
             [],
-            [(0.625000, 'User Bob likes shoes Sneakers. And: Sneakers belong to the Casual category. Design Shoes belong to the Casual category. The shoe pairs Sneakers and Design Shoes share some keywords.')],
+            [(0.625000, 'User Bob likes shoes Sneakers. And similarity: Reason 1: Sneakers belong to the Casual category. Design Shoes belong to the Casual category. Reason 2: The shoe pairs Sneakers and Design Shoes share some keywords.')],
             [],
             [],
             [],
@@ -138,7 +138,7 @@ class TestCompilator(TestBuildAverage):
             [],
             [],
             [],
-            [(0.550000, 'Cindy has searched for the word Comfortable. Bob has searched for the word Comfortable. And: User Bob likes shoes Sneakers.')],
+            [(0.550000, 'Similarity: Cindy has searched for the word Comfortable. Bob has searched for the word Comfortable. And: User Bob likes shoes Sneakers.')],
         ),
 
             
@@ -226,7 +226,7 @@ class TestCompilator(TestBuildAverage):
         ('Edgar', 'Sneakers'): (
             [(0.633333, 'User Edgar likes many shoe pairs.'), (0.766667, 'Shoe pair Sneakers is popular')],
             [],
-            [(0.625000, 'User Edgar likes shoes Rubber Shoes. And: The shoe pairs Sneakers and Rubber Shoes share some keywords. Shoes Sneakers and Rubber Shoes were made by the same manufacturer.')],
+            [(0.625000, 'User Edgar likes shoes Rubber Shoes. And similarity: Reason 1: The shoe pairs Sneakers and Rubber Shoes share some keywords. Reason 2: Shoes Sneakers and Rubber Shoes were made by the same manufacturer.')],
             [],
             [],
             [],
@@ -264,7 +264,7 @@ class TestCompilator(TestBuildAverage):
             [],
             [],
             [],
-            [(0.650000, 'User Edgar likes shoes RS 130. And: RS 130 belong to the For Sports category. Octane SL belong to the For Sports category.')],
+            [(0.650000, 'User Edgar likes shoes RS 130. And similarity: RS 130 belong to the For Sports category. Octane SL belong to the For Sports category.')],
             [],
         ),
             
@@ -281,7 +281,7 @@ class TestCompilator(TestBuildAverage):
             [(0.633333, 'Shoe pair Rubber Shoes is popular')], 
             [],
             [],
-            [(0.600000, 'Users Edgar and Fionna are about the same age. And: User Edgar likes shoes Rubber Shoes.')],
+            [(0.600000, 'Similarity: Users Edgar and Fionna are about the same age. And: User Edgar likes shoes Rubber Shoes.')],
             [],
             [],
         ),            
@@ -290,7 +290,7 @@ class TestCompilator(TestBuildAverage):
             [(0.633333, 'Shoe pair RS 130 is popular')], 
             [],
             [],
-            [(0.600000, 'Users Edgar and Fionna are about the same age. And: User Edgar likes shoes RS 130.')],
+            [(0.600000, 'Similarity: Users Edgar and Fionna are about the same age. And: User Edgar likes shoes RS 130.')],
             [],
             [],
         ),
