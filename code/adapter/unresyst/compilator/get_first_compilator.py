@@ -9,16 +9,23 @@ from unresyst.models.algorithm import RelationshipPredictionInstance
 class GetFirstCompilator(BaseCompilator):
     """Compilator using the first relationship it finds to create a prediction"""
     
-    def __init__(self, depth=DEFAULT_COMPILATOR_DEPTH, breadth=DEFAULT_COMPILATOR_BREADTH):
+    def __init__(
+            self, 
+            depth=DEFAULT_COMPILATOR_DEPTH, 
+            breadth=DEFAULT_COMPILATOR_BREADTH, 
+            pair_depth=DEFAULT_COMPILATOR_PAIR_DEPTH):
         """The initializer"""    
         
-        super(GetFirstCompilator, self).__init__(combinator=None, depth=depth, breadth=breadth)        
+        super(GetFirstCompilator, self).__init__(
+            combinator=None, 
+            depth=depth, 
+            breadth=breadth, 
+            pair_depth=pair_depth)        
 
 
     def compile_all(self, recommender_model):
         """Compile preferences, known relationships + similarities.
         """
-        #TODO pryc:
         self.compile_aggregates(recommender_model)
 
         print "  Compiling similar objects."

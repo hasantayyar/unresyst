@@ -1,4 +1,5 @@
 """The configuration for the last.fm recommender"""
+from django.db.models import Sum, Count
 
 from unresyst import *
 from unresyst.algorithm.algorithm import PredictOnlyAlgorithm
@@ -6,14 +7,33 @@ from unresyst.algorithm.algorithm import PredictOnlyAlgorithm
 from models import *
 from constants import *
 
+
 AGE_DIFFERENCE = 38 - 17
+
+REGISTERED_DIFFERENCE = 733696 - 731857
+
+MAX_SCROBBLE_COUNT = 85
+
+SCROBBLE_DIFFERENCE = MAX_SCROBBLE_COUNT - 1
 
 def _listens_artist_generator():
     """The generator to the predicted relationship"""
     for u in User.objects.iterator():
         for a in Artist.objects.filter(track__scrobble__user=u).distinct().iterator():
             yield (u, a)
+
+def _get_artist_tag_pairs(artist):
+    """Get list tags, confidence for all tags he/she has"""    
+        
+    sumcount = artist.artisttag_set.aggregate(Sum('count'))['count__sum']
     
+    # get only tags that are shared between at least two artists    
+    artist_tags = artist.artisttag_set.annotate(tagcount=Count('tag__artisttag')).filter(tagcount__gt=1)
+
+    # confidence is counted as 
+    # the count of the tag / how many times the artist was tagged.
+    return [(at.tag.name, float(at.count)/sumcount) \
+        for at in artist_tags]
 
 class NovelArtistRecommender(Recommender):
     """A recommender for discovering previously unheard artists"""    
@@ -78,7 +98,7 @@ class NovelArtistRecommender(Recommender):
                 
             is_positive=True,   
                 
-            weight=0.2,
+            weight=0.5,
             
             # a magic linear confidence function
             confidence=lambda s1, s2: 
@@ -88,13 +108,90 @@ class NovelArtistRecommender(Recommender):
                 "the same age."
         ),        
         
+        # if the users were registered in a similar period, the're similar
+        SubjectSimilarityRule(
+            name='Users registered in similar time.',
+            
+            condition=lambda s1, s2:
+                s1.registered and s2.registered and \
+                abs(s1.registered.toordinal() - s2.registered.toordinal()) < REGISTERED_DIFFERENCE / 5,
+            
+            is_positive=True,
+            weight=0.5,
+            
+            confidence=lambda s1, s2:
+                1 - float(abs(s1.registered.toordinal() - s2.registered.toordinal()))/REGISTERED_DIFFERENCE,
+                
+            description="Users %(subject1)s and %(subject2)s were registered in similar times",
+        ),
+    )
+    
+    cluster_sets = (
+        # tag clusters
+        ObjectClusterSet(
+
+            name="Artist tags.",
+
+            weight=0.5,
+            
+            # artists that are tagged by a tag that another artist also has
+            filter_entities=Artist.objects.annotate(shared_count=Count('artisttag__tag__artisttag')).filter(shared_count__gt=1).distinct(),
+            
+            get_cluster_confidence_pairs=_get_artist_tag_pairs,
+            
+            description="%(object)s was tagged as %(cluster)s.",
+        ),
+        
+        # user - gender
+        SubjectClusterSet(
+            
+            name='User gender.',
+            
+            weight=0.5,
+            
+            # users that have a gender (filled)
+            filter_entities=User.objects.exclude(gender=''),
+            
+            get_cluster_confidence_pairs=lambda user: ((user.gender, 1),),
+            
+            description="%(subject)s's gender is %(cluster)s."
+        
+        ),
+        
+        # user - country
+        SubjectClusterSet(
+            
+            name='User country.',
+            
+            weight=0.5,
+            
+            # users that have country filled
+            filter_entities=User.objects.filter(country__isnull=False),
+            
+            get_cluster_confidence_pairs=lambda user: ((user.country.name, 1),),
+            
+            description="%(subject)s is from %(cluster)s."
+        ),
+    )
+    
+    biases = (
+        ObjectBias(
+            name="Artists whose tracks were listened the most.",
+            description="%(object)s is much listened.",
+            weight=0.5,
+            is_positive=True,
+            # users whose tracks were listened more than the half of the most listened
+            generator=lambda: Artist.objects.annotate(listen_count=Count('track__scrobble')).filter(listen_count__gt=MAX_SCROBBLE_COUNT/2),
+            
+            # the number of scrobbles for the artist divided by the max.
+            confidence=lambda a: float(a.track_set.annotate(scrobble_count=Count('scrobble')).aggregate(Sum('scrobble_count')))/MAX_SCROBBLE_COUNT,
+        ),
+        
     )
 
-    """Rules that can be applied to the domain"""
 
     random_recommendation_description = "Recommending a random artist to the user."
     
-    #Algorithm = PredictOnlyAlgorithm
     
 
 class ArtistRecommender(NovelArtistRecommender):
@@ -109,7 +206,7 @@ class ArtistRecommender(NovelArtistRecommender):
     rules = NovelArtistRecommender.rules + ((SubjectObjectRule(
         name="User has listened to the artist.",
         condition=None,
-        weight=0.85,
+        weight=0.5,
         is_positive=True,
         description="%(subject)s listened to %(object)s.",
 

@@ -259,7 +259,7 @@ class ShoeRecommender(Recommender):
             filter_entities=User.objects.filter(words_searched__isnull=False).distinct(),
             
             # clusters are words, confidence is 1/number of searched words for user
-            get_cluster_confidence_pairs=lambda user: [(w, 1.0/user.words_searched.count()) for w in user.words_searched.all()],
+            get_cluster_confidence_pairs=lambda user: [(w.word, 1.0/user.words_searched.count()) for w in user.words_searched.all()],
             
             description="%(subject)s has searched for the word %(cluster)s.",
         ),
@@ -313,6 +313,7 @@ class ShoeRecommender(Recommender):
 class AverageRecommender(ShoeRecommender):
     
     name = "Advanced shoe recommender"
+    #remove_predicted_from_recommendations = False
     
     algorithm = AggregatingAlgorithm(
                 inner_algorithm=CompilingAlgorithm(

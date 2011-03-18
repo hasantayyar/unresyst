@@ -28,8 +28,15 @@ then
     echo "from lastfm.recommender import *; ArtistRecommender.build(); ArtistRecommender.evaluate(); quit();" | python ./manage.py shell
 fi
 
+# LASTFM
+#
+#
 
-# select test data
+# specificky pro lastfm - dva test sety
+from lastfm.models import *
+BaseArtistEvaluationPair.select()
+
+# select test data - obecne
 from lastfm.evaluation import *
 ArtistRecommenderEvaluator.select_evaluation_pairs()
 
@@ -79,11 +86,11 @@ from lastfm.recommender import *
 ArtistRecommenderEvaluator.evaluate_recommendations(ArtistRecommender, 10)
 
 # evaluate mahout recommender
+# nenovel:
 
 # export training data
 from lastfm.mahout_recommender import *
 MahoutArtistRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_train.csv')
-
 
 # run mahout train, test -> lastfm_recommendations.csv
 cd ../mahout/mahoutrec
@@ -97,3 +104,23 @@ MahoutArtistRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/a
 from lastfm.mahout_recommender import *
 from lastfm.evaluation import *
 ArtistRecommenderEvaluator.evaluate_recommendations(MahoutArtistRecommender, 10)
+
+# evaluate mahout recommender
+# novel:
+
+# export training data
+from lastfm.mahout_recommender import *
+NovelMahoutArtistRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_train.csv')
+
+# run mahout train, test -> lastfm_recommendations.csv
+cd ../mahout/mahoutrec
+./unresystrecommend.sh
+
+# import predictions
+from lastfm.mahout_recommender import *
+NovelMahoutArtistRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_recommendations.csv')
+
+# evaluate the recommendations  
+from lastfm.mahout_recommender import *
+from lastfm.evaluation import *
+NovelArtistRecommenderEvaluator.evaluate_recommendations(NovelMahoutArtistRecommender, 10)

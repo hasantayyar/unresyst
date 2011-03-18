@@ -21,15 +21,18 @@ user_000011	m	21	Finland	Sep 8, 2005
 """
 
 from django.db import models
+from django.db.models import Min
 
 from unresyst.models import BaseEvaluationPair
+
+
 
 from constants import *
 
 class User(models.Model):
     """The user"""
     
-    gender = models.CharField(max_length=1)
+    gender = models.CharField(max_length=1, default='')
     """The english name of the enumerator. Should be translated by ugettext before 
     displaying."""
     
@@ -134,10 +137,10 @@ class Tag(models.Model):
         """Return a printable representation of the instance"""
         return self.name     
 
-        
-class ArtistRecommenderEvaluationPair(BaseEvaluationPair):
-    """An artist - user pair for validation purposes"""
-    
+
+class BaseArtistEvaluationPair(BaseEvaluationPair):
+    """An abstract class for the artist evaluators"""
+
     subj = models.ForeignKey('lastfm.User')
     """The subject"""
     
@@ -146,42 +149,74 @@ class ArtistRecommenderEvaluationPair(BaseEvaluationPair):
     
     test_ratio = 0.2
     """The ratio of pairs to select to test pairs"""
-    
-    def __unicode__(self):
-        """Return a printable representation of the instance"""
-        return u"%s - %s" % (self.subj, self.obj)
 
+    class Meta:
+        abstract = True    
+        
     @classmethod 
     def select(cls, i=0):
         """See the base class for the documentation."""
-        count = int(cls.test_ratio * Scrobble.objects.count())
+        all_count = Scrobble.objects.count()        
+        test_count = int(cls.test_ratio * all_count )        
+        train_count = all_count - test_count
         
-        # take 1/5 of the scrobbles, remove them and put them to test data
-        qs_to_test = Scrobble.objects.order_by('-timestamp')[:count]
+        test_pairs = Scrobble.objects.order_by('-timestamp')[:test_count]
+
+        min_stamp_test = test_pairs.aggregate(Min('timestamp'))['timestamp__min']
+        train_pairs = Scrobble.objects.filter(timestamp__lt=min_stamp_test)
         
-        trivial_count = 0
-        
+        # take 1/5 of the scrobbles, remove them and put them to test data        
         # save to test, remove from build
-        for scrobble in qs_to_test.iterator():
-            val_pair = cls(
+        for scrobble in test_pairs.iterator():
+
+            # create the test pair for the radio recommender
+            val_pair = ArtistEvalPair(
                 subj=scrobble.user,
                 obj=scrobble.track.artist,
                 expected_expectancy=EXPECTED_EXPECTANCY_LISTENED,
             )
+            
+            # if not in train pairs 
+            if not train_pairs.filter(user=val_pair.subj, track__artist=val_pair.obj).exists():
+
+                # and not already in novel test_pairs
+                if not NovelArtistEvalPair.objects.filter(subj=val_pair.subj, obj=val_pair.obj).exists():
+                
+                    # add it also to novel test pairs
+                    n_val_pair = NovelArtistEvalPair(
+                        subj=val_pair.subj,
+                        obj=val_pair.obj,
+                        expected_expectancy=val_pair.expected_expectancy
+                    )
+                    n_val_pair.save()
+
             val_pair.save()
             
+            # so wie so delete
             scrobble.delete()
             
-            # if the pair is still in the database, count it as trivial
-            if Scrobble.objects.filter(user=scrobble.user, track__artist=scrobble.track.artist):
-                trivial_count += 1
+        nontrivial_count = NovelArtistEvalPair.objects.count()
         
-        print "Test pair selected, %d of %d are trivial" % (trivial_count, count)                
+        print "Test pairs selected from total %d pairs, %d of %d are non-trivial" % (all_count, nontrivial_count, test_count)          
 
+    def get_success(self):
+        """See the base class for the documentation."""
+        return self.obtained_expectancy > SUCCESS_LIMIT
+    
+    def __unicode__(self):
+        """Return a printable representation of the instance"""
+        return u"%s - %s" % (self.subj, self.obj)
+              
+        
+class ArtistEvalPair(BaseArtistEvaluationPair):
+    """An artist - user pair for validation purposes
+    
+    All test pairs, no matter if contained in training data or not. 
+    """    
 
     @classmethod
     def select_random(cls, i=0):
-        """See the base class for the documentation."""
+        """UNUSED"""
 
         scrobble_count = Scrobble.objects.all().count()
         
@@ -202,8 +237,7 @@ class ArtistRecommenderEvaluationPair(BaseEvaluationPair):
             # remove the scrobble
             scrobble.delete()
 
-
-    def get_success(self):
-        """See the base class for the documentation."""
-        return self.obtained_expectancy > SUCCESS_LIMIT
-
+class NovelArtistEvalPair(BaseArtistEvaluationPair):
+    """Only test pairs that aren't included in the test set"""
+    class Meta:
+        unique_together = ('subj', 'obj')

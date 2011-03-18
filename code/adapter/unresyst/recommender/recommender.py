@@ -166,7 +166,8 @@ class Recommender(BaseRecommender):
             name=cls.name,
             is_built=False,
             are_subjects_objects=(cls.subjects == cls.objects),
-            random_recommendation_description=cls.random_recommendation_description
+            random_recommendation_description=cls.random_recommendation_description,
+            remove_predicted_from_recommendations=cls.remove_predicted_from_recommendations
         )        
         recommender_model.save() 
         

@@ -104,7 +104,10 @@ class _BaseBias(object):
                 confidence=confidence,
                 definition=definition,
                 description=description
-            )                
+            )
+        
+        print "  %d bias instances for bias %s created." % \
+            (BiasInstance.objects.filter(definition=definition).count(), self.name)
                         
 class SubjectBias(_BaseBias):
 

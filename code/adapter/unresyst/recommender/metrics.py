@@ -75,8 +75,8 @@ def precision_recall(cls, count):
         
         subj_recall = float(user_hit_count) / possible_hit_count
 
-        print "%d precision: %f" % (subj_id, float(user_hit_count)/count)
-        print "%d recall: %f" % (subj_id, subj_recall)
+        #print "%d precision: %f" % (subj_id, float(user_hit_count)/count)
+        #print "%d recall: %f" % (subj_id, subj_recall)
         
         recall_sum += subj_recall
     

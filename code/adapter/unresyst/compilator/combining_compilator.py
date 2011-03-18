@@ -9,13 +9,22 @@ class CombiningCompilator(BaseCompilator):
     that it reveals
     """        
     
-    def __init__(self, combinator, depth=DEFAULT_COMPILATOR_DEPTH, breadth=DEFAULT_COMPILATOR_BREADTH):
+    def __init__(
+            self, 
+            combinator, 
+            depth=DEFAULT_COMPILATOR_DEPTH, 
+            breadth=DEFAULT_COMPILATOR_BREADTH,
+            pair_depth=DEFAULT_COMPILATOR_PAIR_DEPTH):
         """The initializer, combinator is not optional."""    
         
-        super(CombiningCompilator, self).__init__(combinator=combinator, depth=depth, breadth=breadth)
+        super(CombiningCompilator, self).__init__(
+            combinator=combinator, 
+            depth=depth, 
+            breadth=breadth,
+            pair_depth=pair_depth)
         
     def compile_prediction(self, recommender_model, dn_subject, dn_object):
-        """Create a prediction using all available information and our combinator.
+        """Create a prediction using all available information and the instance combinator.
         
         @type recommender_model: models.common.Recommender
         @param recommender_model: the recommender model
@@ -66,7 +75,8 @@ class CombiningCompilator(BaseCompilator):
             # get the most promising objects for the subject
             promising_objects = self.combinator.choose_promising_objects(
                                     dn_subject=subj, 
-                                    min_count=self.breadth)                          
+                                    min_count=self.breadth)                                                                  
+                                                    
             if i % 20 == 0:
                 print "    %d subjects processed. Current promising object count: %d" % (i, len(promising_objects))
             i += 1
