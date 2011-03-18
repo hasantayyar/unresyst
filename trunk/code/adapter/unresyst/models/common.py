@@ -24,6 +24,10 @@ class Recommender(models.Model):
     
     random_recommendation_description = models.TextField(default='', blank=True)
     """The description of the relationship/rule instance.""" 
+    
+    remove_predicted_from_recommendations = models.BooleanField()
+    """Should the objects that are already "liked" be removed from 
+    recommendations?"""
         
     class Meta:
         app_label = 'unresyst'

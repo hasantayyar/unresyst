@@ -95,6 +95,9 @@ DEFAULT_RECOMMENDATION_COUNT = 10
 DEFAULT_COMPILATOR_BREADTH = 10
 """The default neighbourhood size for the compilator"""
 
+DEFAULT_COMPILATOR_PAIR_DEPTH = 10
+"""The default compilation element count taken for a pair for a group"""
+
 DEFAULT_COMPILATOR_DEPTH = COMPILATOR_DEPTH_ONE_UNSURE
 """Take only one unsure relationship"""
 
@@ -126,3 +129,11 @@ CONFIDENCE_KWARG_NAME = 'confidence'
 EXPECTANCY_KWARG_NAME = 'expectancy'
 
 REASON_STR = "Reason %d"
+
+LOG_RECOMMENDATIONS_FILENAME = 'recommendations.txt'
+LOG_PREDICTIONS_FILENAME = 'predictions.txt'
+LOG_HITS_FILENAME = 'hits.txt'
+
+MAX_REASONS_DESCRIPTION = 5
+
+MORE_REASONS_STR = "... and %d other reasons."

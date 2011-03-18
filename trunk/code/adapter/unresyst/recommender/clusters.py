@@ -98,7 +98,7 @@ class BaseClusterSet(object):
                 
                 # get or create the cluster 
                 cluster, x = Cluster.objects.get_or_create(
-                    name=cluster_name,
+                    name=cluster_name[:MAX_LENGTH_NAME],
                     cluster_set=cluster_set)
 
                 # evaluate the description
@@ -115,6 +115,11 @@ class BaseClusterSet(object):
                     member=dn_entity,
                     confidence=confidence,
                     description=description)
+        
+        print "  %d clusters and %d cluster members for '%s' cluster set created." \
+            % (Cluster.objects.filter(cluster_set=cluster_set).count(), 
+                ClusterMember.objects.filter(cluster__cluster_set=cluster_set).count(),
+                self.name)
         
         
    

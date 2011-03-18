@@ -101,8 +101,9 @@ class SimpleAlgorithm(BaseAlgorithm):
                                 recommender=recommender_model, 
                                 expectancy__gt=expectancy_limit)\
                             .exclude(**exclude_args)\
-                            .order_by('-expectancy')[:count]
+                            .distinct()\
+                            .order_by('-expectancy')
         
-        return list(recommendations)                                                    
+        return list(recommendations[:count])                                                    
         
 

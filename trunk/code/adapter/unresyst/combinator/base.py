@@ -74,8 +74,18 @@ class BaseCombinator(object):
         if list_len == 1:
             return element_list[0].get_description()
         
-        return ' '.join(["%s: %s" % ((REASON_STR % i), e.get_description()) \
-            for e, i in zip(element_list, range(1, list_len + 1))])
+        # shorten the list in case it's too long
+        short_list = element_list[:MAX_REASONS_DESCRIPTION]
+        
+        # join the descriptions
+        joined_desc =  ' '.join(["%s: %s" % ((REASON_STR % i), e.get_description()) \
+            for e, i in zip(short_list, range(1, list_len + 1))])
+        
+        # if the list was shortened add a message
+        if list_len > MAX_REASONS_DESCRIPTION:
+            joined_desc += ' ' + MORE_REASONS_STR % (list_len - MAX_REASONS_DESCRIPTION)
+        
+        return joined_desc
 
             
 
@@ -138,9 +148,8 @@ class BaseCombinator(object):
         
         @rtype: iterable of SubjectObject
         @return: the promising objects
-        """
-        
-        
+        """        
+                
         recommender_model = dn_subject.recommender
         
         object_ent_type =  ENTITY_TYPE_SUBJECTOBJECT \
@@ -192,6 +201,21 @@ class BaseCombinator(object):
 
         # concat all the list and sort by expectancy
         ret_list = top_bias_objs + top_rel_objs + top_sim_objs + cluster_objs
+        
+        # if the liked should be removed, remove the liked objects from promising
+        if recommender_model.remove_predicted_from_recommendations:
+
+            # get ids of the liked objects for dn subject
+            pred_obj_ids = RelationshipInstance\
+                .filter_predicted(recommender_model=recommender_model)\
+                .filter(subject_object1=dn_subject)\
+                .values_list('subject_object2__pk', flat=True)
+            
+            pred_obj_ids = set(pred_obj_ids)
+                
+            # remove the liked objects from ret_list
+            ret_list = filter(lambda pair: not(pair[0].pk in pred_obj_ids), ret_list)
+        
         ret_list.sort(key=lambda pair: pair[1], reverse=True)                
         
         # remove the duplicates and take only some of the first

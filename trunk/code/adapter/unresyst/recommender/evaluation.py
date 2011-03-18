@@ -1,7 +1,11 @@
 """The classes related to recommender evaluation"""
+import os.path
+import codecs
 
 from unresyst.exceptions import EmptyTestSetError
 from unresyst.constants import *
+
+from settings import LOG_DIRECTORY
 
 class BaseEvaluator(object):
     """The base class for all evaluators"""
@@ -76,6 +80,17 @@ class BaseEvaluator(object):
         
         return qs_pairs
 
+    @staticmethod
+    def _open_logfile(directory, filename):
+        """Open a log file
+        
+        @rtype: file
+        """
+        if directory and filename:
+            full_name = os.path.join(directory, filename)
+            return codecs.open(full_name, mode='w', encoding='utf-8')
+
+        return None 
 
     @classmethod
     def evaluate_predictions(cls, recommender):
@@ -93,7 +108,10 @@ class BaseEvaluator(object):
 
         @raise EmptyTestSetError: if the test set is empty            
         """
-        
+        # if the settings are given, open a log file and log
+        fpreds = cls._open_logfile(LOG_DIRECTORY, LOG_PREDICTIONS_FILENAME)
+        fhits = cls._open_logfile(LOG_DIRECTORY, LOG_HITS_FILENAME)
+            
         # get the pairs
         qs_pairs = cls._get_cleared_pairs()
         all_count = qs_pairs.count()   
@@ -111,6 +129,10 @@ class BaseEvaluator(object):
             # evaluate
             prediction = recommender.predict_relationship(pair.subj, pair.obj)
             
+            # log
+            if fpreds:
+                fpreds.write(u"%s\n" % prediction.__unicode__())
+            
             pair.obtained_expectancy = prediction.expectancy
             pair.is_successful = pair.get_success()
             pair.save()                            
@@ -123,9 +145,18 @@ class BaseEvaluator(object):
             if pair.is_successful:
                 succ_count += 1
                 
+                if fhits:
+                    fhits.write(u'%s\n' % prediction.__unicode__())
+                
                 if pair.obtained_expectancy < TRIVIAL_EXPECTANCY:
                     non_triv_count += 1
+        
+        # this isn't very best practice-following but we don't care for file corruption
+        if fhits:
+            fhits.close()
             
+        if fpreds:
+            fpreds.close()
         
         # count and print the success rate        
         cls.success_rate = float(succ_count)/ all_count
@@ -135,7 +166,6 @@ class BaseEvaluator(object):
         
         # count the metric        
         return cls.prediction_metric()
-
     
     @classmethod
     def evaluate_recommendations(cls, recommender, count):
@@ -152,6 +182,9 @@ class BaseEvaluator(object):
         @rtype: float
         @return: the result of the metric                    
         """
+        # if the settings are given, open a log file and log                                      
+        fhits = cls._open_logfile(LOG_DIRECTORY, LOG_HITS_FILENAME)
+        frecs = cls._open_logfile(LOG_DIRECTORY, LOG_RECOMMENDATIONS_FILENAME)
         
         # get the cleared pair dataset 
         qs_pairs = cls._get_cleared_pairs()
@@ -172,12 +205,17 @@ class BaseEvaluator(object):
                 print "%d subjects processed" % i
                 
             # for each subject in the test pair get its recommendations
-            recommendations = recommender.get_recommendations(subj, count)
+            recommendations = recommender.get_recommendations(subj, count)            
+                
             
             # mark each recommended object that is in the test set as successful
             #
             for rec in recommendations:
 
+                # if it should be logged, log it
+                if frecs:
+                    frecs.write(u'%s\n' % rec.__unicode__())
+                    
                 obj = rec.object_
                 
                 # filter the test pair
@@ -190,6 +228,16 @@ class BaseEvaluator(object):
                     
                     pair.is_successful = True
                     pair.save()
+                    
+                    if fhits:
+                        fhits.write(u'%s\n' % rec.__unicode__())
+
+        # this isn't very best practice-following but we don't care for file corruption
+        if fhits:
+            fhits.close()
+            
+        if frecs:
+            frecs.close()
             
         print "%d hits recorded, counting metric..." % hit_count
         

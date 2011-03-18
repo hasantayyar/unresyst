@@ -20,7 +20,7 @@ class BasicAbstractor(BaseAbstractor):
             # create the subject
             subob = SubjectObject(
                 id_in_specific=subj.pk,
-                name=subj.__unicode__(),
+                name=subj.__unicode__()[:MAX_LENGTH_NAME],
                 entity_type=so or ENTITY_TYPE_SUBJECT,
                 recommender=recommender_model
             )
@@ -40,7 +40,7 @@ class BasicAbstractor(BaseAbstractor):
             # create the object
             subob = SubjectObject(
                 id_in_specific=obj.pk,
-                name=obj.__unicode__(),
+                name=obj.__unicode__()[:MAX_LENGTH_NAME],
                 entity_type=ENTITY_TYPE_OBJECT,
                 recommender=recommender_model
             )

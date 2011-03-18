@@ -14,7 +14,12 @@ from unresyst.models.abstractor import PredictedRelationshipDefinition, Relation
 class BaseCompilator(object):
     """The base class for all compilators"""
     
-    def __init__(self, combinator=None, depth=DEFAULT_COMPILATOR_DEPTH, breadth=DEFAULT_COMPILATOR_BREADTH):
+    def __init__(
+            self, 
+            combinator=None, 
+            depth=DEFAULT_COMPILATOR_DEPTH, 
+            breadth=DEFAULT_COMPILATOR_BREADTH,
+            pair_depth=DEFAULT_COMPILATOR_PAIR_DEPTH):
         """The initializer"""
 
         self.combinator = combinator
@@ -28,6 +33,10 @@ class BaseCompilator(object):
         self.breadth = breadth
         """The number of neighbours that will be taken during the compilation"""      
         
+        self.pair_depth = pair_depth
+        """The number of combination elements that can be taken for each pair from
+        each group. Used only for cluster membership.
+        """
 
         
 
@@ -71,11 +80,10 @@ class BaseCompilator(object):
         # s-o relationships (all)
         #
         
-               
         qs_rels = RelationshipInstance.objects\
                         .exclude(definition=predicted_def)\
                         .filter(definition__recommender=recommender_model)\
-                        .filter(subject_object1=dn_subject, subject_object2=dn_object)
+                        .filter(subject_object1=dn_subject, subject_object2=dn_object)\
                         
         for rel in qs_rels:
             els.append(SubjectObjectRelCombinationElement(rel_instance=rel))
@@ -186,10 +194,11 @@ class BaseCompilator(object):
             member__relationshipinstance_relationships2__definition=predicted_def,
             member__relationshipinstance_relationships2__subject_object1=dn_subject)\
             .exclude(member=dn_object)\
-            .distinct()
+            .distinct()\
+            .order_by('-confidence')
         
         # create the combination elements       
-        for cm in qs_memberships_o:
+        for cm in qs_memberships_o[:self.pair_depth]:
         
             # dont include the ones that are already there because of the similarity
             if cm.member in other_objs:
@@ -226,10 +235,11 @@ class BaseCompilator(object):
             member__relationshipinstance_relationships1__definition=predicted_def,
             member__relationshipinstance_relationships1__subject_object2=dn_object)\
             .exclude(member=dn_subject)\
-            .distinct()
+            .distinct()\
+            .order_by('-confidence')
         
         # create the combination elements       
-        for cm in qs_memberships_s:
+        for cm in qs_memberships_s[:self.pair_depth]:
         
             # dont include the ones that are already there because of the similarity
             if cm.member in other_subjs:

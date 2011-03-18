@@ -78,7 +78,10 @@ def _parse_users(filename):
         age = None if not age else age
         
         # find or create the country
-        country_model, created = Country.objects.get_or_create(name=country)
+        if country:
+            country_model, created = Country.objects.get_or_create(name=country)
+        else:
+            country_model = None
         
         # parse the date
         reg_date = None if not reg_date else datetime.strptime(reg_date, '%b %d, %Y')
