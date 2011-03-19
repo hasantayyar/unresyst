@@ -8,7 +8,7 @@ from unresyst.combinator.combination_element import BiasAggregateCombinationElem
     PredictedPlusSubjectClusterMemberCombinationElement, ClusterSimilarityCombinationElement
 from unresyst.models.aggregator import AggregatedBiasInstance, AggregatedRelationshipInstance
 from unresyst.models.abstractor import PredictedRelationshipDefinition, RelationshipInstance, \
-    ClusterMember
+    ClusterMember, ExplicitRuleInstance
 
 
 class BaseCompilator(object):
@@ -86,6 +86,14 @@ class BaseCompilator(object):
                         .filter(subject_object1=dn_subject, subject_object2=dn_object)\
                         
         for rel in qs_rels:
+            els.append(SubjectObjectRelCombinationElement(rel_instance=rel))
+            
+        # explicit also            
+        qs_expl_rels = ExplicitRuleInstance.objects\
+                        .filter(definition__recommender=recommender_model)\
+                        .filter(subject_object1=dn_subject, subject_object2=dn_object)\
+                        
+        for rel in qs_expl_rels:
             els.append(SubjectObjectRelCombinationElement(rel_instance=rel))
         
         # predicted_relationship + object_similarities

@@ -3,6 +3,7 @@
 LASTFM=false
 DEMO=false
 ADEMO=false
+FLIXSTER=false
 
 for param in $*;
 do    
@@ -12,6 +13,9 @@ do
         ;;
     'demo')
         DEMO=true
+        ;;
+    'flixster')
+        FLIXSTER=true
         ;;
     'ademo')
         ADEMO=true
@@ -32,6 +36,11 @@ fi
 if [ $LASTFM = true ]
 then
     echo "from lastfm.recommender import ArtistRecommender; ArtistRecommender.build(); quit();" | python ./manage.py shell
+fi
+
+if [ $FLIXSTER = true ]
+then
+    echo "from flixster.recommender import MovieRecommender; MovieRecommender.build(); quit();" | python ./manage.py shell
 fi
 
 echo ""

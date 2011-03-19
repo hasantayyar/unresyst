@@ -219,7 +219,7 @@ class BaseCombinator(object):
         ret_list.sort(key=lambda pair: pair[1], reverse=True)                
         
         # remove the duplicates and take only some of the first
-        return list(set([obj for obj, x in ret_list[:2*min_count]]))
+        return list(set([obj for obj, x in ret_list]))[:int(1.2*min_count)]
 
     def _get_promising_objects_clusters(self, dn_subject, min_count, recommender_model):
         """Get promising objects from predicted_relationship + cluster membership

@@ -2,7 +2,6 @@
 from django.db.models import Sum, Count
 
 from unresyst import *
-from unresyst.algorithm.algorithm import PredictOnlyAlgorithm
 
 from models import *
 from constants import *

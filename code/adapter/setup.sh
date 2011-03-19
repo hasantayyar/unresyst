@@ -7,6 +7,7 @@
 
 LASTFM=false
 DEMO=false
+FLIXSTER=false
 DONTDROP=false
 
 for param in $*;
@@ -17,6 +18,9 @@ do
         ;;
     'demo')
         DEMO=true
+        ;;
+    'flixster')
+        FLIXSTER=true
         ;;
     'dontdrop')
         DONTDROP=true
@@ -45,6 +49,12 @@ if [ $LASTFM = true ]
 then
     echo "Adding last.fm data."
     echo "from lastfm.save_data import save_data; save_data(); quit();" | python ./manage.py shell
+fi
+
+if [ $FLIXSTER = true ]
+then
+    echo "Adding flixster data."
+    echo "from flixster.save_data import save_data; save_data(); quit();" | python ./manage.py shell
 fi
 
 echo "" 

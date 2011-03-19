@@ -3,6 +3,7 @@
 from base import BaseCompilator
 from unresyst.constants import *
 from unresyst.models.common import SubjectObject
+from unresyst.exceptions import RecommenderBuildError
 
 class CombiningCompilator(BaseCompilator):
     """The compilator using the given combinator to combine the predictions

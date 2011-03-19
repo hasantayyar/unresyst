@@ -203,9 +203,7 @@ class BaseArtistEvaluationPair(BaseEvaluationPair):
         """See the base class for the documentation."""
         return self.obtained_expectancy > SUCCESS_LIMIT
     
-    def __unicode__(self):
-        """Return a printable representation of the instance"""
-        return u"%s - %s" % (self.subj, self.obj)
+
               
         
 class ArtistEvalPair(BaseArtistEvaluationPair):
