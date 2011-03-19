@@ -15,6 +15,8 @@ class ExternalRecommender(BaseRecommender):
     PredictionModel = ExternalPrediction
     """The model where predictions are stored""" 
     
+    explicit_rating_rule = None
+    """If given, this rule is exported, not the predicted_relationship"""
     
     # build phase:
     #
@@ -42,9 +44,12 @@ class ExternalRecommender(BaseRecommender):
         """
         
         with open(filename, 'w') as f:
+            
+            rel = cls.explicit_rating_rule \
+                if cls.explicit_rating_rule else cls.predicted_relationship
                 
             # export the relationships to the given file
-            cls.predicted_relationship.export(f)
+            rel.export(f)
         
     @classmethod
     def import_predictions(cls, filename):

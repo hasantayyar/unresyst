@@ -38,7 +38,7 @@ BaseArtistEvaluationPair.select()
 
 # select test data - obecne
 from lastfm.evaluation import *
-ArtistRecommenderEvaluator.select_evaluation_pairs()
+MovieRecommenderEvaluator.select_evaluation_pairs()
 
 # evaluate my recommender
 #
@@ -66,7 +66,7 @@ ArtistRecommenderEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trun
 
 # run mahout train, test -> lastfm_predictions.csv
 cd ../mahout/mahoutrec
-./unresystpredict.sh
+./unresystpredict.sh lastfm
 
 # import predictions
 from lastfm.mahout_recommender import *
@@ -124,3 +124,35 @@ NovelMahoutArtistRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/c
 from lastfm.mahout_recommender import *
 from lastfm.evaluation import *
 NovelArtistRecommenderEvaluator.evaluate_recommendations(NovelMahoutArtistRecommender, 10)
+
+
+# Flixster
+#
+#
+
+# select test data - obecne
+from flixster.evaluation import *
+MovieRecommenderEvaluator.select_evaluation_pairs()
+
+# evaluate mahout recommender - predictions:
+# export training data
+from flixster.mahout_recommender import *
+MahoutMovieRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_train.csv')
+
+# export test data
+from flixster.evaluation import *
+MovieRecommenderEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_test.csv')
+
+# run mahout train, test -> lastfm_predictions.csv
+cd ../mahout/mahoutrec
+./unresystpredict.sh flixster
+
+# import predictions
+from flixster.mahout_recommender import *
+MahoutMovieRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_predictions.csv')
+
+# evaluate the predictions  
+from flixster.mahout_recommender import *
+from flixster.evaluation import *
+MovieRecommenderEvaluator.evaluate_predictions(MahoutMovieRecommender)
+

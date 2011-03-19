@@ -14,7 +14,7 @@ class BaseRelationship(object):
     between the entities that are in the given relationship.
     """
     
-    def __init__(self, name, condition, description=None, generator=None):
+    def __init__(self, name, condition=None, description=None, generator=None):
         """The constructor."""
         
         self.name = name
@@ -355,8 +355,8 @@ class BaseRelationship(object):
             adkwargs = self.get_additional_instance_kwargs(ds_arg1, ds_arg2)
             
             # if confidence provided, append it
-            if adkwargs.has_key(CONFIDENCE_KWARG_NAME):
-                linestr += ",%f" % adkwargs[CONFIDENCE_KWARG_NAME]
+            if adkwargs.has_key(EXPECTANCY_KWARG_NAME):
+                linestr += ",%f" % adkwargs[EXPECTANCY_KWARG_NAME]
             
             linestr += '\n'
             
@@ -412,7 +412,7 @@ class ExplicitSubjectObjectRule(BaseRelationship):
     the rule/relationship"""
     
             
-    def __init__(self, name, condition, expectancy, description=None, generator=None):
+    def __init__(self, name, expectancy, condition=None, description=None, generator=None):
         """The constructor."""
         
         super(ExplicitSubjectObjectRule, self).__init__(name, condition, description, generator)
@@ -459,7 +459,7 @@ class _WeightedRelationship(BaseRelationship):
     rule/relationship
     """  
     
-    def __init__(self, name, condition, is_positive, weight, description=None, generator=None):
+    def __init__(self, name, is_positive, weight, condition=None, description=None, generator=None):
         """The constructor."""
         
         super(_WeightedRelationship, self).__init__(name, condition, description, generator)
@@ -556,7 +556,7 @@ class _BaseRule(_WeightedRelationship):
     """The model class used for representing instances of 
     the rule/relationship"""
     
-    def __init__(self, name, condition, is_positive, weight, confidence, description=None, generator=None):
+    def __init__(self, name, is_positive, weight, confidence, condition=None, description=None, generator=None):
         """The constructor.""" 
 
         super(_BaseRule, self).__init__(name, condition, is_positive, weight, description, generator)
