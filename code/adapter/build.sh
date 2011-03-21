@@ -4,6 +4,7 @@ LASTFM=false
 DEMO=false
 ADEMO=false
 FLIXSTER=false
+TRAVEL=false
 
 for param in $*;
 do    
@@ -16,6 +17,9 @@ do
         ;;
     'flixster')
         FLIXSTER=true
+        ;;
+    'travel')
+        TRAVEL=true
         ;;
     'ademo')
         ADEMO=true
@@ -41,6 +45,11 @@ fi
 if [ $FLIXSTER = true ]
 then
     echo "from flixster.recommender import MovieRecommender; MovieRecommender.build(); quit();" | python ./manage.py shell
+fi
+
+if [ $TRAVEL = true ]
+then
+    echo "from travel.recommender import OrderTourRecommender; OrderTourRecommender.build(); quit();" | python ./manage.py shell
 fi
 
 echo ""
