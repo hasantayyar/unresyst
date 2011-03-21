@@ -415,7 +415,11 @@ class ExplicitSubjectObjectRule(BaseRelationship):
     def __init__(self, name, expectancy, condition=None, description=None, generator=None):
         """The constructor."""
         
-        super(ExplicitSubjectObjectRule, self).__init__(name, condition, description, generator)
+        super(ExplicitSubjectObjectRule, self).__init__(
+            name=name, 
+            condition=condition, 
+            description=description, 
+            generator=generator)
         
         self.expectancy = expectancy
         """A function taking a subject and an object, giving the explicit preference
@@ -462,7 +466,11 @@ class _WeightedRelationship(BaseRelationship):
     def __init__(self, name, is_positive, weight, condition=None, description=None, generator=None):
         """The constructor."""
         
-        super(_WeightedRelationship, self).__init__(name, condition, description, generator)
+        super(_WeightedRelationship, self).__init__(
+            name=name, 
+            condition=condition, 
+            description=description, 
+            generator=generator)
         
         self.is_positive = is_positive
         """Is the relationship positive to the predicted relationship?"""
@@ -559,7 +567,13 @@ class _BaseRule(_WeightedRelationship):
     def __init__(self, name, is_positive, weight, confidence, condition=None, description=None, generator=None):
         """The constructor.""" 
 
-        super(_BaseRule, self).__init__(name, condition, is_positive, weight, description, generator)
+        super(_BaseRule, self).__init__(
+            name=name, 
+            condition=condition,
+            is_positive=is_positive, 
+            weight=weight, 
+            description=description, 
+            generator=generator)
         
         self.confidence = confidence
         """A float function giving values from [0, 1] representing the 

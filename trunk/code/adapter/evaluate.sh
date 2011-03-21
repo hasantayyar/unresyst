@@ -135,6 +135,8 @@ from flixster.evaluation import *
 MovieRecommenderEvaluator.select_evaluation_pairs()
 
 # evaluate mahout recommender - predictions:
+#
+
 # export training data
 from flixster.mahout_recommender import *
 MahoutMovieRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_train.csv')
@@ -156,3 +158,51 @@ from flixster.mahout_recommender import *
 from flixster.evaluation import *
 MovieRecommenderEvaluator.evaluate_predictions(MahoutMovieRecommender)
 
+
+# evaluate mahout recommender - recommendations
+# 
+
+# export training data
+from flixster.mahout_recommender import *
+MahoutMovieRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_train.csv')
+
+# run mahout train, test -> flixster_recommendations.csv
+cd ../mahout/mahoutrec
+./unresystrecommend.sh flixster
+
+# import predictions
+from flixster.mahout_recommender import *
+MahoutMovieRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_recommendations.csv')
+
+# evaluate the recommendations  
+from flixster.mahout_recommender import *
+from flixster.evaluation import *
+MovieRecommenderEvaluator.evaluate_recommendations(MahoutMovieRecommender, 10)
+
+# Travel
+#
+#
+
+# select test data - obecne
+from travel.models import *
+TourOrderEvalPair.select()
+
+# evaluate mahout recommender - recommendations
+# 
+
+# export training data
+from travel.mahout_recommender import *
+MahoutOrderTourRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/travel_train.csv')
+
+# run mahout train, test -> travel_recommendations.csv
+cd ../mahout/mahoutrec
+./unresystrecommend.sh travel 
+
+# import predictions
+from travel.mahout_recommender import *
+MahoutOrderTourRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/travel_recommendations.csv')
+
+# evaluate the recommendations  
+from travel.mahout_recommender import *
+from travel.evaluation import *
+OrderTourRecommenderEvaluator.evaluate_recommendations(MahoutOrderTourRecommender, 10)

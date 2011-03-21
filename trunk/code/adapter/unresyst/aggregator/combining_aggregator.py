@@ -106,7 +106,7 @@ class CombiningAggregator(BaseAggregator):
         qs_biases = BiasInstance.objects.filter(definition__recommender=recommender_model)
         
         # get entities that have some biases: subject/object anything
-        qs_ids = qs_biases.values_list('subject_object__id', flat=True)
+        qs_ids = qs_biases.values_list('subject_object__id', flat=True).distinct()
         
         for ent_id in qs_ids:
             
