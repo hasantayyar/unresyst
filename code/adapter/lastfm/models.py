@@ -132,6 +132,9 @@ class Tag(models.Model):
     
     name = models.CharField(max_length=MAX_LENGTH_NAME, unique=True)
     """The label."""
+    
+    gender_specific = models.CharField(max_length=1, default='')
+    """If the tag is preferred by a gender, the gender is here"""
 
     def __unicode__(self):
         """Return a printable representation of the instance"""

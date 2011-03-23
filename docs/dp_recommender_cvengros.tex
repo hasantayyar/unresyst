@@ -175,42 +175,71 @@ Supervisor's e-mail address: \vedoucimail\\
     
     Recommender systems are programs operating on large amount of data in software systems. Recommender systems try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
     
-    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and a prediction of any type of relationship between the entities in the domains. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships. Our recommender adds a new layer above algorithms implemented in recommender frameworks, making the recommender easily applicable to any domain and system.
+    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and utilzation of any relationships among the entities in the domain. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships. Our recommender adds a new layer above algorithms implemented in recommender frameworks, making the recommender easily applicable to any domain and system.
     
     %TODO tohle opravit
     In the introductory chapter we describe the basic structure of the thesis. Then we give a formal definition of a recommender system. Finally we review projects and papers that have been created on the universal recommender topic.
     
-    Moderni systemy toho sbiraji o uzivateli, jeho chovani, o prvicich v systemu a vubec, porad vic a tudiz vzrusta potreba kombinovat tuhle business knowledge , na ukor klasickeho kolaborativniho filtrovani, ktere se snazi z jednoho preferencniho zdroje (napr. ratingu), exploitovat co se da. Cim vic dat mam, tim vic se na ne muzu spolehat a nemusim to nechavat na tajemnem algoritmu. 
-    
-    ze to je trend i ve vyzkumu doklada ta blazniva korenova soutez, http://kddcup.yahoo.com/datasets.php
-    
     \section{Thesis Structure}
         \label{thesis_structure}
         In the \emph{\ref{introduction} Introduction} chapter we describe some basic ideas of the thesis, give a formal definition of a recommender system and explore the works that have been made on the topic.
-        ...
-    \section{Thesis Concepts}
-        The section describes the main concepts of the thesis. We list the most important features, establish the purpose of the thesis and briefly show the distinction from the existing work.
         
+        TODO doplnit
+    \section{Thesis Concepts}
+        The section describes the main concepts of the thesis. We list the most important features and describe the purpose of the thesis.
+        \subsection{Motivation}
+            \label{motivation}
+            Modern web applications like e-shops or social networks tend to have much information about items in the system, they collect much data about users and their behaviour. When implementing a recommender in the system, it would be natural to use all the available knowledge for generating recommendations. However, current algorithms used for recommending usually employ only a single source of knowledge: a user-item rating. Using all available knowledge for recommending would lead to better recommendation accuracy and better reasoning for the provided recommendations.
+            
+            Using multiple sources of data for recommending is also a current trend in the recommender research field, as illustrated by the current recommender system competition, organized by members of the Netflix prize winning team \cite{yahoo_cup}.
+            
+            We would like our Universal recommender system (\emph{Unresyst}) to take advantage of all available relationships. Let's show our idea on an example. Suppose, we have to generate recommendations in a system like Last.fm \cite{last_fm}. Registered users can let the system know what music they are playing on their computers through a media player plugin. Moreover, users can fill in some basic personal information, like gender and age. Songs and artists can be marked by tags\footnote{Tag is a short textual notice, provided by a user to describe the song or an artist. For example, music can be tagged as ``Rock'', ``Jazz'', ``Pop`` or ``Slow'', ``Indie''.}. In a recommender, we would like to be able to provide user-artist recommendations as illustrated on the figure \ref{pic_similarity}. The links between a user and an artist he/she has listened is displayed as solid line. The similarity derived from user attributes and artist tags is displayed as dotted line. The user-item recommendations, we would like to generate, are displayed as dashed lines. 
+            
+            \fig[11]{pics/intro_similarity.png}{Using domain-specific similarity for recommending}{pic_similarity}
+
+            Then there are some domain-specific rules we would like to incorporate to the recommendation process. Some music is usually disliked by listeners with given demographic information. For example girls are seldom fans of ``Heavy Metal'' music, so we would like to decrease the chance of ``Heavy Metal'' music being recommended to girls. The situation is illustrated on the figure \ref{pic_rule}, the expected negative preference is displayed as a zig-zag line.
+            
+            \fig[10]{pics/intro_rule.png}{Applying domain specific rules for deprecating recommendations}{pic_rule}
+            
+            Moreover, some artists are more likely to be played in a given period, e.g. because they have released a new album recently or they are on a tour. Such artists should be recommended more often to listeners. This aritst property doesn't depend on the particular listener, it should just ``help'' the artist to get to recommendations for more users.
+            
+            \fig[10]{pics/intro_bias.png}{Using item property for recommendations}{pic_bias}
+            
+            The obtained \emph{compiled predictions} can be used directly for recommending or they can serve as an input for an ordinary recommender algorithm. More about recommending in the Last.fm dataset can be found in chapter \ref{veryfying_last_fm}. 
+            
         \subsection{Main Features}
-        The main concepts of the thesis are:
-        \begin{description}
-                \item[Problem analysis and design of a solution.] The main goal of the work is to analyze the problem of a universal recommender, to create an architecture of the recommender system, design its interfaces and provide an implementation draft. The intefaces should be usable in real-world applications.
-                \item[Domain independence.] The recommender should work on any domain it's addapted to. It can't rely on any domain-specific assumptions. 
-                \item[Using various relationships.] For the recommendation, the recommender should be able to use any number of relationships available in the domain.
-                \item[Recommending given relationship.] The recommender should be able to predict any given relationship, not just the ``rating'' relationship as most recommenders do.
-                \item[A recommender, not a framework.] The adaptation to the given domain should be simple and should require minumum changes in the parent system. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be addapted and used on an arbitrary domain.
-                \item[Pluggable user interface.] The recommender should contain a web-based user interface for presenting the recommendations. The interface should be pluggable to an existing web application, so that it can look like a part of the system and the user doesn't have to leave system web pages to see his/her recommendations. 
-                \item[Verification on various domains.] The recommender should be addapted to at least three domains to verify its universality and usability of the recommender interfaces. 
-        \end{description}
-        \subsection{Out of Scope}
-        The section lists features that are relevant but out of the thesis scope. 
-        \begin{description}
-            \item[] preciznost a skalovatelnost implementace, optimalizace a rychlost dane implemetnace
-            \item[]nebudu merit vykon v case jenom nejak plus minus asymptoticky
-            \item[Central server for multiple systems.] A single Unresyst instance isn't intended to be used as a central server for multiple domains - a Unresyst instance always refers to a single domain. Unresyst doesn't deal with matching the same subjects and objects appearing in multiple systems. 
-            \item[Collecting user preference] Unresyst doesn't help the system collecting any user actions for recommending. Implicit and explicit user feedback can be used for generating recommendations in Unresyst, but it has to be handled by the outer system and passed to Unresyst in the form of business rules and relationships.
-            %TODO\item[]dalsi hustoficury, ktere nestihnu, 
-        \end{description}
+            \label{main_features}
+            The main concepts of the thesis are:
+            \begin{description}
+                    \item[Problem analysis and design of a solution.] The main goal of the work is to analyze the problem of a universal recommender, to create an architecture of the recommender system, design its interfaces and provide an implementation draft. The intefaces should be usable in real-world applications.
+                    \item[Domain independence.] The recommender should work on any domain it's addapted to. It can't rely on any domain-specific assumptions. 
+                    \item[Using various relationships.] For the recommendation, the recommender should be able to use any number of relationships available in the domain.
+                    \item[Recommending given relationship.] The recommender should be able to predict any given relationship, not just the ``rating'' relationship as most recommenders do.
+                    \item[A recommender, not a framework.] The adaptation to the given domain should be simple and should require minumum changes in the parent system. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be addapted and used on an arbitrary domain.
+                    \item[Pluggable user interface.] The recommender should contain a web-based user interface for presenting the recommendations. The interface should be pluggable to an existing web application, so that it can look like a part of the system and the user doesn't have to leave system web pages to see his/her recommendations. 
+                    \item[Verification on various domains.] The recommender should be addapted to at least three domains to verify its universality and usability of the recommender interfaces. 
+            \end{description}
+        \subsection{Thesis Classification}
+            \label{classification}
+                
+                The recommender system research field can be divided into the following the following areas, as stated in \cite{probabilistic_analysis}:
+                
+                \begin{enumerate}
+                    \item Gathering user preference
+                    \item Algorithms transforming past user actions and other data to recommendations \label{algo}
+                    \item Privacy, legacy and other aspects
+                    \item Measuring recommender accuracy \label{measure}
+                    \item Recommender system implementation
+                \end{enumerate}
+                
+                The thesis primarily concentrates on \ref{algo}: generating recommendations from known data. The area \ref{measure} is also partly covered in the thesis, as the results of the recommender on various domains had to be compared to other known approaches. The resting areas are undoubtedly as important as the selected ones, however the selected fit the best to the demonstration of our universal recommender idea. 
+
+                Finally we list the topics that are out of the scope of our work:
+                \begin{description}
+                    \item[Scalable implementation] The provided recommender aplication is meant as a prototype and isn't intended to be scalable for large datasets. 
+                    \item[Central server for multiple systems.] A single Unresyst instance isn't intended to be used as a central server for multiple domains - a Unresyst instance always refers to a single domain. Unresyst doesn't deal with matching the same subjects and objects appearing in multiple systems. 
+                    \item[Collecting user preference] Unresyst doesn't help the system collecting any user actions for recommending. Implicit and explicit user feedback can be used for generating recommendations in Unresyst, but it has to be handled by the outer system and passed to Unresyst in the form of business rules and relationships.
+                \end{description}
 
 \chapter{Analysis}
     \label{analysis}
@@ -220,7 +249,7 @@ Supervisor's e-mail address: \vedoucimail\\
     
     \section{Recommender System Applicability}
         \label{recommender_system_applicability}
-        For a successful implementation of a recommender system, several conditions which have to be fulfilled. A summary of applicability conditions for a collaborative filtering recommender can be found in \cite{collaborative_filtering}. We list some of them that are valid for any recommender, independently of the recommender algorithm.
+        For a successful implementation of a recommender system, several conditions have to be fulfilled. A summary of applicability conditions for a collaborative filtering recommender can be found in \cite{collaborative_filtering}. We list some of them that are valid for any recommender, independently of the recommender algorithm.
         
         \begin{description}
             \item[Many items:] In the domain there are many items that might be interesting for a user. It is not possible for the user to browse all of them.
@@ -228,7 +257,6 @@ Supervisor's e-mail address: \vedoucimail\\
             \item[Taste data:] In the system there have to be some data about the users interacting with items that can be interpreted as expressing taste. It doesn't matter if these are explicit rating data or implicit capture of user behaviour, but there have to be some.
             \item[Homogeneous items:] The items in the domain have some common attributes, they can all be covered by taste data, e.g. they can all be viewed or rated.
         \end{description}
-
     
     \section{Recommender System Benefits}
         \label{recommender_system_benefits}
@@ -241,6 +269,7 @@ Supervisor's e-mail address: \vedoucimail\\
             In a web-system like an e-shop or an internet radio a user is overloaded with items. The system database typically contains thousands of items divided into several categories. The recommender provides user with items that are likely to be interesting without requiring him/her to search for them. This saves user's time and helps him/her spend more time exploring the interesting items than messing around uninteresting items. The provided recommendations are personalized, they reflect the past user's behaviour and available data, so the recommendations are likely to be much accurate. 
             
             In comparison to advanced multi-criteria search, recommender systems are better at reflecting users' preference in criteria that aren't easy to express and depend on the taste of the user. The advantage of recommender system is their user-friendliness - they don't require any explicit search terms, they just use the facts they already know about the user. This can be a significant advantage for inexperienced internet users. 
+            
             Opposed to search engines, recommender systems present items ordered by the expected preference, which can be more accurate when taste is important. However, multi-criteria search can act as a supplement to a recommender system, for performing well defined search queries. E.g. if the user is absolutely certain he/she wants a red lap-top with the given display size at the lowest price, the multi-criteria search is the best option to find such a product.
             
             Recommender systems help users find novel items. When a user only browses and searches the system items, he/she usually gets stuck to a relatively small group of items. The recommendations usually contain items chosen by various criteria, so that they contain both items the user is familiar with and items that are likely to be interesting for the user, but the user wouldn't otherwise discover them.
@@ -255,13 +284,13 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Another interesting feature recommender systems provide to e-shop holders is the ability to include promoted items to recommendations. E-shop holders can artificially increase the recommendation rates of the promoted goods so that they apeear in recommendations for more users. However, this feature should be used moderately because it distorts the results of the recommender algorithm. A massive propagation of items that are promoted by the system holder but are not very interesting for particular users may lead to a loss of user's trust for the recommender.
             
-            And last but not least, a recommender system provides a competitive advantage. Web business leaders like Google or Amazon have already implemented recommenders in their systems, for smaller companies a recommender system may be a key advantage over their rivals.
+            And last but not least, a recommender system provides a competitive advantage. Web business leaders like Google \cite{google_news}, Amazon \cite{amazon} or Yahoo! \cite{yahoo} have already implemented recommenders in their systems, for smaller companies a recommender system may be a key advantage over their rivals.
     
     \section{Universal Recommender Analysis}
         \label{universal_recommender_analysis}
         In the section we describe the position of the proposed recommender system (\emph{Unresyst}) on the market. We depict advantages and disadvantages of the Unresyst recommender, we compare Unresyst to existing sollutions. Finally we propose processes for incorporating Unresyst to a web-based system and for running a system with Unresyst.
         
-        The proposed Unresyst recommender is a domain-independent recommender system that is able to use various relationships between the domain entities. Unresyst is an independent software component that logically stands outside the web-based parent system. It comminicates with the parent system through a defined API. Detailed information on the system architecture can be found in the section \ref{architecture}. 
+        The proposed Unresyst recommender is a domain-independent recommender system that is able to use various relationships between the domain entities. Unresyst is an independent software component that logically stands outside the web-based parent system. It comminicates with the parent system through a defined API\footnote{API stands for Application Programming Interface.}. Detailed information on the system architecture can be found in the section \ref{architecture}. 
         
         Unresyst itself doesn't contain any domain-specific data or methods. In order to work correctly on the given domain, it has to be addapted to it. Addaptation data make Unresyst use domain knowledge for making recommendations. Addaptation is designed so that it's as easy as possible. Adaptation data are stored in the parent system and are used during the communication with Unresyst. Detailed description on the adaptation can be found in the section \ref{adaptation_data}. 
         
@@ -270,7 +299,9 @@ Supervisor's e-mail address: \vedoucimail\\
         \subsection{Universal Recommender Applicability}
             \label{universal_recommender_applicability}
             
-            Compaines that run big global web-systems generally have enough resources to develop their own recommender systems that are specifically designed for their needs. Therefore, Unresyst is aimed at small and mid-size web systems. The goal of the Unresyst concept is to provide companies a way to implement a recommender system without having to develop their own recommender solution, which is often both time and money consuming. With a bit of configuration, Unresyst provides the recommending accuracy comparable to a custom-made recommender system.
+            Compaines that run big global web-systems generally have enough resources to develop their own recommender systems that are specifically designed for their needs. Therefore, Unresyst is aimed at small and mid-size web systems. The goal of the Unresyst concept is to provide companies a way to implement a recommender system without having to develop their own recommender solution, which is often both time and money consuming. With a bit of configuration, Unresyst can provide recommending accuracy comparable to a custom-made recommender system. We suppose the web-system application uses a database to store its data. The data are manipulated trough an SQL\footnote{SQL stands for Structured Query Language, a language most commonly used for structred data manipulation.} or ORM\footnote{ORM stands for Object-relational mapping, a technique used for manipulating data directly in the application without using SQL.} layer.
+            
+            \fig{pics/owner.png}{Choosing the way of recommender system implementation.}{pic_owner}
             
             Unresyst can take use of any attributes and relationships that can be tracked in the parent system. Data that can be used by Unresyst include but are not limited to:
             \begin{description}
@@ -287,16 +318,16 @@ Supervisor's e-mail address: \vedoucimail\\
              
              The Unresyst software component is logically independent of the parent system, it provides an API for all common operations. The API and the domain-specific configuration is made so that the adaptation to the domain and to the parent system is as easy as possible. Unresyst also contains a pluggable user interface for presenting recommendations to the user. The user interface can be incorporated into the parent system user interface so that the user doesn't have to leave the parent system in order to see the recommendations.
              
-             % casem by tu mohlo pribyt neco kouzelneho - dynamika domeny, extrahovani netusenych vztahu a souvislosti a jine
-             
         \subsection{Comparison to Other Solutions}
             \label{comparison_to_other_solutions}
-            In the section we compare Unresyst to other solutions that are available for a small to mid-size company that likes to implement a recommender system at a reasonable time and cost. Unresyst is laying somewhere between the two presented options, using the advantages of both and minimizing their drawbacks.
+            In the section we compare Unresyst to other solutions that are available for a small to mid-size company that likes to implement a recommender system at a reasonable time and cost. Unresyst is laying somewhere between the presented options, using the advantages of all and minimizing their drawbacks.
             
             \subsubsection{Filtering Items in Queries}
                 \label{filtering_items_in_queries}
                 For a system holder, a minimalistic approach to item recommending is to implement item filtering in a query language (e.g. SQL) above the system database. This approach can be very efficient when the holder wishes to implement a small set of well-defined filtering rules, that don't imply user's taste. Such an implementation can be fast and cheap, as it doesn't require any significant changes to the system, nor incorporation of a third party component to the system. 
                 
+                \fig[4]{pics/options_a_own_circle.png}{Implementing recommendations directly in the application.}{pic_direct}
+
                 However this approach works well only for well-defined and static filtering criteria that aren't costly to evaluate. With an increased size of the rule set, the maintainance of the queries becomes difficult. When the system holder wishes to implement some kind of evaluation of user taste, the situation even complicates. Complex queries combining various data can take a long time to evaluate, which results in slow generating of the system web pages and nervous users.
                 
                 Simple hard coded filtering queries don't allow exceptions to the expressed rules. E.g. if we set up a hard coded query for not recommending an item to users with the given demographic data, the item won't be recommended even if we have a high preference signs from other sources such as user behaviour.
@@ -315,31 +346,42 @@ Supervisor's e-mail address: \vedoucimail\\
                 \label{using_a_recommender_framework}
                 The system holder can choose to implement a recommender based on a recommender framework library like Duine \cite{duine} or Mahout \cite{mahout}. These are software libraries providing implementations of common present-day algoritms like collaborative filtering or content-based algorithms. For details on recommender algorithms see the section \ref{algorithms}.
                 
+                \fig[8]{pics/options_b_library.png}{Implementing recommendations using a recommender framework.}{pic_framework}
+
+                
                 Recommender frameworks aren't real rivals to Unresyst as they can be used in the Algorithm layer of Unresyst. In this section we compare the usage of mere recommendation framework directly incorporated  into the system and the usage of Unresyst with a recommender algorithm below, no matter if the in-built recommender algorithm is used, or if the algorithm implementation is overtaken from a third party library.
                 
                 Most algorithms in recommender frameworks rely on presence of a single explicit preference indicator like rating. If a system holder likes to use more sources of negative or positive preference data, he/she has to care about converting the preference to the rating used in the recommender algorithm. Using multiple sources of preference data, like data about user behaviour, social data or demographic data about users, is necessary for the algorithm to provide good recommendations. Only recommenders that use all available knowledge can produce high quality recommendations.
                 
+                \fig[8]{pics/options_c_unresyst.png}{Implementing recommendations through Unresyst, optionally using a recommender framework algorithm.}{pic_unresyst}
+                
                 The API of most of the present-day recommender frameworks isn't very developer-friendly and let the developer deal with converting between the system entities and recommender entities. This requires additional programming. Moreover, the algorithm API often lacks methods for updating the entities. Therefore in order to propagate the changes in the system data to recommender, the system administrator has to rebuild the index of the recommender algorithm. The recommendations can't be made ``on-line'' from the current system data. Unresyst brings up a simple and complete interface for using the recommender in the parent system.
                 
-                %TODO overit, doplnit odkazy na konkretni knihovny, algoritmy
-                
-                In addition, Unresyst enables system holders to run multiple instances of a recommender in one parent system. E.g. there can be a product recommender and user group recommender in the system, that is working in one Unresyst installation, but is independent of each other and can be using different rules and relationships to produce recommendations. Moreover in Unresyst the domain of the recommended objects can be  equal to domain of subjects, so Unresyst can be used e.g. as a friend recommender.
+                In addition, Unresyst enables system holders to run multiple instances of a recommender in one parent system. E.g. there can be a product recommender and user group recommender in the system, that is working in one Unresyst installation, but is independent of each other and can be using different rules and relationships to produce recommendations. 
+
                 
                 To summarize the comparison, incorporating a recommender framework is usually complicated both techically and intellectually. This may be one of the reasons why the present-day recommender frameworks haven't been widely used in real world web-based systems. Unresyst adds a new layer above the algorithms that solves the problems with combining different sources of preference data and enables the system holder to incorporate the business knowledge to recommendations.
-        
-        \subsection{Unresyst Process Model Proposal}
-            \label{unresyst_process_proposal}
+            \subsubsection{Using a Recommender Service}
+                \label{service_through_api}
+                Another option, the system holder can possibly use in future is implementing a recommender using a recommender service. The first attempt to provide a such a service is the Google Prediction API \cite{google_api}. The service is still in development in Google Labs, available for experiments only through a waiting list. Only little data about the way the service internally works is available for public. There's only one obvious disadvantage of the approach: all data that are to be used for recommending have to be passed and regularly updated through the API. This can raise privacy issues system owner's distrust.
+                
+                \fig[8]{pics/options_d_google.png}{Implementing recommendations using a recommender service}{pic_setup}
+
+        \subsection{Unresyst Process Model Draft}
+            \label{unresyst_process_draft}
             In the section we propose a design of processes related to Unresyst setup and maintainance. Note that this is only a brief simplyfied sketch illustrating how real processes could possibly look like. The actual usage of the system would be highly dependent on particular company, its environment and people. A more technical view on Unresyst setup and evaluation can be found in chapters about Unresyst architecture (\ref{architecture}) and evaluation (\ref{evaluating_recommender_results}).
 
             \subsubsection{Unresyst Setup}
                 \label{unresyst_setup}
                 After the system holder or the company management agrees on using Unresyst for recommending in their system, the setup activities may begin. One of the main roles in the recommender operation is the \emph{Domain Expert}. He/She is familiar with the business the system is operating in, knows a lot about entites and their relationships both in the real world and in the system. 
                 
+                \fig{pics/process_setup.png}{Unresyst Setup process, a draft of a process model.}{pic_setup}
+                
                 Firstly, the \emph{Business Analyst} interviews the \emph{Domain Expert} in order to find out the requirements for the recommender and type and ammount of data that is available for making recommendations.  The output of this activity is a report that thoroughly describes the purpose of the recommender and knowledge that is available for recommending in the parent system. The report should at least include the list of recommender instances that will be incorporated to the system and for each recommender it should describe the subjects and objects of recommendations, the description of the predicted relationship and finally a description of all relationships and business rules that are available for the domain. The report is prepared by the \emph{Business Analyst}, is approved by the \emph{Domain Expert} and is imperative for the later activities. This activity should be done properly, multiple iterations of interviewing and recording will be needed.
                 
                 The report is delivered to the \emph{Data Specialist}. \emph{Data Specialist} is a person highly familiar with the data model of the system. He/she transforms the report into an Unresyst configuration, which formally defines subjects, objects, rules and relationships for each recommender. After the configuration, the \emph{Data Specialist} performs the recommender build, evaluates the results of the recommender and verifies sample recommendations with the \emph{Domain Expert}. \emph{Data Specialist} tries improving the recommender evaluation by tuning the rule and relationship parameters, until a given accuracy threshold is reached.
                 
-                The \emph{Developer} is next to come. \emph{Developer} is familiar with the implementation of the parent system. He/she incorporates the Unrest API calls to the appropriate parts of the system, includes the recommender user interface into the parent system interface.
+                The \emph{Developer} is next to come. \emph{Developer} is familiar with the implementation of the parent system. He/she incorporates the Unresyst API calls to the appropriate parts of the system, includes the recommender user interface into the parent system interface.
                 
                 After enough tests have been performed, the version of the parent system using Unresyst is put into operation. Tests should include user-testing inquiring real users of the system.
                 
@@ -348,13 +390,13 @@ Supervisor's e-mail address: \vedoucimail\\
                 
                 Running a recommender system isn't just a matter of setup. Keeping the recommendation quality high requires a regular maintainance activity. The frequency of the maintainance tasks depend on many factors such as  domain dynamics and internal capacities of the company. It should be done at least a few times a year.
                 
-                xxx Decide to collect new data for recommending
-                xxx changes in the system that affect recommendation sources, use of newly available data
+                \fig{pics/process_review.png}{Unresyst Review process, a draft of a process model.}{pic_review}
                 
-                Maintainance activites follow selected setup activities in order to improve accuracy of the recommender. \emph{Business Analyst} interviews the \emph{Domain Expert} to find out what has happened in the domain business since the last maintainance activity. The news are delivered to the \emph{Data Specialist}, who incorporates them to the recommender configuration. He/she evalutes the recommender with the new configuration and tunes the parameters until the desired evaluation is obtained. The new Unresyst configuration and sample recommendations are consulted with the \emph{Domain Expert}. The new configuration is finally tested and put into operation.
+                Maintainance activites follow selected setup activities in order to improve accuracy of the recommender. \emph{Business Analyst} interviews the \emph{Domain Expert} to find out what has happened in the domain business since the last maintainance activity. Requests for collecting new types of user-data can be included. The news are delivered to the \emph{Data Specialist}, who incorporates them to the recommender configuration. He/She also revises the changes in the system that could have affected the recommendation sources and adujusts the configuration to use any newly available data. Finally he/she evalutes the recommender with the new configuration and tunes the parameters until the desired evaluation is obtained. The new Unresyst configuration and sample recommendations are consulted with the \emph{Domain Expert}. The new configuration is finally tested and put into operation.
         
     \section{Definitions}
         \label{definitions}
+        XXXX TODO zkontrolovat, doplnit.
         In this section we give some basic definitions of terms and problems that appear in the whole thesis.
         
         \subsection{Basic Terms}
@@ -433,24 +475,19 @@ Supervisor's e-mail address: \vedoucimail\\
             For instance, using the example in \ref{def_relationship_prediction}, the friendship recommender presents ten other community server users to Alice. The users are sorted by the relationship prediction rate which reflects the number of mutual friends.
         
         \subsection{Adaptation}
-        \subsection{Relationship for Recommender}
     
     \section{Operations in Recommender Systems}
         \label{operations}
         In a recommendation system, some common operations are:
         \begin{description}
             \item[Recommender setup:] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation can be pretty time consuming, as this doesn't have to be performed very often. 
-            \item[Recommendation (see \ref{recommendation}):] Recommendation is the most common operation for a recommender system. Choosing objects with the highest Recommendation Rate among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
-            \item[Adding an object:] The recommender needs to perform this operation when an object is added to the system. For the recommender systems with an index, the object must be added to the index so that it can be recommended to the subjects. Adding an object corresponds to e.g. adding a new book to the system. The operation isn't as common as the recommendation, it doesn't have to be performed that fast - the adding of new object can appear in the recommendations after some time.
-            \item[Adding a subject:] As for the new object, for the recommender systems with an index, the new subject has to be added to the recommendation index. Adding a subject corresponds to e.g. registering a new user to the system. 
-            \item[Adding a relationship:] Adding a new relationship can be a quite common operation. It should be performed quite quickly but not necessarily real-time. Adding a relationship corresponds e.g. to user's rating of a book. 
-            
+            \item[Recommendation (see \ref{recommendation}):] Recommendation is the most common operation for a recommender system. Choosing objects with the highest Recommendation Rate for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
+            \item[Prediction:] Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalogue. Usually it is not possible to store predictions for all subject-object pair, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
         \end{description}
     
     \section{Related Work}
         \label{related_work}
-        Neco o recommenderech obecne. List komercne fungujicich. 
-        
+        XXX TODO doplnit white paper a duine
         The recommender research area has been strongly influenced by the Netflix prize \cite{netflix_wiki}. In the years 2006-2009, the Netflix DVD rental company held a competition on improving their recommender, awarded by the grand prize of US\$1,000,000. To the competition participants, Netflix exposed a data set of over hundred millions of ratings. Over 48,000 teams from 182 different countries participated, the competition had a huge response in both scientific and mainstream media. A paper describing the winning solution was publicly released \cite{netflix_solution}. The competition brought benefits for the Netflix company as well as for the whole recommender research world \cite{netflix_benefit}  Unfortunately, the second Netflix prize was canceled after some user privacy issues \cite{netflix_end}.
         
         \subsection{Domain Independent Recommenders}
@@ -461,17 +498,11 @@ Supervisor's e-mail address: \vedoucimail\\
             
             white paper, 
             Duine - trochu moc se tam pracuje s tim user ratingem. mixuju podobne pravidla a relationships jako on recommendation techniques. (minimalne mam podobne prostredky), ale nekaskaduju. 
-    \section{Other Aspects of Recommender Systems}
-        \subsection{Relation to Other Research Areas}
-            vztah k vyhledavani, machine learningu, statistice, 
-        \subsection{Legal Issues}
 
 
 \chapter{Recommender Algorithms}
     \label{algorithms}
-    In the chapter we list and describe algorithms that are commonly used for recommending. Finally we choose a combination of algorithms that will be used for the universal recommender.
-    
-    Vetsina jede na ratingy. rict, proc je/neni dobre jet na ratingy. ze to vlastne ratingy taky zvlada (likes relationsip + prediction rate)
+    In the chapter we list and describe algorithms that are commonly used for recommending. For each algorithm we describe its possibility to be implemented as domain-independent, and the its capacity to use multiple data sources as an input.
 
     \section{Content-based Methods}
         \label{content_based_filtering}
@@ -617,53 +648,71 @@ Supervisor's e-mail address: \vedoucimail\\
 
     \section{Conclusion}
         \label{algorithm_conclusion}
-        In the chapter we have described all common contemporary approaches to recommender systems, their suitability for domain-independent recommending has been evaluated. In a universal recommender we cannot assume that any specific relationships or subject and object properties exists, so our choice narrows a lot. 
+        In the chapter we have described all common contemporary approaches to recommender systems, their suitability for domain-independent recommending has been evaluated. In a universal recommender we cannot assume that any specific relationships or subject and object properties exists, so our choice narrows a lot.
         
-        From the studied algorithms, the only one that is domain-independent by nature is \emph{collaborative filtering}. All the others are dependent on some specific features of subjects or objects, or they suppose some specific relationships. Therefore, for our universal recommender we choose a collaborative filter. 
+        Our vision of using business rules for recommending intersects with the knowledge based recommender. \ref{knowledge_based}. However there will have to be a domain-independent mechanism for representing and combining the business rules.
         
-        There is a lot of types of collaborative filtering algorithms, as can be seen in the \ref{collaborative_filtering} section. The most comprehensive from the described collaborative filters seems to be the \emph{matrix factorization} method. Moreover \cite{white_paper} prooves that all other recommenders, except the knowledge based which isn't menitioned, can be generalized by a recommender based on the matrix factorization collaoborative filtering technique. The only difference to the classical matrix factorization described in \cite{bellkor_ieee} is that the subject and object vectors have to reflect more than one type of relationship. 
+        From the studied algorithms, the only one that is domain-independent by nature is \emph{collaborative filtering}. All the others are dependent on some specific features of subjects or objects, or they suppose some specific relationships. Therefore, our universal recommender should be based on a collaborative filtering algorithm. 
         
-        For the given reasons, the matrix factorization recommender should be in the core of our universal recommender. 
+        We have noted, that there's a gap between our requirements for a universal recommender system and collaborative filering algorithms: We would like to make use of multiple data sources including object and subject similarity, and domain specific rules. The collaborative filtering in its typical implementation takes only a single source of data - subject-object rating. The gap between our requirements and the input of a collaborative filtering algorithm should be filled by the Unresyst application. It should process all the inputs it has into a single subject-object preference prediction. This prediction can be then used directly for recommending or it can serve as an input for a common collaborative filtering algorithm.
         
-        \subsection{Combining Knowledge-based and Matrix Factorization Recommenders}
-        The only method that wasn't generalized by the universal recommender proposed in \cite{white_paper} is the knowledge-based method. As we have shown in \ref{knowledge_based}, simple domain-specific rules can enhance the recommendation accuracy, especially when there's little data available. Hence, incorporating a possibility to enter some simple domain-specific set of rules when addapting the universal recommender to a domain, would be very interesting. We found a few options how to incorporate the evaluation of knowledge rules into a matrix factorization recommender:
-        \begin{description}
-            \item[Knowledge-based recommender above matrix factorization.] In this variation there're independent knowledge based and matrix factorization recommenders, which corresponds to a hybrid recommender. This approach was used in the RACOFI system \cite{racofi} for other types of collaborative filters. For a relationship prediction, if a rule is available, it would be used for predicting the relationship together with the underlying matrix factorization. If not, only the matrix factorization method would be used. Although this is a possible combination of the recommenders it has a significant drawback. The method introduces a tension between the two recommenders. The results of the matrix factorization method, which should be universal, aren't used in some cases at all, in other cases its results are distorted by the knowledge recommender. This problem can lead to incorrect learning of the model.
-            \item[Using matrix factorization, converting the rules into relationships.] Optionally, the rules given in the addaptation to a specific domain, can be converted to relationships between subject/object pairs satisfying the condition in the rule. The matrix factorization recommender would use such relationships as any others and therefore its universality would remain intact. The drawback is the usage of the matrix factorization even for domains and subject/object pairs where a simple knowledge-based recommender would be sufficient. Another problem is the loss of recommendation explanations that would otherwise be available from the knowledge-based recommender.
-            \item[Combining the previously mentioned options.] The last possibility is to combine the previously mentioned options. The rules would be divided into two groups: \emph{hard rules} (when a rule condition is satisfied, the object will always be recommended) and \emph{soft rules} (when a rule condition is satisfied, the prediction rate would be decreased or increased). A knowledge-based recommender with the hard rules will be used as described in the first option. The soft rules would be converted into relationships as described in the second option. The distortion of the matrix factorization results would be minimized, the explanations of the knowledge-based recommender will be preserved and the matrix factorization would be used only in the cases when really needed. However matrix factorization distortion remains, as it is not used in all cases. A new problem emerges: The objects recommended by the hard rules would be recommended always and there's no way for a subject to decline them.
-        \end{description}
+        There are a lot of types of collaborative filtering algorithms, as can be seen in the \ref{collaborative_filtering} section. The algorithms differ in many aspects as time complexity, accuracy of the predictions or possibility to reflect the updates in the parent system. Each parent system has its own requirements on the named aspects and therefore Unresyst shouldn't be bound to a particular algorithm. Rather than that it should be able to use an arbitrary collaborative filtering algorithm in its algorihm layer. When implementing a recommender to a system we should be able to choose whether to use the predictions directly for recommending or to choose the right algorithm to fit the domain properties and needs.
         
-        For the given reasons we would choose the second option - \emph{Using matrix factorization, converting the rules into relationships}. Another advantage of this approach is that a standalone knowledge based recommender doesn't have to be implemented, as the modified matrix factorization recommender will be dealing with the rules. The described drawbacks of the method aren't critical and we should be able to overcome them during the implementation. 
-        
-        
-\chapter{Relationships in Studied Systems}
-    Tohle mozna vypustit, delam to univerzalne. In the chapter we analyze systems where there are some subjects and objects to recommend. The relationships between the entities in the system are examined and analyzed. The relationships that are suitable for recommendations are chosen and abstracted so they fit the relationships used in the recommender algorithms. 
-    \section{Relationships in Existing Systems}
-        \label{relationships_in_existing_systems}
-        tohle mozna vypustit
-        \subsection{Rating}
-        \subsection{Friendship}
+
+        \subsection{Combining Knowledge-based and Collaborative Filtering Recommenders}
+            The only method that wasn't generalized by the universal recommender proposed in \cite{white_paper} is the knowledge-based method. As we have shown in \ref{knowledge_based}, simple domain-specific rules can enhance the recommendation accuracy, especially when there's little preference data available. Hence, incorporating a possibility to enter some simple domain-specific set of rules when addapting the universal recommender to a domain, would be interesting. We found a few options how to merge the evaluation of knowledge rules with collaborative filtering:
+            \subsubsection{A hybrid recommender for knowledge-based and collaborative filtering}
             
+                \fig[7]{pics/knowledge_cf_hybrid.png}{Combining Collaborative Filtering and Knowledge Based Recommender as a Hybrid Recommender}{pic_knowledge_cf_hybrid}
+                 
+                In this variation there're independent knowledge based and collaborative filtering recommenders. This approach was used in the RACOFI system \cite{racofi}. For a relationship prediction, if a rule is available, it is used for predicting the relationship together with the underlying collaborative filtering algorithm. If not, only the collaborative filtering is used. Although this is a possible combination of the recommenders it has some significant drawbacks. The method introduces a tension between the two recommenders. The results of the collaborative method, which should be universal are in some cases distorted by the knowledge recommender. This problem would lead to incorrect learning in the model-based algorithms, as some manipulations are done outside the model and therefore the method cannot fully affect the resulting predictions.
+                
+               
+
+            \subsubsection{Using the knowledge-based predictions as an input for collaborative filtering} 
+                Alternatively, using the business rules given during the addaptation to a specific domain, we can generate a prediction (a kind of rating) that is later used in the underlying collaborative filtering algorithm. The prediction is available for subject - object pairs, for which some rules can be applied. The rules are only used during the initial recommender build to provide an input for the collabarative filtering. The recommendations then are done solely by the collaborative filtering algorithm. The advantage of the approach is, that the information from the knowledge-based algorithm is available in the initial phase and can be used for the collaborative filtering model build. 
+                
+                \fig[7]{pics/knowledge_cf_above.png}{Using predictions from Knowledge based recommender as an input to Collaborative Filtering}{pic_knowledge_cf_above}
+            
+            
+            For the given reasons we choose the second option. Another advantage of this approach is that the recommendation time will be dependent only on the recommender algorithm. The implementation of the chosen approach is thoroughly described in the chapter \ref{architecture}.
+        
+\chapter{Business Rules and Relationships in Studied Systems}
+    In the chapter we analyze selected systems where the Unresyst recommender could be used. As we don't have a direct access to the system databases, we use datasets\footnote{Dataset is a set of text files containing some part of data inlcuded in the system database}. The first two datasets - Last.fm and Flixster are publicly available. The third one (Czech travel agency e-shop dataset) was made accessible to the thesis author by the courtesy of the system administrator.
+    \section{The Last.fm Dataset}
+        basic data about both subjects and objects, relationships
+        \fig[14]{pics/lastfm.png}{The data model of the Last.fm dataset}{pic_last_fm}
+
+    \section{The Flixster Dataset}
+        classic collaborative filtering having additive social data.
+        \fig[8]{pics/flixster.png}{The data model of the Flixster dataset}{pic_flixster}
+    
+    \section{The Travel Agency Dataset}
+        Different kinds of implicit feedback
+        \fig[18]{pics/travel2.png}{The data model of the Travel Agency dataset}{pic_travel}
+    
     \section{Relationship Abstraction Summary}
         \label{relationship_abstraction_summary}
-        This section summarizes some basic rules that were used when abstracting the relationships. Problems that were met during the analysis are mentioned. Relationships that could not be abstracted are listed here, with reasons why the abstraction wasn't possible.
+        This section summarizes the type of rules and relationships that appeared in the studied systems. 
 
 \chapter{Universal Recommender Design and Implementation}
     \label{design_and_implementation}
-    The chapter describes how the Universal Recommender was implemented. We describe the basic architecture of the Universal Recommender. 
+    TODO projet, doplnit konkretni priklady z uvodu
+    
+    The chapter describes how the Universal Recommender was implemented. We describe the high-level architecture of the Universal Recommender from outside, then we describe the layers of the program architecture. Finally we give a more detailled overview of the inner classes.
 
 % recommendation rate nejak uzpusobit, zavest special konstantu - pro objekty ktere uz subjekt ``vlastni'' - takovy zaklad konfigurace, kdyz to ma, tak mu to nenabizim. 
     \section{Universal Recommender Architecture}
         \label{architecture}
-        The Universal Recommender is designed so that it's independent of the domain of the subjects and objects, working only with the abstract relationships. The set of relationships can be extended easily. Several instances of the recommender can be run on a single system, so the Universal Recommender can run with various configurations recommending various objects to various subjects. 
+        The Universal Recommender is designed so that it's independent of the domain of the subjects and objects, working only with the abstract relationships. The set of relationships can be extended easily. Several instances of the recommender can be run on a single system, so the Universal Recommender can run with various configurations recommending various objects to various subjects.
         
-        neni nikde native - takze musi stat mimo ten system, mit s nim nejaky rozumny iterface. 
+        The recommender doesn't have to be directly a part of the parent system, its database is logically independent of the parent database system. The parent system and the recommender communicate only through the interfaces, there are no implicit links on the application nor on the database level. Hence the recommender could be easily run on an independent server.
         
-        The figure \ref{pic_unrest_adaptation} shows an example how UNREST can be adapted to a domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Gear Recommender} and a \emph{Friend Recommender}. Each recommender has two interfaces: \emph{Adaptation Interface} and \emph{Runtime Interface}. The domain expert uses the Adaptation interface to adapt UNREST to the Tennis domain and performs necessary setup to put the recommenders into operation. 
-        \fig{pics/unrest_adaptation.png}{Adaptating UNREST to a domain done by a domain expert.}{pic_unrest_adaptation}
+        The figure \ref{pic_unresyst_adaptation} shows an example how Unresyst can be adapted to a domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Gear Recommender} and a \emph{Friend Recommender}. Each recommender has two interfaces: \emph{Adaptation Interface} and \emph{Runtime Interface}. The domain expert uses the Adaptation interface to adapt Unresyst to the Tennis domain and performs necessary setup to put the recommenders into operation. 
+        \fig{pics/unrest_adaptation.png}{Adaptating Unresyst to a domain done by a domain expert.}{pic_unresyst_adaptation}
         
-        In the figure \ref{pic_unrest_runtime} there is a schema of how a system using UNREST operates. The system user accesses the system as usually through its graphical interface (GUI). The UNREST GUI which is a part of UNREST is plugged into the Tennis Server user interface and it presents recommendations to the user. The UNREST GUI as well as the Tennis Server uses the Runtime Interface of both recommenders to get recommendations and to provide information needed for making recommendations. Both recommenders transfer the calls to the UNREST module. The UNREST module generates recommendations and stores them in a database. Recommendations are provided on demand.  
-        \fig[17]{pics/unrest_runtime.png}{UNREST common usage.}{pic_unrest_runtime}
+        In the figure \ref{pic_unresyst_runtime} there is a schema of how a system using Unresyst operates. The system user accesses the system as usually through its graphical interface (GUI). The Unresyst GUI which is a part of Unresyst is plugged into the Tennis Server user interface and it presents recommendations to the user. The Unresyst GUI as well as the Tennis Server uses the Runtime Interface of both recommenders to get recommendations and to provide information needed for making recommendations. Both recommenders transfer the calls to the Unresyst module. The Unresyst module generates recommendations and stores them in a database. Recommendations are provided on demand.  
+        \fig[17]{pics/unrest_runtime.png}{Unresyst common usage.}{pic_unresyst_runtime}
         
         obrazek architecture:
             Specific Recommender holds the domain-specific data.
@@ -675,15 +724,15 @@ Supervisor's e-mail address: \vedoucimail\\
         obrazek build:
             During the build, domain data that have been entered by the domain expert are used for creating a recommender model. 
             Recommender just passes the call to other layers.
-            Abstractor goes ove rhe subjects and objects, evalutes the business rules on them, introduces a new relationship or bilas for each rule. It converts subjects and objects to a universal representation that would be used in the rest of UNREST.
+            Abstractor goes ove rhe subjects and objects, evalutes the business rules on them, introduces a new relationship or bilas for each rule. It converts subjects and objects to a universal representation that would be used in the rest of Unresyst.
             Aggregator aggregates all relationships int o a sinle one for subject-object, subject-subject and object-object pairs, using the given weights. It does the same for biases.
             Recommender Algorithm uses the aggregated relationships to learn a recommender model.
         
         obrazek class diagram:
 	    Classes are displayed as rectangles, objects as rectangles with round corners. All the classes are \emph{purely static} - there are no instances of the classes, the classes contain only class methods. They act as singleton objects.
 	    The diamond relationships mean that the given class/object can be accessed only from the containing class. 
-    \section{Adaptation Data}
-        \label{adaptation_data}
+    \section{Adaptation Interface}
+        \label{adaptation_interface}
         \subsection{Representing Rules}
             \label{representing_rules}
             
@@ -800,57 +849,86 @@ Supervisor's e-mail address: \vedoucimail\\
                 This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the description remains as described in the section \ref{representing_relationships}. 
             \subsection{Representing Bias}
                 mam subject/object bias, subject v podstate neovlivni doporuceni/nedoporuceni, jen upravuje vysi expectancy. Object naopak ovlivni
-    \section{Combining}
-        \begin{equation}
-            \label{eq_expectancy_combination}
-            f(x) = \left\{\begin{array}{ll}
-                    2^{n-1}x^n & \textrm{if $x\in[0,\frac{1}{2}]$}\\
-                    & \\
-                    1-2^{n-1}(x-1)^n & \textrm{if $x\in(\frac{1}{2}, 1]$}\\
-                \end{array} \right.
-        \end{equation}
-        hh\\
-        $C_{so}$: event, $s$ chooses $o$\\
-        $E_{Rso}$ event, rule $R$ covers $s$ - $o$ prediction
-        \begin{equation}
-            \label{eq_bayes1}
-            P(C_{so} | E_{Rso}) = \frac{P(E_{Rso} | C_{so}) P(C_{so})}{P(E_{Rso})}
-        \end{equation}
-        hh\\
-        $CPair$: a set of s-o pairs, s has chosen o\\
-        $Pair_R$: a set of s-o pairs, $R$ predicts s-o expectancy\\
-        $S$: a set of subjects\\
-        $O$: a set of objects\\
-        $P(C_{so}) \simeq$ expectancy given by $R$\\
-        $P(E_{Rso}) \simeq \frac{|Pair_R|}{|S||O|}$\\
-        $P(E_{Rso}|C_{so}) \simeq \frac{|CPair \cap Pair_R|}{CPair}$\\
+    \section{Applying Rules}???
+        BFS with the given depth
+        \subsection{Matching Rule Conditions to Entities and Entity Pairs}
+            \label{matching}
+            traversing the pairs, testing condition, optimalization - provide a generator function
+            abstractor.
+        \subsection{Aggregating Similarities and Biases}
+            \label{aggregating}
+            aggregator, jak se to kdyz se to sejde see \ref{combining}.
         
-        \begin{equation}
-            \label{eq_bayes2}
-            P(C_{so} | E_{R_1so} \cap E_{R_2so}) = \frac{P(C_{so}) P(E_{R_1so} | C_{so}) P(E_{R_2so} | C_{so} \cap E_{R_1so})}{P(E_{R_1so}) P(E_{R_2so}|E_{R_1so})}
-        \end{equation}
+        \subsection{Compiling Rules to Preference Predictions}
+            \label{compiling}
+            compilator
+            predicted relationship + similarity, subject-object rules, bias, 
+            ukazat na prikladu
+            
+        \subsection{Combining}
+            \label{combining}
+            deje se na dvou mistech 
+            combining: aggregating phase (biases, similarities) ->, compiling phase (preferences) -> combined preferences,. 
+            \subsubsection{Twisted Average}???
+                
+                \begin{equation}
+                    \label{eq_expectancy_combination}
+                    f(x) = \left\{\begin{array}{ll}
+                            2^{n-1}x^n & \textrm{if $x\in[0,\frac{1}{2}]$}\\
+                            & \\
+                            1-2^{n-1}(x-1)^n & \textrm{if $x\in(\frac{1}{2}, 1]$}\\
+                        \end{array} \right.
+                \end{equation}
+            \subsubsection{Mycin}
+                Confidence factor nevimco, bude se muset lehce ztransformovat.
+            \subsubsection{Bayesian}
+                $C_{so}$: event, $s$ chooses $o$\\
+                $E_{Rso}$ event, rule $R$ covers $s$ - $o$ prediction
+                \begin{equation}
+                    \label{eq_bayes1}
+                    P(C_{so} | E_{Rso}) = \frac{P(E_{Rso} | C_{so}) P(C_{so})}{P(E_{Rso})}
+                \end{equation}
+                hh\\
+                $CPair$: a set of s-o pairs, s has chosen o\\
+                $Pair_R$: a set of s-o pairs, $R$ predicts s-o expectancy\\
+                $S$: a set of subjects\\
+                $O$: a set of objects\\
+                $P(C_{so}) \simeq$ expectancy given by $R$\\
+                $P(E_{Rso}) \simeq \frac{|Pair_R|}{|S||O|}$\\
+                $P(E_{Rso}|C_{so}) \simeq \frac{|CPair \cap Pair_R|}{CPair}$\\
+                \begin{equation}
+                    \label{eq_bayes2}
+                    P(C_{so} | E_{R_1so} \cap E_{R_2so}) = \frac{P(C_{so}) P(E_{R_1so} | C_{so}) P(E_{R_2so} | C_{so} \cap E_{R_1so})}{P(E_{R_1so}) P(E_{R_2so}|E_{R_1so})}
+                \end{equation}
 
     \section{Implementation}
+        \subsection{Addaptation Interface}
+        misto condition generator
+        \subsection{Data Model}
+        datovy model - subjekty, objekty v jednom, definice, indexy, agregator si to radi a pak to bere jak to jde
         Vychytavka se symmetric relations. Poradi: v s-o prvni subject, vsude jinde to co ma mensi id tak to prvni.
-    \section{Recommendation Viewer}
-        \label{viewer}
-        The recommendations made by the Universal Recommender can be viewed in a web based application called \emph{Recommendation Viewer}. The application shows recommendations for a chosen subject. It is independent of the object and subject domain. The page for viewing the recommendations can be easily embedded to a webpage.
-        %idealne aby to slo rovnou embeddovat do bikebooku
+        \subsection{Runtime Interface}
+            jak tam vracim uzasny miry a vysvetleni, jak je to diky buildu rychly. 
+        \subsection{Recommendation Viewer}
+            \label{viewer}
+            The recommendations made by the Universal Recommender can be viewed in a web based application called \emph{Recommendation Viewer}. The application shows recommendations for a chosen subject. It is independent of the object and subject domain. The page for viewing the recommendations can be easily embedded to a webpage.
         
         ...
-\chapter{Adapting the Universal Recommender to Existing Systems}
+\chapter{Verifying the Universal Recommender on Real-World Data}
     \label{adapting_to_existing_systems}
-    Minimalne tri. The process of adapting the Universal Recommender to some existing systems is described in the chapter. The chosen systems work on various domains. Each system has some API, so that the Universal Recommender can easily get data about the objects, subjects and their relationships. The way how to run the Universal Recommender in several instances for a system is described here. Some basic rules for the Universal Recommender configuration are given.
-        \subsection{MovieLens data set}
+    The process of adapting the Universal Recommender to some existing systems is described in the chapter. The chosen systems work on various domains. Each system has some API, so that the Universal Recommender can easily get data about the objects, subjects and their relationships. The way how to run the Universal Recommender in several instances for a system is described here. Some basic rules for the Universal Recommender configuration are given.
+        \subsection{Flixster data set}
+            z megamnozstvi jsem udelal min - podmnozina uzivatelu, z prvnich 105000 radku friendu, k nim nalezejici ratingy, uzivatele bez hodnoceni smazat, ponevadz nejsem schopen je nijak testovat - je to akorat spam
         \subsection{Last.fm}
+            \label{veryfying_last_fm}
             zpusob vyberu z megadatasetu
-        \subsection{Bikebook}
+            musel jsem vyhazet tagy, ktere nejsou sharovane mezi vic artisty, byly jich dve tretiny.
+        \subsection{Travel agency}
+            byl smaznul jsem i ostatni implicitni feedback z train setu - feedback z budoucnosti neznam. 
         
-\chapter{Universal Recommender Prototype Implementation}
-    \label{implementation}
         implementacni vychytavky:
             symetricke relace serazene podle idecka, zarucene bude s1 s2 a uz ne s2 s1
-            agregator si to radi a pak to bere jak to jde
+            
             pridani toho generatoru do pravidel
         ...
 
@@ -867,6 +945,8 @@ Supervisor's e-mail address: \vedoucimail\\
         RMSE = \sqrt{\frac{\sum_{(s,o)\in TestPairs}(p_{so} - \widetilde{p}_{so})^2}{|TestPairs|}}
     \end{equation}
     
+    ndcg nemuzu pouzit, protoze nemam poradi v result listu
+    korenuv hyperzpusob na par nahodne vybranych uzivatelu.
     hh\\
     $Prec_s$: precision for subject $s$.\\
     $Rec_s$: recall for subject $s$\\
@@ -909,12 +989,9 @@ Supervisor's e-mail address: \vedoucimail\\
             prediction: 0.536166 (593/1106) RMSE: 0.340527
             recommendation: 3 hits recorded, (0.0043478260869565218, 0.0056051034311903883)
 
-
-    \section{Comparison to Other Recommenders}
-        \label{comparison_to_other}
-    
     \section{Improving the Recommender Results}
         \label{improving_the_results}
+        \subsection{Learning Weights}
 
 \chapter{Conclusion and Future Work}
 \label{conclusion}
@@ -982,6 +1059,11 @@ http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
 \bibitem{lastfm_festivals}\verb!http://www.last.fm/festivals!
 \bibitem{mahout}\verb!http://mahout.apache.org/!
 \bibitem{collaborative_filtering}Collaborative filtering recommender systems \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.130.4520&rep=rep1&type=pdf!
+\bibitem{last_fm}Last.fm recommendation service \verb!http://www.last.fm/about!
+\bibitem{yahoo_cup}KDD cup recommender competition \verb!http://kddcup.yahoo.com/index.php!
+\bibitem{probabilistic_analysis}Recommendation systems: a probabilistic analysis \verb!http://www.tomkinshome.com/site_media/papers/papers/KRR+98.pdf!
+\bibitem{yahoo} Seung-Taek Park, David M. Pennock: Applying collaborative filtering techniques to movie search for better ranking and browsing \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.8109&rep=rep1&type=pdf!
+\bibitem{google_api}The Google Prediction API \verb!http://code.google.com/apis/predict/!
 
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
@@ -998,7 +1080,7 @@ odkazy:
         SUGGEST (dead since 2000):
             http://glaros.dtc.umn.edu/gkhome/suggest/overview
             + http://pypi.python.org/pypi/pysuggest/1.0
-        easyrec (opensource, vypada ze umi prd, ale bezi jako service):
+        easyrec (opensource, vypada ze moc neumi, ale bezi jako service):
             http://easyrec.org/api-js
         duine (opensource):
             http://duineframework.org
