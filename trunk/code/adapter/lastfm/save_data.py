@@ -11,6 +11,38 @@ from models import *
 TZ = tzutc()
 """The used timezone"""
 
+GENDER_SPECIFIC_TAGS = {
+    'punk': 'm',
+    'metal': 'm',
+    'punk rock': 'm',
+    'hardcore': 'm',
+    'hard rock': 'm',
+    'industrial': 'm',
+    'post-punk': 'm',
+    'post-rock': 'm',
+    'heavy metal': 'm',
+    'metalcore': 'm',
+    'death metal': 'm',
+    'noise': 'm',
+    'hardcore punk': 'm'',
+
+    'female': 'f',
+    'beautiful': 'f',
+    'Love': 'f',
+    'lovely': 'f',
+    'sweet': 'f',
+    'singer-songwriter': 'f',
+    'singer songwriter': 'f',
+    'woman': 'f',
+    'mellow': 'f',
+    'dream pop': 'f',
+    'soft': 'f',
+    'emotional': 'f',
+    'cut': 'f',
+}
+"""Tags that are specific for the given gender.
+"""
+
 """
 7141 artists
 992 users
@@ -179,8 +211,16 @@ def _parse_tags(filename):
         if artist.name != artist_name:
             continue
         
+        # get the gender specificity
+        if GENDER_SPECIFIC_TAGS.has_key(tag_name):
+            gender_specific = GENDER_SPECIFIC_TAGS[tag_name]
+        else
+            gender_specific = ''
+        
         # get or create the tag
-        tag, created = Tag.objects.get_or_create(name=tag_name)
+        tag, created = Tag.objects.get_or_create(
+            name=tag_name, 
+            defaults={'gender_specific': gender_specific,})        
         
         # create and save the tag for the artist 
         artist_tag = ArtistTag(
