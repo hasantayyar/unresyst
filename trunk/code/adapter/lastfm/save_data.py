@@ -24,7 +24,7 @@ GENDER_SPECIFIC_TAGS = {
     'metalcore': 'm',
     'death metal': 'm',
     'noise': 'm',
-    'hardcore punk': 'm'',
+    'hardcore punk': 'm',
 
     'female': 'f',
     'beautiful': 'f',
@@ -214,7 +214,7 @@ def _parse_tags(filename):
         # get the gender specificity
         if GENDER_SPECIFIC_TAGS.has_key(tag_name):
             gender_specific = GENDER_SPECIFIC_TAGS[tag_name]
-        else
+        else:
             gender_specific = ''
         
         # get or create the tag

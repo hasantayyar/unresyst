@@ -169,13 +169,13 @@ Supervisor's e-mail address: \vedoucimail\\
 \chapter{Introduction}
     \label{introduction}
 
-    A present-day internet user is facing a plentitude of options. E-shops are offering a wide choice of various products, internet newspapers publish thousands of articles every day, loads of videos are published or uploaded by users every second. When a user is deciding what to buy, read or see, there are by far too many options to browse and choose the optimal one. Search engines don't help much, because a query like ``find something I would like'' is too vague. That's where recommender systems emerge. They help users to deal with the information overload, retailers to offer the most appropriate product for each client which resutls in increased custumer satisfaction and loyalty. 
+    A present-day internet user is facing a plentitude of options. E-shops are offering a wide choice of various products, internet newspapers publish thousands of articles every day, loads of videos are published or uploaded by users every second. When a user is deciding what to buy, read or see, there are by far too many options to browse and choose the optimal one. Search engines don't help much, because a query like ``find something I would like'' is too vague. That's where recommender systems emerge. They help users to deal with the information overload, retailers to offer the most appropriate product for each client which results in increased customer satisfaction and loyalty. 
     
     The key feature of recommender systems is \emph{personalization}. Unlike search engines, recommenders take into account the personality and past behaviour of each user. A typical recommender wouldn't present the same set of items to two different users.
     
     Recommender systems are programs operating on large amount of data in software systems. Recommender systems try to present items such as books, music, news, etc. that are likely to be interesting for a given user. These systems may be helpful for users that are choosing between a large number of items and aren't willing to browse information about all available items.
     
-    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and utilzation of any relationships among the entities in the domain. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, prediciting relationships of the given type using already known relationships. Our recommender adds a new layer above algorithms implemented in recommender frameworks, making the recommender easily applicable to any domain and system.
+    Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and utilization of any relationships among the entities in the domain. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, predicting relationships of the given type using already known relationships. Our recommender adds a new layer above algorithms implemented in recommender frameworks, making the recommender easily applicable to any domain and system.
     
     %TODO tohle opravit
     In the introductory chapter we describe the basic structure of the thesis. Then we give a formal definition of a recommender system. Finally we review projects and papers that have been created on the universal recommender topic.
@@ -193,7 +193,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Using multiple sources of data for recommending is also a current trend in the recommender research field, as illustrated by the current recommender system competition, organized by members of the Netflix prize winning team \cite{yahoo_cup}.
             
-            We would like our Universal recommender system (\emph{Unresyst}) to take advantage of all available relationships. Let's show our idea on an example. Suppose, we have to generate recommendations in a system like Last.fm \cite{last_fm}. Registered users can let the system know what music they are playing on their computers through a media player plugin. Moreover, users can fill in some basic personal information, like gender and age. Songs and artists can be marked by tags\footnote{Tag is a short textual notice, provided by a user to describe the song or an artist. For example, music can be tagged as ``Rock'', ``Jazz'', ``Pop`` or ``Slow'', ``Indie''.}. In a recommender, we would like to be able to provide user-artist recommendations as illustrated on the figure \ref{pic_similarity}. The links between a user and an artist he/she has listened is displayed as solid line. The similarity derived from user attributes and artist tags is displayed as dotted line. The user-item recommendations, we would like to generate, are displayed as dashed lines. 
+            We would like our Universal recommender system (Unresyst) to take advantage of all available relationships. Let's show our idea on an example. Suppose, we have to generate recommendations in a system like Last.fm \cite{last_fm}. Registered users can let the system know what music they are playing on their computers through a media player plugin. Moreover, users can fill in some basic personal information, like gender and age. Songs and artists can be marked by tags\footnote{Tag is a short textual notice, provided by a user to describe the song or an artist. For example, music can be tagged as ``Rock'', ``Jazz'', ``Pop`` or ``Slow'', ``Indie''.}. In a recommender, we would like to be able to provide user-artist recommendations as illustrated on the figure \ref{pic_similarity}. The links between a user and an artist he/she has listened is displayed as solid line. The similarity derived from user attributes and artist tags is displayed as dotted line. The user-item recommendations, we would like to generate, are displayed as dashed lines. 
             
             \fig[11]{pics/intro_similarity.png}{Using domain-specific similarity for recommending}{pic_similarity}
 
@@ -201,23 +201,23 @@ Supervisor's e-mail address: \vedoucimail\\
             
             \fig[10]{pics/intro_rule.png}{Applying domain specific rules for deprecating recommendations}{pic_rule}
             
-            Moreover, some artists are more likely to be played in a given period, e.g. because they have released a new album recently or they are on a tour. Such artists should be recommended more often to listeners. This aritst property doesn't depend on the particular listener, it should just ``help'' the artist to get to recommendations for more users.
+            Moreover, some artists are more likely to be played in a given period, e.g. because they have released a new album recently or they are on a tour. Such artists should be recommended more often to listeners. This artist property doesn't depend on the particular listener, it should just ``help'' the artist to get to recommendations for more users.
             
             \fig[10]{pics/intro_bias.png}{Using item property for recommendations}{pic_bias}
             
-            The obtained \emph{compiled predictions} can be used directly for recommending or they can serve as an input for an ordinary recommender algorithm. More about recommending in the Last.fm dataset can be found in chapter \ref{veryfying_last_fm}. 
+            The obtained \emph{compiled predictions} can be used directly for recommending or they can serve as an input for an ordinary recommender algorithm. More about recommending in the Last.fm dataset can be found in chapter \ref{verifying_last_fm}. 
             
         \subsection{Main Features}
             \label{main_features}
             The main concepts of the thesis are:
             \begin{description}
-                    \item[Problem analysis and design of a solution.] The main goal of the work is to analyze the problem of a universal recommender, to create an architecture of the recommender system, design its interfaces and provide an implementation draft. The intefaces should be usable in real-world applications.
-                    \item[Domain independence.] The recommender should work on any domain it's addapted to. It can't rely on any domain-specific assumptions. 
+                    \item[Problem analysis and design of a solution.] The main goal of the work is to analyze the problem of a universal recommender, to create an architecture of the recommender system, design its interfaces and provide an implementation draft. The interfaces should be usable in real-world applications.
+                    \item[Domain independence.] The recommender should work on any domain it's adapted to. It can't rely on any domain-specific assumptions. 
                     \item[Using various relationships.] For the recommendation, the recommender should be able to use any number of relationships available in the domain.
                     \item[Recommending given relationship.] The recommender should be able to predict any given relationship, not just the ``rating'' relationship as most recommenders do.
-                    \item[A recommender, not a framework.] The adaptation to the given domain should be simple and should require minumum changes in the parent system. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be addapted and used on an arbitrary domain.
+                    \item[A recommender, not a framework.] The adaptation to the given domain should be simple and should require minimum changes in the parent system. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be adapted and used on an arbitrary domain.
                     \item[Pluggable user interface.] The recommender should contain a web-based user interface for presenting the recommendations. The interface should be pluggable to an existing web application, so that it can look like a part of the system and the user doesn't have to leave system web pages to see his/her recommendations. 
-                    \item[Verification on various domains.] The recommender should be addapted to at least three domains to verify its universality and usability of the recommender interfaces. 
+                    \item[Verification on various domains.] The recommender should be adapted to at least three domains to verify its universality and usability of the recommender interfaces. 
             \end{description}
         \subsection{Thesis Classification}
             \label{classification}
@@ -236,14 +236,14 @@ Supervisor's e-mail address: \vedoucimail\\
 
                 Finally we list the topics that are out of the scope of our work:
                 \begin{description}
-                    \item[Scalable implementation] The provided recommender aplication is meant as a prototype and isn't intended to be scalable for large datasets. 
+                    \item[Scalable implementation] The provided recommender application is meant as a prototype and isn't intended to be scalable for large datasets. 
                     \item[Central server for multiple systems.] A single Unresyst instance isn't intended to be used as a central server for multiple domains - a Unresyst instance always refers to a single domain. Unresyst doesn't deal with matching the same subjects and objects appearing in multiple systems. 
                     \item[Collecting user preference] Unresyst doesn't help the system collecting any user actions for recommending. Implicit and explicit user feedback can be used for generating recommendations in Unresyst, but it has to be handled by the outer system and passed to Unresyst in the form of business rules and relationships.
                 \end{description}
 
 \chapter{Analysis}
     \label{analysis}
-    In the chapter we discuss the circumstances under which recommender systems are a preferrable option both for users and system holders. Later we describe the reasons for using our universal recommender (\emph{Unresyst}), we compare our recommender to existing solutions. We propose draft of a process model for activities related to running Unresyst. Finally we formally define the problem of recommending.
+    In the chapter we discuss the circumstances under which recommender systems are a preferred option both for users and system holders. Later we describe the reasons for using our universal recommender system (Unresyst), we compare our recommender to existing solutions. We propose draft of a process model for activities related to running Unresyst. Finally we formally define the problem of recommending.
     
     Recommender system is a part of a web-based application, that uses data about users and their behaviour to provide them with items which are the most relevant to them. The recommended items are typically things that are liable to user taste, like books, music, news, etc.
     
@@ -282,24 +282,24 @@ Supervisor's e-mail address: \vedoucimail\\
             
             In an e-shop, if a user easily finds items that are appropriate for him/her, he/she is more likely to buy them. In a non-retail system like an internet radio, the system holder can also profit from a user finding appropriate items quickly. The user spends more time on pages that provide interesting information for him/her, which leads to more appropriate context advertisements with higher earnings.
             
-            Another interesting feature recommender systems provide to e-shop holders is the ability to include promoted items to recommendations. E-shop holders can artificially increase the recommendation rates of the promoted goods so that they apeear in recommendations for more users. However, this feature should be used moderately because it distorts the results of the recommender algorithm. A massive propagation of items that are promoted by the system holder but are not very interesting for particular users may lead to a loss of user's trust for the recommender.
+            Another interesting feature recommender systems provide to e-shop holders is the ability to include promoted items to recommendations. E-shop holders can artificially increase the recommendation rates of the promoted goods so that they appear in recommendations for more users. However, this feature should be used moderately because it distorts the results of the recommender algorithm. A massive propagation of items that are promoted by the system holder but are not very interesting for particular users may lead to a loss of user's trust for the recommender.
             
             And last but not least, a recommender system provides a competitive advantage. Web business leaders like Google \cite{google_news}, Amazon \cite{amazon} or Yahoo! \cite{yahoo} have already implemented recommenders in their systems, for smaller companies a recommender system may be a key advantage over their rivals.
     
     \section{Universal Recommender Analysis}
         \label{universal_recommender_analysis}
-        In the section we describe the position of the proposed recommender system (\emph{Unresyst}) on the market. We depict advantages and disadvantages of the Unresyst recommender, we compare Unresyst to existing sollutions. Finally we propose processes for incorporating Unresyst to a web-based system and for running a system with Unresyst.
+        In the section we describe the position of the proposed universal recommender system (Unresyst) on the market. We depict advantages and disadvantages of the Unresyst recommender, we compare Unresyst to existing solutions. Finally we propose processes for incorporating Unresyst to a web-based system and for running a system with Unresyst.
         
-        The proposed Unresyst recommender is a domain-independent recommender system that is able to use various relationships between the domain entities. Unresyst is an independent software component that logically stands outside the web-based parent system. It comminicates with the parent system through a defined API\footnote{API stands for Application Programming Interface.}. Detailed information on the system architecture can be found in the section \ref{architecture}. 
+        The proposed Unresyst recommender is a domain-independent recommender system that is able to use various relationships between the domain entities. Unresyst is an independent software component that logically stands outside the web-based parent system. It communicates with the parent system through a defined API\footnote{API stands for Application Programming Interface.}. Detailed information on the system architecture can be found in the section \ref{architecture}. 
         
-        Unresyst itself doesn't contain any domain-specific data or methods. In order to work correctly on the given domain, it has to be addapted to it. Addaptation data make Unresyst use domain knowledge for making recommendations. Addaptation is designed so that it's as easy as possible. Adaptation data are stored in the parent system and are used during the communication with Unresyst. Detailed description on the adaptation can be found in the section \ref{adaptation_data}. 
+        Unresyst itself doesn't contain any domain-specific data or methods. In order to work correctly on the given domain, it has to be adapted to it. Adaptation data make Unresyst use domain knowledge for making recommendations. Adaptation is designed so that it's as easy as possible. Adaptation data are stored in the parent system and are used during the communication with Unresyst. Detailed description on the adaptation can be found in the section \ref{adaptation_interface}. 
         
-        In order to provide high quality recommendations, Unresyst can take use of any \emph{relationships} between the entities in the system domain. Additionally, the business knowledge can be transformed to \emph{rules} and used for generating recommendations. Both rules and relationships are stored in the addaptation data. See sections \ref{representing_rules}, \ref{representing_relationships} for details on rule and relationship representation.
+        In order to provide high quality recommendations, Unresyst can take use of any \emph{relationships} between the entities in the system domain. Additionally, the business knowledge can be transformed to \emph{rules} and used for generating recommendations. Both rules and relationships are stored in the adaptation data. See sections \ref{representing_rules}, \ref{representing_relationships} for details on rule and relationship representation.
         
         \subsection{Universal Recommender Applicability}
             \label{universal_recommender_applicability}
             
-            Compaines that run big global web-systems generally have enough resources to develop their own recommender systems that are specifically designed for their needs. Therefore, Unresyst is aimed at small and mid-size web systems. The goal of the Unresyst concept is to provide companies a way to implement a recommender system without having to develop their own recommender solution, which is often both time and money consuming. With a bit of configuration, Unresyst can provide recommending accuracy comparable to a custom-made recommender system. We suppose the web-system application uses a database to store its data. The data are manipulated trough an SQL\footnote{SQL stands for Structured Query Language, a language most commonly used for structred data manipulation.} or ORM\footnote{ORM stands for Object-relational mapping, a technique used for manipulating data directly in the application without using SQL.} layer.
+            Companies that run big global web-systems generally have enough resources to develop their own recommender systems that are specifically designed for their needs. Therefore, Unresyst is aimed at small and mid-size web systems. The goal of the Unresyst concept is to provide companies a way to implement a recommender system without having to develop their own recommender solution, which is often both time and money consuming. With a bit of configuration, Unresyst can provide recommending accuracy comparable to a custom-made recommender system. We suppose the web-system application uses a database to store its data. The data are manipulated trough an SQL\footnote{SQL stands for Structured Query Language, a language most commonly used for structured data manipulation.} or ORM\footnote{ORM stands for Object-relational mapping, a technique used for manipulating data directly in the application without using SQL.} layer.
             
             \fig{pics/owner.png}{Choosing the way of recommender system implementation.}{pic_owner}
             
@@ -312,9 +312,9 @@ Supervisor's e-mail address: \vedoucimail\\
                 \item[Other relationships:] Any other relationships between entities of the system can be used for making recommendations. Such relationships include user-defined tags which can be used for determining similarity of the entities marked with the same tag, or user's preference for items marked with a particular tag.
              \end{description}
              
-             Recommendations produced by Unresyst can take into account both objective and subjective criteria. Objective criteria for recommending can be expressed in business rules (e.g. not recommending expensive items to users with low income). Subjective criteria, as the expressed preference for an item are used both for the user and users that are observerd to have similar taste.
+             Recommendations produced by Unresyst can take into account both objective and subjective criteria. Objective criteria for recommending can be expressed in business rules (e.g. not recommending expensive items to users with low income). Subjective criteria, as the expressed preference for an item are used both for the user and users that are observed to have similar taste.
              
-             The most common operations for a recommender ,providing recommendations and prediciting the preference for a particular item, are performed in time independent of the number of the entities in the system. The exact recommendation and prediction time may vary between the recommender algorithms. However most of the presented current algorithm use some kind of recommendation index which enables them to perform recommendations in constant time.
+             The most common operations for a recommender, providing recommendations and predicting the preference for a particular item, are performed in time independent of the number of the entities in the system. The exact recommendation and prediction time may vary between the recommender algorithms. However most of the presented current algorithm use some kind of recommendation index which enables them to perform recommendations in constant time.
              
              The Unresyst software component is logically independent of the parent system, it provides an API for all common operations. The API and the domain-specific configuration is made so that the adaptation to the domain and to the parent system is as easy as possible. Unresyst also contains a pluggable user interface for presenting recommendations to the user. The user interface can be incorporated into the parent system user interface so that the user doesn't have to leave the parent system in order to see the recommendations.
              
@@ -328,7 +328,7 @@ Supervisor's e-mail address: \vedoucimail\\
                 
                 \fig[4]{pics/options_a_own_circle.png}{Implementing recommendations directly in the application.}{pic_direct}
 
-                However this approach works well only for well-defined and static filtering criteria that aren't costly to evaluate. With an increased size of the rule set, the maintainance of the queries becomes difficult. When the system holder wishes to implement some kind of evaluation of user taste, the situation even complicates. Complex queries combining various data can take a long time to evaluate, which results in slow generating of the system web pages and nervous users.
+                However this approach works well only for well-defined and static filtering criteria that aren't costly to evaluate. With an increased size of the rule set, the maintenance of the queries becomes difficult. When the system holder wishes to implement some kind of evaluation of user taste, the situation even complicates. Complex queries combining various data can take a long time to evaluate, which results in slow generating of the system web pages and nervous users.
                 
                 Simple hard coded filtering queries don't allow exceptions to the expressed rules. E.g. if we set up a hard coded query for not recommending an item to users with the given demographic data, the item won't be recommended even if we have a high preference signs from other sources such as user behaviour.
                 
@@ -336,15 +336,15 @@ Supervisor's e-mail address: \vedoucimail\\
                 
                 The recommender algorithm which is one of the Unresyst layers, can use complex techniques to exploit the business knowledge. Therefore the recommendations produced by Unresyst are generally more accurate. At the same time the algorithm uses a recommender index that makes the prediction time independent of the number of entities in the system. 
                 
-                The main disadvantage of Unresyst compared to the minimalistic option is the required initiatory effort required to start producing recommendations. Firstly, Unresyst has to be configurated for the system, which means specifying the subject and object domain, definition of the predicted relationship  and finally writing down the business knowledge in the form of rules and relationships. Then the recommendations have to be incorporated to the parent system - calling of Unresyst methods has to be added to neccessary places, the recommender user interface has to be incorporated to the system. However the initial effort pays off as the latter changes in recommender configuration can be done easily at one place.
+                The main disadvantage of Unresyst compared to the minimalistic option is the required initiatory effort required to start producing recommendations. Firstly, Unresyst has to be configured for the system, which means specifying the subject and object domain, definition of the predicted relationship  and finally writing down the business knowledge in the form of rules and relationships. Then the recommendations have to be incorporated to the parent system - calling of Unresyst methods has to be added to necessary places, the recommender user interface has to be incorporated to the system. However the initial effort pays off as the latter changes in recommender configuration can be done easily at one place.
                 
-                Running a system that uses a recommender involves some additional effort. The index of the recommender algorithm has to be built before the recommender is used. This can be a time-consuming action, depending on the algorithm and number of entities in the system. The recommender index has to be kept up to date by either rebuilding now and then or by continuously calling methods for index update. These methods keep update the index with every change in the system but they require some additional time during save and update of the system entites and they might be inavailable for some recommender algorithms. The issues of the recommender index however occur when running any recommender that takes constant time for recommending items.
+                Running a system that uses a recommender involves some additional effort. The index of the recommender algorithm has to be built before the recommender is used. This can be a time-consuming action, depending on the algorithm and number of entities in the system. The recommender index has to be kept up to date by either rebuilding now and then or by continuously calling methods for index update. These methods keep update the index with every change in the system but they require some additional time during save and update of the system entities and they might be unavailable for some recommender algorithms. The issues of the recommender index however occur when running any recommender that takes constant time for recommending items.
                 
-                To summarize the comparison, Unresyst is a better option than filtering items in queries unless the system holder only whishes to implement a small set of fixed filtering rules, that don't need to be changed over time and he/she isn't interested in exploiting the rules by a recommender algorithm.
+                To summarize the comparison, Unresyst is a better option than filtering items in queries unless the system holder only wishes to implement a small set of fixed filtering rules, that don't need to be changed over time and he/she isn't interested in exploiting the rules by a recommender algorithm.
                 
             \subsubsection{Using a Recommender Framework}
                 \label{using_a_recommender_framework}
-                The system holder can choose to implement a recommender based on a recommender framework library like Duine \cite{duine} or Mahout \cite{mahout}. These are software libraries providing implementations of common present-day algoritms like collaborative filtering or content-based algorithms. For details on recommender algorithms see the section \ref{algorithms}.
+                The system holder can choose to implement a recommender based on a recommender framework library like Duine \cite{duine} or Mahout \cite{mahout}. These are software libraries providing implementations of common present-day algorithms like collaborative filtering or content-based algorithms. For details on recommender algorithms see the section \ref{algorithms}.
                 
                 \fig[8]{pics/options_b_library.png}{Implementing recommendations using a recommender framework.}{pic_framework}
 
@@ -360,24 +360,24 @@ Supervisor's e-mail address: \vedoucimail\\
                 In addition, Unresyst enables system holders to run multiple instances of a recommender in one parent system. E.g. there can be a product recommender and user group recommender in the system, that is working in one Unresyst installation, but is independent of each other and can be using different rules and relationships to produce recommendations. 
 
                 
-                To summarize the comparison, incorporating a recommender framework is usually complicated both techically and intellectually. This may be one of the reasons why the present-day recommender frameworks haven't been widely used in real world web-based systems. Unresyst adds a new layer above the algorithms that solves the problems with combining different sources of preference data and enables the system holder to incorporate the business knowledge to recommendations.
+                To summarize the comparison, incorporating a recommender framework is usually complicated both technically and intellectually. This may be one of the reasons why the present-day recommender frameworks haven't been widely used in real world web-based systems. Unresyst adds a new layer above the algorithms that solves the problems with combining different sources of preference data and enables the system holder to incorporate the business knowledge to recommendations.
             \subsubsection{Using a Recommender Service}
                 \label{service_through_api}
                 Another option, the system holder can possibly use in future is implementing a recommender using a recommender service. The first attempt to provide a such a service is the Google Prediction API \cite{google_api}. The service is still in development in Google Labs, available for experiments only through a waiting list. Only little data about the way the service internally works is available for public. There's only one obvious disadvantage of the approach: all data that are to be used for recommending have to be passed and regularly updated through the API. This can raise privacy issues system owner's distrust.
                 
-                \fig[8]{pics/options_d_google.png}{Implementing recommendations using a recommender service}{pic_setup}
+                \fig[8]{pics/options_d_google.png}{Implementing recommendations using a recommender service}{pic_google}
 
         \subsection{Unresyst Process Model Draft}
             \label{unresyst_process_draft}
-            In the section we propose a design of processes related to Unresyst setup and maintainance. Note that this is only a brief simplyfied sketch illustrating how real processes could possibly look like. The actual usage of the system would be highly dependent on particular company, its environment and people. A more technical view on Unresyst setup and evaluation can be found in chapters about Unresyst architecture (\ref{architecture}) and evaluation (\ref{evaluating_recommender_results}).
+            In the section we propose a design of processes related to Unresyst setup and maintenance. Note that this is only a brief simplified sketch illustrating how real processes could possibly look like. The actual usage of the system would be highly dependent on particular company, its environment and people. A more technical view on Unresyst setup and evaluation can be found in chapters about Unresyst architecture (\ref{architecture}) and evaluation (\ref{evaluating_recommender_results}).
 
             \subsubsection{Unresyst Setup}
                 \label{unresyst_setup}
-                After the system holder or the company management agrees on using Unresyst for recommending in their system, the setup activities may begin. One of the main roles in the recommender operation is the \emph{Domain Expert}. He/She is familiar with the business the system is operating in, knows a lot about entites and their relationships both in the real world and in the system. 
+                After the system holder or the company management agrees on using Unresyst for recommending in their system, the setup activities may begin. One of the main roles in the recommender operation is the \emph{Domain Expert}. He/She is familiar with the business the system is operating in, knows a lot about entities and their relationships both in the real world and in the system. 
                 
                 \fig{pics/process_setup.png}{Unresyst Setup process, a draft of a process model.}{pic_setup}
                 
-                Firstly, the \emph{Business Analyst} interviews the \emph{Domain Expert} in order to find out the requirements for the recommender and type and ammount of data that is available for making recommendations.  The output of this activity is a report that thoroughly describes the purpose of the recommender and knowledge that is available for recommending in the parent system. The report should at least include the list of recommender instances that will be incorporated to the system and for each recommender it should describe the subjects and objects of recommendations, the description of the predicted relationship and finally a description of all relationships and business rules that are available for the domain. The report is prepared by the \emph{Business Analyst}, is approved by the \emph{Domain Expert} and is imperative for the later activities. This activity should be done properly, multiple iterations of interviewing and recording will be needed.
+                Firstly, the \emph{Business Analyst} interviews the \emph{Domain Expert} in order to find out the requirements for the recommender and type and amount of data that is available for making recommendations.  The output of this activity is a report that thoroughly describes the purpose of the recommender and knowledge that is available for recommending in the parent system. The report should at least include the list of recommender instances that will be incorporated to the system and for each recommender it should describe the subjects and objects of recommendations, the description of the predicted relationship and finally a description of all relationships and business rules that are available for the domain. The report is prepared by the \emph{Business Analyst}, is approved by the \emph{Domain Expert} and is imperative for the later activities. This activity should be done properly, multiple iterations of interviewing and recording will be needed.
                 
                 The report is delivered to the \emph{Data Specialist}. \emph{Data Specialist} is a person highly familiar with the data model of the system. He/she transforms the report into an Unresyst configuration, which formally defines subjects, objects, rules and relationships for each recommender. After the configuration, the \emph{Data Specialist} performs the recommender build, evaluates the results of the recommender and verifies sample recommendations with the \emph{Domain Expert}. \emph{Data Specialist} tries improving the recommender evaluation by tuning the rule and relationship parameters, until a given accuracy threshold is reached.
                 
@@ -385,14 +385,14 @@ Supervisor's e-mail address: \vedoucimail\\
                 
                 After enough tests have been performed, the version of the parent system using Unresyst is put into operation. Tests should include user-testing inquiring real users of the system.
                 
-            \subsubsection{Unresyst Maintainance}
-                \label{unresyst_maintainance}
+            \subsubsection{Unresyst Maintenance}
+                \label{unresyst_maintenance}
                 
-                Running a recommender system isn't just a matter of setup. Keeping the recommendation quality high requires a regular maintainance activity. The frequency of the maintainance tasks depend on many factors such as  domain dynamics and internal capacities of the company. It should be done at least a few times a year.
+                Running a recommender system isn't just a matter of setup. Keeping the recommendation quality high requires a regular maintenance activity. The frequency of the maintenance tasks depend on many factors such as  domain dynamics and internal capacities of the company. It should be done at least a few times a year.
                 
                 \fig{pics/process_review.png}{Unresyst Review process, a draft of a process model.}{pic_review}
                 
-                Maintainance activites follow selected setup activities in order to improve accuracy of the recommender. \emph{Business Analyst} interviews the \emph{Domain Expert} to find out what has happened in the domain business since the last maintainance activity. Requests for collecting new types of user-data can be included. The news are delivered to the \emph{Data Specialist}, who incorporates them to the recommender configuration. He/She also revises the changes in the system that could have affected the recommendation sources and adujusts the configuration to use any newly available data. Finally he/she evalutes the recommender with the new configuration and tunes the parameters until the desired evaluation is obtained. The new Unresyst configuration and sample recommendations are consulted with the \emph{Domain Expert}. The new configuration is finally tested and put into operation.
+                Maintenance activities follow selected setup activities in order to improve accuracy of the recommender. \emph{Business Analyst} interviews the \emph{Domain Expert} to find out what has happened in the domain business since the last maintenance activity. Requests for collecting new types of user-data can be included. The news are delivered to the \emph{Data Specialist}, who incorporates them to the recommender configuration. He/She also revises the changes in the system that could have affected the recommendation sources and adjusts the configuration to use any newly available data. Finally he/she evaluates the recommender with the new configuration and tunes the parameters until the desired evaluation is obtained. The new Unresyst configuration and sample recommendations are consulted with the \emph{Domain Expert}. The new configuration is finally tested and put into operation.
         
     \section{Definitions}
         \label{definitions}
@@ -401,13 +401,13 @@ Supervisor's e-mail address: \vedoucimail\\
         
         \subsection{Basic Terms}
         \label{basic_terms}
-            The basic terms used both in definitions and throughout the tesis are:
+            The basic terms used both in definitions and throughout the thesis are:
             \begin{description}
                 \item[Subject]: Subject of a recommendation is an entity to which the recommender presents its recommendations. A subject can be a user as well as a user group or any other entity.
                 \item[Object]: Object of a recommendation is an entity which can be recommended to subjects. Objects can be books, songs, or any other entities.  
                 \item[Entity]: Entity is a subject, an object or any other thing that occurs in the domain.
                 \item[Predicted relationship]: Predicted relationship is a subject-object relationship that we try to predict for making recommendations. An example of such a relationship is the \emph{likes} relationship between a user and an item. 
-                \item[Expectancy of the predicted relationship]: For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will ocurr between the subject and object. In other words, Expectancy can be explained as subject-object preference in means of the predicted relationship. In our user-item \emph{like} example, the expectancy would mean how much the user is likely to like the item. 
+                \item[Expectancy of the predicted relationship]: For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will occur between the subject and object. In other words, Expectancy can be explained as subject-object preference in means of the predicted relationship. In our user-item \emph{like} example, the expectancy would mean how much the user is likely to like the item. 
              \end{description}
         
         \subsection{Recommender System}
@@ -421,7 +421,7 @@ Supervisor's e-mail address: \vedoucimail\\
             \end{equation}
             where $S$ is the subject domain, $O$ is the object domain. The usefulness of the object to the subject is measured by the $u_R$ function, $u_R: S \times O \to T$, where $T$ is a totally ordered set. 
             
-            There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an adressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
+            There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an addressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
             
         \subsection{Relationship Prediction}
             \label{def_relationship_prediction}
@@ -434,14 +434,14 @@ Supervisor's e-mail address: \vedoucimail\\
             
             For a given subject-object pair, $\hat{u}$ gives:
             \begin{description}
-                \item[Expectancy:] the predicted probabilitity of occurence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ usually aren't presented. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented.
+                \item[Expectancy:] the predicted probability of occurrence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ usually aren't presented. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented.
                 \item[Explanation:] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
                 %\item[Relationship metadata values]: coming soon
             \end{description}
 
             For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explanation, that they have four friends in common. This means that the predicted probability of friendship between Alice and Bob is $0.75$. 
             
-            Our concept is similar to the one used in the Duine framework \cite{duine}. The prediction techniques in Duine give a \emph{Prediction}, \emph{Validity indicators} and an \emph{Explanation} for each subject-object pair. \emph{Prediction} is an estimation of subject's rating of the object. \emph{Validity indicators} determine the \emph{confidence} of the techinque when predicting the rating. Low values mean, that the technique isn't confident about the \emph{Prediction} for the given subject-object pair, e.g. it doesn't have enough information to make a valid prediction. \emph{Explanation} has the same meaning as the one in our recommender. 
+            Our concept is similar to the one used in the Duine framework \cite{duine}. The prediction techniques in Duine give a \emph{Prediction}, \emph{Validity indicators} and an \emph{Explanation} for each subject-object pair. \emph{Prediction} is an estimation of subject's rating of the object. \emph{Validity indicators} determine the \emph{confidence} of the technique when predicting the rating. Low values mean, that the technique isn't confident about the \emph{Prediction} for the given subject-object pair, e.g. it doesn't have enough information to make a valid prediction. \emph{Explanation} has the same meaning as the one in our recommender. 
              
             In a universal recommender we can't assume there will be a rating relationship between subjects and objects. Moreover, we are supposed to be able to predict any given relationship between subjects and objects, not just the preference expressed by the rating. In a Universal recommender, we only predict a $0/1$ indicator: there is the predicted relationship between the given subject and object, or there isn't. Hence we can shrink the prediction and confidence concepts into one - relationship \emph{expectancy}. 
             
@@ -451,7 +451,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
             % napr. prediction 0, confidence 0.75 je to samy jako prediction 1, confidence 0.25. Protoze P(0) = 0.75 = 1-0.25 - protoze jevy 0 a 1 se vylucuji. 
             
-            The dependency between relationship expectancy and prediction confidence is illustrated on the figure \ref{pic_expectancy_confidence}. Let prediction confidence be a function to $[0,1]$ determining how sure the recommender is about the given relationship prediction. Expectancy values just above zero indicate that the recommender is quite sure that there won't be the given relationship between the given subject-object pair. Expectancy values near $0.5$ mean low confidence for the prediction. Especially $0.5$ means that according to the recommender, the probability of the relationship occurence is the same as for non-occurence. Expectancy values close to $1$ mean that recommender is quite sure, that the given subject-object pair will be connected by the given relationship. 
+            The dependency between relationship expectancy and prediction confidence is illustrated on the figure \ref{pic_expectancy_confidence}. Let prediction confidence be a function to $[0,1]$ determining how sure the recommender is about the given relationship prediction. Expectancy values just above zero indicate that the recommender is quite sure that there won't be the given relationship between the given subject-object pair. Expectancy values near $0.5$ mean low confidence for the prediction. Especially $0.5$ means that according to the recommender, the probability of the relationship occurrence is the same as for non-occurrence. Expectancy values close to $1$ mean that recommender is quite sure, that the given subject-object pair will be connected by the given relationship. 
 
             \fig[9]{pics/expectancy_confidence.png}{The dependency between relationship expectancy and prediction confidence.}{pic_expectancy_confidence}
 	    
@@ -482,7 +482,7 @@ Supervisor's e-mail address: \vedoucimail\\
         \begin{description}
             \item[Recommender setup:] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation can be pretty time consuming, as this doesn't have to be performed very often. 
             \item[Recommendation (see \ref{recommendation}):] Recommendation is the most common operation for a recommender system. Choosing objects with the highest Recommendation Rate for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
-            \item[Prediction:] Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalogue. Usually it is not possible to store predictions for all subject-object pair, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
+            \item[Prediction:] Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalog. Usually it is not possible to store predictions for all subject-object pair, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
         \end{description}
     
     \section{Related Work}
@@ -494,7 +494,7 @@ Supervisor's e-mail address: \vedoucimail\\
             \label{domain_independent_recommenders}
             The idea of a domain-independent recommender isn't completely new. The most notable project in this field is an open-source project called \emph{AURA} (The Advanced Universal Recommendation Architecture) \cite{aura}. The project was supported by Sun and later by Oracle, but since the end of 2009 there's been no activity on the source code repository. The experimental music recommender based on AURA, \emph{The Music Explaura} \cite{music_explaura} seems to be inactive. The project aimed to create a universal hybrid recommender system, combining the two most used approaches: collaborative filtering and content-based recommendation (see \ref{collaborative_filtering}, \ref{content_based_filtering}). The system should have been working above a data store. More on the project can be found in \cite{aura_wiki}.  
             
-            Another notable work on universal recommender is a US software pattent application \emph{Universal system and method for representing and predicting human behavior} \cite{patent}. The text contains a mixture of marketing proclamations, ideas on the recommender architecture, description of recommender and machine-learning algorithms and ideas on capturing implicit user ratings. In our opinion, the recommending methods presented in the text could be working well only on very small sets of data, for larger data sets, the ammount of time needed for performing some basic operations wouldn't be acceptable. The final paragraph, trying to claim everything around, from vector object representation to capturing the action of user adjusting the volume on his music player, gives a negative example of where the idea of software patents can lead. As far as we know there's no functional recommender system based on this patent. 
+            Another notable work on universal recommender is a US software patent application \emph{Universal system and method for representing and predicting human behavior} \cite{patent}. The text contains a mixture of marketing proclamations, ideas on the recommender architecture, description of recommender and machine-learning algorithms and ideas on capturing implicit user ratings. In our opinion, the recommending methods presented in the text could be working well only on very small sets of data, for larger data sets, the ammount of time needed for performing some basic operations wouldn't be acceptable. The final paragraph, trying to claim everything around, from vector object representation to capturing the action of user adjusting the volume on his music player, gives a negative example of where the idea of software patents can lead. As far as we know there's no functional recommender system based on this patent. 
             
             white paper, 
             Duine - trochu moc se tam pracuje s tim user ratingem. mixuju podobne pravidla a relationships jako on recommendation techniques. (minimalne mam podobne prostredky), ale nekaskaduju. 
@@ -533,7 +533,7 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{collaborative_filtering}
         Collaborative filtering is currently one of the most widely used technique for recommending. Market leaders as Google \cite{google_news}, Amazon \cite{amazon} or Yahoo! \cite{yahoo} use recommenders at least partially based on collaborative filtering. 
         
-        For recommending an object to a subject, the method uses relationships between other subjects and objects. For a given subject $s$, the algorihm finds subjects that like most of the objects that $s$ likes. Recommended objects are then taken from other objects liked by the found subjects. 
+        For recommending an object to a subject, the method uses relationships between other subjects and objects. For a given subject $s$, the algorithm finds subjects that like most of the objects that $s$ likes. Recommended objects are then taken from other objects liked by the found subjects. 
         
         In the figure \ref{pic_collaborative} there is a simplified example of a recommendation made by collaborative filtering. The full arrows represent already known relationships. The two subjects both have a relation to one item and therefore they are treated as similar. The recommendation is marked by the dashed arrow. An object to be recommended is chosen from the similar subject's related objects so that the subject isn't related to the object.
         
@@ -546,11 +546,11 @@ Supervisor's e-mail address: \vedoucimail\\
         By the manner in which the unknown relationships are predicted, collaborative filtering methods can be divided into two groups: \emph{Memory-based} and \emph{Model-based} \cite{survey}.
         
         \subsection{Memory-based Collaborative Filtering}
-            Memory based (or heuristic-based) methods are historically the first collaborative filtering methods. In memory-based prediction methods, the predictions of possible relationships are counted as an aggreagate of the known subject-object relationships. The aggregate function can be a simple average or some more sofisticated measure using relative differences to average ratings or inter-subject similarity. 
+            Memory based (or heuristic-based) methods are historically the first collaborative filtering methods. In memory-based prediction methods, the predictions of possible relationships are counted as an aggregate of the known subject-object relationships. The aggregate function can be a simple average or some more sophisticated measure using relative differences to average ratings or inter-subject similarity. 
             
             \emph{Neighbourhood methods} belong to this category. For recommending an object to a subject they use relationships of the neighbouring subject or object (depending on the recommender being subject-based or object-based). The neighbour is defined as the subject/object having the highest similarity to the given subject/object. The similarity can be counted in many ways, including the Pearson correlation coefficient or Cosine measure \cite{survey}. 
             
-            The memory-based methods can further be devided into two groups by the direction which is used for recommending: \emph{Subject-based} or \emph{Object-based}. 
+            The memory-based methods can further be divided into two groups by the direction which is used for recommending: \emph{Subject-based} or \emph{Object-based}. 
             
             \subsubsection{User-based Collaborative Filtering}
                 Subject-based (or user-based) methods are centered to the subjects. In this traditional variation, the similarity of subjects is computed. More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s_j, o)$ assigned to object $o$ by the subjects $s_j \in S$  who are similar to subject $s$. Usually the similarity between subjects is determined by comparing their relationships to objects. 
@@ -564,7 +564,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Latent semantic models use vectors to represent subjects and objects \cite{bellkor_ieee}. For objects, the values in the vectors mean some characteristics of the object. This approach is similar to the one used in content-based filtering (\ref{content_based_filtering}). The difference is in obtaining the vectors: the values in object vectors aren't submitted by a human expert, both subject and object vectors are learned from the known data by various techniques. Therefore the technique is domain-independent. 
             
-            Subject and object vectors allow to project the subjects and object into multidimensional space. Recommended objects are those that are ``near'' the given subject in the multidimensional space. Some common techniques for measuring the subject-object distance are vector cosine and dot product. Some dimensions can be coupled with some known object characteristics as genre for movies \cite{bellkor_ieee}. But the meaning of most of the dimensions can hardly be discovered, as they aren't designed by a human but a machine-learining technique. Consequently, the recommenders using matrix factorization usually aren't able to give reasons for their recommendations. 
+            Subject and object vectors allow to project the subjects and object into multidimensional space. Recommended objects are those that are ``near'' the given subject in the multidimensional space. Some common techniques for measuring the subject-object distance are vector cosine and dot product. Some dimensions can be coupled with some known object characteristics as genre for movies \cite{bellkor_ieee}. But the meaning of most of the dimensions can hardly be discovered, as they aren't designed by a human but a machine-learning technique. Consequently, the recommenders using matrix factorization usually aren't able to give reasons for their recommendations. 
             
             Figure \ref{pic_latent} shows some users and items projected to a simplified two-dimensional space. Their nature determines their positions in the space. Items that are near each user are likely to produce a positive response from the user and hence they are good for recommendations. 
             
@@ -575,7 +575,7 @@ Supervisor's e-mail address: \vedoucimail\\
         
         In general, collaborative filtering methods are currently the most used and the most successful methods for recommending. When properly used, they provide high accuracy and scalability for large ammount of data. However they have some drawbacks too \cite{survey}.
         \begin{description}
-            \item[Cold start problem:] As for the conteng-based method, the system doesn't know any liked objects for a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender (\ref{hybrid_recommenders}) that would use an easier recommender (like giving the most popular objects) when predictions from collaborative filtering aren't available.
+            \item[Cold start problem:] As for the content-based method, the system doesn't know any liked objects for a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender (\ref{hybrid_recommenders}) that would use an easier recommender (like giving the most popular objects) when predictions from collaborative filtering aren't available.
             A similar problem occurs when a new object is added to the system, it's not related to any subject and therefore it can never be recommended. This can be solved also by a hybrid recommender (\ref{hybrid_recommenders}). 
             \item[Sparsity:] The subject-object matrix is usually very sparse - the number of known relationships is very small compared to the number of relationships that should be predicted. Therefore, in most of the collaborative filtering methods, the objects related to few subjects are seldom recommended. This drawback is overcome by some of the model-based methods, e.g. matrix factorization \cite{bellkor_ieee}.
             \item[Grey sheep problem:] This problem is mentioned in \cite{knowledge_spain}. In the system, there might be subjects whose preferences aren't consistently similar to other subjects. Therefore they don't belong to any preference subject group and they can't get any accurate recommendations.
@@ -585,7 +585,7 @@ Supervisor's e-mail address: \vedoucimail\\
         
         The universal recommender proposed in \cite{white_paper} is based on the idea of model-based collaborative filtering techniques. 
         
-        The disadvantage of collaborative filtering is that it's limited to a single subject-object preference data source - usually an explicit rating. For our purposes it would have to be addapted so that it can process multiple data sources.
+        The disadvantage of collaborative filtering is that it's limited to a single subject-object preference data source - usually an explicit rating. For our purposes it would have to be adapted so that it can process multiple data sources.
     
     \section{Knowledge-based Recommenders}
         \label{knowledge_based}
@@ -594,11 +594,11 @@ Supervisor's e-mail address: \vedoucimail\\
         
         There are many approaches to knowledge-based recommending. One of them is presented in \cite{knowledge_burke}. The user interaction to the system is similar as in the case of performing a search. At first, the  user specifies an item that he/she likes. Then the system iteratively presents similar items to the user. The user further specifies his/her preferences, like ``I would like a more romantic/adventurous movie''. This continues until the user is fully satisfied with the presented item.
         
-        One problem of the aproach is that the recommendations aren't personal. There're no user profiles in the system, so the recommendations are based only on data given by the user during the search. The author describes how to reduce this disadvantage in \cite{integrating_burke}. The items found by the knowledge-based recommender are sorted by the integrated collaborative filter. Another problem of this approach is bothering the user. The user has to fully specify his preferences in order to get some good recommendations. Although the system leads the user through the search, it can take a lot of time to find the right item.
+        One problem of the approach is that the recommendations aren't personal. There are no user profiles in the system, so the recommendations are based only on data given by the user during the search. The author describes how to reduce this disadvantage in \cite{integrating_burke}. The items found by the knowledge-based recommender are sorted by the integrated collaborative filter. Another problem of this approach is bothering the user. The user has to fully specify his preferences in order to get some good recommendations. Although the system leads the user through the search, it can take a lot of time to find the right item.
         
         The article \cite{knowledge_spain} proposes a bit different approach. Their knowledge-based recommender is trying to solve the ``cold start problem'' (see \ref{collaborative_filtering}). When a new user registers to the system, he/she is asked to choose an example of an item he/she likes in the item catalogue. Then the user is asked to compare the item to some other items, using a scale from zero to one, determining how much the item is preferred over the other. An underlying algorithm exploits this knowledge to the whole item catalogue and uses the data for making recommendations. This approach is more usable than the first described one, as it demands the user input only once - when he/she is registering. Nevertheless new users are more sensitive to being asked a lot of questions and there's a risk, that the user leaves for a rival system. The presented recommender is only a theoretical suggestion, there might be some problems with scalability to large numbers of users and items.
         
-        Recommendation by ordering is also discussed in \cite{order}. The authors of the article describe an advanced algorithm for exploiting the known relative preferences to the whole domain. The performance evaluations of the presented algorithm look very promising. Nevertheless, obtaining reliable relative preferences without bothering the user is diffcult and requires some non-trivial domain knowledge. 
+        Recommendation by ordering is also discussed in \cite{order}. The authors of the article describe an advanced algorithm for exploiting the known relative preferences to the whole domain. The performance evaluations of the presented algorithm look very promising. Nevertheless, obtaining reliable relative preferences without bothering the user is difficult and requires some non-trivial domain knowledge. 
         
         Another approach to knowledge-based recommender was used in the \emph{RACOFI} system \cite{racofi}. The system consist of a collaborative filtering engine (\emph{COFI}) and a rule applying agent (\emph{RALOCA}). The primary recommendation is done by COFI. The rules are then used for adjusting the recommendation rate or removing objects from recommendations. The rules are applied on \emph{objective} data we know about the subjects and objects, like age and genre respectively. 
         
@@ -636,7 +636,7 @@ Supervisor's e-mail address: \vedoucimail\\
          
         For enhancing the success of produced recommendations, we can use a hybrid recommender that uses all its underlying methods when producing any recommendation. The combined methods can be of various types, using various relationships among subjects and objects. A combination of content-based and collaborative filtering is quite popular, possibilities of combining the two methods into a single hybrid recommender are listed in \cite{survey}. The combination of memory-based and model-based collaborative filtering is often used in contemporary commercial recommenders, as in \cite{google_news} 
         
-        A hybrid recommender can help to overcome some drawbacks of the recommendation methods, as the \emph{Cold start problem} (see \ref{cf_benefits_drawbacks}). In this case, when little data is known about a new subject and object, some subsidary recommendation method can be used. This subsidary method wouldn't be suitable for performing the most of the recommendations, but it can make the best of the little data that is available. This approach is used in the default strategy of the Duine recommender framework \cite{duine}.
+        A hybrid recommender can help to overcome some drawbacks of the recommendation methods, as the \emph{Cold start problem} (see \ref{cf_benefits_drawbacks}). In this case, when little data is known about a new subject and object, some subsidiary recommendation method can be used. This subsidiary method wouldn't be suitable for performing the most of the recommendations, but it can make the best of the little data that is available. This approach is used in the default strategy of the Duine recommender framework \cite{duine}.
         
         Figure \ref{pic_hybrid} shows a recommendation for a new user, performed by a hybrid recommender combining social links and collaborative filtering. 
         
@@ -645,30 +645,29 @@ Supervisor's e-mail address: \vedoucimail\\
         \subsubsection{Suitability for The Universal Recommender}
         As presented in \cite{white_paper}, the specific combination of methods used in a hybrid recommender depends on the data available in the given domains. Therefore a hybrid recommender can't be generic. Finding the right combination of recommenders for the specific domain can be non-trivial and thereby hybrid recommenders aren't suitable for a universal recommender. 
 
-    \section{Conclusion}
+    \section{Algorithm Selection}
         \label{algorithm_conclusion}
-        In the chapter we have described all common contemporary approaches to recommender systems, their suitability for domain-independent recommending has been evaluated. In a universal recommender we cannot assume that any specific relationships or subject and object properties exists, so our choice narrows a lot.
+        In the chapter we have described all common contemporary approaches to recommender systems, their suitability for domain-independent recommending has been evaluated. In a universal recommender we cannot assume that any specific relationships or subject and object properties exist, so our choice narrows a lot.
         
         Our vision of using business rules for recommending intersects with the knowledge based recommender. \ref{knowledge_based}. However there will have to be a domain-independent mechanism for representing and combining the business rules.
         
         From the studied algorithms, the only one that is domain-independent by nature is \emph{collaborative filtering}. All the others are dependent on some specific features of subjects or objects, or they suppose some specific relationships. Therefore, our universal recommender should be based on a collaborative filtering algorithm. 
         
-        We have noted, that there's a gap between our requirements for a universal recommender system and collaborative filering algorithms: We would like to make use of multiple data sources including object and subject similarity, and domain specific rules. The collaborative filtering in its typical implementation takes only a single source of data - subject-object rating. The gap between our requirements and the input of a collaborative filtering algorithm should be filled by the Unresyst application. It should process all the inputs it has, into a single subject-object preference prediction. This prediction can be then used directly for recommending or it can serve as an input for a common collaborative filtering algorithm.
+        We have noted, that there's a gap between our requirements for a universal recommender system and collaborative filtering algorithms: We would like to make use of multiple data sources including object and subject similarity, and domain specific rules. The collaborative filtering in its typical implementation takes only a single source of data - subject-object rating. The gap between our requirements and the input of a collaborative filtering algorithm should be filled by the Unresyst application. It should process all the inputs it has, into a single subject-object preference prediction. This prediction can be then used directly for recommending or it can serve as an input for a common collaborative filtering algorithm.
         
-        There are a lot of types of collaborative filtering algorithms, as can be seen in the \ref{collaborative_filtering} section. The algorithms differ in many aspects as time complexity, accuracy of the predictions or possibility to reflect the updates in the domain. Each domain has its own requirements on the named aspects and therefore Unresyst shouldn't be bound to a particular algorithm. Rather than that it should be able to use an arbitrary collaborative filtering algorithm in its algorihm layer. When implementing a recommender to a system we should be able to choose whether to use the predictions directly for recommending or to choose the right algorithm to fit the domain properties and needs.
+        There are a lot of types of collaborative filtering algorithms, as can be seen in the \ref{collaborative_filtering} section. The algorithms differ in many aspects as time complexity, accuracy of the predictions or possibility to reflect the updates in the domain. Each domain has its own requirements on the named aspects and therefore Unresyst shouldn't be bound to a particular algorithm. Rather than that it should be able to use an arbitrary collaborative filtering algorithm in its algorithm layer. When implementing a recommender to a system we should be able to choose whether to use the predictions directly for recommending or to choose the right algorithm to fit the domain properties and needs.
 
         \subsection{Combining Knowledge-based and Collaborative Filtering Recommenders}
-            The only method that wasn't generalized by the universal recommender proposed in \cite{white_paper} is the knowledge-based method. As we have shown in \ref{knowledge_based}, simple domain-specific rules can enhance the recommendation accuracy, especially when there's little preference data available. Hence, incorporating a possibility to enter some simple domain-specific set of rules when addapting the universal recommender to a domain, would be interesting. We found a few options how to merge the evaluation of knowledge rules with collaborative filtering:
+            \label{combining_knowledge_and_cf}
+            The only method that wasn't generalized by the universal recommender proposed in \cite{white_paper} is the knowledge-based method. As we have shown in \ref{knowledge_based}, simple domain-specific rules can enhance the recommendation accuracy, especially when there's little preference data available. Hence, incorporating a possibility to enter some simple domain-specific set of rules when adapting the universal recommender to a domain, would be interesting. We found a few options how to merge the evaluation of knowledge rules with collaborative filtering:
             \subsubsection{A hybrid recommender for knowledge-based and collaborative filtering}
             
                 \fig[7]{pics/knowledge_cf_hybrid.png}{Combining Collaborative Filtering and Knowledge Based Recommender as a Hybrid Recommender}{pic_knowledge_cf_hybrid}
                  
-                In this variation there're independent knowledge based and collaborative filtering recommenders. This approach was used in the RACOFI system \cite{racofi}. For a relationship prediction, if a rule is available, it is used for predicting the relationship together with the underlying collaborative filtering algorithm. If not, only the collaborative filtering is used. Although this is a possible combination of the recommenders it has some significant drawbacks. The method introduces a tension between the two recommenders. The results of the collaborative method, which should be universal are in some cases distorted by the knowledge recommender. This problem would lead to incorrect learning in the model-based algorithms, as some manipulations are done outside the model and therefore the method cannot fully affect the resulting predictions.
-                
+                In this variation there are independent knowledge based and collaborative filtering recommenders. This approach was used in the RACOFI system \cite{racofi}. For a relationship prediction, if a rule is available, it is used for predicting the relationship together with the underlying collaborative filtering algorithm. If not, only the collaborative filtering is used. Although this is a possible combination of the recommenders it has some significant drawbacks. The method introduces a tension between the two recommenders. The results of the collaborative method, which should be universal are in some cases distorted by the knowledge recommender. This problem would lead to incorrect learning in the model-based algorithms, as some manipulations are done outside the model and therefore the method cannot fully affect the resulting predictions.
                
-
             \subsubsection{Using the knowledge-based predictions as an input for collaborative filtering} 
-                Alternatively, using the business rules given during the addaptation to a specific domain, we can generate a prediction (a kind of rating) that is later used in the underlying collaborative filtering algorithm. The prediction is available for subject - object pairs, for which some rules can be applied. The rules are only used during the initial recommender build to provide an input for the collabarative filtering. The recommendations then are done solely by the collaborative filtering algorithm. The advantage of the approach is, that the information from the knowledge-based algorithm is available in the initial phase and can be used for the collaborative filtering model build. 
+                Alternatively, using the business rules given during the adaptation to a specific domain, we can generate a prediction (a kind of rating) that is later used in the underlying collaborative filtering algorithm. The prediction is available for subject - object pairs, for which some rules can be applied. The rules are only used during the initial recommender build to provide an input for the collaborative filtering. The recommendations then are done solely by the collaborative filtering algorithm. The advantage of the approach is, that the information from the knowledge-based algorithm is available in the initial phase and can be used for the collaborative filtering model build. 
                 
                 \fig[7]{pics/knowledge_cf_above.png}{Using predictions from Knowledge based recommender as an input to Collaborative Filtering}{pic_knowledge_cf_above}
             
@@ -676,8 +675,9 @@ Supervisor's e-mail address: \vedoucimail\\
             For the given reasons we choose the second option. Another advantage of this approach is that the recommendation time will be dependent only on the recommender algorithm. The implementation of the chosen approach is thoroughly described in the chapter \ref{architecture}.
         
 \chapter{Business Rules and Relationships in Studied Systems}
-    In the chapter we analyze selected systems where the Unresyst recommender could be used. As we don't have a direct access to the system databases, we use datasets\footnote{Dataset is a set of text files containing some part of data inlcuded in the system database}. The first two datasets - Last.fm and Flixster are publicly available. The third one (Czech travel agency e-shop dataset) was made accessible to the thesis author by the courtesy of the system administrator.
+    In the chapter we analyze selected systems where the Unresyst recommender could be used. As we don't have a direct access to the system databases, we use datasets\footnote{Dataset is a set of text files containing some part of data included in the system database}. The first two datasets - Last.fm and Flixster are publicly available. The third one (Czech travel agency e-shop dataset) was made accessible to the thesis author by the courtesy of the system administrator.
     \section{The Last.fm Dataset}
+        \label{rel_last_fm}
         basic data about both subjects and objects, relationships
         \fig[14]{pics/lastfm.png}{The data model of the Last.fm dataset}{pic_last_fm}
 
@@ -695,9 +695,8 @@ Supervisor's e-mail address: \vedoucimail\\
 
 \chapter{Universal Recommender Design and Implementation}
     \label{design_and_implementation}
-    TODO projet, doplnit konkretni priklady z uvodu
     
-    The chapter describes how the Universal Recommender was implemented. Firstly we give an overview of the architecture, then we describe the interfaces through which Unresyst communicates with the parent system. Then we describe the algorithm used for applying rules. High-level architecture of the Universal Recommender, the layers of the application, are studied in the following section. Finally we give a more detailled overview of the inner structure of Unresyst.
+    The chapter describes how the Universal Recommender was implemented. Firstly we give an overview of the architecture, then we describe the interfaces through which Unresyst communicates with the parent system. Then we describe the algorithm used for applying rules. High-level architecture of the Universal Recommender, the layers of the application, are studied in the following section. Finally we give a more detailed overview of the inner structure of Unresyst.
 
     \section{Universal Recommender Architecture Overview}
         \label{architecture}
@@ -707,165 +706,420 @@ Supervisor's e-mail address: \vedoucimail\\
         
         The recommender doesn't have to be directly a part of the parent system, its database is logically independent of the parent database system. The parent system and the recommender communicate only through the interfaces. There are no implicit links on the application nor on the database level. Hence the recommender could be easily run on an independent server.
         
-        Unresyst provides two interfaces to the parent system: the \emph{Adaptation Interface} and the  \emph{Runtime Interface}. The Adaptation Interface is used only during the system setup and maintenance. See the section \ref{unresyst_process_draft} for a more detailled description of the actions taken during the adaptation. On the other hand, the Runtime Interfaced is used continuously by the parent system to provide recommendations.
+        Unresyst provides two interfaces to the parent system: the \emph{Adaptation Interface} and the  \emph{Runtime Interface}. The Adaptation Interface is used only during the system setup and maintenance. See the section \ref{unresyst_process_draft} for a more detailed description of the actions taken during the adaptation. On the other hand, the Runtime Interfaced is used continuously by the parent system to provide recommendations.
         
-        The figure \ref{pic_unresyst_adaptation} shows how Unresyst can be adapted to a domain on the example of the music domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Novel Artist Recommender} and a \emph{Artist Radio Recommender}. Both recommenders suggest artists to listneners. The Novel Artist recommender tries to broaden listener's music horizons by suggesting artists the listener haven't heard yet. Whereas the Artist Radio Recommender suggests artists to a listener no matter if he/she has already heard it. Such a recommender can be used for an internet radio.
+        The figure \ref{pic_unresyst_adaptation} shows how Unresyst can be adapted to a domain on the example of the music domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Novel Artist Recommender} and a \emph{Artist Radio Recommender}. Both recommenders suggest artists to listeners. The Novel Artist recommender tries to broaden listener's music horizons by suggesting artists the listener haven't heard yet. Whereas the Artist Radio Recommender suggests artists to a listener no matter if he/she has already heard it. Such a recommender can be used for an internet radio.
         
         Each recommender has two interfaces: \emph{Adaptation Interface} and \emph{Runtime Interface}. The domain expert uses the Adaptation interface to adapt Unresyst to the music domain. The adaptation is done by defining basic recommender properties and a set of rules. The design and the usage of the Adaptation Interface is later described in the section \ref{adaptation_interface}.
         
-        \fig{pics/unrest_adaptation.png}{Adaptating Unresyst to the music domain done by a domain expert.}{pic_unresyst_adaptation}
+        \fig{pics/unresyst_adaptation.png}{Adapting Unresyst to the music domain done by a domain expert.}{pic_unresyst_adaptation}
         
         In the figure \ref{pic_unresyst_runtime} there is a schema of how a system that is using Unresyst operates. The user accesses the system as usually through its graphical interface (GUI). The Unresyst GUI which is a part of Unresyst is plugged into the Tennis Server user interface and it presents recommendations to the user. The Unresyst GUI as well as the parent system uses the Runtime Interface of both recommenders to get recommendations and to provide information needed for making recommendations. Both recommenders transfer the calls to the Unresyst module. The design and usage of the Runtime Interface is later described in the section \ref{runtime_interface}.
         
-        \fig[17]{pics/unrest_runtime.png}{Unresyst common usage.}{pic_unresyst_runtime}
+        \fig[17]{pics/unresyst_runtime.png}{Unresyst common usage.}{pic_unresyst_runtime}
         
     \section{Unresyst Interfaces}
         \label{unresyst_interfaces}
-        In order to make Unresyst independent of the parent system we had to define interfaces through which the parent system and Unresyt will communicate. Unresyst has a set of two interfaces: the Adaptation interface and the Runtime interface. 
+        In order to make Unresyst independent of the parent system we have defined interfaces through which the parent system and Unresyst communicate. Unresyst has a set of two interfaces: the Adaptation interface and the Runtime interface. 
 
         \subsection{Adaptation Interface}
             \label{adaptation_interface}
             A well defined adaptation interface is critical for the success of the recommender. The interface has to be general enough to cover most domains and data sources they contain. At the same time it has to be clear and easy to use.
             
-            The interface is used in the \emph{adaptation} phase of Unresyst setup. All initial data that is needed by Unresyst to provide recommendations are passed through this interface. Through the adaptation interface the parts are given:
+            The interface is used in the \emph{adaptation} phase of Unresyst setup. All initial data that is needed by Unresyst to provide recommendations are passed through this interface. Through the adaptation interface the following parts are given:
             \begin{description}
-                \item[Subjects and Objects:] When addapting Unresyst to a domain, we have to define what and to whom we would like to recommend. In our implementation, this is done through an ORM Manager class covering the tables where subjects and objects respectively are stored. In our example we use managers pointing to the \emph{User} and \emph{Artist} table.
-                \item[The Predicted Relationship:] We have to define which relationship in the parent system data model is the preference. This is done in the way described in \ref{representing_predicted_relationship}. In our example we use the relationship ``User played Artist's track'' as the predicted relationship.
-                \item[Rules and Relationships that influence recommendations:] When we like to use business rules or relationships to make recommendations we have to define them through the addaptation interface. The way to define rules and relationships is described in sections \ref{representing_rules} and \ref{representing_relationships}. An example of a business rule is the mentioned ``Music having the given tags shouldn't be recommended to users of the given gender''. An example of a relationship influencing the preiction is a similarity ``Artists sharing tags are similar''.
-                \item[Biases:] Some objects are more likely to be liked than others, independently of the subject to whom we're recommending. Such facts can be included to recommendations by defining biases. More about representing biases can be found in section \ref{representing_biases}.
+                \item[Subjects and Objects:] When adapting Unresyst to a domain, we have to define what and to whom we would like to recommend. In our implementation, this is done through an ORM Manager class covering the tables where subjects and objects respectively are stored. In our example we use managers pointing to the \emph{User} and \emph{Artist} table.
                 
+                \item[The Predicted Relationship:] We have to define which relationship in the parent system data model is the preference. This is done in the way described in \ref{representing_predicted_relationship}. In our example we use the relationship ``User played Artist's track'' as the predicted relationship.
+                
+                \item[Rules and Relationships that influence recommendations:] When we want to use business rules or relationships for making recommendations we have to define them through the adaptation interface. The way to define rules and relationships is described in sections \ref{representing_rules} and \ref{representing_relationships}. An example of a subject-object rule is the mentioned ``Music having the given tags shouldn't be recommended to female users''. An example of an object similarity rule influencing the prediction is ``Artists sharing tags are similar''. An example of a subject similarity relationship is the mentioned ``Users coming from the same country are similar''. The difference between a rule and a relationship is the following: For rules we'd like to give a specific strength for each covered pair, i.e. for artists sharing some tags we can give a percentage of how much tags they're sharing. Whereas in relationships, we only know there's some connection, that can't be weighted for the particular pair, i.e. if the users are coming from the same country, they are similar without any further strength differentiation for different pairs of users coming from the same country.
+                
+                \item[Biases:] Some objects are more likely to be liked than others, independently of the subject to whom we're recommending - these are called object biases. Subject biases indicate a higher tendency for a subject to like an object, independently of the particular object. Such facts can be included to recommendations by defining biases. More about representing biases can be found in section \ref{representing_biases}. An example of a positive object bias is the mentioned ``Artists that have released a new album recently''.
             \end{description}
             
-            In our implementation, the adaptation interface is employed by deriving a class from the predefined Unresyst \emph{Recommender} class. In the example ...
-            XXX kod
-
+            In our implementation, the adaptation interface is used by deriving a class from the predefined Unresyst \emph{Recommender} class. In the example we define an \emph{ArtistRecommender} class, that holds all domain specific data. The following piece of \emph{Python} code shows the definition of the music recommender from the example. Subjects of recommending are system users, recommended objects are artists. The definition of the rules, relationships and biases is discussed in the sections that follow.
             
+            \begin{verbatim}
+from unresyst import Recommender
+from models import User, Artist
+
+class ArtistRecommender(Recommender):
+    """A recommender recommending artists (musicians) that 
+    the user can like.
+    """    
+
+    name = " Artist Recommender"
+    """The name"""    
+    
+    subjects = User.objects
+    """The subjects to who the recommender will recommend."""
+    
+    objects = Artist.objects
+    """The objects that will be recommended."""
+                    
+            \end{verbatim}
+
             \subsubsection{Representing Rules}
                 \label{representing_rules}
-                xxx doplnit prikladky
+                In the section we discuss the possibilities of implementing the rule representation, then we list the properties of the representing class. Finally we present a code of the rules of our example recommender for our prototype implementation 
                 
-                During the adaptation phase, the domain expert can introduce business rules that will be used for creating recommendations. As in \cite{racofi}, our rule consists of a \emph{condition} determining when the rule should be applied, and an \emph{action} defining what should be done if the condition is satisfied. The representation should use an easy human-editable notation, so that the rules can be easily added and later edited. 
+                During the adaptation phase, the domain expert can introduce business rules that will be used for creating recommendations. As in \cite{racofi}, our rule consists of a \emph{condition} determining when the rule should be applied, and an \emph{action} defining what should be done if the condition is satisfied. The representation should use an easy human-editable notation, so that the rules can be easily added and later edited. Opposed to business relationships, for rules we have some kind of strength that is specific for each covered pair, i.e. for artists that share some tags we have a percentage of shared tags.
                 
                 The RACOFI framework \cite{racofi} uses two types of actions: \emph{Modify} that modifies the predicted subject's object rating by a given constant and \emph{Not Offered} that excludes an object from subject's recommendation.
                 
-                Our rules aren't modifying predictions, but they serve as an input for the predicting algorithm. Therefore we will use absolute values, not relative values as in RACOFI \emph{Modify} rules. The \emph{Not Offered} rule type can be represented by a rule giving minimal value, so we won't have a special rule type for it. 
+                Our rules aren't modifying predictions, but they serve as an input for the predicting algorithm (see the section \ref{combining_knowledge_and_cf} for the reasons why this way of integrating rules to collaborative filtering was selected). Therefore we will use absolute values, not relative values as in RACOFI \emph{Modify} rules. The \emph{Not Offered} rule type can be represented by a rule giving minimal value, so we don't need to have a special rule type for it. 
                 
                 In our rules we would also like to represent inter-entity similarity. Hence we will use the following types of rules:
-                \begin{description}
-                    \item[Subject-object rules] defining subject-object interactions that can be used for recommending objects to subjects.
-                    \item[Subject-subject rules] defining similarity between subjects.
-                    \item[Object-object rules] defining similarity between objects.
-                \end{description}
+                \begin{enumerate}
+                    \item \label{ex_s_o} \emph{Subject-object rules} defining subject-object interactions that can be used for recommending objects to subjects. An example of a negative subject-object rule is the mentioned ``Music having the given tags shouldn't be recommended to users of the given gender''.
+                    \item \label{ex_s_s} \emph{Subject-subject rules} defining similarity between subjects. An example of a positive similarity rule is ``Users of similar age are similar''.
+                    \item \label{ex_o_o} \emph{Object-object rules} defining similarity between objects. An example of a positive similarity rule is the mentioned ``Artists sharing some of their tags are similar''.
+                \end{enumerate}
                 
-                There are several ways how to represent rules. The first studied one is \emph{RuleML (Rule Markup Language)} \cite{ruleml}, a XML-based markup language for representing rules. The language is very powerful, having the same expresiveness as declarative programming languages\footnote{There are serveral convertors between the \emph{Prolog} programming language and RuleML, e.g. \cite{ruleml_prolog}}. RuleML was used for entering rules into the RACOFI recommender system \cite{racofi}.
+                There are several ways how to represent rules. The first studied one is \emph{RuleML (Rule Markup Language)} \cite{ruleml}, a XML-based markup language for representing rules. The language is very powerful, having the same expressiveness as declarative programming languages\footnote{There are several converters between the \emph{Prolog} programming language and RuleML, e.g. \cite{ruleml_prolog}}. RuleML was used for entering rules into the RACOFI recommender system \cite{racofi}.
+
+                Creating and editing rules in RuleML isn't very convenient as creating and editing any other XML-based document. That is partially solved by a shortened notation \cite{ruleml_short}, but even that isn't very comfortable to a user that isn't experienced in declarative programing. Another drawback of using RuleML for our purpose is its generality. The set of conditions and actions we'd like to represent is very limited and therefore we don't need such a powerful language. 
                 
-                Creating and editing rules in RuleML isn't very convenient as creating and editing any other XML-based document. That is partially solved by a shortened notation \cite{ruleml_short}, but even that isn't very comfortable to a user that isn't experienced in declarative programing. Another drawback of using RuleML for our purpose is its generality. The set of conditions and actions we'd like to represent is very limited and therefore we don't need such a powerful language.
+                Another drawback of such a general notation is the efficiency of evaluating rules. The classical substitution of all possible pairs to the condition wouldn't be feasible for larger domains. See \ref{unresyst_details} for details on how evaluating rules was implemented in a more efficient way.
                 
-                Another option would be to directly use a logic programming language as \emph{Prolog}. This option has the same drawbacks in over-generality and user-unfriedliness as RuleML. Additionally we would have to incorporate a logic programming language interpreter to Unresyst.  
+                Another option would be to directly use a logic programming language as \emph{Prolog}. This option has the same drawbacks in over-generality and user-unfriendliness as RuleML. Additionally we would have to incorporate a logic programming language interpreter to Unresyst. The following lines of code show our example rules written in the Prolog declarative language. The code is meant only as an and shows the possible actions without defining all necessary predicates. The predicates don't consider the strength of the rule conclusion.
                 
-                A better option is to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the addaptation phase, the domain expert instantiates the pre-defined classes to create  business rules.
+                \begin{verbatim}
+% don't recommend artists with male-specific tags to females
+dont_recommend(U, A) :- 
+    is_user(U),
+    is_artist(A),
+    female(U),
+    artist_tagged(A, T),
+    male_specific(T).
+
+% users of similar age are similar
+similar_subjects(U1, U2) :-
+    is_user(U1),
+    is_user(U2),
+    similar_age(U1, U2).
+
+# artists sharing some tags are similar
+similar_objects(A1, A2) :-
+    is_artist(A1),
+    is_artist(A2),
+    artist_tagged(A1, T),
+    artist_tagged(A2, T).
+                \end{verbatim}
                 
-                In the figure \ref{pic_semantic_network} there is an example of a semantic network that can be a part of the parent system. The network belongs to a shoe e-shop. Alice and Bob are users living in the same city. Alice has searched the word ``trainers'' which is a part of the description of the pictured trainers. In the trainer shoe description there's also the word ``comfortable'', which is also a part of the description of the displayed rubber boots. Bob has viewed a profile page of the trainers. The trainers and the rubber boots were made by a manufacturer seating in the city where Alice and Bob lives.
-                
-                \fig{pics/semantic_network.png}{A sample semantic network for demonstrating rules and relationships.}{pic_semantic_network}
+                An option better fitting our needs is to implement our own \emph{Object-oriented rule representation}, where we represent rules as instances of a rule class. In the adaptation phase, the domain expert instantiates the pre-defined classes to create  business rules.
                 
                 The \emph{expectancy} concept (\ref{def_relationship_prediction}) is powerful but not very intuitive for defining the impact of the rules on predicting relationships. By defining a rule with expectancy we would be able to indicate positive as well as negative impact on predicting the given relationship because low values of expectancy have negative impact on preference and high values positive. Defining directly the expectancy of a rule would result in complicated functions and could lead to confusion and misinterpretation. Hence, for rule definition, we use a less general but more intuitive concept of \emph{confidence} and \emph{positiveness}.
                 
                 Each rule is either defined as \emph{positive} or \emph{negative}. Positive rules increase the prediction of the given relationship, negative rules decrease it. Each rule additionally has a confidence function defining how strong (positive resp. negative) the rule is for the given pair of entities. Events that can have both positive and negative impact should be represented by two rules.
-    %             synergic
                 
-                % kdyz chces udelat relationship ktere kdyz neni, tak je to negative, tak si udelej dve relationships
+                Another advantage of using confidence and positiveness is a more intuitive approach to defining positive and negative rules, as the recommender uses only the part (positive or negative) that we have defined. I.e. the negative rule of not recommending a specifically tagged artists to female listeners doesn't necessarily mean we would like to recommend these artists to all male listeners (positively). If we define the negative rule, only the negative part will be taken. If we wanted to incorporate the positive part too, we would define a new positive rule. 
                 
-                %to samy u rules - idea je aby to pocitalo jenom s tim co mu explicitne zadas. to ze mu reknes, nedoporucuj zimni boty jizanum jeste neznamena doporucuj zimni boty severanum - pokud to chce, at si na to explicitne zada pravidlo.
+                In the examples, we will be predicting the \emph{User listens to artist's tracks} relationship, representing the preference of the user to the given artist. 
                 
-                %expectancy mu vubec nedovolim zadavat - to si budu pocitat sam.
-                
-                In the examples, we will be predicting the \emph{like} relationship, representing the preference of the user to the given shoe pair. We will demonstrate the rule definition on the following rules:
-                \begin{enumerate}
-                    \item \label{ex_s_o} If a user is from a city in the south, we won't recommend him/her winter shoes (negative).
-                    \item \label{ex_s_s} If two users are about the same age, they are considered similar (positive).
-                    \item \label{ex_o_o} When two pairs of shoes have in their description some common words, they are considered similar (positive).
-                \end{enumerate}
-                
-                Note that we define only one side of the rules (either positive or negative). E.g. by defining that we won't recommend winter shoes for southern users, we don't say that we would like to recommend winter shoes to northern users. If we wanted to extend the rule this way we would define a new positive rule. 
-                
-                For our object-oriented rule representation we need to define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible actions are determining the expectancy of the subject-object relationship and determining inter-entity similarity. Therefore actions will be represented as functions giving an expectancy or similarity respectively. The rule objects contain:
+                For our object-oriented rule representation we define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible actions are determining the confidence of the subject-object relationship and determining inter-entity similarity. Therefore actions will be represented as functions giving a confidence of the preference or similarity. The rule objects contain:
                 \begin{description}
                     \item[Condition:] A boolean function determining whether the rule can be applied to a given entity pair. The function is defined depending on the rule type:
                     \begin{description}
-                        \item[Subject-object condition] $C_{so}:S \times O \to \{False, True\}$. A function takes a subject-object pair and determines whether the rule can be applied to the pair. Example \ref{ex_s_o}: If the user $s$ is from a city that is in south and the shoes $o$ are winter shoes, the condition evaluates to \emph{True}. Otherwise it's \emph{False}
-                        \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. Example \ref{ex_s_s}: If we know the age of both of the users, the condition is \emph{True}, otherwise it's \emph{False}.
-                        \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. Example \ref{ex_o_o}: If the descriptions of the shoes share some words, the condition is \emph{True}, otherwise it's \emph{False}. 
+                        \item[Subject-object condition] $C_{so}:S \times O \to \{False, True\}$. A function takes a subject-object pair and determines whether the rule can be applied to the pair. In our example \ref{ex_s_o} the condition function is: If the user $s$ is a female and artist $o$ is tagged by one of the given tags, the condition evaluates to \emph{True}. Otherwise it's \emph{False}
+                        \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. In our example \ref{ex_s_s} the condition function is: If we know the age of both of the users, the condition is \emph{True}, otherwise it's \emph{False}.
+                        \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. In our example \ref{ex_o_o} the condition function is: If the artists share some tags, the condition is \emph{True}, otherwise it's \emph{False}. 
                     \end{description}
-                    \item[Is Positive:] A  boolean constant (\emph{True} or \emph{False}) for determining whether the rule is positive for the predicted relationship or negative.
+                    \item[Is Positive:] A  boolean constant (\emph{True} or \emph{False}) for determining whether the rule is positive for the predicted relationship or negative. I.e. the rules \ref{ex_s_s} and \ref{ex_o_o} are positive, the rule \ref{ex_s_o} is negative.
                     \item[Confidence:] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity in a positive or negative way.
                     \begin{description}
-                        \item[Subject-object relationship confidence] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and gives a confidence, that the \emph{predicted relationship} appears (when positive) or doesn't appear (when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) for the given subject-object relationship - that makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. Example \ref{ex_s_o}: We can use a linear function. The more southern the city is, the higher is the resulting confidence. Or we can simply remove the shoes from the user's recommendation by always returning $1$.
-                        \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the expectancy, the more similar the subjects are, according to the rule. Example \ref{ex_s_s}: Our function returns a normalized difference between the age of the two users. 
-                        \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity or dissimilarity between the subjects. The higher the confidence, the more similar (or dissimilar when negative) the objects are, according to the rule. Example \ref{ex_o_o}: We can use a function returning the number of common words divided by the number of words in the description.
+                        \item[Subject-object relationship confidence] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and gives a confidence, that the \emph{predicted relationship} appears (when positive) or doesn't appear (when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) on the preference. This makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. In our example \ref{ex_s_o} we can use a linear confidence function. The more of the given tags the artist has, the higher is the resulting confidence. \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the confidence, the more similar (or dissimilar if negative) the subjects are, according to the rule. In our example \ref{ex_s_s} we use a confidence function that returns a normalized difference between the age of the two users. 
+                        \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity or dissimilarity between the objects. The higher the confidence, the more similar (or dissimilar when negative) the objects are, according to the rule. In our example \ref{ex_o_o} the confidence function returns the number of common tags normalized by the overall number of tags.
                     \end{description}
-                    \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike confidence, is independent of the particular entities on which the rule is evalutated. In our example, the number \ref{ex_s_o} will have a high weight (e.g. $0.8$), because it is quite specific. Other rules would have lower weight, e.g. $0.1$.
-                    \item[Description:] A text explaining the meaning of the rule. Descriptions can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_o_o} can have a description ``The shoe pairs \{object1\} and \{object2\} are similar because their descriptions contain some words in common.''
+                    \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike confidence, is independent of the particular entities on which the rule is evaluated. The weight should be set so that the more significant rules get higher weight. The exact weight values should be checked experimentally.
+                    \item[Description:] A text explaining the meaning of the rule. Descriptions can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_s_s} can have a description ``The users \{subject1\} and \{subject2\} are similar because their age is similar.''
                 \end{description}
                 
-                Such rules can represent each of knowledge types described in \cite{knowledge_spain}, described in the section \ref{knowledge_based}. Catalog knowledge can be represented by rules accessing object properties in their Condition and Confidence functions. Functional and user knowledge can be representing by rules using the relatioships between subjects and objects. 
+                The following lines of code show the rules written in our Python prototype recommender implementation.
+                \begin{verbatim}
+from unresyst import *
+from models import *
+
+AGE_DIFFERENCE = 38 - 17
+"""The age difference between the oldest and the yongest user"""
+
+class ArtistRecommender(Recommender):
+    """A recommender recommending artists (musicians) that 
+    the user can like.
+    """    
+    
+    # ...
+    
+    # the class contains definitions for business rules
+    rules = (
+    
+        # don't recommend artists with male-specific tags to females
+        SubjectObjectRule(
+            name="Don't recommend male music to female users.",
+
+            # the user is a female and the artist was tagged by
+            # a male-specific tag
+            condition=lambda user, artist: user.gender == 'f' and \
+                artist.artisttag_set.filter(tag__gender_specific='m').exists()
+            
+            # it's a negative rule
+            is_positive=False,
+            
+            weight=0.5,
+            
+            # the more male-specific tags the artist has, the higher is 
+            # the rule confidence. Normalized by the artist tag count
+            confidence=lambda user, artist: float(
+                artist.artisttag_set.filter(tag__gender_specific='m').count())/ \
+                    artist.artisttag_set.count(),
+                    
+            description="Artist %(object)s isn't recommended to %(subject)s, " +
+                "because the artist is considered male-specific."
+        )
+                
+                
+        # users of similar age are similar
+        SubjectSimilarityRule(
+            name="Users with similar age.",
+            
+            # both users have given their age and the difference 
+            # is lower than five
+            condition=lambda user1, user2: 
+                user1.age and user2.age and abs(user1.age - user2.age) <= 5,
+                
+            is_positive=True,   
+                
+            weight=0.5,
+            
+            # a magic linear confidence function
+            confidence=lambda user1, user2: 
+                1 - float(abs(user1.age - user2.age))/AGE_DIFFERENCE,
+            
+            description="Users %(subject1)s and %(subject2)s are about " + 
+                "the same age."
+        ),        
+        
+        # artists sharing some tags are similar
+        ObjectSimilarityRule(
+            name="Artists sharing some tags.",
+
+            # both artists have some tags and they share at least one tag
+            condition=lambda artist1, artist2: \
+                artist1.artisttag_set.exists() and \
+                artist2.artisttag_set.exists() and \
+                artist1.artisttag_set.filter(
+                    tag__id__in=artist2.artisttag_set.values_list('tag__id')
+                ).exists(),
+            
+            # it's a positive rule
+            is_positive=True,
+            
+            weight=0.5,
+            
+            # The more tags the artists have in common, the higher is  
+            # the similarity confidence
+            condition=lambda artist1, artist2: \
+                float(artist1.artisttag_set.filter(
+                    tag__id__in=artist2.artisttag_set.values_list('tag__id')
+                ).count()) / \
+                min(artist1.artisttag_set.count(), artist2.artisttag_set.count()),
+            
+            description="Artists %(object1)s and %(object2)s are similar " +
+             "because they share some tags."
+        ),
+    )
+        \end{verbatim}
+
+                Such rules can represent each of knowledge types described in \cite{knowledge_spain}, described in the section \ref{knowledge_based}. Catalog knowledge can be represented by rules accessing object properties in their Condition and Confidence functions. Functional and user knowledge can be representing by rules using the relationships between subjects and objects. 
 
             \subsubsection{Representing Relationships}
                 \label{representing_relationships}
                 
                 Apart from defining business rules, the domain expert can define which relationships are relevant for performing the prediction. This is done when adapting a system to Unresyst.
                 
-                We have some specific requirements on the relationship representation. In the system there can be various entities, not only subjects and objects. The relationships can also span such entities. In our example on the figure \ref{pic_semantic_network} there're are the ``city`` entities, which aren't subjects nor objects but we use them in rules. Secondly, the relationships can have various relevance for predicting the given relationship. This should be implemented by assigning weights to relationships. 
+                In relationships, unlike rules, we only know there's some connection, that can't be weighted for a particular entity pair, i.e. if the users are coming from the same country, they are similar without any further strength differentiation for a pair of users coming from the same country.
                 
                 We would like to represent relationships of the following types. The relationships don't have to be direct - on the path from subject/object to subject/object there can be an entity of any type. 
                 
-                As for the rules, there can be both positive and negative relationships. Positive relationships increase the preference or similarity for the relevant entity pairs, negative relationships decrease it.
+                As for the rules, there can be both positive and negative relationships. Positive relationships increase the subject-object preference or similarity for the relevant entity pairs, negative relationships decrease it.
                 
-                The following examples are related to the figure \ref{pic_semantic_network}.
+                As for the rules, we have the following relationship types
                 \begin{description}
-                    \item[Subject-object relationships] indicate a subject's preference for the given object in means of the predicted relationship. In our example, if Bob has viewed a profile page of the trainers, we suppose he is quite interested in them (positive).
-                    \item[Subject-subject relationships] indicate similarity among subjects. For example if Alice and Bob live in the same city they are considered similar (positive).
-                    \item[Object-object relationships] indicate similarity among objects. For example if the trainers and the rubber shoes were made by the same manufacturer they are considered kind of similar (positive).
+                    \item[Subject-object relationships] indicate a subject's preference for the given object in means of the predicted relationship.
+                    \item[Subject-subject relationships] indicate similarity among subjects. In our example, we have a relationship ``Users that are from the same country are similar''. The relationship is positive, as it increases the resulting similarity.
+                    \item[Object-object relationships] indicate similarity among objects.
                 \end{description}
 
-                Obviously, the requirenemts on the relationship representation are very similar to the requirements we have set on rule representation. Hence, we can use the rule representation for relationships with some corrections:
+                Obviously, the requirements on the relationship representation are very similar to the requirements we have set on rule representation. Hence, we can use the rule representation for relationships with some corrections:
                 \begin{description}
-                    \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. In the subject-object example, the Condition is a function returning \emph{True} if the user has viewed the profile page of the shoes, otherwise it returns \emph{False}.
+                    \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. In our example, the condition function is \emph{True} if both users have filled the country they're from and they are from the same country, otherwise it returns \emph{False}.
                     \item[Is Positive: ] A  boolean constant for determining whether the relationship is positive for the predicted relationship or negative. Works analogously to the Is Positive value in rules.
-                    \item[Confidence:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair surely is (when positive) or isn't (when negative) in a relationship. Hence, such a function would always return $1$ for relationhips.
-                    \item[Weight:] We need a way how to define the relevance of the relationship for predicting the relationship. Weight can be used on this purpose. In our example the ``viewed profile'' relationship would have higher weight than the others because it's the most specific relationship out of the three. 
-                    \item[Description:] The textual explanation can be used for clarifying the meaning of the relationship. ``\{subject\} has viewed the profile of \{object\}.
+                    \item[Confidence:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair surely is (when positive) or isn't (when negative) in a relationship. Hence, such a function would always return $1$ for relationships.
+                    \item[Weight, Description:] The properties an analogous meaning to rule weight, see \ref{representing_rules}
                 \end{description}
                 
-                Such a representation can use semantics of a system independently of its data model. There doesn't have to be a direct link between subjects/objects in the data model to define a relationship. For example Alice has searched for the word ``trainers'' which is in the description of the displayed trainers. Even though there isn't a direct connection in the data model, we can represent such a relationship in our system. Moreover, the relationships can be taken from various sources, e.g. multiple databases, data stores, or log files. The only thing that has to be provided to Unresyst is an implementation of a function returning whether the given subjects/objects are in the relationship.
+                The following lines of code show the relationships written in our Python prototype recommender implementation.
+                \begin{verbatim}
+from unresyst import *
+from models import *
+
+class ArtistRecommender(Recommender):
+    """A recommender recommending artists (musicians) that 
+    the user can like.
+    """    
+    
+    # ...
+    relationships = (
+        # if two users are from the same country, they are similar
+        SubjectSimilarityRelationship(
+            name="Users living in the same country",
+            
+            # both users have given their country and it's the same
+            condition=lambda user1, user2:
+                user1.country and \
+                user2.country and \
+                user1.country == user2.country,
+            
+            # it's relationship positive to similarity
+            is_positive=True,               
+            
+            weight=0.5,            
+            
+            description="Users %(subject1)s and %(subject2)s are from " + \
+            " the same country.",
+        ),
+    )
+                \end{verbatim}
                 
-                This representation is a reduction of the full semantic representation used in \cite{white_paper}. The authors propose using all system entities and relationships for recommending. This approach has some significant drawbacks. Firstly, it's not clear how to assign weights for relationships between entities that are not subjects or objects. Such relationship can have a varied meaning in the context of different relationships. In our example, we can use the user-city relationship both in subject-subject similarity relationship (Alice and Bob are from the same city) and in subject-object preference (Alice prefers shoes that are made in the same city where she lives). The significance of the user-city relationship vary in these two contexts and there's no clear way how to statically assign the weight to the user-city relationship. The second drawback of the \cite{white_paper} approach is that most of the main-stream recommender algorithms use only subjects, objects and relationships between them. Therefore the choice of a recommender algorithm is much more limited.
+                Such a representation can use semantics of a system independently of its data model. There doesn't have to be a direct link between subjects/objects in the data model to define a relationship. Even though there isn't a direct connection in the data model, we can represent such a relationship in our system. Moreover, the relationships can be taken from various sources, e.g. multiple databases, data stores, or log files. The only thing that has to be provided to Unresyst is an implementation of a function returning whether the given subjects/objects are in the relationship.
                 
-                The relationships between entities that are not subjects or objects can be used in our representation as well, but only those that are on a path in a semantic network from a subject to an object, or subject to subject or object to object. For example we can use words searched by users on a path from users to shoes. 
+                This representation is a reduction of the full semantic representation used in \cite{white_paper}. The authors propose using all system entities and relationships for recommending. This approach has some significant drawbacks. Firstly, it's not clear how to assign weights for relationships between entities that are not subjects or objects. Such relationship can have a varied meaning in the context of different relationships. In our example, if we had to use the links from artists to tags, we would have to assign a weight to them. However, we're using these links in two contexts: similarity of artists and the rule deprecating artists marked by the given tag for female users. Evaluating such relationship once in a positive meaning and once in a negative would be much complicated. The second drawback of the \cite{white_paper} approach is that most of the main-stream recommender algorithms use only subjects, objects and relationships between them. Therefore the choice of a recommender algorithm is much more limited.
+                
+                The relationships between entities that are not subjects or objects can be used in our representation as well, but only as parts of the described rules. They do not have a particular representation in Unresyst. 
                 
                 To our relationship definition we can include a relationship of any type:
                 \begin{description}
-                    \item[One-to-one relationships] can be included by directly traversing the relationship. For example a connection between a shoe pair and its profile page. 
-                    \item[One-to-many relationships] can be included by looping through all related entities of an entity. For example, all shoes a user has viewed are from the same manufacturer. Or we can test whether a given entity is in the related entities of another entity, e.g. we can test if the shoe pairs are from the same manufacturer.
-                    \item[Many-to-many relationships] can be included in the same means as the one-to-many relationships. E.g. the shoes are one of those the user has viewed. 
+                    \item[One-to-one relationships] can be included by directly traversing the relationship. 
+                    \item[One-to-many relationships] can be included for example by testing the equality of the connected entities. In our example a relationship user - country is a one-to-many relationship. A user can be from at most one country, while one country can be a home of many users.
+                    \item[Many-to-many relationships] can be included too. In our example the artist tags are many-to-many relationships. One artist can be tagged by many tags and one tag can be assigned to many artists.
                 \end{description}
                 
                 \subsubsection{Representing Predicted Relationship}
                     \label{representing_predicted_relationship}
-                    During the adaptation phase, the domain expert has to define which relationship should be predicted. For example, if we want Unresyst to predict which pair of shoes a user would like, we need to tell Unresyst somehow.
+                    During the adaptation phase, the domain expert has to define which relationship should be predicted. In our example, we  would like  Unresyst to recommend artists to users.
                     
-                    This is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that can be ommited is the \emph{weight}. The condition and the description remains as described in the section \ref{representing_relationships}. 
+                    The predicted relationship definition is is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that is omitted is the \emph{weight}. The condition and the description remains as described in the section \ref{representing_relationships}. 
+
                 \subsubsection{Representing Biases}
                     \label{representing_biases}
-                    mam subject/object bias, subject v podstate neovlivni doporuceni/nedoporuceni, jen upravuje vysi expectancy. Object naopak ovlivni
+                    Apart from rules and relationships the domain expert can define the so-called biases. Object bias indicates a tendency of an object to be liked more or less than others, depending if the bias is positive or negative. Object bias is a property of an object and is independent of the subject to whom we're recommending. Subject bias is an analogous concept for subjects. They indicate a higher tendency for a subject to like any object. Subject biases are useful only when the absolute expectancy matters, as for predicting object rating (see \ref{rel_last_fm}).
+                    
+                    As for rules and relationships, we use an object-oriented representation of biases. Each bias instance contains the following attributes.
+                    \begin{description}
+                         \item[Condition:] A boolean function determining whether the bias can be applied to a given entity. The function is defined depending on the rule type:
+                        \begin{description}
+                            \item[Object bias condition:] $C_o:O \to \{False, True\}$. A function takes an object and determines whether the object is influenced by the bias. In our example  the condition function is: If the artist $o$ is played more than $N$ times in a given recent period, the condition evaluates to \emph{True}. Otherwise it's \emph{False}
+                            \item[Subject bias condition:] $C_s:S \to \{False, True\}$. A function takes a subject and determines whether the subject is influenced by the bias.
+                        \end{description}
+                        \item[Is Positive:] A  boolean constant (\emph{True} or \emph{False}) for determining whether the bias is positive for the preference or negative. Our example bias is positive.
+                        \item[Confidence:] A function determining the strength of the bias in a positive or a negative way.
+                        \begin{description}
+                            \item[Object bias confidence:] $D_s:S \to [0,1]$. A function takes an object  and gives a confidence, that the object will be preferred by any given subject (or not preferred when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) on the preference. In our example we take a confidence function returning the artist play count divided by the maximum play count for an artist in the given period.\footnote{For the sake of simplicity we take an absolute play count and a fixed time period. For better results it would be better to take the number of plays relative to an average artist play count in a given period. Our example function would probably give high biases to a constant set of popular artists.}
+
+                            \item[Subject bias confidence:] $D_s:S \to [0,1]$. A function takes a subject and gives a confidence, that the subject will prefer any given object (or not prefer when negative). 
+                        \end{description}
+                         \item[Weight, Description:] The properties has the same meaning as in rule definition (see \ref{representing_rules}).
+                    \end{description}
+                    The following lines of code show the example bias written in our Python prototype recommender implementation.
+                    \begin{verbatim}
+import datetime
+
+from django.db.models import Count
+
+from unresyst import *
+from models import *
+
+MAX_PLAY_COUNT = 542
+"""The maximum play count for an artist in the period"""
+
+N_MIN_PLAY_COUNT = 100
+"""The minimum play count for an artist to apply the bias"""
+
+PERIOD_START_DATE = datetime.date(2010, 9, 1)
+PERIOD_END_DATE = datetime.date(2010, 12, 31)
+
+
+class ArtistRecommender(Recommender):
+    """A recommender recommending artists (musicians) that 
+    the user can like.
+    """    
+    
+    # ...
+    biases = (
+        ObjectBias(
+            name="Artists whose tracks have been listened a lot recently.",
+            
+            description="%(object)s has been listened much recently.",
+            
+            # take only artists with more than the minimal play count
+            # in the given period
+            condition=lambda artist: \
+                artist.track_set\
+                    .filter(scrobble__timestamp__range=
+                        (PERIOD_START_DATE, PERIOD_END_DATE))\
+                    .aggregate(Count('scrobble')) > N_MIN_PLAY_COUNT
+            
+            weight=0.5,
+            
+            # it's a positive bias
+            is_positive=True,
+            
+            # the number of scrobbles for the artist divided by the max.
+            confidence=lambda artist: \
+                float(artist.track_set\
+                    .filter(scrobble__timestamp__range=
+                        (PERIOD_START_DATE, PERIOD_END_DATE))\
+                    .annotate(scrobble_count=Count('scrobble'))\
+                    .aggregate(Sum('scrobble_count')))/MAX_PLAY_COUNT
+        ),
+    )
+                    \end{verbatim}
 
                 \subsection{Runtime Interface}            
                     \label{runtime_interface}
+                    Unresyst runtime interface serves for performing common operations in the recommender. The interface is made easy to use, so that Unresyst can be incorporated directly in the parent system without needing to implement an adapter. 
+                    
+                    The runtime interface contains the following methods.
+                    \begin{description}
+                        \item[$build()$] The build method does all computations and prepares all necessary data structures of the recommender in order to start recommending. The state of the system database in the time of build is used for recommending. Changes made in the parent system database will take effect in recommending after either calling the update method or the build method. The build method can take an indispensable ammount of time and system resources and therefore it should be called only by an entrusted person. It shouldn't be accessible to a common system user in any way. Build must be called before using any other runtime interface method. 
+                        \item[$predict\_relationship(subject, object)$] The function predicts the preference in the means of the predicted relationship, of the given subject to the given object. The return value is an instance of the $RelationshipPrediction$ class (see the next paragraph for details). The function is meant to be called very often. Therefore the execution should be pretty fast, independent of the number of entities in the parent system.
+                        \item[$get\_recommendations(subject, count)$] The function returns the given number of recommendations for the given subject. The return value is a list of instances of the $RelationshipPrediction$ class (see the next paragraph for details). The function takes advantage of the structures precomputed during the execution of the build method. For reasonable values of the count parameter it should be executed in a constant time.
+                        \item[$update(entity)$] A method that is called after an update in the parent system database in order to propage the change to recommendations and predictions. The entity parameter is either a subject or an object. The method recomputes all structures we have created during the build method for the given entity. For some of the algorithms the update method might be as complex as performing build. The update method isn't implemented in our recommender prototype.
+                    \end{description}
+                    
+                    The $RelationshipPrediction$ class, which instances are returned by the $get\_recommendations$ and $predict\_relationship$ runtime methods, has the following attributes.
+                    \begin{description}
+                        \item[$subject$] The subject of the prediction, typically the system user. The attribute contains a parent system class instance, no conversion is needed.
+                        \item[$object$]: The object of the prediction, analogously to the $subject$ attribute.
+                        \item[$expectancy$]: The estimated probability of the predicted relationship
+                        occuring between the subject and the object, which is a rate of subject-object preference. The attribute contains a float number between from the $[0, 1]$ interval.
+                        \item[$explanation$]: A short textual explanation of the provided prediction. The attribute contains a short text that can be presented to the user. For some algorithms this attribute may be inavailable.
+                    \end{description}
+                    
+                    In our prototype implementation, all runtime interface methods are placed directly on the Recommender base class. When using the interface, we work with our class defined in the adaptation phase. In all runtime methods we work directly with the parent system objects, no conversion is needed.
+                    
+                    The usage of the runtime interface of our Python prototype implementation can be seen on the following lines.
+                    \begin{verbatim}
+kod z konzole - build, recommend, predict
+                    \end{verbatim}
+
+
     \section{Applying Rules}
         BFS with the given depth
+        sumarni vzorecek
         \subsection{Matching Rule Conditions to Entities and Entity Pairs}
             \label{matching}
-            traversing the pairs, testing condition, optimalization - provide a generator function
+            traversing the pairs, testing condition, optimization - provide a generator function
             abstractor.
         \subsection{Aggregating Similarities and Biases}
             \label{aggregating}
@@ -892,7 +1146,7 @@ Supervisor's e-mail address: \vedoucimail\\
                         \end{array} \right.
                 \end{equation}
             \subsubsection{Mycin}
-                Confidence factor nevimco, bude se muset lehce ztransformovat.
+                Confidence factor, bude se muset lehce ztransformovat.
             \subsubsection{Bayesian}
                 $C_{so}$: event, $s$ chooses $o$\\
                 $E_{Rso}$ event, rule $R$ covers $s$ - $o$ prediction
@@ -913,7 +1167,6 @@ Supervisor's e-mail address: \vedoucimail\\
                     P(C_{so} | E_{R_1so} \cap E_{R_2so}) = \frac{P(C_{so}) P(E_{R_1so} | C_{so}) P(E_{R_2so} | C_{so} \cap E_{R_1so})}{P(E_{R_1so}) P(E_{R_2so}|E_{R_1so})}
                 \end{equation}
 
-
         \section{Unresyst Application Layers}
             \label{unresyst_layers}
         \section{Unresyst Implementation Details}
@@ -922,23 +1175,27 @@ Supervisor's e-mail address: \vedoucimail\\
             Specific Recommender holds the domain-specific data.
             Recommender provides a domain-independent interface for creating a recommender model, getting recommendations and updating the recommender model.
             Abstractor translates the domain-specific objects into universal ones, converts the given business rules into relationships among subjects and objects.
-            Aggregator aggregates all renationships into a single one for subject-object, subject-subject and object-object pairs.
+            Aggregator aggregates all relationships into a single one for subject-object, subject-subject and object-object pairs.
             Recommender Algorithm uses the known relationships among subjects and objects, exploits them to predict all subject-object relationships of the given type.
         
         obrazek build:
             During the build, domain data that have been entered by the domain expert are used for creating a recommender model. 
             Recommender just passes the call to other layers.
-            Abstractor goes ove rhe subjects and objects, evalutes the business rules on them, introduces a new relationship or bilas for each rule. It converts subjects and objects to a universal representation that would be used in the rest of Unresyst.
-            Aggregator aggregates all relationships int o a sinle one for subject-object, subject-subject and object-object pairs, using the given weights. It does the same for biases.
+            Abstractor goes over the subjects and objects, evaluates the business rules on them, introduces a new relationship or bias for each rule. It converts subjects and objects to a universal representation that would be used in the rest of Unresyst.
+            Aggregator aggregates all relationships int o a single one for subject-object, subject-subject and object-object pairs, using the given weights. It does the same for biases.
             Recommender Algorithm uses the aggregated relationships to learn a recommender model.
         
         obrazek class diagram:
         Classes are displayed as rectangles, objects as rectangles with round corners. All the classes are \emph{purely static} - there are no instances of the classes, the classes contain only class methods. They act as singleton objects.
         The diamond relationships mean that the given class/object can be accessed only from the containing class. 
         
+        implementacni vychytavky:
+            symetricke relace serazene podle idecka, zarucene bude s1 s2 a uz ne s2 s1
+            
+            pridani toho generatoru do pravidel
 
     \section{Layers}
-        \subsection{Addaptation Interface}
+        \subsection{Adaptation Interface}
         misto condition generator
         \subsection{Data Model}
         datovy model - subjekty, objekty v jednom, definice, indexy, agregator si to radi a pak to bere jak to jde
@@ -956,23 +1213,20 @@ Supervisor's e-mail address: \vedoucimail\\
         \subsection{Flixster data set}
             z megamnozstvi jsem udelal min - podmnozina uzivatelu, z prvnich 105000 radku friendu, k nim nalezejici ratingy, uzivatele bez hodnoceni smazat, ponevadz nejsem schopen je nijak testovat - je to akorat spam
         \subsection{Last.fm}
-            \label{veryfying_last_fm}
+            \label{verifying_last_fm}
             zpusob vyberu z megadatasetu
             musel jsem vyhazet tagy, ktere nejsou sharovane mezi vic artisty, byly jich dve tretiny.
         \subsection{Travel agency}
             byl smaznul jsem i ostatni implicitni feedback z train setu - feedback z budoucnosti neznam. 
         
-        implementacni vychytavky:
-            symetricke relace serazene podle idecka, zarucene bude s1 s2 a uz ne s2 s1
-            
-            pridani toho generatoru do pravidel
+       
         ...
 
 \chapter{Evaluating Recommender Results}
     \label{evaluating_recommender_results}
     In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. 
     
-    metriky kde se porovnava poradi v listech jsou mi na pytel, jelikoz v test setu nemam poradi. 
+    metriky kde se porovnava poradi v listech nejsou uzitecne, jelikoz v test setu nemam poradi. 
     hh\\
     $p_{so}$: preference of $s$ to $o$ taken from the test set\\
     $\widetilde{p}_{so}$: prediction of the preference of $s$ to $o$
@@ -1048,7 +1302,10 @@ Supervisor's e-mail address: \vedoucimail\\
 %%% Pøi odkazu na knihu se v¾dy uvádìjí èísla stránek.
 
 \begin{thebibliography}{99}
-%druhy literatury:
+% seradit abecedne, u internetovych clanku dat datum pristupu
+% jak davat neclanky (napr. last.fm?)
+
+% druhy literatury:
 %    o universal recommenders
 %    o algoritmech a jejich implementaci
 %    case studies
