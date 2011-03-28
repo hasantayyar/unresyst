@@ -30,7 +30,7 @@ class RelationshipPrediction(object):
         """The object"""
         
         self.expectancy = expectancy
-        """The estimated probability of the predict_relationship
+        """The estimated probability of the predicted_relationship
         occuring between the subject and the object.
         """
         
