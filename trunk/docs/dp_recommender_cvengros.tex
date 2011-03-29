@@ -252,10 +252,10 @@ Supervisor's e-mail address: \vedoucimail\\
         For a successful implementation of a recommender system, several conditions have to be fulfilled. A summary of applicability conditions for a collaborative filtering recommender can be found in \cite{collaborative_filtering}. We list some of them that are valid for any recommender, independently of the recommender algorithm.
         
         \begin{description}
-            \item[Many items:] In the domain there are many items that might be interesting for a user. It is not possible for the user to browse all of them.
-            \item[Choice based on taste:] The choice of the items depends on the taste of each user. If there were some objective criteria for recommending items to users the recommender system wouldn't be much helpful.
-            \item[Taste data:] In the system there have to be some data about the users interacting with items that can be interpreted as expressing taste. It doesn't matter if these are explicit rating data or implicit capture of user behaviour, but there have to be some.
-            \item[Homogeneous items:] The items in the domain have some common attributes, they can all be covered by taste data, e.g. they can all be viewed or rated.
+            \item[Many items] In the domain there are many items that might be interesting for a user. It is not possible for the user to browse all of them.
+            \item[Choice based on taste] The choice of the items depends on the taste of each user. If there were some objective criteria for recommending items to users the recommender system wouldn't be much helpful.
+            \item[Taste data] In the system there have to be some data about the users interacting with items that can be interpreted as expressing taste. It doesn't matter if these are explicit rating data or implicit capture of user behaviour, but there have to be some.
+            \item[Homogeneous items] The items in the domain have some common attributes, they can all be covered by taste data, e.g. they can all be viewed or rated.
         \end{description}
     
     \section{Recommender System Benefits}
@@ -305,11 +305,11 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Unresyst can take use of any attributes and relationships that can be tracked in the parent system. Data that can be used by Unresyst include but are not limited to:
             \begin{description}
-                \item[User behaviour:] In recommendations we can use data about user viewing item pages, the time users spent on each page, analysis of user's mouse move and any other implicit feedback provided by users.
-                \item[Explicit feedback:] We can also use the explicit user feedback, like rating on a scale, thumb up/thumb down rating, in systems where such mechanisms are available.
-                \item[Demographic information:] In systems where demographic data are available, we can use them for making recommendations. For users we can use attributes like age, place of residence, or education. For items we can use the data about their manufacturers like country or size of the company.
-                \item[Social relations:] In systems, where users interact between each other, the social data can be used for providing recommendations. We can use relationships between users like friends, sent personal messages or viewing other user's profile.
-                \item[Other relationships:] Any other relationships between entities of the system can be used for making recommendations. Such relationships include user-defined tags which can be used for determining similarity of the entities marked with the same tag, or user's preference for items marked with a particular tag.
+                \item[User behaviour] In recommendations we can use data about user viewing item pages, the time users spent on each page, analysis of user's mouse move and any other implicit feedback provided by users.
+                \item[Explicit feedback] We can also use the explicit user feedback, like rating on a scale, thumb up/thumb down rating, in systems where such mechanisms are available.
+                \item[Demographic information] In systems where demographic data are available, we can use them for making recommendations. For users we can use attributes like age, place of residence, or education. For items we can use the data about their manufacturers like country or size of the company.
+                \item[Social relations] In systems, where users interact between each other, the social data can be used for providing recommendations. We can use relationships between users like friends, sent personal messages or viewing other user's profile.
+                \item[Other relationships] Any other relationships between entities of the system can be used for making recommendations. Such relationships include user-defined tags which can be used for determining similarity of the entities marked with the same tag, or user's preference for items marked with a particular tag.
              \end{description}
              
              Recommendations produced by Unresyst can take into account both objective and subjective criteria. Objective criteria for recommending can be expressed in business rules (e.g. not recommending expensive items to users with low income). Subjective criteria, as the expressed preference for an item are used both for the user and users that are observed to have similar taste.
@@ -403,11 +403,11 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{basic_terms}
             The basic terms used both in definitions and throughout the thesis are:
             \begin{description}
-                \item[Subject]: Subject of a recommendation is an entity to which the recommender presents its recommendations. A subject can be a user as well as a user group or any other entity.
-                \item[Object]: Object of a recommendation is an entity which can be recommended to subjects. Objects can be books, songs, or any other entities.  
-                \item[Entity]: Entity is a subject, an object or any other thing that occurs in the domain.
-                \item[Predicted relationship]: Predicted relationship is a subject-object relationship that we try to predict for making recommendations. An example of such a relationship is the \emph{likes} relationship between a user and an item. 
-                \item[Expectancy of the predicted relationship]: For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will occur between the subject and object. In other words, Expectancy can be explained as subject-object preference in means of the predicted relationship. In our user-item \emph{like} example, the expectancy would mean how much the user is likely to like the item. 
+                \item[Subject] Subject of a recommendation is an entity to which the recommender presents its recommendations. A subject can be a user as well as a user group or any other entity.
+                \item[Object] Object of a recommendation is an entity which can be recommended to subjects. Objects can be books, songs, or any other entities.  
+                \item[Entity] Entity is a subject, an object or any other thing that occurs in the domain.
+                \item[Predicted relationship] Predicted relationship is a subject-object relationship that we try to predict for making recommendations. An example of such a relationship is the \emph{likes} relationship between a user and an item. 
+                \item[Expectancy of the predicted relationship] For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will occur between the subject and object. In other words, Expectancy can be explained as subject-object preference in means of the predicted relationship. In our user-item \emph{like} example, the expectancy would mean how much the user is likely to like the item. 
              \end{description}
         
         \subsection{Recommender System}
@@ -425,6 +425,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
         \subsection{Relationship Prediction}
             \label{def_relationship_prediction}
+            \label{confidence_expectancy}
             \emph{Relationship Prediction} $\hat{u}$ is an approximation of the utility function $u$: 
             \begin{equation}
                 \label{eq_relationship_prediction}
@@ -434,9 +435,9 @@ Supervisor's e-mail address: \vedoucimail\\
             
             For a given subject-object pair, $\hat{u}$ gives:
             \begin{description}
-                \item[Expectancy:] the predicted probability of occurrence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ usually aren't presented. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented.
-                \item[Explanation:] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
-                %\item[Relationship metadata values]: coming soon
+                \item[Expectancy] the predicted probability of occurrence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ usually aren't presented. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented.
+                \item[Explanation] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
+                %\item[Relationship metadata values] coming soon
             \end{description}
 
             For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explanation, that they have four friends in common. This means that the predicted probability of friendship between Alice and Bob is $0.75$. 
@@ -480,9 +481,9 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{operations}
         In a recommendation system, some common operations are:
         \begin{description}
-            \item[Recommender setup:] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation can be pretty time consuming, as this doesn't have to be performed very often. 
-            \item[Recommendation (see \ref{recommendation}):] Recommendation is the most common operation for a recommender system. Choosing objects with the highest Recommendation Rate for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
-            \item[Prediction:] Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalog. Usually it is not possible to store predictions for all subject-object pair, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
+            \item[Recommender setup] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation can be pretty time consuming, as this doesn't have to be performed very often. 
+            \item[Recommendation (see \ref{recommendation})] Recommendation is the most common operation for a recommender system. Choosing objects with the highest Recommendation Rate for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
+            \item[Prediction] Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalog. Usually it is not possible to store predictions for all subject-object pair, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
         \end{description}
     
     \section{Related Work}
@@ -519,9 +520,9 @@ Supervisor's e-mail address: \vedoucimail\\
         \subsubsection{Benefits and Drawbacks}
         The accuracy of the provided recommendations strongly depends on the similarity determination. If the items are characterized properly and the subjects tend to like uniform sets of objects, the recommender can be pretty successful, as \cite{wiki_genome} mentioned above. However there are several drawbacks of the method, as mentioned in \cite{survey}:
         \begin{description}
-            \item[Limited content analysis:] The set of characteristics assigned to each object is always limited and is never able to fully characterize the object. Moreover the values of the characteristics have to be determined either manually which is time-consuming or automatically which currently works well only for text documents. 
-            \item[Overspecialization:] The method always recommends objects that are similar to some that the subject liked in the past. Therefore the recommender never broadens subjects' horizon by recommending diverse objects.
-            \item[New user problem:] When a new subject emerges in the system and has no relationships to objects, the system cannot make any recommendations to the subject.
+            \item[Limited content analysis] The set of characteristics assigned to each object is always limited and is never able to fully characterize the object. Moreover the values of the characteristics have to be determined either manually which is time-consuming or automatically which currently works well only for text documents. 
+            \item[Overspecialization] The method always recommends objects that are similar to some that the subject liked in the past. Therefore the recommender never broadens subjects' horizon by recommending diverse objects.
+            \item[New user problem] When a new subject emerges in the system and has no relationships to objects, the system cannot make any recommendations to the subject.
         \end{description}
 
         \subsubsection{Suitability for The Universal Recommender}
@@ -575,10 +576,10 @@ Supervisor's e-mail address: \vedoucimail\\
         
         In general, collaborative filtering methods are currently the most used and the most successful methods for recommending. When properly used, they provide high accuracy and scalability for large ammount of data. However they have some drawbacks too \cite{survey}.
         \begin{description}
-            \item[Cold start problem:] As for the content-based method, the system doesn't know any liked objects for a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender (\ref{hybrid_recommenders}) that would use an easier recommender (like giving the most popular objects) when predictions from collaborative filtering aren't available.
+            \item[Cold start problem] As for the content-based method, the system doesn't know any liked objects for a new subject. For a user being a subject, this problem can be solved by asking the user to enter some data. This approach is used in the Netflix system. A new user is given a questionnaire for rating some chosen movies \cite{bellkor_2009}. Another solution to the problem is using a hybrid recommender (\ref{hybrid_recommenders}) that would use an easier recommender (like giving the most popular objects) when predictions from collaborative filtering aren't available.
             A similar problem occurs when a new object is added to the system, it's not related to any subject and therefore it can never be recommended. This can be solved also by a hybrid recommender (\ref{hybrid_recommenders}). 
-            \item[Sparsity:] The subject-object matrix is usually very sparse - the number of known relationships is very small compared to the number of relationships that should be predicted. Therefore, in most of the collaborative filtering methods, the objects related to few subjects are seldom recommended. This drawback is overcome by some of the model-based methods, e.g. matrix factorization \cite{bellkor_ieee}.
-            \item[Grey sheep problem:] This problem is mentioned in \cite{knowledge_spain}. In the system, there might be subjects whose preferences aren't consistently similar to other subjects. Therefore they don't belong to any preference subject group and they can't get any accurate recommendations.
+            \item[Sparsity] The subject-object matrix is usually very sparse - the number of known relationships is very small compared to the number of relationships that should be predicted. Therefore, in most of the collaborative filtering methods, the objects related to few subjects are seldom recommended. This drawback is overcome by some of the model-based methods, e.g. matrix factorization \cite{bellkor_ieee}.
+            \item[Grey sheep problem] This problem is mentioned in \cite{knowledge_spain}. In the system, there might be subjects whose preferences aren't consistently similar to other subjects. Therefore they don't belong to any preference subject group and they can't get any accurate recommendations.
          \end{description}
         \subsubsection{Suitability for The Universal Recommender}
         One of the biggest advantage of collaborative filtering is its domain independence. Generally, the algorithms don't assume any properties of subjects or objects, they just use the relationships between subjects and objects to make recommendations. Of course, the recommender tuned for a particular domain can't be used directly for other domain, but the core algorithm is domain-independent.
@@ -728,13 +729,13 @@ Supervisor's e-mail address: \vedoucimail\\
             
             The interface is used in the \emph{adaptation} phase of Unresyst setup. All initial data that is needed by Unresyst to provide recommendations are passed through this interface. Through the adaptation interface the following parts are given:
             \begin{description}
-                \item[Subjects and Objects:] When adapting Unresyst to a domain, we have to define what and to whom we would like to recommend. In our implementation, this is done through an ORM Manager class covering the tables where subjects and objects respectively are stored. In our example we use managers pointing to the \emph{User} and \emph{Artist} table.
+                \item[Subjects and Objects] When adapting Unresyst to a domain, we have to define what and to whom we would like to recommend. In our implementation, this is done through an ORM Manager class covering the tables where subjects and objects respectively are stored. In our example we use managers pointing to the \emph{User} and \emph{Artist} table.
                 
-                \item[The Predicted Relationship:] We have to define which relationship in the parent system data model is the preference. This is done in the way described in \ref{representing_predicted_relationship}. In our example we use the relationship ``User played Artist's track'' as the predicted relationship.
+                \item[The Predicted Relationship] We have to define which relationship in the parent system data model is the preference. This is done in the way described in \ref{representing_predicted_relationship}. In our example we use the relationship ``User played Artist's track'' as the predicted relationship.
                 
-                \item[Rules and Relationships that influence recommendations:] When we want to use business rules or relationships for making recommendations we have to define them through the adaptation interface. The way to define rules and relationships is described in sections \ref{representing_rules} and \ref{representing_relationships}. An example of a subject-object rule is the mentioned ``Music having the given tags shouldn't be recommended to female users''. An example of an object similarity rule influencing the prediction is ``Artists sharing tags are similar''. An example of a subject similarity relationship is the mentioned ``Users coming from the same country are similar''. The difference between a rule and a relationship is the following: For rules we'd like to give a specific strength for each covered pair, i.e. for artists sharing some tags we can give a percentage of how much tags they're sharing. Whereas in relationships, we only know there's some connection, that can't be weighted for the particular pair, i.e. if the users are coming from the same country, they are similar without any further strength differentiation for different pairs of users coming from the same country.
+                \item[Rules and Relationships that influence recommendations] When we want to use business rules or relationships for making recommendations we have to define them through the adaptation interface. The way to define rules and relationships is described in sections \ref{representing_rules} and \ref{representing_relationships}. An example of a subject-object rule is the mentioned ``Music having the given tags shouldn't be recommended to female users''. An example of an object similarity rule influencing the prediction is ``Artists sharing tags are similar''. An example of a subject similarity relationship is the mentioned ``Users coming from the same country are similar''. The difference between a rule and a relationship is the following: For rules we'd like to give a specific strength for each covered pair, i.e. for artists sharing some tags we can give a percentage of how much tags they're sharing. Whereas in relationships, we only know there's some connection, that can't be weighted for the particular pair, i.e. if the users are coming from the same country, they are similar without any further strength differentiation for different pairs of users coming from the same country.
                 
-                \item[Biases:] Some objects are more likely to be liked than others, independently of the subject to whom we're recommending - these are called object biases. Subject biases indicate a higher tendency for a subject to like an object, independently of the particular object. Such facts can be included to recommendations by defining biases. More about representing biases can be found in section \ref{representing_biases}. An example of a positive object bias is the mentioned ``Artists that have released a new album recently''.
+                \item[Biases] Some objects are more likely to be liked than others, independently of the subject to whom we're recommending - these are called object biases. Subject biases indicate a higher tendency for a subject to like an object, independently of the particular object. Such facts can be included to recommendations by defining biases. More about representing biases can be found in section \ref{representing_biases}. An example of a positive object bias is the mentioned ``Artists that have released a new album recently''.
             \end{description}
             
             In our implementation, the adaptation interface is used by deriving a class from the predefined Unresyst \emph{Recommender} class. In the example we define an \emph{ArtistRecommender} class, that holds all domain specific data. The following piece of \emph{Python} code shows the definition of the music recommender from the example. Subjects of recommending are system users, recommended objects are artists. The definition of the rules, relationships and biases is discussed in the sections that follow.
@@ -780,7 +781,7 @@ class ArtistRecommender(Recommender):
 
                 Creating and editing rules in RuleML isn't very convenient as creating and editing any other XML-based document. That is partially solved by a shortened notation \cite{ruleml_short}, but even that isn't very comfortable to a user that isn't experienced in declarative programing. Another drawback of using RuleML for our purpose is its generality. The set of conditions and actions we'd like to represent is very limited and therefore we don't need such a powerful language. 
                 
-                Another drawback of such a general notation is the efficiency of evaluating rules. The classical substitution of all possible pairs to the condition wouldn't be feasible for larger domains. See \ref{unresyst_details} for details on how evaluating rules was implemented in a more efficient way.
+                Another drawback of such a general notation is the efficiency of evaluating rules. The classical substitution of all possible pairs to the condition wouldn't be feasible for larger domains. See \ref{unresyst_implementation_details} for details on how evaluating rules was implemented in a more efficient way.
                 
                 Another option would be to directly use a logic programming language as \emph{Prolog}. This option has the same drawbacks in over-generality and user-unfriendliness as RuleML. Additionally we would have to incorporate a logic programming language interpreter to Unresyst. The following lines of code show our example rules written in the Prolog declarative language. The code is meant only as an and shows the possible actions without defining all necessary predicates. The predicates don't consider the strength of the rule conclusion.
                 
@@ -819,20 +820,20 @@ similar_objects(A1, A2) :-
                 
                 For our object-oriented rule representation we define a class which instances hold conditions, actions and some additional data. As we have showed, the only possible actions are determining the confidence of the subject-object relationship and determining inter-entity similarity. Therefore actions will be represented as functions giving a confidence of the preference or similarity. The rule objects contain:
                 \begin{description}
-                    \item[Condition:] A boolean function determining whether the rule can be applied to a given entity pair. The function is defined depending on the rule type:
+                    \item[Condition] A boolean function determining whether the rule can be applied to a given entity pair. The function is defined depending on the rule type:
                     \begin{description}
                         \item[Subject-object condition] $C_{so}:S \times O \to \{False, True\}$. A function takes a subject-object pair and determines whether the rule can be applied to the pair. In our example \ref{ex_s_o} the condition function is: If the user $s$ is a female and artist $o$ is tagged by one of the given tags, the condition evaluates to \emph{True}. Otherwise it's \emph{False}
                         \item[Subject-subject condition] $C_{ss}:S \times S \to \{False, True\}$. A function takes a subject-subject pair and determines whether the rule can be applied to the pair. In our example \ref{ex_s_s} the condition function is: If we know the age of both of the users, the condition is \emph{True}, otherwise it's \emph{False}.
                         \item[Object-object condition] $C_{oo}:O \times O \to \{False, True\}$. A function takes an object-object pair and determines whether the rule can be applied to the pair. In our example \ref{ex_o_o} the condition function is: If the artists share some tags, the condition is \emph{True}, otherwise it's \emph{False}. 
                     \end{description}
-                    \item[Is Positive:] A  boolean constant (\emph{True} or \emph{False}) for determining whether the rule is positive for the predicted relationship or negative. I.e. the rules \ref{ex_s_s} and \ref{ex_o_o} are positive, the rule \ref{ex_s_o} is negative.
-                    \item[Confidence:] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity in a positive or negative way.
+                    \item[Is Positive] A  boolean constant (\emph{True} or \emph{False}) for determining whether the rule is positive for the predicted relationship or negative. I.e. the rules \ref{ex_s_s} and \ref{ex_o_o} are positive, the rule \ref{ex_s_o} is negative.
+                    \item[Confidence] A function determining the strength of the subject-object preference in means of the predicted relationship or subject-subject/object-object similarity in a positive or negative way.
                     \begin{description}
                         \item[Subject-object relationship confidence] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and gives a confidence, that the \emph{predicted relationship} appears (when positive) or doesn't appear (when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) on the preference. This makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. In our example \ref{ex_s_o} we can use a linear confidence function. The more of the given tags the artist has, the higher is the resulting confidence. \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the confidence, the more similar (or dissimilar if negative) the subjects are, according to the rule. In our example \ref{ex_s_s} we use a confidence function that returns a normalized difference between the age of the two users. 
                         \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity or dissimilarity between the objects. The higher the confidence, the more similar (or dissimilar when negative) the objects are, according to the rule. In our example \ref{ex_o_o} the confidence function returns the number of common tags normalized by the overall number of tags.
                     \end{description}
-                    \item[Weight:] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike confidence, is independent of the particular entities on which the rule is evaluated. The weight should be set so that the more significant rules get higher weight. The exact weight values should be checked experimentally.
-                    \item[Description:] A text explaining the meaning of the rule. Descriptions can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_s_s} can have a description ``The users \{subject1\} and \{subject2\} are similar because their age is similar.''
+                    \item[Weight] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike confidence, is independent of the particular entities on which the rule is evaluated. The weight should be set so that the more significant rules get higher weight. The exact weight values should be checked experimentally.
+                    \item[Description] A text explaining the meaning of the rule. Descriptions can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_s_s} can have a description ``The users \{subject1\} and \{subject2\} are similar because their age is similar.''
                 \end{description}
                 
                 The following lines of code show the rules written in our Python prototype recommender implementation.
@@ -952,10 +953,10 @@ class ArtistRecommender(Recommender):
 
                 Obviously, the requirements on the relationship representation are very similar to the requirements we have set on rule representation. Hence, we can use the rule representation for relationships with some corrections:
                 \begin{description}
-                    \item[Condition:] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. In our example, the condition function is \emph{True} if both users have filled the country they're from and they are from the same country, otherwise it returns \emph{False}.
+                    \item[Condition] The boolean function means whether the given subjects/objects are in the relationship. The forms of the function remain the same as described in the section \ref{representing_rules}. In our example, the condition function is \emph{True} if both users have filled the country they're from and they are from the same country, otherwise it returns \emph{False}.
                     \item[Is Positive: ] A  boolean constant for determining whether the relationship is positive for the predicted relationship or negative. Works analogously to the Is Positive value in rules.
-                    \item[Confidence:] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair surely is (when positive) or isn't (when negative) in a relationship. Hence, such a function would always return $1$ for relationships.
-                    \item[Weight, Description:] The properties an analogous meaning to rule weight, see \ref{representing_rules}
+                    \item[Confidence] The function won't be needed for representing relationships. If the Condition function returns $True$ for a subject/object pair the pair surely is (when positive) or isn't (when negative) in a relationship. Hence, such a function would always return $1$ for relationships.
+                    \item[Weight, Description] The properties an analogous meaning to rule weight, see \ref{representing_rules}
                 \end{description}
                 
                 The following lines of code show the relationships written in our Python prototype recommender implementation.
@@ -1009,6 +1010,33 @@ class ArtistRecommender(Recommender):
                     During the adaptation phase, the domain expert has to define which relationship should be predicted. In our example, we  would like  Unresyst to recommend artists to users.
                     
                     The predicted relationship definition is is done in a way similar to defining relationships that are relevant for recommendations. The only attribute that is omitted is the \emph{weight}. The condition and the description remains as described in the section \ref{representing_relationships}. 
+                    
+                    The following lines of code show the example predicted relationship written in our Python prototype recommender implementation.
+                    \begin{verbatim}
+from unresyst import *
+from models import *
+
+
+class ArtistRecommender(Recommender):
+    """A recommender recommending artists (musicians) that 
+    the user can like.
+    """    
+    
+    # ...
+    
+    predicted_relationship = PredictedRelationship( 
+        name="User listens to artist's tracks.",
+        
+        # gives true for user, artist pairs where the user have listened
+        # to the artist
+        condition=lambda user, artist: \
+            user.scrobble_set.filter(track__artist=artist).exists(), 
+        
+        description="""User %(subject)s listens to the %(object)s's tracks."""
+    )
+    """The relationship that will be predicted"""
+                    \end{verbatim}
+
 
                 \subsubsection{Representing Biases}
                     \label{representing_biases}
@@ -1016,19 +1044,19 @@ class ArtistRecommender(Recommender):
                     
                     As for rules and relationships, we use an object-oriented representation of biases. Each bias instance contains the following attributes.
                     \begin{description}
-                         \item[Condition:] A boolean function determining whether the bias can be applied to a given entity. The function is defined depending on the rule type:
+                         \item[Condition] A boolean function determining whether the bias can be applied to a given entity. The function is defined depending on the rule type:
                         \begin{description}
-                            \item[Object bias condition:] $C_o:O \to \{False, True\}$. A function takes an object and determines whether the object is influenced by the bias. In our example  the condition function is: If the artist $o$ is played more than $N$ times in a given recent period, the condition evaluates to \emph{True}. Otherwise it's \emph{False}
-                            \item[Subject bias condition:] $C_s:S \to \{False, True\}$. A function takes a subject and determines whether the subject is influenced by the bias.
+                            \item[Object bias condition] $C_o:O \to \{False, True\}$. A function takes an object and determines whether the object is influenced by the bias. In our example  the condition function is: If the artist $o$ is played more than $N$ times in a given recent period, the condition evaluates to \emph{True}. Otherwise it's \emph{False}
+                            \item[Subject bias condition] $C_s:S \to \{False, True\}$. A function takes a subject and determines whether the subject is influenced by the bias.
                         \end{description}
-                        \item[Is Positive:] A  boolean constant (\emph{True} or \emph{False}) for determining whether the bias is positive for the preference or negative. Our example bias is positive.
-                        \item[Confidence:] A function determining the strength of the bias in a positive or a negative way.
+                        \item[Is Positive] A  boolean constant (\emph{True} or \emph{False}) for determining whether the bias is positive for the preference or negative. Our example bias is positive.
+                        \item[Confidence] A function determining the strength of the bias in a positive or a negative way.
                         \begin{description}
-                            \item[Object bias confidence:] $D_s:S \to [0,1]$. A function takes an object  and gives a confidence, that the object will be preferred by any given subject (or not preferred when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) on the preference. In our example we take a confidence function returning the artist play count divided by the maximum play count for an artist in the given period.\footnote{For the sake of simplicity we take an absolute play count and a fixed time period. For better results it would be better to take the number of plays relative to an average artist play count in a given period. Our example function would probably give high biases to a constant set of popular artists.}
+                            \item[Object bias confidence] $D_s:S \to [0,1]$. A function takes an object  and gives a confidence, that the object will be preferred by any given subject (or not preferred when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) on the preference. In our example we take a confidence function returning the artist play count divided by the maximum play count for an artist in the given period.\footnote{For the sake of simplicity we take an absolute play count and a fixed time period. For better results it would be better to take the number of plays relative to an average artist play count in a given period. Our example function would probably give high biases to a constant set of popular artists.}
 
-                            \item[Subject bias confidence:] $D_s:S \to [0,1]$. A function takes a subject and gives a confidence, that the subject will prefer any given object (or not prefer when negative). 
+                            \item[Subject bias confidence] $D_s:S \to [0,1]$. A function takes a subject and gives a confidence, that the subject will prefer any given object (or not prefer when negative). 
                         \end{description}
-                         \item[Weight, Description:] The properties has the same meaning as in rule definition (see \ref{representing_rules}).
+                         \item[Weight, Description] The properties has the same meaning as in rule definition (see \ref{representing_rules}).
                     \end{description}
                     The following lines of code show the example bias written in our Python prototype recommender implementation.
                     \begin{verbatim}
@@ -1100,10 +1128,10 @@ class ArtistRecommender(Recommender):
                     The $RelationshipPrediction$ class, which instances are returned by the $get\_recommendations$ and $predict\_relationship$ runtime methods, has the following attributes.
                     \begin{description}
                         \item[$subject$] The subject of the prediction, typically the system user. The attribute contains a parent system class instance, no conversion is needed.
-                        \item[$object$]: The object of the prediction, analogously to the $subject$ attribute.
-                        \item[$expectancy$]: The estimated probability of the predicted relationship
+                        \item[$object$] The object of the prediction, analogously to the $subject$ attribute.
+                        \item[$expectancy$] The estimated probability of the predicted relationship
                         occuring between the subject and the object, which is a rate of subject-object preference. The attribute contains a float number between from the $[0, 1]$ interval.
-                        \item[$explanation$]: A short textual explanation of the provided prediction. The attribute contains a short text that can be presented to the user. For some algorithms this attribute may be inavailable.
+                        \item[$explanation$] A short textual explanation of the provided prediction. The attribute contains a short text that can be presented to the user. For some algorithms this attribute may be inavailable.
                     \end{description}
                     
                     In our prototype implementation, all runtime interface methods are placed directly on the Recommender base class. When using the interface, we work with our class defined in the adaptation phase. In all runtime methods we work directly with the parent system objects, no conversion is needed.
@@ -1115,26 +1143,72 @@ kod z konzole - build, recommend, predict
 
 
     \section{Applying Rules}
-        BFS with the given depth
-        sumarni vzorecek
+        \label{applying}
+        In the section we describe the techniques used for applying the given rules, relationships and biases on the domain data in order to compute relationship predictions that can be used directly or as an input for a collaborative filtering algorithm. Firstly we create a domain neutral representation for all recommender subjects and objects, then we create links between these according to the configuration given in the adaptation phase. For entities and entity pairs where multiple similarity relationships or biases meet, we aggregate them. Finally we perform a BFS\footnote{BFS stands for Breadth-first search, a technique used traversing graphs in the order accoridng to their node level.} with a very limited maximum depth.
+        
         \subsection{Matching Rule Conditions to Entities and Entity Pairs}
             \label{matching}
-            traversing the pairs, testing condition, optimization - provide a generator function
-            abstractor.
+            After creating a domain-neutral representation of subjects and objects, we continue by creating links between entities, for which a rule, relationship or bias can be applied. These links are called rule/relationship/bias \emph{instances}. Both these actions are performed in the Abstractor application layer (see \ref{abstractor_layer}). 
+            
+            Matching the entities and entity pairs to the given conditions is done by substituing all possible entities and entity pairs one by one to the given conditions. As the complexity of this action is $O(mn)$ ($m$ is the number of subjects, $n$ the number of objects), in our prototype implementation we enable defining a \emph{generator} function for each rule, relationship or bias (see \ref{unresyst_implementation_details} for details).
+            
+            In our example, we create a similarity rule instance between Alice and Bob as the age of the two is similar, another similarity rule instance between Arctic Monkeys and Modest Mouse as these share the ``Indie'' tag.
+            
+            The data model is designed so that data that is shared among all rule matches, like weight and name, are kept on one place (see \ref{data_model} for details).
+            
         \subsection{Aggregating Similarities and Biases}
             \label{aggregating}
-            aggregator, jak se to kdyz se to sejde see \ref{combining}.
+            For entity pairs to which multiple similarity links were applied, and for entities to which multiple biases apply, we need to \emph{aggregate} them to provide at most one similarity instance for each entity pair and at most one bias instance for each entity. This is done on the top of the Algorithm application layer (see \ref{algorithm_layer})
+            
+            When aggregating, we also transform the confidence and positiveness to the general expectancy rate (see \ref{confidence_expectancy} for details on confidence and expectancy concepts). The transformation is done by the formula \ref{eq_confidence_expectancy} where $s$ is an instance of a rule/relationship/bias, $w_s$ is the weight of the rule/relationship/bias and $c(s)$ is the confidence of the instance.
+            
+            \begin{equation}
+                \label{eq_confidence_expectancy}
+                ex(s) = \left\{\begin{array}{ll}
+                            \frac{1}{2} + \frac{w_s c(s)}{2} & \textrm{if $s$ is an instance of a positive rule/relationship/bias} \\
+                            & \\
+                            \frac{1}{2} - \frac{w_s c(s)}{2} & \textrm{if $s$ is an instance of a negative rule/relationship/bias} \\
+                        \end{array} \right.
+            \end{equation}
+            
+            In our example, if Alice and Bob were of the similar age and moreover they were from the same country, we would aggregate those two similarity instances to one aggregated instance.
+
+            The combination of multiple instances into one aggregate is done in a separate module called \emph{Combinator}, see \ref{combining}. The combining is done outside the Aggregator level in order to have a possibility to switch combination strategies without having to modify the code of the Aggregator layer.
         
         \subsection{Compiling Rules to Preference Predictions}
             \label{compiling}
-            compilator
-            predicted relationship + similarity, subject-object rules, bias, 
-            ukazat na prikladu
+            Later on we compile all information we have to provide predictions of subject-object preferences in means of the predicted relationship.
+            
+            For providing a prediction for a given subject-object pair, the following preference sources are taken into account.
+            \begin{description}
+                \item[Subject-object rules] Preference rules that apply to the given pair are taken directly as a preference source. An example of such rule is our negative rule not recommending artists tagged by a male-specific tags to female. For Cindy and ``Black Sabbath'' this rule will negatively impact the resulting preference prediction.
+                \item[Known relationships and aggregated similarity] Another way to create a preference prediction is to take an already known preference and recommend a similar object to the one that is already preferred by the subject, or to recommend the preferred object to a subject that is similar to the one who preferred the object. In our example we recommend Modest Mouse to Alice, as she has listned to Arctic Monkeys band which is known to be similar to Modest Mouse. Moreover we recommend U2 to Alice, because Bob has listened to U2 and his age is similar to Alice's.
+                \item[Aggregated Bias] The subject or object bias is also taken into account for relationship predictions. If the subject or the object (or both) have a bias, it's included to the prediction. In our example The Tape has a bias which influence all predictions for pairs where The Tape is the object.
+            \end{description}
+            
+            For some of the subject-object pairs more than one of the preference sources can be available, e.g. we have a subject-object rule for the pair and the object is one of the biased ones. For such pairs we use the combinator module (see \ref{combining}) to combine these sources to a single prediction.
+            
+            During the build, we don't compile the predictions for all possible subject-object pairs, as this would be time and space consuming. Instead of that we select the given number of \emph{promising} objects for all subjects in the domain in order to provide fast recommendations. See the section \ref{unresyst_implementation_details} for details.
             
         \subsection{Combining}
             \label{combining}
-            deje se na dvou mistech 
-            combining: aggregating phase (biases, similarities) ->, compiling phase (preferences) -> combined preferences,. 
+            In some cases there can appear multiple pieces of information for similarity, bias and preference and we need to combine them to get a single result. The combination is done in a module called \emph{Combinator}. The combination method is kept on one place so that the same method can be used for combining all pieces of information in all places. The piece of information to combine is called a \emph{combination element}. 
+            
+            Multiple combination elements can appear for some entities and entity pairs during the following actions.
+            \begin{description}
+                \item[Aggregating similarities and biases] During the aggregation multiple similarity instances can appear on a single subject or object pair. Multiple biases can appear on a single subject or object. See \ref{aggregating} for details on aggregation.
+                \item[Compiling rules to preference predictions] During the compilation, multiple combination elements can appear on a single subject-object pair, see \ref{compiling} for the list of all possible preference sources. The similarity preference sources can produce multiple combination elements for one subject-object pair, as demonstrated on the figure \ref{} TODO
+            \end{description}
+            
+            Intuitively, when combining two combination elements we would like the result to fulfil the following requirements:
+            \begin{enumerate}
+                \item If one element is positve and the other negative, the result should be neutral.
+                \item If both elements are positive, the result should be more positive than both of the elements.
+                \item If both elements are negative, the result should be more negative than both of the elements.
+            \end{enumerate}
+            
+            For combining the combination elements we propose the functions described in the following subsections.
+            
             \subsubsection{Twisted Average}???
                 
                 \begin{equation}
@@ -1169,8 +1243,12 @@ kod z konzole - build, recommend, predict
 
         \section{Unresyst Application Layers}
             \label{unresyst_layers}
+            \subsection{Abstractor Layer}
+                \label{abstractor_layer}
+            \subsection{Algorithm Layer}
+                \label{algorithm_layer}
         \section{Unresyst Implementation Details}
-            \label{unresyst_details}
+            \label{unresyst_implementation_details}
             obrazek architecture:
             Specific Recommender holds the domain-specific data.
             Recommender provides a domain-independent interface for creating a recommender model, getting recommendations and updating the recommender model.
@@ -1198,6 +1276,7 @@ kod z konzole - build, recommend, predict
         \subsection{Adaptation Interface}
         misto condition generator
         \subsection{Data Model}
+            \label{data_model}
         datovy model - subjekty, objekty v jednom, definice, indexy, agregator si to radi a pak to bere jak to jde
         Vychytavka se symmetric relations. Poradi: v s-o prvni subject, vsude jinde to co ma mensi id tak to prvni.
         \subsection{Runtime Interface}

@@ -199,7 +199,7 @@ class BaseCombinator(object):
                             min_count=min_count,
                             recommender_model=recommender_model)
 
-        # concat all the list and sort by expectancy
+        # concat all the lists and sort by expectancy
         ret_list = top_bias_objs + top_rel_objs + top_sim_objs + cluster_objs
         
         # if the liked should be removed, remove the liked objects from promising
@@ -219,7 +219,7 @@ class BaseCombinator(object):
         ret_list.sort(key=lambda pair: pair[1], reverse=True)                
         
         # remove the duplicates and take only some of the first
-        return list(set([obj for obj, x in ret_list]))[:int(1.2*min_count)]
+        return list(set([obj for obj, x in ret_list]))[:int(PROMISING_RATE*min_count)]
 
     def _get_promising_objects_clusters(self, dn_subject, min_count, recommender_model):
         """Get promising objects from predicted_relationship + cluster membership
