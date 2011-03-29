@@ -137,3 +137,8 @@ LOG_HITS_FILENAME = 'hits.txt'
 MAX_REASONS_DESCRIPTION = 5
 
 MORE_REASONS_STR = "... and %d other reasons."
+
+PROMISING_RATE = 1.2
+"""The rate by which the compiler breadth is multiplied to get the number
+of promising objects to be inspected"""
+
