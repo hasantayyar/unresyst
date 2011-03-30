@@ -125,7 +125,9 @@ class TourOrderEvalPair(BaseEvaluationPair):
     
     test_ratio = 0.2
     """The ratio of pairs to select to test pairs"""
- 
+
+    class Meta:
+        app_label = 'travel' 
         
     @classmethod 
     def select(cls, i=0):
