@@ -26,6 +26,8 @@
 \usepackage{graphicx} % nezbytné pro standardní vkládání obrázkù do dokumentu
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{pgf}
+\usepackage{amsthm}
 
 \usepackage[left=2.5cm]{geometry} % nastavení dané velikosti okrajù
 
@@ -53,6 +55,21 @@
     \end{figure}
 }
 % parameters: [width in cm], filename, caption, label
+
+% stat table
+\newenvironment{stattable}[2]{
+    \pushQED{#2}
+    \begin{table}[h]
+        \begin{center}
+            \label{#1}
+            \begin{tabular}{|l|l|}}
+                {
+            \end{tabular}
+            \caption{\popQED}
+        \end{center}
+    \end{table}
+}
+% parameters: label, caption
 
 
 \title{Název práce}   % tyto dvì polo¾ky jsou zde v podstatì formálnì, ve skuteènosti nejsou nikde 
@@ -675,24 +692,42 @@ Supervisor's e-mail address: \vedoucimail\\
             
             For the given reasons we choose the second option. Another advantage of this approach is that the recommendation time will be dependent only on the recommender algorithm. The implementation of the chosen approach is thoroughly described in the chapter \ref{architecture}.
         
-\chapter{Business Rules and Relationships in Studied Systems}
+\chapter{Relationships in Studied Systems}
+    \label{relationships_in_studied}
     In the chapter we analyze selected systems where the Unresyst recommender could be used. As we don't have a direct access to the system databases, we use datasets\footnote{Dataset is a set of text files containing some part of data included in the system database}. The first two datasets - Last.fm and Flixster are publicly available. The third one (Czech travel agency e-shop dataset) was made accessible to the thesis author by the courtesy of the system administrator.
     \section{The Last.fm Dataset}
         \label{rel_last_fm}
-        basic data about both subjects and objects, relationships
+        Last.fm is a music recommendation service \cite{last_fm}. The system users post the information about what tracks they're listening to through plugins installed in their music players. Last.fm provides a freely available API \cite{last_fm_api} for developers who can build applications using Last.fm data. 
+        
         \fig[14]{pics/lastfm.png}{The data model of the Last.fm dataset}{pic_last_fm}
+        
+        The API was used for crawling the datasets we used for our study. The first used dataset \cite{last_fm_dataset1} contains users and their listening history. Each user has listened and posted (\emph{scrobbled}) some tracks, each track was recorded by an artist. For some of the users there's some basic personal information available (age, gender and home country), each scrobble has a timestamp. 
+        
+        The dataset was integrated with the Last.fm social tag dataset \cite{last_fm_dataset2}. Last.fm users can tag artists, describing the genre the artist is playing (like \emph{Pop}, \emph{Rock} or \emph{Techno}), the feeling of the music (like \emph{slow}, \emph{loud}) or any other property. For some of the artists we were abble assign tags, the users gave the artist.
+        
+        The mentioned datasets were selected because together they contain basic attributes of both subjects and objects, which can be used for similarity measures. It contains implicit feedback (the scrobbles) that discloses some positive preferences of the users. The data model of avialable data is displayed in the figure \ref{pic_last_fm}
 
     \section{The Flixster Dataset}
-        classic collaborative filtering having additive social data.
+        Flixster is a community server for sharing movie reviews and ratings \cite{flixster}. Each contained movie has a profile page where registered users can comment and rate the movie. Users can become friends with each other. The Flixster data set \cite{flixster_dataset} doesn't contain any properties for movies nor for users. The only data available is the user-movie rating and links between users who are friends. The data model is displayed in the figure \ref{pic_flixster}.
+        
         \fig[8]{pics/flixster.png}{The data model of the Flixster dataset}{pic_flixster}
+        
+        The dataset is a of a type that is often used for collaborative filtering research as it contains an explicit user-item feedback that can be predicted. In the data set there is additional social information - the links between friends. A version of the dataset was used for a research on trust propagation in social networks \cite{flixster_paper}. 
     
     \section{The Travel Agency Dataset}
-        Different kinds of implicit feedback
+        The travel agency dataset was collected by an administrator of a travel agency website. During a few months  he was recording different kinds of implicit feedback through a script. Users were browsing through the website, clicking on links, viewing the tour profiles, moving over elements on the web pages. Some of the users asked questions about tours, through an online form. Some users ordered tours from the website. The tours have some basic properties: the country and the type (tours to hotels at the sea, tours visiting interesting places around the country, etc.).
+        
         \fig[18]{pics/travel2.png}{The data model of the Travel Agency dataset}{pic_travel}
+        
+        The dataset contains different kinds of implicit feedback that is to be combined in order to provide good recommendations. Moreover the objects (tours) have some properties that can be used for determining similarity. 
     
     \section{Relationship Abstraction Summary}
         \label{relationship_abstraction_summary}
-        This section summarizes the type of rules and relationships that appeared in the studied systems. 
+        The studied systems were selected so that they cover a variety of different domains, where we can recommend. The datasets fulfil the recommender applicability conditions described in the section \ref{recommender_system_applicability}. The systems were selected so that we can prove the usefulness of the Unresyst recommender concept for processing both implicit and explicit feedback. Some of the datasets have attributes for their subjects and objects, that can be used for similarity measures.
+        
+        The rules, relationships and biases used in Unresyst for the described datasets are presented in the Chapter \ref{adapting_to_existing_systems}.
+        
+        
 
 \chapter{Universal Recommender Design and Implementation}
     \label{design_and_implementation}
@@ -1197,113 +1232,270 @@ kod z konzole - build, recommend, predict
             Multiple combination elements can appear for some entities and entity pairs during the following actions.
             \begin{description}
                 \item[Aggregating similarities and biases] During the aggregation multiple similarity instances can appear on a single subject or object pair. Multiple biases can appear on a single subject or object. See \ref{aggregating} for details on aggregation.
-                \item[Compiling rules to preference predictions] During the compilation, multiple combination elements can appear on a single subject-object pair, see \ref{compiling} for the list of all possible preference sources. The similarity preference sources can produce multiple combination elements for one subject-object pair, as demonstrated on the figure \ref{} TODO
+                \item[Compiling rules to preference predictions] During the compilation, multiple combination elements can appear on a single subject-object pair, see \ref{compiling} for the list of all possible preference sources. The similarity preference sources can produce multiple combination elements for one subject-object pair, as demonstrated on the figure %\ref{} TODO
             \end{description}
             
             Intuitively, when combining two combination elements we would like the result to fulfil the following requirements:
             \begin{enumerate}
-                \item If one element is positve and the other negative, the result should be neutral.
-                \item If both elements are positive, the result should be more positive than both of the elements.
-                \item If both elements are negative, the result should be more negative than both of the elements.
+                \item If one element is positve and the other negative, the result should be neutral. \label{pos_neg}
+                \item If both elements are positive, the result should be more positive than both of the elements. \label{pos_pos}
+                \item If both elements are negative, the result should be more negative than both of the elements. \label{neg_neg}
             \end{enumerate}
             
-            For combining the combination elements we propose the functions described in the following subsections.
+            For combining the combination elements we propose functions described in following subsections.
             
-            \subsubsection{Twisted Average}???
+            \subsubsection{Twisted Average}
+                \label{twisted_average}
+                The first idea for multiple element combination is to use weighted average. But as the weighted average function doesn't meet the requirements \ref{pos_pos} and \ref{neg_neg}, we will have to alter it so that it meets the requirements. 
+                
+                \fig[9]{pics/expectancy_combination.png}{Combining expectancy by the Twisted Average function.}{pic_expectancy_combination}
+                
+                The idea on how the altered average function should look like is on the figure \ref{pic_expectancy_combination}. The straight line is the average between the expectancies, the curved line is our idea of how our function should look like, when the positive or negative effect is confirmed by multiple rules. For positive effects (higher than $0.5$) it gives  slightly higher values than the average, for negative effects (lower than $0.5$) it gives slightly lower values. For modelling the function we use as a base function $2x^2$, which is to be used for the negative effects (lower than $0.5$). For positive effects, we transform the base function so that the resulting function is symmetric around the point $(0.5, 0.5)$. The resulting function for combining two rules is \ref{eq_expectancy_combination2}.
+                
+                \begin{equation}
+                    \label{eq_expectancy_combination2}
+                    CMB(e_1, e_2) = \left\{\begin{array}{ll}
+                            2(\frac{e_1 + e_2}{2})^{2} & \textrm{if $\frac{e_1 + e_2}{2}\in[0,\frac{1}{2}]$}\\
+                            & \\
+                            1-2(\frac{e_1 + e_2}{2}-1)^2 & \textrm{if $\frac{e_1 + e_2}{2}\in(\frac{1}{2}, 1]$}\\
+                        \end{array} \right.
+                \end{equation}
+                
+                To generalize \ref{eq_expectancy_combination2} for multiple rules, we define \ref{eq_expectancy_combination}, where $a$ denotes the average of the combined expectancies and $n$ denotes the absolute difference between the number of positive and negative expectancies.
                 
                 \begin{equation}
                     \label{eq_expectancy_combination}
-                    f(x) = \left\{\begin{array}{ll}
-                            2^{n-1}x^n & \textrm{if $x\in[0,\frac{1}{2}]$}\\
+                    f(a) = \left\{\begin{array}{ll}
+                            2^{n}a^{n+1} & \textrm{if $a\in[0,\frac{1}{2}]$}\\
                             & \\
-                            1-2^{n-1}(x-1)^n & \textrm{if $x\in(\frac{1}{2}, 1]$}\\
+                            1-|2^{n}(a-1)^{n+1}| & \textrm{if $a\in(\frac{1}{2}, 1]$}\\
                         \end{array} \right.
                 \end{equation}
-            \subsubsection{Mycin}
-                Confidence factor, bude se muset lehce ztransformovat.
-            \subsubsection{Bayesian}
-                $C_{so}$: event, $s$ chooses $o$\\
-                $E_{Rso}$ event, rule $R$ covers $s$ - $o$ prediction
+                
+                Let's show the application of \ref{eq_expectancy_combination} on our example. TODO example
+            
+            \subsubsection{Certainty Factor Calculus}
+                \label{certainty_factor_calculus}
+                The problem of combining multiple pieces of evidence having different certainties was a subject of interest of early expert systems like Mycin \cite{mycin}. In the Mycin expert system, the certainty-factor calculus was used. The certainty-factor model \cite{certainty_calculus} uses a numerical measure of certainty which values range from $-1$ and $1$, where negative values indicate disbelibelief in the given hypothesis and positive values indicate the belief in the hypothesis. 
+                
+                In Unresyst our hypothesis can be formulated as \emph{The subject prefers the object} for subject-object rules, or \emph{The subjects/objects are similar} for similarity rules or \emph{The object is likely to be preferred by any subject}/\emph{The subject is likely to prefer any object} for biases. As our expectancy measure ranges from $0$ to $1$, we have to transform the certainty-factor combination function, so that it fits our expectancy concept. The function for transforming expectancies to certainty factor is \ref{eq_transformation}, the inverse function is \ref{eq_reverse_transformation}.
                 \begin{equation}
-                    \label{eq_bayes1}
-                    P(C_{so} | E_{Rso}) = \frac{P(E_{Rso} | C_{so}) P(C_{so})}{P(E_{Rso})}
+                    \label{eq_transformation}
+                    t(x) = 2x -1
                 \end{equation}
-                hh\\
-                $CPair$: a set of s-o pairs, s has chosen o\\
-                $Pair_R$: a set of s-o pairs, $R$ predicts s-o expectancy\\
-                $S$: a set of subjects\\
-                $O$: a set of objects\\
-                $P(C_{so}) \simeq$ expectancy given by $R$\\
-                $P(E_{Rso}) \simeq \frac{|Pair_R|}{|S||O|}$\\
-                $P(E_{Rso}|C_{so}) \simeq \frac{|CPair \cap Pair_R|}{CPair}$\\
+                
                 \begin{equation}
-                    \label{eq_bayes2}
-                    P(C_{so} | E_{R_1so} \cap E_{R_2so}) = \frac{P(C_{so}) P(E_{R_1so} | C_{so}) P(E_{R_2so} | C_{so} \cap E_{R_1so})}{P(E_{R_1so}) P(E_{R_2so}|E_{R_1so})}
+                    \label{eq_reverse_transformation}
+                    t^{-1}(x) = \frac{x+1}{2}
                 \end{equation}
+                
+                The factor combination formula described in \cite{certainty_calculus} is \ref{eq_certainty_factor_calculus}, where $cf_1$, $cf_2$ are certainty factor values of the combined pieces of evidence.
+                
+                \begin{equation}
+                \label{eq_certainty_factor_calculus}
+                CFC(cf_1, cf_2) = \left\{\begin{array}{ll}
+                            cf_1 + cf_2(1 - cf_1) & \textrm{if $cf_1,cf_2>0$} \\
+                            & \\
+                            \frac{cf_1, cf_2}{1 - min(|cf_1|, |cf_2|)} & \textrm{if $-1 < cf_1cf_2 \leq 0$} \\
+                            & \\
+                            cf_1 + cf_2(1 + cf_1) & \textrm{if $cf_1,cf_2<0$} \\
+                        \end{array} \right.
+                \end{equation}
+                
+                Finally, our resulting function that combines two expectancies to a single expectance $CMB: [0,1] \times [0, 1] \rightarrow [0,1]$ is in \ref{eq_cf_final}.
+                \begin{equation}
+                    \label{eq_cf_final}
+                    CMB(e_1, e2) = t^{-1}(CFC( t(e_1), t(e_1)))
+                \end{equation}
+
+                As noted in \cite{certainty_calculus}, the function is commutative and associative in its second argument, so the order of the combination has no effect on the result. The resulting function apparently fulfils the requirements for our combination function.
+                
+                Let's show the application of Certainty factor calculus on our example. TODO doplnit example s konkretnimi cisly. 
 
         \section{Unresyst Application Layers}
             \label{unresyst_layers}
-            \subsection{Abstractor Layer}
+            
+            The oncoming sections describe the proposed architecture of Unresyst. The overview of the layers is illustrated in the figure \ref{pic_architecture}.
+            
+            \fig[15]{pics/unresyst_architecture_light.png}{The Unresyst architecture layers}{pic_architecture}
+            
+            \subsection{Recommender Layer}
+                \label{recommender_layer}
+                The top most level (\emph{Recommender}) provides the runtime interface (see \ref{runtime_interface}) to the whole recommender, the addaptation data is stored in the specific recommender subclass (see \ref{adaptation_interface}). 
+            
+            
+            \subsection{Abstactor Layer}
                 \label{abstractor_layer}
+                The second layer (\emph{Abstractor})  cares for converting the domain-specific objects and relationships to a domain-neutral representation. In Abstractor, the domain specific subjects, objects, rules, relationships and biases are converted to an abstract, domain-neutral representation which is later used by the underlying algorithm. Therefore all actions done in layers under the Abstractor layer can be implemented as domain-neutral.
+                
+                Our prototype implementation follows the proposed architecture. The classes of the recommender follow the proposed layers. The final configuration of classes that will be used as the proposed layers is done right in the \emph{Recommender} base class, so that it can be overriden in its specific subclasses.
+            
             \subsection{Algorithm Layer}
                 \label{algorithm_layer}
-        \section{Unresyst Implementation Details}
-            \label{unresyst_implementation_details}
-            obrazek architecture:
-            Specific Recommender holds the domain-specific data.
-            Recommender provides a domain-independent interface for creating a recommender model, getting recommendations and updating the recommender model.
-            Abstractor translates the domain-specific objects into universal ones, converts the given business rules into relationships among subjects and objects.
-            Aggregator aggregates all relationships into a single one for subject-object, subject-subject and object-object pairs.
-            Recommender Algorithm uses the known relationships among subjects and objects, exploits them to predict all subject-object relationships of the given type.
-        
-        obrazek build:
-            During the build, domain data that have been entered by the domain expert are used for creating a recommender model. 
-            Recommender just passes the call to other layers.
-            Abstractor goes over the subjects and objects, evaluates the business rules on them, introduces a new relationship or bias for each rule. It converts subjects and objects to a universal representation that would be used in the rest of Unresyst.
-            Aggregator aggregates all relationships int o a single one for subject-object, subject-subject and object-object pairs, using the given weights. It does the same for biases.
-            Recommender Algorithm uses the aggregated relationships to learn a recommender model.
-        
-        obrazek class diagram:
-        Classes are displayed as rectangles, objects as rectangles with round corners. All the classes are \emph{purely static} - there are no instances of the classes, the classes contain only class methods. They act as singleton objects.
-        The diamond relationships mean that the given class/object can be accessed only from the containing class. 
-        
-        implementacni vychytavky:
-            symetricke relace serazene podle idecka, zarucene bude s1 s2 a uz ne s2 s1
+                Under the Abstractor there is a domain-neutral \emph{Algorithm} layer. The algorithm is further structured to levels so that a new algorithm can be plugged to any of the levels. The proposed levels of the algorithm layer are the following.
             
-            pridani toho generatoru do pravidel
+                \begin{description}
+                    \item[Aggregating algorithm level] The level cares for aggregating multiple bias and rule instances during the build and update, see \ref{aggregating} for details. For combining multiple rule instances it uses the Combinator module (\ref{combinator}). The input for the level are rule, relationship and bias instances, the output are aggregated instances. For each entity pair there can be at most one aggregated relationship and for each entity there can be at most one aggregated bias.
+                    \item[Compiling algorithm level] The level compiles the subject-object rules, aggregated similarities and aggregated biases to relationship preditions during the build and update, see \ref{compiling} for details. For combining multiple sources of prediction it uses the Combinator module (\ref{combinator}). The input of the level are subject-object rules, aggregated similatirities and aggregated biases the output of the level are compiled subject-object preference predictions.
+                    \item[Exploiting algorithm level] The level takes the predictions obtained from the higher level and later exploits them for other pairs. For this layer, we can use a classical collaborative filtering algorithm as described in \ref{collaborative_filtering}. In the prototype implementation we use only a simple algorithm returning predictions it has obtained from the compililgn level. The input of the level are the predictions, the output are the obtained predictions, optionally exploited to some previously unpredicted subject-object pairs.
+                \end{description}
+                
+                The levels provide a possibility to include another algorithm at any level. E.g. if we find an algorithm that can produce predictions from similarities, aggregated preferences and aggregated biases, we can put the new algorithm in the place of our Compiling Algorithm. The leveled structrure even enables us to create a new algorithm with other layers than the proposed ones.
+                
+                In our prototype implementation all algorithm level classes are derived from the same base class, having the same interface for building the algorithm and providing predictions and recommendations. The complete interface description can be found in the generated documentation on the attached CD. 
+                
+                \subsubsection{Combinator}
+                    \label{combinator}
+                    As the combination of multiple sources of information is done on two places in different algorithm levels, the \emph{Combinator} module is excluded from the algorithm and defined as a separate module. 
+                    
+                    The module cares for combining multiple combination elements into a single preference, similarity or bias. The methods proposed to be used in the Combinator can be found in \ref{combining}. The proposed methods are implemented in our prototype as separate Combinator subclasses.
 
-    \section{Layers}
-        \subsection{Adaptation Interface}
-        misto condition generator
-        \subsection{Data Model}
-            \label{data_model}
-        datovy model - subjekty, objekty v jednom, definice, indexy, agregator si to radi a pak to bere jak to jde
-        Vychytavka se symmetric relations. Poradi: v s-o prvni subject, vsude jinde to co ma mensi id tak to prvni.
-        \subsection{Runtime Interface}
-            jak tam vracim uzasny miry a vysvetleni, jak je to diky buildu rychly. 
-        \subsection{Recommendation Viewer}
-            \label{viewer}
-            The recommendations made by the Universal Recommender can be viewed in a web based application called \emph{Recommendation Viewer}. The application shows recommendations for a chosen subject. It is independent of the object and subject domain. The page for viewing the recommendations can be easily embedded to a webpage.
-        
-        ...
+        \section{Unresyst Prototype Implementation}
+            \label{unresyst_implementation_details}
+            In the section we disclose some implementation details of our recommender prototype. We describe the data model of our implementation, then we give some details about problems that had to be solved during the implementation.
+            
+            \subsection{Unresyst Prototype Data Model}
+                \label{data_model}
+                As the data model of the Unresyst application is extensive, we had to divide the model to smaller ones: Basic data model, Biases data model, Aggregator data model and Algorithm data model. The figure displaying the complete data model can be found on the attached CD.
+                
+                The basic data model of the Unresyst application consists of the models displayed in the figure \ref{pic_core_models}. All these models are filled by the Abstractor layer (see \ref{abstractor_layer}). 
+                
+                \fig[15]{pics/core_models.png}{The basic data model of Unresyst}{pic_core_models}
+                
+                As there can be multiple recommenders in one parent system, we need a representation of the recommender in the database. This is the \emph{Recommender} model. One recommender model in database corresponds to one specific recommender. All other models for recommendations are linked to the  recommender model they belong to.
+                
+                Note that domain neutral representations of subjects a objects are stored in one model. Thanks to that, we can use a single model for all kinds of relationships (preference and similarity). Each rule defined in the adaptation phase has one \emph{definition} and for each pair it applies to, it has one \emph{instance}. Definitions contain all data that are common to all instances, like weight, name and the link to the recommender. Instances connect the affected pairs of entities and hold the confidence for the pair (just for rules). 
+                
+                The models related to biases are displayed in the figure \ref{pic_biases}. As for rules and relationships, each defined bias has one definition and an instance for each entity it applies to. Bias definitions and instances are also filled by the Abstractor layer.
+                
+                \fig[6]{pics/biases.png}{The data model of entity bias}{pic_biases}
+                
+                The Aggregator data model on the figure \ref{pic_aggregator_models} contains models filled by aggregator level of the algorithm layer (see \ref{algorithm_layer}. The aggregated instances group together rule, relationship and bias instances.
+                
+                \fig[9]{pics/aggregator.png}{The Aggregator data model}{pic_aggregator_models}
+                
+                The data model for our simple algorithm is in the figure \ref{pic_algorithm_models}. As our implementation only returns the results of the levels above, it only contains a model for preference prediction. These models aren't generated for all posibble pairs as this wouldn't be feasible for larger domains. However, as we need to generate recommendations for a given subject fast, we do some pre-computation. During the build we select the given number of promising objects for each subject. For these objects, all known preference sources are inspected (see \ref{compiling}) and the predictions for the pairs are saved.
+                
+                \fig[6]{pics/algorithm.png}{The data model of our simple algorithm implementation}{pic_algorithm_models}
+            
+            \subsection{Implementation Details}
+                \label{implementation_challenges}
+                The section presents details about some of the problems that had to be solved during the Unresyst prototype implementation. 
+                
+                The representation of similarity relationships was in some cases inefective, for example the similarity relationship between users coming from the same country from our introductory example. When building the recommender with such relationship definition, we would have to connect by a relationship instance all pairs of users coming from the same country - the number of relationship instances would be quadratic to the number of users. 
+                
+                \fig[7]{pics/clusters.png}{The data model of our cluster implementation}{pic_clusters}
+                
+                For higher effectivity, we introduced the \emph{culster} concept. For each country we create a cluster and we connect each user with the cluster appropriate to the country he/she is from. The similarity can then be obtained by checking whether the pair of users is connected to the same cluster. In this case we reduce the number of links so that it's at the most equal to number of users. The domain-neutral representation of models related to clusters is in the figure \ref{pic_clusters}.
+                
+                In the flixster data set there is an explicit feedback relationship that can be both positive and negative. For these kinds of relationships we introduced a new type of rule - an Explicit Rule. In this kind of rule there is no positiveness given, as the feedback can be both positive and negative. Instead of that, in the rule we define directly the expectancy measure. The data model for explicit rules is displayed on the figure \ref{pic_explicit}.
+                
+                \fig[10]{pics/explicit.png}{The data model of the explicit rule definitions and instances}{pic_explicit}
+                
+                In the implementation of different levels of the algorithm layer (see \ref{algorithm_layer}), we had to design the classes so that one class can contain an instance of a similar type of class (a subclass of the same class). This directed us to the Composite design pattern \cite{design_patterns}, which was slightly modified for our needs. The diagram of the classes in the algorithm layer is displayed in the figure \ref{pic_algorithm_classes}. The predicting and recommending methods are implemented only in the inner-most class - the simple algorithm.
+
+                \fig{pics/algorithm_classes.png}{The diagram of the classes in our implementation of the algorithm layer}{pic_algorithm_classes}
+
+                As the prototype was to be addapted to real datasets with thousands of subjects and objects we had to make some technical enhancements to make the prototype recommender build in a reasonable time. Firstly, in the rule, relationship and bias classes we addded a possibility to define a \emph{generator} instead of the condition. Generator is a function returning entities or entity pairs that satisfy the condition. The use of the generator in rule abstraction is much faster because we don't have to traverse all entities or entity pairs to test the condition, instead of that we directly evaluate the confidence on the entities/entity pairs returned from the generator.
+
+                As can be noted in the data models \ref{pic_core_models} and \ref{pic_aggregator_models} all relationship instances are symmetric, as we use a single model for subjects and objects. When saving a relationship instance between the entities $(A, B)$, we have to check whether the relationship $(B, A)$ isn't already saved. The same check has to be performed when searching for a relationship between the entities. But as the check for the opposite direction adds an extra database query, we introduced some regulations for saving the relationship entities so that the opposite order doesn't have to be checked. The regulations are the following
+                \begin{enumerate}
+                    \item If the relationship is between a subject and an object, we save the subject to the first position, object to the second
+                    \item If it's a similarity relationship we save the entity with the lower private key to the first position and the entity with the higher private key as teh second.
+                \end{enumerate}
+                
+                These regulations guarantee the order of the entities in the relationships and therefore we can perform a save or retrieval of a relationship within a single database query. 
+
 \chapter{Verifying the Universal Recommender on Real-World Data}
     \label{adapting_to_existing_systems}
-    The process of adapting the Universal Recommender to some existing systems is described in the chapter. The chosen systems work on various domains. Each system has some API, so that the Universal Recommender can easily get data about the objects, subjects and their relationships. The way how to run the Universal Recommender in several instances for a system is described here. Some basic rules for the Universal Recommender configuration are given.
-        \subsection{Flixster data set}
-            z megamnozstvi jsem udelal min - podmnozina uzivatelu, z prvnich 105000 radku friendu, k nim nalezejici ratingy, uzivatele bez hodnoceni smazat, ponevadz nejsem schopen je nijak testovat - je to akorat spam
-        \subsection{Last.fm}
-            \label{verifying_last_fm}
-            zpusob vyberu z megadatasetu
-            musel jsem vyhazet tagy, ktere nejsou sharovane mezi vic artisty, byly jich dve tretiny.
-        \subsection{Travel agency}
-            byl smaznul jsem i ostatni implicitni feedback z train setu - feedback z budoucnosti neznam. 
+    In the chapter we describe the process of adapting the Unresyst prototype to the selected datasets (see Chapter \ref{relationships_in_studied}). 
+    
+    In the following sections we give an overview of relationships we have predicted using Unresyt. We give an overview of the rules we used for the Unresyst configuration. As each dataset contains more data than our prototype can manage, we had to reduce the datasets in the manner described in the following subsections. In addition, we give some basic statistics of the counts of subjects and objects in the reduced datasts.
+    
+    The data models and descriptions of the attributes that we can use for recommending, can be found in the Chapter \ref{relationships_in_studied}. The complete source code of the presented rules can be found on the attached CD. 
+    
+    \section{Last.fm}
+        \label{verifying_last_fm}
         
-       
-        ...
+        We decided to predict the relationship \emph{User listens to Artist}, rather than predicting the listned tracks. That's because the range of played tracks from each artist is pretty wide and different users tend to listen different tracks.
+        
+        We have set up two recommenders for the Last.fm datast: a novel artist recommender, recommending only artists that the user hasn't heard before and a radio recommender recommending all artists no matter if they have been heard or not. The latter recommender could be used e.g. for selecting music to play in a user's personalized internet radio.
+        
+        In Unresyst configuration for the Last.fm dataset we used the following rules:
+        \begin{itemize}
+            \item Similarity of users according to their age. We take only pairs of users whose age difference is lower than a given constant. The confidence of similarity raises with lowering age difference. We suppose, the users of similar age are likely to listen to the same aritsts.
+            \item Similarity of users according to their registration date. We used the same mechanism as for user age. We suppose that in some period of time, the users listening a given kind of music could become memebers of the last.fm, e.g. when an article about Last.fm was published in a magazine specialized in the given kind of music.
+            \item Similarity of users according to their gender, home country. The rules were implemented through clusters (see \ref{implementation_challenges}).             
+            \item Artist similarity according to their social tags. We take only pairs of users that have more than a given constant of tags in common. The more tags they have in common the higher is the confidence. First we tried to implement the similarity using tags as clusters, but in this application clusters were less efficient than similarities, as the number of tags for each artist (where available) was pretty high.
+            \item Preference derived from the number of user's scrobbles for the artist. The confidence depends on the percentage of the artist scrobbles in the overall user's scrobble count.  The rule is used only in the radio recommender. We suppose that artists heard many times before are likely to be liked.
+            \item Positive bias for popular artists. Artists that have been listened by many users (more than a given constants) get a positive bias. We supposed that artists listened to a high number of users are likely to be liked by any user. 
+            \item Negative preference for artists tagged by a gender-specific tag. As shown in the introductory example (\ref{motivation}) we classified some of the most popular tags as gender-specific. We have marked tags like ``Hard Rock'' or ``Death Metal'' as male-specific, and tags like ``sweet'' or ``emotional'' as female-specific. We suppose the gender-specific music is often disliked by the opposite gender.
+        \end{itemize}
+
+        As the dataset originaly contains millions of scrobbles, we had to reduce it to make it feasible for our recommender prototype and the available hardware. We took the first cca hundred users from the dataset and then we selected every seven hundredth scrobble for each user. After that we obtained a dataset with entity counts listed in the table \ref{table_lastfm}. Assigning tags for the listened artists was done by matching their MusicBrainz \footnote{MusicBrainz is a community music metadatabase that attempts to create a comprehensive music information site. Each contained artist has a unique identifier\cite{musicbrainz}.}  identifiers.
+        \begin{stattable}{table_lastfm}{Statistics for the reduced Last.fm dataset}
+            \hline
+            f & f\\
+            \hline
+            f & f\\
+            \hline
+        \end{stattable}
+
+    \section{Flixster data set}
+        \label{verifying_flixster}
+    
+        The Flixster dataset is a classic collaborative filtering dataset with explicit user-movie rating and without any attributes for users or movies. Additionally to such datasets, Flixster contains links between users who are friends. As we had the only user-movie interaction relationship - the rating - we took as the predicted preference relationship a rating that was higher than a given constant. If the user gave the movie the given number of stars, he/she probably likes it. 
+        
+        For Unresyst setup we used the following rules.
+        \begin{itemize}
+            \item The explicit rule for user - movie ratings. As rating can give both positive and negative feedback we introduced a special rule type for it, see section \ref{implementation_challenges} for details. The five-stars scale was normalized to a float number between $0$ and $1$. 
+            \item Similarity of users according to the friend relationship. We suppose that users who are friends have a similar taste so they like similar movies. 
+            \item Object bias for high- and low-rated movies. We assume movies that were given exceptionally high/low ratings are supposed to be liked/disliked by many users. 
+            \item Subject bias for high- and low-rating users. As mentioned in the section \ref{representing_biases}, the subject biases are relevant only in cases when we care about the exact expectancy number. This is the case of the Flixster dataset as we try to predict the exact user - movie rating. Some users tend to rate all movies high whereas some sceptical users give low ratings to most of the movies. We include this remark to predictions by defining a subject bias.
+        \end{itemize}
+
+        The dataset originally contained over eight million ratings and over seven million friend links. When reducing the dataset we took a subset of users so that the friend links were preserved. For these users we found the appropriate ratings.
+        
+        \begin{stattable}{table_flixster}{Statistics for the reduced Flixster dataset}
+            \hline
+            f & f\\
+            \hline
+            f & f\\
+            \hline
+        \end{stattable}
+    
+    \section{Travel agency}
+        \label{verifying_travel}
+        
+        The travel agency dataset was created through a dump of the tables where the collected implicit feedback was stored. Firstly we had to filter out feedback that wasn't related to a particular tour, as feedback was collected on the whole website, not just tour profiles. Then we categorized the feedback by saving the data to the data model displayed in the figure \ref{pic_travel}. The strongest sign of preference is ordering the tour, so we decided to predict the \emph{User ordered a tour} relationship.
+        
+        For Unresyst setup we used the following rules
+        \begin{itemize}
+            \item Implicit preference relationships - question, mouse move, click. When the user asked a question about the tour, has been actively moving the mouse over the tour profile, or has clicked on tour details or photos, we suppose he/she is interested in the tour. 
+            \item View profile time. As in the dataset there were recorded the events of opening and closing a page, with timestamps, we used the data to determine time the user spent on the tour profile. The longer the time, the higher was the preference according to the rule. 
+            \item Similarity of tours according to their type and destination country. The rules were implemented through clusters (see \ref{implementation_challenges}).
+            \item Positive object bias according to the ammount of implicit feedback. Tours that were much actively visited were supposed to be more likely to be preferred by any user.
+        \end{itemize}
+        
+        After processing the dataset in the described way it had the parameters described in the table \ref{table_travel}
+        
+        \begin{stattable}{table_travel}{Statistics for the Travel agency dataset}
+            \hline
+            f & f\\
+            \hline
+            f & f\\
+            \hline
+        \end{stattable}
+        
+        
+        
+
 
 \chapter{Evaluating Recommender Results}
     \label{evaluating_recommender_results}
     In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. 
+    
+    smaznul jsem i ostatni implicitni feedback z train setu - feedback z budoucnosti neznam. 
     
     metriky kde se porovnava poradi v listech nejsou uzitecne, jelikoz v test setu nemam poradi. 
     hh\\
@@ -1436,6 +1628,17 @@ http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
 \bibitem{probabilistic_analysis}Recommendation systems: a probabilistic analysis \verb!http://www.tomkinshome.com/site_media/papers/papers/KRR+98.pdf!
 \bibitem{yahoo} Seung-Taek Park, David M. Pennock: Applying collaborative filtering techniques to movie search for better ranking and browsing \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.8109&rep=rep1&type=pdf!
 \bibitem{google_api}The Google Prediction API \verb!http://code.google.com/apis/predict/!
+\bibitem{certainty_calculus}Certainty-factor-like structures in Bayesian belief networks \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.19.1853&rep=rep1&type=pdf!
+\bibitem{mycin}Computer-based medical consultation MYCIN. New York: Elsevier, 1976.\verb!http://www.annals.org/content/85/6/831.1.extract!
+\bibitem{design_patterns}Design Patterns: Elements of Reusable Object-Oriented Software, Erich Gamma, Richard Helm, Ralph Johnson, John M. Vlissides. Addison-Wesley, 1994
+\bibitem{last_fm_api} Last.fm api \verb!http://www.last.fm/api!
+\bibitem{last_fm_dataset1} Last.fm Dataset - 1K users \verb!http://www.dtic.upf.edu/~ocelma/MusicRecommendationDataset/lastfm-1K.html!
+\bibitem{last_fm_dataset2}LastFM-ArtistTags2007 \verb!http://musicmachinery.com/2010/11/10/lastfm-artisttags2007/!
+\bibitem{flixster}Flixster \verb!http://www.flixster.com/!
+\bibitem{flixster_dataset}Flixster data set \verb!http://www.cs.sfu.ca/~sja25/personal/datasets/!
+\bibitem{flixster_paper}A matrix factorization technique with trust propagation for recommendation in social networks
+\verb!http://portal.acm.org/citation.cfm?id=1864708.1864736!
+\bibitem{musicbrainz} MusicBrainz music database \verb!http://musicbrainz.org/!
 
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
