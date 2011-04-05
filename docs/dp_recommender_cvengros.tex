@@ -36,10 +36,13 @@
 % promenne:
 \newcommand{\vedouci}{prof. RNDr. Peter Vojtá¹, DrSc.}
 \newcommand{\ja}{Petr Cvengro¹}
-\newcommand{\katedra}{Katedra softwarového in¾enýrství}
-\newcommand{\nazev}{Univerzální doporuèovací systém}
+\newcommand{\katedra}{The Department of Software Engineering}
+\newcommand{\nazev}{Universal Recommender System}
 \newcommand{\datum}{DATUM}
 \newcommand{\vedoucimail}{Peter.Vojtas@mff.cuni.cz}
+
+\newcommand{\nazevcesky}{Univerzální doporuèovací systém}
+\newcommand{\katedracesky}{Katedra softwarového in¾enýrství}
 
 % prikazy s parametry
 
@@ -59,7 +62,7 @@
 % stat table
 \newenvironment{stattable}[2]{
     \pushQED{#2}
-    \begin{table}[h]
+    \begin{table}[ht]
         \begin{center}
             \label{#1}
             \begin{tabular}{|l|l|}}
@@ -72,7 +75,7 @@
 % parameters: label, caption
 
 
-\title{Název práce}   % tyto dvì polo¾ky jsou zde v podstatì formálnì, ve skuteènosti nejsou nikde 
+\title{Universal Recommender System}   % tyto dvì polo¾ky jsou zde v podstatì formálnì, ve skuteènosti nejsou nikde 
 \author{Petr Cvengro¹} % dále v dokumentu pou¾ity
 
 %\date{}
@@ -91,12 +94,12 @@
 \vspace{15mm}
 
 \large
-Univerzita Karlova v Praze\\
-Matematicko-fyzikální fakulta\\
+Charles University in Prague\\
+Faculty of Mathematics and Physics\\
 
 \vspace{5mm}
 
-{\Large\bf DIPLOMOVÁ PRÁCE}
+{\Large\bf Master Thesis}
 
 \vspace{10mm}
 
@@ -111,18 +114,20 @@ Matematicko-fyzikální fakulta\\
 {\Large \ja}\\ % doplòte va¹e jméno
 \vspace{5mm}
 {\Large\bf \nazev}\\ % doplòte název práce
+\vspace{1mm}
+(\nazevcesky)\\
 \vspace{5mm}
 \katedra\\ % doplòte název katedry èi ústavu
 \end{center}
 \vspace{15mm}
 
 \large
-\noindent Vedoucí diplomové práce: \vedouci % doplòte odpovídající údaje
+\noindent Supervisor: \vedouci % doplòte odpovídající údaje
 %%% dal¹í øádek mù¾ete ve vìt¹inì pøípadù (tj. pokud údaje uvedené vý¹e nejsou pøíli¹ dlouhé) zru¹it
 \hskip20mm 
 \vspace{1mm} 
 
-\noindent Studijní program: Informatika, Softwarové systémy, Softwarové in¾enýrství % doplòte odpovídající údaje
+\noindent Study Programm: Computer Science, Software Systems, Software Engineering % doplòte odpovídající údaje
 %%% dal¹í øádek mù¾ete ve vìt¹inì pøípadù (tj. pokud údaje uvedené vý¹e nejsou pøíli¹ dlouhé) zru¹it
 %\hskip20mm 
 
@@ -138,13 +143,15 @@ Matematicko-fyzikální fakulta\\
 \setcounter{page}{2} % nastavení èíslování stránek
 \ \vspace{10mm} 
 
-\noindent Na tomto místì mohou být napsána pøípadná podìkování (vedoucímu práce, konzultantovi, tomu, kdo pùjèil software, literaturu, poskytl data apod.). % doplòte vlastní text
+\noindent I would like to thank my supervisor \vedouci for his valuable comments and support. I would also like to thank the travel agency system admin for lending the datataset. I would like to thank attendees of the User-Web seminary for their comments and ideas on the work. Last but not least, thanks to my parents for supporting my studies.
+ % doplòte vlastní text
 
 \vspace{\fill} % nastavuje dynamické umístìní následujícího textu do spodní èásti stránky
-\noindent Prohla¹uji, ¾e jsem svou diplomovou práci napsal samostatnì a výhradnì s pou¾itím citovaných pramenù. Souhlasím se zapùjèováním práce.
+\noindent I declare that I wrote the thesis by myself and listed all used sources. I agree with making
+the thesis publicly available.
 
 \bigskip
-\noindent V Praze dne \datum \hspace{\fill}\ja\\ % doplòte patøièné datum, jméno a pøíjmení
+\noindent Prague \datum \hspace{\fill}\ja\\ % doplòte patøièné datum, jméno a pøíjmení
 
 %%%   Výtisk pak na tomto míste nezapomeòte PODEPSAT!
 %%%                                         *********
@@ -154,29 +161,30 @@ Matematicko-fyzikální fakulta\\
 \newpage % pøechod na novou stránku
 
 %%% Následuje strana s abstrakty. Doplòte vlastní údaje.
-\noindent
-Název práce: \nazev\\
-Autor: \ja\\
-Katedra (ústav): \katedra\\
-Vedoucí diplomové práce: \vedouci\\
-e-mail vedoucího: \vedoucimail\\
-
-\noindent Abstrakt:  V pøedlo¾ené práci studujeme ... Uvede se abstrakt v rozsahu 80 a¾ 200 slov. %Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut sit amet sem. Mauris nec turpis ac sem mollis pretium. Suspendisse neque massa, suscipit id, dictum in, porta at, quam. Nunc suscipit, pede vel elementum pretium, nisl urna sodales velit, sit amet auctor elit quam id tellus. Nullam sollicitudin. Donec hendrerit. Aliquam ac nibh. Vivamus mi. Sed felis. Proin pretium elit in neque. Pellentesque at turpis. Maecenas convallis. Vestibulum id lectus. Fusce dictum augue ut nibh. Etiam non urna nec mi mattis volutpat. Curabitur in tortor at magna nonummy gravida.\\
-
-\noindent Klíèová slova: klíèová slova (3 a¾ 5)
-
-\vspace{10mm}
 
 \noindent
-Title: Universal Recommender System\\
+Title: \nazev\\
 Author: \ja\\
-Department: Department of Software Engineering\\
+Department: \katedra\\
 Supervisor: \vedouci\\
 Supervisor's e-mail address: \vedoucimail\\
 
 \noindent Abstract: In the present work we study ... Uvede se anglický abstrakt v rozsahu 80 a¾ 200 slov. %Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut sit amet sem. Mauris nec turpis ac sem mollis pretium. Suspendisse neque massa, suscipit id, dictum in, porta at, quam. Nunc suscipit, pede vel elementum pretium, nisl urna sodales velit, sit amet auctor elit quam id tellus. Nullam sollicitudin. Donec hendrerit. Aliquam ac nibh. Vivamus mi. Sed felis. Proin pretium elit in neque. Pellentesque at turpis. Maecenas convallis. Vestibulum id lectus. Fusce dictum augue ut nibh. Etiam non urna nec mi mattis volutpat. Curabitur in tortor at magna nonummy gravida.\\
 
 \noindent Keywords: klíèová slova (3 a¾ 5) v angliètinì
+
+\vspace{10mm}
+
+\noindent
+Název práce: \nazevcesky\\
+Autor: \ja\\
+Katedra (ústav): \katedracesky\\
+Vedoucí diplomové práce: \vedouci\\
+e-mail vedoucího: \vedoucimail\\
+
+\noindent Abstrakt:  V pøedlo¾ené práci studujeme ... Uvede se abstrakt v rozsahu 80 a¾ 200 slov. %Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut sit amet sem. Mauris nec turpis ac sem mollis pretium. Suspendisse neque massa, suscipit id, dictum in, porta at, quam. Nunc suscipit, pede vel elementum pretium, nisl urna sodales velit, sit amet auctor elit quam id tellus. Nullam sollicitudin. Donec hendrerit. Aliquam ac nibh. Vivamus mi. Sed felis. Proin pretium elit in neque. Pellentesque at turpis. Maecenas convallis. Vestibulum id lectus. Fusce dictum augue ut nibh. Etiam non urna nec mi mattis volutpat. Curabitur in tortor at magna nonummy gravida.\\
+
+\noindent Klíèová slova: klíèová slova (3 a¾ 5)
 
 \newpage
 
@@ -194,14 +202,24 @@ Supervisor's e-mail address: \vedoucimail\\
     
     Traditional recommender systems are specific to a particular domain of recommended items. Our view is more general and involves domain independence and utilization of any relationships among the entities in the domain. The thesis aims to create a prototype of a \emph{Universal Recommender} system, a system applicable to various domains, predicting relationships of the given type using already known relationships. Our recommender adds a new layer above algorithms implemented in recommender frameworks, making the recommender easily applicable to any domain and system.
     
-    %TODO tohle opravit
-    In the introductory chapter we describe the basic structure of the thesis. Then we give a formal definition of a recommender system. Finally we review projects and papers that have been created on the universal recommender topic.
-    
     \section{Thesis Structure}
         \label{thesis_structure}
-        In the \emph{\ref{introduction} Introduction} chapter we describe some basic ideas of the thesis, give a formal definition of a recommender system and explore the works that have been made on the topic.
+        The \emph{Introduction} chapter describes basic ideas of the thesis. 
         
-        TODO doplnit
+        In the \emph{Analysis} chapter we specify cases in which recommender systems can be used, we list various options of implementing a recommender. Finally we give a formal definition of a recommender system and explore the works that have been made on the universal recommender topic. 
+        
+        In the \emph{Recommender Algorithms} chapter we give an overview of algorithms that are currently used for recommending, we judge their applicability to a universal recommender system and finally choose a combination of algorithms that will be used for a universal recommender.
+        
+        In the chapter called \emph{Relationship in Studied Systems} we present three domains in which we would like to use our universal recommender. We study the relationships that can be observed between the entities in the system and how they can be used for recommending.
+        
+        In the chapter \emph{Universal Recommender Design and Implementation} we propose  Unresyst, a universal recommender system. We describe its interfaces, architecture and actions that should be performed in the given application parts. Finally we present some details about the Unresyst prototype implementation, including its data model.
+        
+        In the chapter \emph{Verifying the Universal Recommender on Real-World Data} we describe how we addapted the Unresyst recommender to datasets containing real data. 
+        
+        In the chapter \emph{Evaluating Recommender Results} we propose off-line methods and metrics that can be used for evaluating a universal recommender. We describe the results obtained for Unresyst prototype on the studied datasets and propose methods on how the results can be improved.
+        
+        In the chapter \emph{Conclusion and Future Work} we give a summary of the thesis and depict actions that can be done to continue the work done in the thesis.
+        
     \section{Thesis Concepts}
         The section describes the main concepts of the thesis. We list the most important features and describe the purpose of the thesis.
         \subsection{Motivation}
@@ -233,7 +251,6 @@ Supervisor's e-mail address: \vedoucimail\\
                     \item[Using various relationships.] For the recommendation, the recommender should be able to use any number of relationships available in the domain.
                     \item[Recommending given relationship.] The recommender should be able to predict any given relationship, not just the ``rating'' relationship as most recommenders do.
                     \item[A recommender, not a framework.] The adaptation to the given domain should be simple and should require minimum changes in the parent system. As opposed to recommendation frameworks that give resources to implement a recommender, our system should be a complete recommender ready to be adapted and used on an arbitrary domain.
-                    \item[Pluggable user interface.] The recommender should contain a web-based user interface for presenting the recommendations. The interface should be pluggable to an existing web application, so that it can look like a part of the system and the user doesn't have to leave system web pages to see his/her recommendations. 
                     \item[Verification on various domains.] The recommender should be adapted to at least three domains to verify its universality and usability of the recommender interfaces. 
             \end{description}
         \subsection{Thesis Classification}
@@ -249,7 +266,7 @@ Supervisor's e-mail address: \vedoucimail\\
                     \item Recommender system implementation
                 \end{enumerate}
                 
-                The thesis primarily concentrates on \ref{algo}: generating recommendations from known data. The area \ref{measure} is also partly covered in the thesis, as the results of the recommender on various domains had to be compared to other known approaches. The resting areas are undoubtedly as important as the selected ones, however the selected fit the best to the demonstration of our universal recommender idea. 
+                The thesis primarily concentrates on \ref{algo}: generating recommendations from known data. The area \ref{measure} is also partly covered in the thesis, as the results of the recommender on various domains had to be compared to other known approaches. The remaining areas are undoubtedly as important as the selected ones, however the selected fit the best to the demonstration of our universal recommender idea. 
 
                 Finally we list the topics that are out of the scope of our work:
                 \begin{description}
@@ -279,7 +296,7 @@ Supervisor's e-mail address: \vedoucimail\\
         \label{recommender_system_benefits}
         The section summarizes reasons why recommender systems are useful for both users and system holders.
         
-        \fig[8]{pics/use_case_recommender.png}{Use cases for a recommender system.}{pic_use_case_recommender}
+        \fig[10]{pics/use_case_recommender.png}{Use cases for a recommender system.}{pic_use_case_recommender}
         
         \subsection{Benefits for System Users}
             \label{benefits_for_users}
@@ -318,7 +335,7 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Companies that run big global web-systems generally have enough resources to develop their own recommender systems that are specifically designed for their needs. Therefore, Unresyst is aimed at small and mid-size web systems. The goal of the Unresyst concept is to provide companies a way to implement a recommender system without having to develop their own recommender solution, which is often both time and money consuming. With a bit of configuration, Unresyst can provide recommending accuracy comparable to a custom-made recommender system. We suppose the web-system application uses a database to store its data. The data are manipulated trough an SQL\footnote{SQL stands for Structured Query Language, a language most commonly used for structured data manipulation.} or ORM\footnote{ORM stands for Object-relational mapping, a technique used for manipulating data directly in the application without using SQL.} layer.
             
-            \fig{pics/owner.png}{Choosing the way of recommender system implementation.}{pic_owner}
+            \fig{pics/owner.png}{A system owner choosing the way of recommender system implementation, deciding between the solutions presented in the following sections.}{pic_owner}
             
             Unresyst can take use of any attributes and relationships that can be tracked in the parent system. Data that can be used by Unresyst include but are not limited to:
             \begin{description}
@@ -413,99 +430,102 @@ Supervisor's e-mail address: \vedoucimail\\
         
     \section{Definitions}
         \label{definitions}
-        XXXX TODO zkontrolovat, doplnit.
         In this section we give some basic definitions of terms and problems that appear in the whole thesis.
         
         \subsection{Basic Terms}
         \label{basic_terms}
             The basic terms used both in definitions and throughout the thesis are:
             \begin{description}
-                \item[Subject] Subject of a recommendation is an entity to which the recommender presents its recommendations. A subject can be a user as well as a user group or any other entity.
+                \item[Subject] Subject of a recommendation is an entity to which the recommender presents its recommendations. A subject can be a user as well as a user group or any other entity appearing in the parent system. 
                 \item[Object] Object of a recommendation is an entity which can be recommended to subjects. Objects can be books, songs, or any other entities.  
-                \item[Entity] Entity is a subject, an object or any other thing that occurs in the domain.
-                \item[Predicted relationship] Predicted relationship is a subject-object relationship that we try to predict for making recommendations. An example of such a relationship is the \emph{likes} relationship between a user and an item. 
-                \item[Expectancy of the predicted relationship] For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will occur between the subject and object. In other words, Expectancy can be explained as subject-object preference in means of the predicted relationship. In our user-item \emph{like} example, the expectancy would mean how much the user is likely to like the item. 
+                \item[Predicted relationship] Predicted relationship is a subject-object relationship that we try to predict for making recommendations. An example of such a relationship is the relationship  \emph{User has listened to Artist}. 
+                \item[Expectancy of the predicted relationship] For predicting a relationship we need a rate - a number determining the estimated probability that the \emph{predicted relationship} will occur between the subject and object. In other words, Expectancy can be explained as subject-object preference in means of the predicted relationship. In our example, the expectancy would mean how much the user is likely to listen to the artist. 
              \end{description}
         
         \subsection{Recommender System}
         \label{def_recommender_system}
             Informally, a recommender system is a system that presents some chosen \emph{objects} to a given \emph{subject}. The objects are chosen so that they are likely to invoke a positive response of the subject.
             
-            Similarly to the recommender problem definition in \cite{survey}, we formally define the recommendation as choosing the object $o_s$ for each subject $s$, so that the object maximizes the subject's utility $u_R$:
+            Similarly to the recommender problem definition in \cite{survey}, we formally define the recommendation as choosing the object $o_s$ for each subject $s$, so that the object maximizes the subject's utility function $u_R$:
             \begin{equation}
             \label{eq_recommender_problem}
             \forall s \in S: o_s = \underset{o \in O}{arg \  max \  u_R(s, o)},
             \end{equation}
-            where $S$ is the subject domain, $O$ is the object domain. The usefulness of the object to the subject is measured by the $u_R$ function, $u_R: S \times O \to T$, where $T$ is a totally ordered set. 
+            where $S$ is the subject domain, $O$ is the object domain. The utility of the object to the subject is measured by the utility function $u_R: S \times O \to [0,1]$. 
             
-            There are two differences to the definition in \cite{survey}. Firstly, we define our function on a \emph{Subject domain $S$}, instead of the User domain. In our view an addressee of a recommendation can be anything, not just a user. In some cases $S=O$, e.g. when we are recommending new friends to a user.  Secondly, we parametrize the utility function by the given relationship type $R$. In our system a recommendation can be done in the means of the given relationship type. 
+            In our definition, we parametrize the utility function by the predicted relationship $R$, $R \subset S \times O$, because our recommender should be able to predict the given relationship $R$ between subjects and objects, e.g. \emph{User has listened to Artist}. 
+            
+            For example a utility for $Bob$ of listening to the artist $Beck$ can be $0.7$ ($u_R(Bob, Beck) = 0.7$), which means $Bob$ would be pretty satisfied listening to $Beck$, as he likes such music. $Bob$'s utility listening to $Beatles$ can be $0.5$ as $Bob$ is indifferent to music $Beatles$ play. Finally $Bob$'s utility listening to $Rihanna$ would be $0.1$ as he doesn't like her music.
             
         \subsection{Relationship Prediction}
             \label{def_relationship_prediction}
             \label{confidence_expectancy}
-            \emph{Relationship Prediction} $\hat{u}$ is an approximation of the utility function $u$: 
+            \emph{Relationship Prediction} $\hat{u}_R$ is an approximation of the utility function $u_R$: 
             \begin{equation}
                 \label{eq_relationship_prediction}
-                \hat{u}: S \times O \to [0, 1]  \times E,
+                \hat{u}_R: S \times O \to [0, 1]  \times E,
             \end{equation}
             where $E$ is a set of textual explanations.
             
-            For a given subject-object pair, $\hat{u}$ gives:
+            For a given subject-object pair, $\hat{u}_R$ gives:
             \begin{description}
-                \item[Expectancy] the predicted probability of occurrence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The value $1$ is reserved for the subject-object pairs, that are already connected by the relationship of the given type. Thus, the objects with relationship expectancy $1$ usually aren't presented. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented.
-                \item[Explanation] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
-                %\item[Relationship metadata values] coming soon
+                \item[Expectancy:] the predicted probability of occurrence of the given relationship type between the subject and the object. It's a number between $0$ and $1$. The recommended objects are usually presented ordered by the expectancy. The exact expectancy value doesn't have to be presented.
+                \item[Explanation:] a textual explanation why the object has been recommended. For some recommender algorithms explanations aren't available.
             \end{description}
-
-            For instance, if the object and subject domains are community server users and the relationship type is friendship, for Alice and Bob the recommender can give a relationship prediction of $0.75$, with an explanation, that they have four friends in common. This means that the predicted probability of friendship between Alice and Bob is $0.75$. 
             
-            Our concept is similar to the one used in the Duine framework \cite{duine}. The prediction techniques in Duine give a \emph{Prediction}, \emph{Validity indicators} and an \emph{Explanation} for each subject-object pair. \emph{Prediction} is an estimation of subject's rating of the object. \emph{Validity indicators} determine the \emph{confidence} of the technique when predicting the rating. Low values mean, that the technique isn't confident about the \emph{Prediction} for the given subject-object pair, e.g. it doesn't have enough information to make a valid prediction. \emph{Explanation} has the same meaning as the one in our recommender. 
+            Our goal is to estimate the utility function $u_R$ by the expectancy given by $\hat{u}_R$, so that $proj_1 \circ \hat{u}_R \approx u_R$, where $proj_1$ is a projection that discards the explanation from the function $\hat{u}_R$.
+
+            For instance, our recommender predicts that $Bob$'s listening to $Back$ utility is $0.8$, because $Beck$ is similar to $Sonic \ Youth$, a band that $Bob$ has listened yesterday. In our notation: $\hat{u_R}(Bob, Beck)=(0.8, \textrm{``Bob  has listened to Sonic Youth band, which is similar to Beck''})$. 
+            
+            Our expectancy concept is similar to the one used in the Duine framework \cite{duine}. The prediction techniques in Duine give a \emph{Prediction}, \emph{Validity indicators} and an \emph{Explanation} for each subject-object pair. \emph{Prediction} is an estimation of subject's rating of the object. \emph{Validity indicators} determine the \emph{confidence} of the technique when predicting the rating. Low values mean, that the technique isn't confident about the \emph{Prediction} for the given subject-object pair, e.g. it doesn't have enough information to make a valid prediction. \emph{Explanation} has the same meaning as the one in our recommender. 
              
-            In a universal recommender we can't assume there will be a rating relationship between subjects and objects. Moreover, we are supposed to be able to predict any given relationship between subjects and objects, not just the preference expressed by the rating. In a Universal recommender, we only predict a $0/1$ indicator: there is the predicted relationship between the given subject and object, or there isn't. Hence we can shrink the prediction and confidence concepts into one - relationship \emph{expectancy}. 
+            In a universal recommender we can't assume there will be a rating relationship between subjects and objects. Moreover, we are supposed to be able to predict any given relationship between subjects and objects, not just the preference expressed by the rating. In a Universal recommender, we only predict a $0/1$ indicator: there is the predicted relationship between the given subject and object, or there isn't. Hence we can shrink the prediction and confidence concepts into one - expectancy. 
             
-            Let's show the reduction on an example. A recommender predicts, that \emph{Bob} will like the \emph{Five Days In Paris} book with $20\%$ probability. The like expectancy is $0.2$. For us, this is the same as predicting that Bob won't like it with $80\%$ probability. This is because, in our relationship representation, Bob either likes the book, or he doesn't. The events ``Bob likes the book'' and ``Bob doesn't like the book'' are complementary.
+            Let confidence be a function $D: S \times O \to [0,1]$ determining how sure the recommender is about a positive or negative recommendation of object $o$ to subject $s$. For converting confidence to expectancy, we use the function $\Pi:{True, False} \times [0, 1] \to [0,1]$, given by the formula \ref{eq_exp_conf}, where $d$ is the confidence value, and $p$ is the positiveness, which is $True$ for positive recommendations and $False$ for negative. 
             
-	    % like s 20% confidence neni to samy jako like s 20% expectancy. Confidence u like musi zacinat na 0.5. Pod 0.5 je to dislike - pomoci confidence se nejde prepnout z like do dislike.
+            \begin{equation}
+                \label{eq_exp_conf}
+                \Pi(p, d) = \left\{\begin{array}{ll}
+                            \frac{1}{2} + \frac{d}{2}, & \textrm{if $p=True$} \\
+                            & \\
+                            \frac{1}{2} - \frac{d}{2}, & \textrm{if $p=False$} \\
+                        \end{array} \right.
+            \end{equation}
             
-            % napr. prediction 0, confidence 0.75 je to samy jako prediction 1, confidence 0.25. Protoze P(0) = 0.75 = 1-0.25 - protoze jevy 0 a 1 se vylucuji. 
+            \fig[9]{pics/expectancy_confidence.png}{The dependency between expectancy and confidence.}{pic_expectancy_confidence}
             
-            The dependency between relationship expectancy and prediction confidence is illustrated on the figure \ref{pic_expectancy_confidence}. Let prediction confidence be a function to $[0,1]$ determining how sure the recommender is about the given relationship prediction. Expectancy values just above zero indicate that the recommender is quite sure that there won't be the given relationship between the given subject-object pair. Expectancy values near $0.5$ mean low confidence for the prediction. Especially $0.5$ means that according to the recommender, the probability of the relationship occurrence is the same as for non-occurrence. Expectancy values close to $1$ mean that recommender is quite sure, that the given subject-object pair will be connected by the given relationship. 
-
-            \fig[9]{pics/expectancy_confidence.png}{The dependency between relationship expectancy and prediction confidence.}{pic_expectancy_confidence}
-	    
-	    Expectancy can be useful for ordering the obtained recommended objects. For example, let's suppose we are predicting the ``like`` relationship and the list of recommended objects is ordered by the expectancy. At the beginning of the list there are objects the subject will probably like (the expectancy is close to $1$). Then there are objects the recommender is not sure about (the expectancy is around $0.5$). At the bottom of the list there are objects that will be probably disliked by the subject (the expectancy is close to $0$).
-	    
-	    On the other hand, expectancy isn't much intuitive for specifying the relationships in a system, so giving positiveness and confidence are used there (see \ref{representing_relationships}, \ref{representing_rules}).
-	    
-            In our universal recommender we don't support rating prediction directly. But as subject-object rating means a level of subject-object preference, we can estimate rating using our relationship expectancy. We only need to define mapping from relationship expectancy values to rating. Taking the subject and object from the previous example (Bob and Five Days in Paris), we can interpret Bob's $0.2$ like relationship expectation, to the rating 1 star on a 0 to 5 star scale. 
+            Let's show the conversion on an example. With respect to the fact, that $Bob$ has listened to $Sonic \ Youth$ whose music is similar to $Beck$'s, our recommender gives a positive recommendation of $Beck$ to $Bob$. From the similarity between $Beck$ and $Sonic \ Youth$ it determines the confidence $0.6$ of the recommendation. The positiveness is $True$ because the recommender recommends $Bob$ to listen to $Beck$. To convert the confidence to expectancy, we use the $\Pi$ function: $\Pi(True, 0.6) = 0.8$. 
+            
+            The dependency between relationship expectancy and prediction confidence is illustrated on the figure \ref{pic_expectancy_confidence}. Expectancy values just above zero indicate that the recommender is quite sure that there won't be the given relationship between the given subject-object pair, i.e. $Bob$ wouldn't like to listen to $Rihanna$. Expectancy values near $0.5$ mean low confidence for the prediction. Especially $0.5$ means that according to the recommender, the subject is indifferent to the object. Expectancy values close to $1$ mean that recommender is quite sure, that there will be the predicted relationship between the given subject-object pair  E.g. $Bob$ will like listening to $Beck$.
+            
+            Expectancy isn't much intuitive for specifying strength of the relationships in a system, so the concepts of positiveness and confidence are used there (see \ref{representing_relationships}, \ref{representing_rules}).
+            
+            In our universal recommender we don't support rating prediction directly. But as subject-object rating means a level of subject-object preference, we can estimate rating using our relationship expectancy. We only need to define mapping from relationship expectancy values to rating. For example, we can express $Bob$'s expectancy $0.8$ to $Beck$ as rating 4 stars on a 0 to 5 star scale. 
 
         \subsection{Recommendation}
             \label{recommendation}
-            For the given subject, the \emph{Recommender System} or \emph{Recommender} performs a \emph{Recommendation} $\varrho$ -- it chooses at most $N$ subjects with the highest relationship prediction rate:
+            For the given subject, a \emph{Recommender} performs a \emph{Recommendation} $\rho^{\hat{u}_R}$ -- it chooses at most $N$ objects with the highest expectancy for the subject and relationship prediction function $\hat{u}_R$:
             \begin{equation}
                 \label{eq_recommendation}
-                \varrho: S \to \mathcal{P}_{\leq N}(O),
+                \rho^{\hat{u}_R}: S \to (o_1, \dots, o_N), \  o_1, \dots, o_N \in O
             \end{equation}
-            where $\mathcal{P}_{\leq N}(O)$ is a $N$-limited powerset of $O$ (the set of subsets of $O$ of cardinality lower or equal to $N$).
             
-            The recommender always chooses exactly $N$ objects, except the case where there are less than $N$ objects available for recommendation. The chosen objects are presented to the subject ordered by the Recommendation Rate.
+            The recommender always chooses exactly $N$ objects. The chosen objects are presented to the subject ordered by expectancy.
             
-            For instance, using the example in \ref{def_relationship_prediction}, the friendship recommender presents ten other community server users to Alice. The users are sorted by the relationship prediction rate which reflects the number of mutual friends.
-        
-        \subsection{Adaptation}
-    
+            For instance, an artist recommender presents $N$ artists to $Bob$. Artists are sorted by the expectancy.
+
     \section{Operations in Recommender Systems}
         \label{operations}
         In a recommendation system, some common operations are:
         \begin{description}
-            \item[Recommender setup] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation can be pretty time consuming, as this doesn't have to be performed very often. 
-            \item[Recommendation (see \ref{recommendation})] Recommendation is the most common operation for a recommender system. Choosing objects with the highest Recommendation Rate for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
-            \item[Prediction] Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalog. Usually it is not possible to store predictions for all subject-object pair, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
+            \item[Recommender build] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation can be pretty time consuming, as this doesn't have to be performed very often. 
+            \item[Recommendation] Recommendation corresponds to evaluating the function $\rho^{\hat{u}_R}$ for a given subject. Recommendation is the most common operation for a recommender system. Choosing objects with the highest expectancy for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
+            \item[Prediction] Prediction corresponds to evaluating the function $\hat{u}_R$ for a given subject-object pair. Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalog. Usually it is not possible to store predictions for all subject-object pairs, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
         \end{description}
     
     \section{Related Work}
         \label{related_work}
-        XXX TODO doplnit white paper a duine
+
         The recommender research area has been strongly influenced by the Netflix prize \cite{netflix_wiki}. In the years 2006-2009, the Netflix DVD rental company held a competition on improving their recommender, awarded by the grand prize of US\$1,000,000. To the competition participants, Netflix exposed a data set of over hundred millions of ratings. Over 48,000 teams from 182 different countries participated, the competition had a huge response in both scientific and mainstream media. A paper describing the winning solution was publicly released \cite{netflix_solution}. The competition brought benefits for the Netflix company as well as for the whole recommender research world \cite{netflix_benefit}  Unfortunately, the second Netflix prize was canceled after some user privacy issues \cite{netflix_end}.
         
         \subsection{Domain Independent Recommenders}
@@ -514,9 +534,9 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Another notable work on universal recommender is a US software patent application \emph{Universal system and method for representing and predicting human behavior} \cite{patent}. The text contains a mixture of marketing proclamations, ideas on the recommender architecture, description of recommender and machine-learning algorithms and ideas on capturing implicit user ratings. In our opinion, the recommending methods presented in the text could be working well only on very small sets of data, for larger data sets, the ammount of time needed for performing some basic operations wouldn't be acceptable. The final paragraph, trying to claim everything around, from vector object representation to capturing the action of user adjusting the volume on his music player, gives a negative example of where the idea of software patents can lead. As far as we know there's no functional recommender system based on this patent. 
             
-            white paper, 
-            Duine - trochu moc se tam pracuje s tim user ratingem. mixuju podobne pravidla a relationships jako on recommendation techniques. (minimalne mam podobne prostredky), ale nekaskaduju. 
-
+            An implementation of a domain-neutral component for recommending in e-shops was a part of the thesis \cite{peska}. The component was also dealing with gathering implicit feedback from users. Recommending was done using some of the common recommender algorithms like collaborative filtering. The component was tested on two e-shops.
+            
+            The Universal Recommender White Paper \cite{white_paper} describes a recommenation engine working on semantic datasets. The proposed recommender is operating on the full semantic representation of domain data, where entities are connected by various relationships and according to the paper it generalizes all common recommender algorithms. The paper identifies problems that have to be overcome in order to implement such a recommender, such as normalization of the represented relationships.  We use some ideas presented in the paper in the section \ref{combining_knowledge_and_cf} and simplify the approach presented in the paper.
 
 \chapter{Recommender Algorithms}
     \label{algorithms}
@@ -532,7 +552,12 @@ Supervisor's e-mail address: \vedoucimail\\
         
         \fig{pics/content-based.png}{Content-based Methods}{pic_content_based}
 
-        More formally, according to \cite{survey}, the utility function $u_R(s, o)$ of subject $s$, object $o$ and relationship $R$ is estimated based on the utilities $u_R(s, o_i)$ assigned by subject $s$ to objects $o_i \in O$ that are similar to object $o$. The method can be enhanced by introducing \emph{subject profiles} containing information about subjects' tastes. 
+        More formally, according to \cite{survey}, the utility function approximation is done as depicted in the formula \ref{eq_content_based}, where $sim: O \times O \to [0,1]$ is a measure of object similarity, based on the object attributes. The $sim$ function is applied on objects $o'$ that are already in the relationship $R$ with the given subject $s$. The sum can be replaced by a more sophisticated functions in some implementation. The method can be enhanced by introducing \emph{subject profiles} containing information about subjects' tastes. 
+        
+        \begin{equation}
+            \label{eq_content_based}
+            \hat{u}^{CB}_R(s, o) = \sum_{(s,o') \in R} sim(o, o')
+        \end{equation}
         
         \subsubsection{Benefits and Drawbacks}
         The accuracy of the provided recommendations strongly depends on the similarity determination. If the items are characterized properly and the subjects tend to like uniform sets of objects, the recommender can be pretty successful, as \cite{wiki_genome} mentioned above. However there are several drawbacks of the method, as mentioned in \cite{survey}:
@@ -556,6 +581,13 @@ Supervisor's e-mail address: \vedoucimail\\
         In the figure \ref{pic_collaborative} there is a simplified example of a recommendation made by collaborative filtering. The full arrows represent already known relationships. The two subjects both have a relation to one item and therefore they are treated as similar. The recommendation is marked by the dashed arrow. An object to be recommended is chosen from the similar subject's related objects so that the subject isn't related to the object.
         
         \fig{pics/collaborative.png}{Collaborative Filtering}{pic_collaborative}
+        
+        More formally, classic user-based collaborative filtering methods use a function $\hat{u}^{CCF}_R$ for estimiating the utilitiy as  depicted in the formula \ref{eq_cf}. In the formula, $v_R: S \to \mathbb{R}^{|O|}$ is a function giving a subject vector to a given subject $s$, according the objects that are in $R$ with $s$. $cos$ is cosine of two vectors, as defined e.g. in \cite{survey}.
+        
+        \begin{equation}
+            \label{eq_cf}
+            \hat{u}^{CCF}_R(s, o) = \sum_{(s',o) \in R} cos(v_R(s), v_R(s'))
+        \end{equation}
         
         The collaborative filtering methods can be divided into several groups. The overview of the groups can be seen in the figure \ref{pic_collaborative_groups}), names of the techniques and algorithms belonging to the given groups are in italics.
         
@@ -584,9 +616,16 @@ Supervisor's e-mail address: \vedoucimail\\
             
             Subject and object vectors allow to project the subjects and object into multidimensional space. Recommended objects are those that are ``near'' the given subject in the multidimensional space. Some common techniques for measuring the subject-object distance are vector cosine and dot product. Some dimensions can be coupled with some known object characteristics as genre for movies \cite{bellkor_ieee}. But the meaning of most of the dimensions can hardly be discovered, as they aren't designed by a human but a machine-learning technique. Consequently, the recommenders using matrix factorization usually aren't able to give reasons for their recommendations. 
             
-            Figure \ref{pic_latent} shows some users and items projected to a simplified two-dimensional space. Their nature determines their positions in the space. Items that are near each user are likely to produce a positive response from the user and hence they are good for recommendations. 
+            More formally, latent factor recommender estimates the utility by a function $\hat{u}^{LF}_R$ as displayed in the formula \ref{eq_lf}. $fv^s_R: S \to \mathbf{R}^f$, $fv^o_R: O \to \mathbf{R}^f$ are  functions assigning each subject/object a vector of the given factor latent space dimensionality $f \in \mathbf{N}$. Vectors for the subjects and objects are obtained by a methods like \emph{stochastic gradient descent} or \emph{alternating least squares}, see \cite{bellkor_ieee}.
             
-            \fig{pics/latent.png}{Latent factor model recommender}{pic_latent} 
+            \begin{equation}
+                \label{eq_lf}
+                \hat{u}^{LF}_R(s, o) = {fv^s_R(s)}^T  fv^o_R(o)
+            \end{equation}
+            
+            Figure \ref{pic_latent} shows some users and items projected to a simplified two-dimensional space ($f=2$). Their nature determines their positions in the space. Items that are near each user are likely to produce a positive response from the user and hence they are good recommendations. 
+            
+            \fig{pics/latent.png}{Latent factor model recommender}{pic_latent}
             
         \subsection{Benefits and Drawbacks}
         \label{cf_benefits_drawbacks}
@@ -621,7 +660,16 @@ Supervisor's e-mail address: \vedoucimail\\
         Another approach to knowledge-based recommender was used in the \emph{RACOFI} system \cite{racofi}. The system consist of a collaborative filtering engine (\emph{COFI}) and a rule applying agent (\emph{RALOCA}). The primary recommendation is done by COFI. The rules are then used for adjusting the recommendation rate or removing objects from recommendations. The rules are applied on \emph{objective} data we know about the subjects and objects, like age and genre respectively. 
         
         The \cite{racofi} report shows that rules can handle boundary cases by removing inappropriate objects for recommendations. They can also refine recommendations by applying some rules that were found empirically. We find the idea of applying rules for recommending interesting, especially when there's not enough data for making other types of recommendation. The other benefit of rule-based recommending is the ability to give good explanations why the objects were recommended.
-
+        
+        More formally, knowledge based methods use functions like $\hat{u}^{KB}_R$ defined in the formula \ref{eq_kb} for estimating the utility. $RL_{so}$ is a set of rules that can be applied to a particular subject-object pair $(s, o)$, where each rule $rl: S \times O \to [0,1]$ is a function determining utility of the object $o$ to the subject $s$.
+        
+        \begin{equation}
+            \label{eq_kb}
+            \hat{u}^{KB}_R(s, o) = \sum_{rl \in RL_{so}} rl(s,o)
+        \end{equation}
+        
+        In the illustration \ref{pic_knowledge} we use a rule that uses information about the conditions where the subject is situated in order to determine the utility of the object to the subject.
+        
         \fig{pics/knowledge.png}{Knowledge-based Recommender}{pic_knowledge} 
         
         Accordng to \cite{knowledge_spain}, there are three types of knowledge, a recommender system can deal with:
@@ -640,13 +688,27 @@ Supervisor's e-mail address: \vedoucimail\\
             In social networks, there are links between users, such as the \emph{friends} link. If these are available, the recommender can recommend an object according on what user's friends liked. A schematic picture of the a social network recommender can be seen in the figure \ref{pic_social}.
             
             \fig{pics/social.png}{Recommending in social networks}{pic_social} 
+            
+            More formally, the $\hat{u}^{SN}_R$ estimates the utility, as depicted in the formula \ref{eq_sn}, where $FR \subseteq S \times S$ is a symmetric friendship relation and $int: S \times S \to [0,1]$ is a function giving an intensity of the friendship between two users.
+            
+            \begin{equation}
+                \label{eq_sn}
+                \hat{u}^{SN}_R(s, o) = \sum_{(s, s') \in FR \ \& \ (s', o) \in R} int(s, s')
+            \end{equation}
 
         \subsection{Demographic Filtering}
             When we have some additional information about users such as nationality, residence, age or occupation, we can use it for determining similarity between the users. A demographic filtering method can be used as an additional measure of user similarity when there's little known about the user's taste. An example of a recommendation made by a demographic filtering recommender can be seen in the figure \ref{pic_demographic}.
             
             \fig{pics/demographic.png}{Demographic Filtering}{pic_demographic} 
             
-        Even though these methods require some specific data to be present in the domain, we would like our universal recommender to work with such data. E.g. in the domain where demographic data is available, we should be able to use them for making recommendations.
+            More formally, the $\hat{u}^{DF}_R$ estimates the utility, as depicted in the formula \ref{eq_df}, where  $dsim: S \times S \to [0,1]$ is a function giving similarity between users according to their demographic data.
+            
+            \begin{equation}
+                \label{eq_df}
+                \hat{u}^{DF}_R(s, o) = \sum_{(s', o) \in R} dsim(s, s')
+            \end{equation}
+            
+            Even though these methods require some specific data to be present in the domain, we would like our universal recommender to work with such data. E.g. in the domain where demographic data is available, we should be able to use them for making recommendations.
 
     \section{Hybrid Recommenders}
         \label{hybrid_recommenders}
@@ -655,6 +717,13 @@ Supervisor's e-mail address: \vedoucimail\\
         For enhancing the success of produced recommendations, we can use a hybrid recommender that uses all its underlying methods when producing any recommendation. The combined methods can be of various types, using various relationships among subjects and objects. A combination of content-based and collaborative filtering is quite popular, possibilities of combining the two methods into a single hybrid recommender are listed in \cite{survey}. The combination of memory-based and model-based collaborative filtering is often used in contemporary commercial recommenders, as in \cite{google_news} 
         
         A hybrid recommender can help to overcome some drawbacks of the recommendation methods, as the \emph{Cold start problem} (see \ref{cf_benefits_drawbacks}). In this case, when little data is known about a new subject and object, some subsidiary recommendation method can be used. This subsidiary method wouldn't be suitable for performing the most of the recommendations, but it can make the best of the little data that is available. This approach is used in the default strategy of the Duine recommender framework \cite{duine}.
+        
+        More formally, a linear hybrid recommender uses $\hat{u}^{H}_R$ for estimating the utility, as depicted in the formula \ref{eq_df}. $U$ is a set of functions belonging to the contained recommenders, $\hat{u'}_{iR} \in U$ for $i=1, \dots |U|$. $w_i \in [0,1]$ is a relative weight of the utility function $\hat{u'}_{iR}$.
+            
+        \begin{equation}
+            \label{eq_h}
+            \hat{u}^{H}_R(s, o) = \sum_{i = 1}^{|U|} \hat{u'}_{iR} \ w_i
+        \end{equation}
         
         Figure \ref{pic_hybrid} shows a recommendation for a new user, performed by a hybrid recommender combining social links and collaborative filtering. 
         
@@ -683,14 +752,27 @@ Supervisor's e-mail address: \vedoucimail\\
                 \fig[7]{pics/knowledge_cf_hybrid.png}{Combining Collaborative Filtering and Knowledge Based Recommender as a Hybrid Recommender}{pic_knowledge_cf_hybrid}
                  
                 In this variation there are independent knowledge based and collaborative filtering recommenders. This approach was used in the RACOFI system \cite{racofi}. For a relationship prediction, if a rule is available, it is used for predicting the relationship together with the underlying collaborative filtering algorithm. If not, only the collaborative filtering is used. Although this is a possible combination of the recommenders it has some significant drawbacks. The method introduces a tension between the two recommenders. The results of the collaborative method, which should be universal are in some cases distorted by the knowledge recommender. This problem would lead to incorrect learning in the model-based algorithms, as some manipulations are done outside the model and therefore the method cannot fully affect the resulting predictions.
-               
+                
+                More formally, in this approach we use a function $\hat{u}^{HKC}_R$ for estimating the utility, as depicted in the formula \ref{eq_hkc}. $\hat{u}^{HKC}_R$ is a composition of a knowledge based recommender utility estimation function $\hat{u}^{KB}_R$ and a collaborative filtering utility estimation function $\hat{u}^{CF}_R$, which can be replaced by any of the functions related to algorithms mentioned in the section \ref{collaborative_filtering}. 
+                
+                \begin{equation}
+                    \label{eq_hkc}
+                    \hat{u}^{HKC}_R = \hat{u}^{KB}_R \circ \hat{u}^{CF}_R
+                \end{equation}
+                
             \subsubsection{Using the knowledge-based predictions as an input for collaborative filtering} 
+                \fig[7]{pics/knowledge_cf_above.png}{Using predictions from Knowledge based recommender as an input to Collaborative Filtering}{pic_knowledge_cf_above}
+                
                 Alternatively, using the business rules given during the adaptation to a specific domain, we can generate a prediction (a kind of rating) that is later used in the underlying collaborative filtering algorithm. The prediction is available for subject - object pairs, for which some rules can be applied. The rules are only used during the initial recommender build to provide an input for the collaborative filtering. The recommendations then are done solely by the collaborative filtering algorithm. The advantage of the approach is, that the information from the knowledge-based algorithm is available in the initial phase and can be used for the collaborative filtering model build. 
                 
-                \fig[7]{pics/knowledge_cf_above.png}{Using predictions from Knowledge based recommender as an input to Collaborative Filtering}{pic_knowledge_cf_above}
-            
-            
-            For the given reasons we choose the second option. Another advantage of this approach is that the recommendation time will be dependent only on the recommender algorithm. The implementation of the chosen approach is thoroughly described in the chapter \ref{architecture}.
+                More formally, in this approach we use a function $\hat{u}^{KIC}_R$ for estimating the utility, as depicted in the formula \ref{eq_kic}. $\hat{u}^{KIC}_R$ uses a function $\hat{u}^{CF}$, which can be replaced by any of the functions related to algorithms mentioned in the section \ref{collaborative_filtering}. Instead of using bare predicted relationship $R$ it additionally uses $R^{KB} \subset S \times S$, a relation obtained by applying the rules of the knowledge-based recommender to subjects $s \in S$ and $o \in O$. Formally $R^{KB} = \{(s, o) | \exists rl \in RL_{so}\}$, where $RL_{so}$ is a set of rules that can be applied to the subject object pair $(s, o)$, defined in the section \ref{knowledge_based}. 
+                
+                \begin{equation}
+                    \label{eq_kic}
+                    \hat{u}^{KIC}_R = \hat{u}^{CF}_{R \cup R^{KB}}
+                \end{equation}
+                
+                For the given reasons we choose the second option. Another advantage of this approach is that the recommendation time will be dependent only on the recommender algorithm. The implementation of the chosen approach is thoroughly described in the chapter \ref{architecture}.
         
 \chapter{Relationships in Studied Systems}
     \label{relationships_in_studied}
@@ -721,7 +803,7 @@ Supervisor's e-mail address: \vedoucimail\\
         
         The dataset contains different kinds of implicit feedback that is to be combined in order to provide good recommendations. Moreover the objects (tours) have some properties that can be used for determining similarity. 
     
-    \section{Relationship Abstraction Summary}
+    \section{Summary}
         \label{relationship_abstraction_summary}
         The studied systems were selected so that they cover a variety of different domains, where we can recommend. The datasets fulfil the recommender applicability conditions described in the section \ref{recommender_system_applicability}. The systems were selected so that we can prove the usefulness of the Unresyst recommender concept for processing both implicit and explicit feedback. Some of the datasets have attributes for their subjects and objects, that can be used for similarity measures.
         
@@ -1486,80 +1568,125 @@ kod z konzole - build, recommend, predict
             f & f\\
             \hline
         \end{stattable}
-        
-        
-        
-
 
 \chapter{Evaluating Recommender Results}
     \label{evaluating_recommender_results}
-    In the chapter we describe experience with running the Universal Recommender on various systems. The quality of the recommendations are evaluated for each system. The results are compared to the recommender contained in the system, where relevant. 
+    In the chapter we describe how we evaluated Unresyst on the presented datasets. Firstly we describe the methodology of evaluating, then we discuss the choice of the evaluation metric for each dataset, we give an overview of evaluation results. Finally we discuss possibilities of improving the Unresyst evaluation results.
     
-    smaznul jsem i ostatni implicitni feedback z train setu - feedback z budoucnosti neznam. 
-    
-    metriky kde se porovnava poradi v listech nejsou uzitecne, jelikoz v test setu nemam poradi. 
-    hh\\
-    $p_{so}$: preference of $s$ to $o$ taken from the test set\\
-    $\widetilde{p}_{so}$: prediction of the preference of $s$ to $o$
-    \begin{equation}
-        \label{rmse}
-        RMSE = \sqrt{\frac{\sum_{(s,o)\in TestPairs}(p_{so} - \widetilde{p}_{so})^2}{|TestPairs|}}
-    \end{equation}
-    
-    ndcg nemuzu pouzit, protoze nemam poradi v result listu
-    korenuv hyperzpusob na par nahodne vybranych uzivatelu.
-    hh\\
-    $Prec_s$: precision for subject $s$.\\
-    $Rec_s$: recall for subject $s$\\
-    $R_s$: a set of objects recommended to $s$\\
-    $T_s$: a set of objects in test set for $s$\\
-    $N$: number of recommended objects\\
-    
-    \begin{equation}
-        \label{precision}
-        Prec_s = \frac{|R_s \cap T_s|}{N}
-    \end{equation}
-    
-    \begin{equation}
-        \label{recall}
-        Rec_s = \frac{|R_s \cap T_s|}{|T_s|}
-    \end{equation}
-    
-    zpusob vyberu test dat z datasetu - nakonec asi podle casu (where available)
-    
-    timestampy at si resi v pravidlech - to je business vec - jestli plati nejaky decay nebo tak neco, do toho algoritmus nema stourat. 
-    
-    \section{Metrics}
-        je jich hafo, viz clanek. Kdyz nemam negativni hodnoceni, tak je mi RMSE uplne na pytel. Jak jsem dosel k tomu precision recall na urovni usera - je potreba to nejak omezit aby nevyhraval recommender konstantni 1. Rozumna operace pro omezeni je recommende - per user. 
-    \section{Last.fm dataset}
-        Ze mam dva recommendery - jeden novel - objevovani novych artistu
-        druhy nenovel - napr. hrani v personalized radiu, nezalezi na tom jestli hral nebo ne. Tohle nesrovnam s Mahoutem, protoze ten vyrazuje zname dvojice z recommendations
+    \section{Evaluation Methodology}
+        \label{evaluation_methodology}
         
-        u novel test pairu beru distinct subj, obj. u nenovel beru jak mi to prijde. Pokud recommender trefi objekt, ktery je v test setu vickrat, tak do precision to pocitam jenom jednou (recommended item byla zahrana), do recall vickrat (trefil vic polozek z moznych). 
+        As we only had access to the presented systems through the datasets, we couldn't perform a live experiment with real system users. Instead of that, we used an offline analysis as described in \cite{evaluating}. We ran Unresyst on a subset of available data (\emph{training data}) and evaluated the results on the rest (\emph{testing data}). In the database on which we performed the recommender build, we kept only the training data. Later on we took the testing data and measured the peformance of the evaluator using metrics described in the section \ref{evaluation_metrics}. 
         
-        Results:
-        test set randomly chosen, 516 trivial hits
-        - unresyst with age rule: prediction Success rate: 0.583559 (646/1107); recommendation: 4 hits recorded, precision, recall (0.0046511627906976744, 0.0042393410852713176)
-        - mahout slope one: prediction Success rate: 0.708220 (784/1107), 7 hits recorded, precision/recall (0.0069767441860465115, 0.014426910808489757)
+        For a comparison, we ran the evaluation also on an external recommender that was using a common recommender algorithm. As an external recommender we used the Mahout recommender framework \cite{mahout}. Our usage of Mahout is illustrated on the figure \ref{pic_external}. We created the External Recommender class having the same interface as the Unresyst recommender. The recommender was using for its build the Mahout recommender, communicating via CSV\footnote{CSV stands for Comma-separated values, a simple format of text files where the values (in our case identifiers of subjects, objects and optionally rating) are separated by commas.} files. The input files contained train data for the Mahout recommender. The output files contained predictions or recommendations on the test data.
         
-        test set taken as the latest scrobbles (non-novel): XXX trivial hits
-        - unresyst with age rule and scrobble count rule:
-            prediction: Success rate: 0.527125 (583/1106), RMSE: 0.475152
-            recommendation: 65 hits recorded, (0.050724637681159424, 0.052776203958823528)
-        - mahout slope one (binary):  
-            prediction: 0.536166 (593/1106) RMSE: 0.340527
-            recommendation: 3 hits recorded, (0.0043478260869565218, 0.0056051034311903883)
+        \fig[10]{pics/external_recommender.png}{The usage of the Mahout recommender for comparison}{pic_external}
 
-    \section{Improving the Recommender Results}
-        \label{improving_the_results}
-        \subsection{Learning Weights}
+        \subsection{Selecting Test Data}
+            \label{selecting_test_data}
+            We used a constant ratio of testing to training data ($1:4$) for all datasets. In datasets where the timestamp in the feedback relationships was available (Last.fm and Travel agency), we selected the given part of the newest relationships as training data. Then the evaluation was done as if we ``replayed'' the scrobbles and orders recorded in the dataset. In the Flixster dataset where the timestamp wasn't available, we selected the ratings to the test set randomly.
+            
+            In the travel agency dataset we also removed all implicit feedback data that was newer than the newest contained tour order. This corresponds to a simulation of a live user test. In a given period we collect user feedback (orders, quetions, clicks, etc.). In the next period we perform a test where we try to predict which tours a user orders, using only the data collected in the previous period. 
+
+    \section{Evaluation Metrics}
+        \label{evaluation_metrics}
+        For evaluating recommender accuracy there are a lot of various metrics \cite{evaluating}. In our case we had to deal with two different cases: explicit feedback where the exact preference value is available and implicit feedback where we have only positive signs of preference.
+        
+        \subsection{Explicit Feedback Metrics}
+            \label{explicit_feedback_metrics}
+            
+            For evaluating explicit feedback from the Flixster dataset we have chosen RMSE, although the metric is an object of recent criticism \cite{rmse_critic}. RMSE stands for Root Mean Square Error and has been the most widely used metric for evaluating accuracy recommender system, since it was used in the Netflix prize  for evaluating the participants' results \cite{netflix_prize}. Apart from being widely used it has an advantage of being simple to compute and it punishes large errors much more than the small ones.
+            
+            The formula \ref{rmse} computes RMSE for the whole recommender. In our case $p_{so}$ is the  preference of $s$ to $o$ taken from the testing data, $\widetilde{p}_{so}$ is a prediction of the preference of $s$ to $o$, created by the recommender.
+            
+            \begin{equation}
+                \label{rmse}
+                RMSE = \sqrt{\frac{\sum_{(s,o)\in TestPairs}(p_{so} - \widetilde{p}_{so})^2}{|TestPairs|}}
+            \end{equation}
+        
+        \subsection{Implicit Feedback Metrics}
+            \label{implicit_feedback_metrics}
+            The more complicated case is evaluating a recommender running on a dataset where only implicit feedback is available. In Last.fm and Travel agency datasets we have only positive implicit feedback and the lack of  feedback can't be taken as a negative preference. I.e. there can be several reasons why a user hasn't listened to an artists, maybe he/she doesn't like the artist or he/she only doesn't know about the artist. 
+            
+            Therefore using the implicit feedback from test data to evaluate the recommender by a metric like RMSE isn't much sensible, as we only have positive examples with the highest possible expectancy value $1$. If we used such an evaluator, an ideal recommender would give $1$ for all the items, which isn't the recommender we're looking for. We can't even use a slightly negative feedback for missing feedback, as there're much more objects with missing feedback, than with present feedback and there's no reasonable way to select objects without feedback to predict preference for.
+            
+            In order to overcome the limitations of having only positive implicit feedback, we have to either restrict the number of objects the recommender can propose or we have to take relative values of the predicted expectancy. The metrics measuring coherency of the recommendation list and list from test data, as NDCG \cite{ndcg} aren't much helpful, as we don't have any ordering in the list from test data.
+            
+            The paper \cite{evaluating} proposes using the \emph{Precision/Recall} metric, which is heavily used in the field of machine learning and information retrieval. For our application, we count the metric for each user and count an average to get the numbers for the complete recommender. Objects that were have an implicit feedback from the user are taken as \emph{relevant}, others are irrelevant. We try to predict relevant objects for a subject via our \emph{get recommendations} method. In the formulas for counting precision (\ref{precision}) and recall (\ref{recall}) we accomodate the Precision/Recall concepts to our needs. $Prec_s$ is precision of recommendations for subject $s$, $Rec_s$ is recall of recommendations for subject $s$, $R_s$ is a set of objects recommended to $s$, $T_s$ is a set of objects in test set for $s$,
+            $N$ is the number of recommended objects.
+            
+            \begin{equation}
+                \label{precision}
+                Prec_s = \frac{|R_s \cap T_s|}{N}
+            \end{equation}
+            
+            \begin{equation}
+                \label{recall}
+                Rec_s = \frac{|R_s \cap T_s|}{|T_s|}
+            \end{equation}
+            
+            We experimented with different values of $N$, but for all tested recommender algorithms both precission and recall were extremly low. The problem of this approach is, that it's taking objects with no implicit feedback as irrelevant, which isn't completely appropriate as the lack of possitive feedback doesn't imply a negative preference. Therefore we had to seek another metric.
+            
+            Authors of \cite{koren_implicit} used a metric called $\overline{rank}$ for evaluation of their recommender working with implicit feedback. The definition of the metric is the formula \ref{eq_koren_avg}, where $T$ denotes the set of testing subject-object pairs. $rank_{so}$ is a rank for the given subject-object pair, defined in \ref{eq_koren_rank}. $m$ denotes the number of objects in dataset, $i_{so}$ the index of the object $o$ in a list of all objects ordered by the expectancy for the subject $s$. 
+            
+            \begin{equation}
+                \label{eq_koren_avg}
+                \overline{rank} = \frac{\sum_{(s,o) \in T} rank_{so}}{|T|}
+            \end{equation}
+            
+            \begin{equation}
+                \label{eq_koren_rank}
+                rank_{so} = \frac{i_{so}}{m}
+            \end{equation}
+            
+            As the metric requires counting all expectancy of all subject-object pairs, we have performed it only for a number of randomly selected subjects. To count the $\overline{rank}$ metric we created an ordered list of all objects for a given subject. For each object $o$ we had in the test set for the subject $s$, we obtained the index $i_{so}$ and counted $rank_{so}$. For comparison, a random recommender would score around $0.5$, as the objects from the test set would be randomly distributed in the list, giving the average $0.5$. 
+
+
+    \section{Evaluation Results on the Datasets}
+        \label{results}
+        When evaluating Unresyst on the studied datasets, we experimented with various recommender configurations. The results of our measurements are in the following sections. Finally we give some ideas on improving the recommender results.
+        
+        \subsection{Last.fm}
+            \label{results_lastfm}
+            druhy nenovel - napr. hrani v personalized radiu, nezalezi na tom jestli hral nebo ne. Tohle nesrovnam s Mahoutem, protoze ten vyrazuje zname dvojice z recommendations
+        \subsection{Flixster}
+            \label{results_flixster}
+            
+        \subsection{Travel Agency}
+            \label{travel_agency}
+            
+        \subsection{Improving the Recommender Results}
+            \label{improving_the_results}
+            An obvious way to improve Unresyst results on a given dataset is to set weights of the rules, so that the important rules that heavilly infulence the recommendations get high weights and vice versa. As seeing which rule is important and which isn't, we propose an automatic way of weight setting.
+            
 
 \chapter{Conclusion and Future Work}
-\label{conclusion}
+    \label{conclusion_future}
+    The chapter summarizes the thesis and gives ideas for future development of the Unresyst recommender.
+    \section{Conclusion}
+        \label{conclusion}
+        In the thesis we have analyzed the problem of a universal recommender. We have proposed design and a prototype of Unresyst, a universal recommender system, taking multiple sources of preference and similarity as an input. Unresyst combines a knowledge-based recommender with collaborative filtering in a way that is according to our belief novel. The Unresyst interface isolates the business knowledge from recommender algorithms. The  proposed architectrure for Unresyst is highly modular and enables using various algorithms under the business knowledge layer.
+        
+        We have designed an interface for entering business rules that can be used for both explicit and implicit user feedback. For entering the strength of the rules we have introduced the expectancy concept, which is a way of representing confidency of both positive and negative rules. We have analyzed methods for combining multiple rules that can be applied to a single entity or entity pairs. 
+        
+        The design concepts were verified by implementing a prototype that was addapted to datasets from various domains. We proposed ways of measuring Unresyst recommendation accuracy and used it for our prototype implementation.
+        
+    \section{Future Work}
+        \label{future_work}
+        We propose a set of actions to continue the work done in the thesis. Addtionally to the implementation, we propose some more activities in the universal recommender research.
+        
+        \paragraph{Implementation} The Unresyst recommender should be implemented in a fast and scalable way, so that it can be used in a real world system. The implementation should deal with technical matters like a deeper integration of Unresyst with a collaborative filtering framework. We should be able to integrate the Unresyst implementation to systems running on a wide range of platformts or it should be able to run as a recommender service.
+        
+        \paragraph{More Domain Experiments} Even though we have experimented with Unresyst on a range of various domains, some more experiments are needed, including collecting user feedback to provided recommendations. Some experiments beyond the traditional user-item recommendations can be prerformed, like recommending to user groups, or recommending multiple kinds of items.
+        
+        \paragraph{More Rule Combination Methods} The rule combination methods presented in the section \ref{combining} can be replaced by more sophisticated ones as Bayesian networks.
+        
+        \paragraph{Recommender Algorithm Modifications} The traditional collaborative filtering algorithms can be modified so that they take as an input the data sources provided by the Unresyst interface. The modified algorithms can work on one of the levels proposed in the section \ref{algorithm_layer}. 
+        
+        \paragraph{Learning Weights of the Rules} The concept of automatic rule weight setting presented in the section \ref{improving_the_results} can be expanded, so that the weight setting is done during the build of the recommender. Experiments with more sophisticated learning methods can be performed.
+        
+        \paragraph{Learning New Rules} Additionaly to learning weights of the existing rules, data mining methods can be used for finding new rules in parent system data. The found rules can be discussed with domain experts and eventually added to the Unresyst configuration.
 
-% zahrnul jsem knowledge-based recommender do matrix factorization (ale na to prijdu az v kapitole algorithms).
-% navrhnul jsem expectancy - miru relevance rekomendace nezavislou na hodnoceni, navrhnul jsem jak ji zadavat aby to bylo user-friendly
-% oddelil jsem business knowledge od recommender algorithm
 
 \chapter{Software tools}
 \label{tools}
@@ -1588,6 +1715,7 @@ kod z konzole - build, recommend, predict
     \bibitem{netflix_solution}http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
     \bibitem{netflix_wiki}http://en.wikipedia.org/wiki/Netflix\_Prize
     \bibitem{netflix_benefit}http://www.nytimes.com/2009/09/22/technology/internet/22netflix.html
+    \bibitem{netflix_prize}The Netflix Prize \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.117.8094&rep=rep1&type=pdf!
     \bibitem{netflix_end}http://blog.netflix.com/2010/03/this-is-neil-hunt-chief-product-officer.html
         http://glaros.dtc.umn.edu/gkhome/suggest/overview
     hybrid vec na duinu
@@ -1639,6 +1767,12 @@ http://www.netflixprize.com/assets/GrandPrize2009\_BPC\_BellKor.pdf
 \bibitem{flixster_paper}A matrix factorization technique with trust propagation for recommendation in social networks
 \verb!http://portal.acm.org/citation.cfm?id=1864708.1864736!
 \bibitem{musicbrainz} MusicBrainz music database \verb!http://musicbrainz.org/!
+\bibitem{evaluating}Evaluating collaborative filtering recommender systems \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.97.5270&rep=rep1&type=pdf!
+\bibitem{rmse_critic}Being accurate is not enough: how accuracy metrics have hurt recommender systems \verb!http://www.grouplens.org/papers/pdf/mcnee-chi06-acc.pdf!
+\bibitem{ndcg}Learning to Rank by Optimizing NDCG Measure \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.154.8402&rep=rep1&type=pdf!
+\bibitem{koren_implicit}Collaborative Filtering for Implicit Feedback Datasets \verb!http://www2.research.att.com/~yifanhu/PUB/cf.pdf!
+\bibitem{peska}Ladislav Pe¹ka: User preferences in the domain of web shops, Master thesis
+
 
 http://ids.csom.umn.edu/faculty/gedas/papers/recommender-systems-survey-2005.pdf
 odkazy:
