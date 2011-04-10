@@ -137,19 +137,19 @@ sources#</dia:string>
     </dia:object>
     <dia:object type="Flowchart - Ellipse" version="0" id="O1">
       <dia:attribute name="obj_pos">
-        <dia:point val="8.18502,2.2429"/>
+        <dia:point val="8.12116,2.22498"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="8.08502,2.1429;16.5513,4.66223"/>
+        <dia:rectangle val="8.02116,2.12498;16.6151,4.68014"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="8.18502,2.2429"/>
+        <dia:point val="8.12116,2.22498"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="8.2662319804194002"/>
+        <dia:real val="8.3939566751612418"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="2.3193262890176807"/>
+        <dia:real val="2.3551630817635436"/>
       </dia:attribute>
       <dia:attribute name="border_width">
         <dia:real val="0.20000000000000001"/>
@@ -163,7 +163,7 @@ sources#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#Busness Analyst#</dia:string>
+            <dia:string>#Business Analyst#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="sans" style="0" name="Helvetica"/>
@@ -185,13 +185,13 @@ sources#</dia:string>
     </dia:object>
     <dia:object type="Standard - Line" version="0" id="O2">
       <dia:attribute name="obj_pos">
-        <dia:point val="16.4513,3.40256"/>
+        <dia:point val="16.5151,3.40256"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.3274,3.27871;22.6177,5.37878"/>
+        <dia:rectangle val="16.3911,3.27851;22.6175,5.37638"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
-        <dia:point val="16.4513,3.40256"/>
+        <dia:point val="16.5151,3.40256"/>
         <dia:point val="22.4029,5.125"/>
       </dia:attribute>
       <dia:attribute name="numcp">
@@ -844,7 +844,7 @@ to the system#</dia:string>
         <dia:point val="35.5,17.9"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="34.9695,4.71319;37.35,18"/>
+        <dia:rectangle val="34.9695,4.7132;37.35,18"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="35.5,17.9"/>

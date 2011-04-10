@@ -148,7 +148,10 @@ class BaseCombinator(object):
         
         @rtype: iterable of SubjectObject
         @return: the promising objects
-        """        
+        """ 
+        
+        if not min_count:
+            return []       
                 
         recommender_model = dn_subject.recommender
         
