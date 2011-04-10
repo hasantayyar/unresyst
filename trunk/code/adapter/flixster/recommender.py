@@ -46,7 +46,7 @@ class MovieRecommender(Recommender):
         ),
     )
     """The rules"""
-    
+
     relationships = (
         # users in friendship
         SubjectSimilarityRelationship(
@@ -56,21 +56,22 @@ class MovieRecommender(Recommender):
             
             is_positive=True,               
             
-            weight=0.5,            
+            weight=0.65,            
             
             description="Users %(subject1)s and %(subject2)s are friends.",
         ),
     )
     """The relationships"""
-    
+        
     biases = (
+                
         # people giving high ratings
         SubjectBias(
             name="Users giving high ratings.",
             
             description="User %(subject)s gives high ratings.",
             
-            weight=0.5,           
+            weight=1.0,           
             
             is_positive=True,
             
@@ -85,7 +86,7 @@ class MovieRecommender(Recommender):
             
             description="Movie %(object)s is high-rated",
             
-            weight=0.5,
+            weight=1.0,
             
             is_positive=True,
             
@@ -100,7 +101,7 @@ class MovieRecommender(Recommender):
             
             description="User %(subject)s gives low ratings.",
             
-            weight=0.5,           
+            weight=0.25,           
             
             is_positive=False,
             
@@ -115,7 +116,7 @@ class MovieRecommender(Recommender):
             
             description="Movie %(object)s is low-rated",
             
-            weight=0.5,
+            weight=0.25,
             
             is_positive=False,
             
@@ -123,5 +124,8 @@ class MovieRecommender(Recommender):
             
             confidence=lambda movie: MAX_LOW_RATING - movie.rating_set.aggregate(Avg('rating'))['rating__avg']
         ),        
+                
+    
     )
+    
     

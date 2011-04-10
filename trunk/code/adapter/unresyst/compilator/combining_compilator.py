@@ -58,6 +58,10 @@ class CombiningCompilator(BaseCompilator):
     def compile_all(self, recommender_model):
         """Compile preferences, known relationships + similarities.
         """
+        
+        if not self.breadth:
+            return
+        
         # go through the sujbects (or subjectobjects)
         #
         

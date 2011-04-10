@@ -31,6 +31,8 @@ After the removal:
 >>> Friend.objects.count()
 1051
 
+>>> MovieRecommenderEvaluator.select_evaluation_pairs()
+2839 test pairs selected from total 14195 pairs
 """
 
 max_user_id = 1520

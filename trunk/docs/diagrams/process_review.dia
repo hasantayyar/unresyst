@@ -136,19 +136,19 @@ characteristics, changes in the system#</dia:string>
     </dia:object>
     <dia:object type="Flowchart - Ellipse" version="0" id="O1">
       <dia:attribute name="obj_pos">
-        <dia:point val="8.03502,1.9429"/>
+        <dia:point val="7.97116,1.92498"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.93502,1.8429;16.4013,4.36223"/>
+        <dia:rectangle val="7.87116,1.82498;16.4651,4.38014"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="8.03502,1.9429"/>
+        <dia:point val="7.97116,1.92498"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="8.2662319804194002"/>
+        <dia:real val="8.3939566751612418"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="2.3193262890176807"/>
+        <dia:real val="2.3551630817635436"/>
       </dia:attribute>
       <dia:attribute name="border_width">
         <dia:real val="0.20000000000000001"/>
@@ -162,7 +162,7 @@ characteristics, changes in the system#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#Busness Analyst#</dia:string>
+            <dia:string>#Business Analyst#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="sans" style="0" name="Helvetica"/>
@@ -184,13 +184,13 @@ characteristics, changes in the system#</dia:string>
     </dia:object>
     <dia:object type="Standard - Line" version="0" id="O2">
       <dia:attribute name="obj_pos">
-        <dia:point val="16.3013,3.10257"/>
+        <dia:point val="16.3651,3.10256"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.1752,2.97645;22.7001,5.35031"/>
+        <dia:rectangle val="16.2388,2.97624;22.6999,5.34774"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
-        <dia:point val="16.3013,3.10257"/>
+        <dia:point val="16.3651,3.10256"/>
         <dia:point val="22.4876,5.125"/>
       </dia:attribute>
       <dia:attribute name="numcp">
@@ -451,7 +451,7 @@ system data model#</dia:string>
         <dia:point val="16.5662,11.4697"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.4657,11.0272;22.9236,11.9744"/>
+        <dia:rectangle val="16.4656,11.0272;22.9236,11.9744"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
         <dia:point val="16.5662,11.4697"/>
@@ -775,19 +775,19 @@ for making recommendations#</dia:string>
     </dia:object>
     <dia:object type="Flowchart - Ellipse" version="0" id="O15">
       <dia:attribute name="obj_pos">
-        <dia:point val="8.045,-6.0075"/>
+        <dia:point val="7.98114,-6.02542"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.945,-6.1075;16.4112,-3.58817"/>
+        <dia:rectangle val="7.88114,-6.12542;16.4751,-3.57026"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="8.045,-6.0075"/>
+        <dia:point val="7.98114,-6.02542"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="8.2662319804194002"/>
+        <dia:real val="8.3939566751612418"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="2.3193262890176807"/>
+        <dia:real val="2.3551630817635436"/>
       </dia:attribute>
       <dia:attribute name="border_width">
         <dia:real val="0.20000000000000001"/>
@@ -801,7 +801,7 @@ for making recommendations#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#Busness Analyst#</dia:string>
+            <dia:string>#Business Analyst#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="sans" style="0" name="Helvetica"/>
@@ -823,13 +823,13 @@ for making recommendations#</dia:string>
     </dia:object>
     <dia:object type="Standard - Line" version="0" id="O16">
       <dia:attribute name="obj_pos">
-        <dia:point val="16.3112,-4.84784"/>
+        <dia:point val="16.3751,-4.84784"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.1841,-4.97496;22.7614,-2.48336"/>
+        <dia:rectangle val="16.2478,-4.97515;22.7612,-2.48513"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
-        <dia:point val="16.3112,-4.84784"/>
+        <dia:point val="16.3751,-4.84784"/>
         <dia:point val="22.55,-2.69826"/>
       </dia:attribute>
       <dia:attribute name="numcp">
@@ -905,7 +905,7 @@ for making recommendations#</dia:string>
         <dia:point val="16.4762,-0.980737"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.3528,-2.9571;22.7652,-0.857299"/>
+        <dia:rectangle val="16.3528,-2.9571;22.7652,-0.8573"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
         <dia:point val="16.4762,-0.980737"/>
@@ -939,7 +939,7 @@ for making recommendations#</dia:string>
         <dia:point val="29.525,-1.02153"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="29.029,-1.12214;29.9762,3.54472"/>
+        <dia:rectangle val="29.029,-1.12215;29.9762,3.54472"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
         <dia:point val="29.525,-1.02153"/>

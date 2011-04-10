@@ -18,7 +18,7 @@ from unresyst.aggregator import LinearAggregator, CombiningAggregator
 from unresyst.algorithm import SimpleAlgorithm, AggregatingAlgorithm, CompilingAlgorithm
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.compilator import GetFirstCompilator, CombiningCompilator
-from unresyst.combinator import AverageCombinator
+from unresyst.combinator import AverageCombinator, TwistedAverageCombinator, ConfidenceFactorCombinator
 
 def _assign_recommender(list_rels, recommender):
     """Go throuth the list, if the items have the "recommender" attribute,
@@ -478,13 +478,17 @@ class Recommender(BaseRecommender):
                     inner_algorithm=SimpleAlgorithm(
                         inner_algorithm=None
                     ),
-                    compilator=CombiningCompilator(combinator=AverageCombinator())
+                    compilator=CombiningCompilator(combinator=ConfidenceFactorCombinator(), breadth=0)
                 ),
-                aggregator=CombiningAggregator(combinator=AverageCombinator())
-            )                
+                aggregator=CombiningAggregator(combinator=ConfidenceFactorCombinator())
+            )
     """The default algorithm setup.
     The class that will be used for the algorithm level. Can be 
     overriden in subclasses"""    
+    
+    # TwistedAverageCombinator
+    # AverageCombinator
+    # ConfidenceFactorCombinator
     
     default_recommendation_count = DEFAULT_RECOMMENDATION_COUNT
     """The defaul count of the obtained recommended objects"""
