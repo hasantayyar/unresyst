@@ -1,52 +1,3 @@
-"""The flixster recommender"""
-
-from django.db.models import Avg
-
-from unresyst import *
-from models import *
-from constants import *
-
-def _rated_positively_generator():
-    """The generator to the predicted relationship"""
-    for r in Rating.objects.filter(rating__gt=str(MIN_POSITIVE_RATING)):
-        yield (r.user, r.movie)
-
-class MovieRecommender(Recommender):
-    """The flixster movie recommender"""
-
-    name = "Flixster Movie Recommender"
-    """The name"""    
-    
-    subjects = User.objects
-    """The objects to who the recommender will recommend."""
-    
-    objects = Movie.objects
-    """The objects that will be recommended.""" 
-
-    predicted_relationship = PredictedRelationship( 
-        name="User has rated the movie positively.",
-        condition=None, 
-        description="""User %(subject)s has rated the %(object)s positively.""",
-        generator=_rated_positively_generator,
-    )
-    """The relationship that will be predicted"""
-    
-    rules = (
-        # explicit rating
-        ExplicitSubjectObjectRule(
-            name="Movie rating.",
-            
-            description="User %(subject)s has rated %(object)s.",
-            
-            # all pairs user, rated movie
-            generator=lambda: [(r.user, r.movie) for r in Rating.objects.all()],
-            
-            # the number of stars divided by five
-            expectancy=lambda s, o:float(Rating.objects.get(user=s, movie=o).rating) / MAX_STARS,
-        ),
-    )
-    """The rules"""
-
     relationships = (
         # users in friendship
         SubjectSimilarityRelationship(
@@ -56,22 +7,21 @@ class MovieRecommender(Recommender):
             
             is_positive=True,               
             
-            weight=0.1,            
+            weight=0.5,            
             
             description="Users %(subject1)s and %(subject2)s are friends.",
         ),
     )
     """The relationships"""
-        
+    
     biases = (
-                
         # people giving high ratings
         SubjectBias(
             name="Users giving high ratings.",
             
             description="User %(subject)s gives high ratings.",
             
-            weight=1.0,           
+            weight=0.5,           
             
             is_positive=True,
             
@@ -86,7 +36,7 @@ class MovieRecommender(Recommender):
             
             description="Movie %(object)s is high-rated",
             
-            weight=1.0,
+            weight=0.5,
             
             is_positive=True,
             
@@ -101,7 +51,7 @@ class MovieRecommender(Recommender):
             
             description="User %(subject)s gives low ratings.",
             
-            weight=0.25,           
+            weight=0.5,           
             
             is_positive=False,
             
@@ -116,7 +66,7 @@ class MovieRecommender(Recommender):
             
             description="Movie %(object)s is low-rated",
             
-            weight=0.25,
+            weight=0.5,
             
             is_positive=False,
             
@@ -124,9 +74,5 @@ class MovieRecommender(Recommender):
             
             confidence=lambda movie: MAX_LOW_RATING - movie.rating_set.aggregate(Avg('rating'))['rating__avg']
         ),        
-                
-    
     )
-
-MovieRecommender.explicit_rating_rule = MovieRecommender.rules[0]    
     

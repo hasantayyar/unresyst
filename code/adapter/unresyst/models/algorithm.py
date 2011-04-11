@@ -29,6 +29,7 @@ class RelationshipPredictionInstance(BaseRelationshipInstance):
     
     class Meta:
         app_label = 'unresyst'  
+        unique_together = ('subject_object1', 'subject_object2', 'recommender')
 
     def __unicode__(self):
         return "(%s, %s), %f" % (self.subject_object1, self.subject_object2, self.expectancy)

@@ -142,3 +142,4 @@ PROMISING_RATE = 1.2
 """The rate by which the compiler breadth is multiplied to get the number
 of promising objects to be inspected"""
 
+EXP_PRECISION = 0.00001

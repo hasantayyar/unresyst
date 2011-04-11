@@ -28,7 +28,7 @@ class BaseRecommender(object):
     #
     
     @classmethod        
-    def predict_relationship(cls, subject, object_):    
+    def predict_relationship(cls, subject, object_, save_to_db=False):    
         """Get the prediction of the given relationship type between the subject
         and the object. 
         
@@ -37,6 +37,10 @@ class BaseRecommender(object):
         
         @type object_: domain specific object
         @param object_: the object
+        
+        @type save_to_db: bool
+        @param save_to_db: should the obtained predictions be saved, so that it
+            doesn't have to be computed again when asked for the pair next time
         
         @rtype: RelationshipPrediction
         @return: An instance representing the prediction of the relationship 
@@ -180,6 +184,10 @@ class BaseRecommender(object):
     recommendation list?
     """
     
+    save_all_to_predictions = None
+    """Should also instances of predicted_relationship be saved to predictions?
+    """
+    
     recommendation_expectancy_limit = None
     """The limit for expectancy above which the objects can be recommended.
     If not none, only objects with expectancy above the limit are recommended.
@@ -190,3 +198,5 @@ class BaseRecommender(object):
     verbose_build = None
     """Should messages be printed during the build?"""
     
+    explicit_rating_rule = None
+    """If given, this rule is exported, not the predicted_relationship"""

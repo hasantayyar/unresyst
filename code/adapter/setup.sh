@@ -9,6 +9,7 @@ LASTFM=false
 DEMO=false
 FLIXSTER=false
 DONTDROP=false
+TRAVEL=false
 
 for param in $*;
 do    
@@ -21,6 +22,9 @@ do
         ;;
     'flixster')
         FLIXSTER=true
+        ;;
+    'travel')
+        TRAVEL=true
         ;;
     'dontdrop')
         DONTDROP=true
@@ -55,6 +59,12 @@ if [ $FLIXSTER = true ]
 then
     echo "Adding flixster data."
     echo "from flixster.save_data import save_data; save_data(); quit();" | python ./manage.py shell
+fi
+
+if [ $TRAVEL = true ]
+then
+    echo "Adding travel data."
+    echo "from travel.save_data import save_data; save_data(); quit();" | python ./manage.py shell
 fi
 
 echo "" 
