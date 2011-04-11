@@ -6,6 +6,7 @@ from predictions import RelationshipPrediction
 from unresyst.exceptions import RecommenderError, RecommenderNotBuiltError
 from unresyst.models.algorithm import ExternalPrediction
 from unresyst.models.common import Recommender as RecommenderModel
+from unresyst.constants import *
 
 class ExternalRecommender(BaseRecommender):
     """A class representing an outside-world recommender with an Unresyst 
@@ -13,10 +14,7 @@ class ExternalRecommender(BaseRecommender):
     """
     
     PredictionModel = ExternalPrediction
-    """The model where predictions are stored""" 
-    
-    explicit_rating_rule = None
-    """If given, this rule is exported, not the predicted_relationship"""
+    """The model where predictions are stored"""         
     
     # build phase:
     #
@@ -53,7 +51,7 @@ class ExternalRecommender(BaseRecommender):
         
     @classmethod
     def import_predictions(cls, filename):
-        """Loads predictions from the given csv file.
+        """Load predictions from the given csv file.
         
         Creates the recommender model for the recommender and imports the 
         predictions from the given file. The file has to be in format:
@@ -115,7 +113,7 @@ class ExternalRecommender(BaseRecommender):
     # recommend phase
     #
     @classmethod        
-    def predict_relationship(cls, subject, object_):
+    def predict_relationship(cls, subject, object_, save_to_db=False):
         """See the base class for the explanation
 
         If the prediction doesn't exist retruns None.
@@ -150,7 +148,8 @@ class ExternalRecommender(BaseRecommender):
         prediction = RelationshipPrediction(
             subject=subject,
             object_=object_,
-            expectancy=expectancy
+            expectancy=expectancy,
+            is_uncertain=abs(expectancy - UNCERTAIN_PREDICTION_VALUE) < EXP_PRECISION
         )            
         return prediction
 

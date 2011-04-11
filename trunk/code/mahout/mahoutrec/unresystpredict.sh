@@ -10,6 +10,8 @@ LASTFM=false
 FLIXSTER=false
 TRAVEL=false
 
+FLIXSTERBELOW=false
+
 for param in $*;
 do    
     case $param in
@@ -22,6 +24,9 @@ do
     'travel')
         TRAVEL=true
         ;;        
+    'flixsterbelow')
+        FLIXSTERBELOW=true
+        ;;           
     esac
 done
 
@@ -31,6 +36,11 @@ then
 fi
 
 if [ $FLIXSTER = true ]
+then
+    mvn -e exec:java -Dexec.mainClass="com.unresyst.UnresystPredict"  -Dexec.args="/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_train.csv /home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_test.csv /home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_predictions.csv" 
+fi
+
+if [ $FLIXSTERBELOW = true ]
 then
     mvn -e exec:java -Dexec.mainClass="com.unresyst.UnresystPredict"  -Dexec.args="/home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_train.csv /home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_test.csv /home/pcv/diplomka2/svn/trunk/code/adapter/csv/flixster_predictions.csv" 
 fi

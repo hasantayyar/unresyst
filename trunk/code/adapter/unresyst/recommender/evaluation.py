@@ -93,7 +93,7 @@ class BaseEvaluator(object):
         return None 
 
     @classmethod
-    def evaluate_predictions(cls, recommender):
+    def evaluate_predictions(cls, recommender, save_predictions=False):
         """Evaluate each evaluation pair by calling the predict_relationship
         method.
         
@@ -102,7 +102,10 @@ class BaseEvaluator(object):
         @type recommender: Recommender
         @param recommender: the built recommender on which the predictions
             should be evaluated                   
-            
+        
+        @type save_predictions: bool
+        @param save_predictions: should the generated predictions be saved to db?
+        
         @rtype: float
         @return: the result of the metric            
 
@@ -127,7 +130,7 @@ class BaseEvaluator(object):
         for pair in qs_pairs.iterator():
             
             # evaluate
-            prediction = recommender.predict_relationship(pair.subj, pair.obj)
+            prediction = recommender.predict_relationship(pair.subj, pair.obj, save_predictions)
             
             # log
             if fpreds:

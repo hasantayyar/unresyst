@@ -310,6 +310,8 @@ class ShoeRecommender(Recommender):
             )
     """The most basic algorithm is used"""
 
+ShoeRecommender.explicit_rating_rule = ShoeRecommender.rules[3]
+
 class AverageRecommender(ShoeRecommender):
     
     name = "Advanced shoe recommender"

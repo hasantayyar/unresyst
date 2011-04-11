@@ -118,4 +118,4 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 SERVE_STATIC_FILES = True
 
-LOG_DIRECTORY = '/home/pcv/diplomka2/svn/trunk/code/adapter/logs/'
+LOG_DIRECTORY = ''# /home/pcv/diplomka2/svn/trunk/code/adapter/logs/

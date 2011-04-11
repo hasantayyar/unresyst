@@ -30,7 +30,7 @@ class BaseEvaluationPair(models.Model):
         """Return a textual representation."""    
         
         return u"%s - %s: exp: %f, got: %f" % \
-            (self.subj, self.obj, self.expected_expectancy, self.obtained_expectancy)
+            (self.subj, self.obj, self.expected_expectancy, self.obtained_expectancy or -1)
     
     @classmethod
     def export(cls, f):

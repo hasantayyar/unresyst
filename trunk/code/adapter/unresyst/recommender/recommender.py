@@ -7,6 +7,7 @@ Contents:
 """
 import math
 import copy
+import csv
 
 from base import BaseRecommender
 from predictions import RelationshipPrediction
@@ -19,6 +20,8 @@ from unresyst.algorithm import SimpleAlgorithm, AggregatingAlgorithm, CompilingA
 from unresyst.models.common import SubjectObject, Recommender as RecommenderModel
 from unresyst.compilator import GetFirstCompilator, CombiningCompilator
 from unresyst.combinator import AverageCombinator, TwistedAverageCombinator, ConfidenceFactorCombinator
+from unresyst.models.abstractor import RelationshipInstance, ExplicitRuleInstance
+from unresyst.models.algorithm import RelationshipPredictionInstance
 
 def _assign_recommender(list_rels, recommender):
     """Go throuth the list, if the items have the "recommender" attribute,
@@ -225,18 +228,57 @@ class Recommender(BaseRecommender):
         # build the algorithm model from the aggregated relationships
         cls.algorithm.build(recommender_model=recommender_model)
         
-        cls._print("Algorithm built. Done.")
+        cls._print("Algorithm built.")
+        
+        # if it should be done and predicted should be removed, 
+        # save predicted_rel to predictions
+        if cls.remove_predicted_from_recommendations and cls.save_all_to_predictions:
+            
+            cls._print("Saving explicit/predicted to predictions...")
+            
+            # if explicit relationship is available, get its instances
+            # if not, get the predicted_rel
+            qs_predicted_rels = ExplicitRuleInstance.objects.filter(definition__recommender=recommender_model) \
+                if cls.explicit_rating_rule else \
+                RelationshipInstance.filter_predicted(recommender_model=recommender_model)
+        
+            for ri in qs_predicted_rels:
+                
+                # get the expectancy of the rating or the trivial
+                expectancy = ri.expectancy if cls.explicit_rating_rule else TRIVIAL_EXPECTANCY                
+                
+                rpi, created = RelationshipPredictionInstance.objects.get_or_create(
+                    subject_object1=ri.subject_object1,
+                    subject_object2=ri.subject_object2,
+                    recommender=recommender_model,
+                    defaults={
+                        'expectancy': expectancy,
+                        'is_trivial': True,
+                        'description': ri.description,
+                    }
+                )
+                
+                # if it was found update it to the predicted
+                if not created:
+                    rpi.expectancy = expectancy
+                    rpi.is_trivial = True
+                    rpi.description = ri.description
+                
+                # save it if created or not     
+                rpi.save()
         
         # mark the recommender as built, save it and keep it in the class
         recommender_model.is_built = True
         recommender_model.save()
+        
+        cls._print('Done')
 
 
     # Recommend phase:
     # 
     
     @classmethod        
-    def predict_relationship(cls, subject, object_):
+    def predict_relationship(cls, subject, object_, save_to_db=False):
         """For documentation, see the base class"""        
         
         recommender_model = cls._get_recommender_model()
@@ -294,12 +336,17 @@ class Recommender(BaseRecommender):
             remove_predicted=cls.remove_predicted_from_recommendations
         )
         
+        # if it should be done and we know something about the pair
+        if save_to_db and not prediction_model.is_uncertain:
+            prediction_model.save()
+        
         # create and return the outer-world object
         prediction = RelationshipPrediction(
             subject=subject,
             object_=object_,
             expectancy=prediction_model.expectancy,
-            explanation=prediction_model.description
+            explanation=prediction_model.description,
+            is_uncertain=prediction_model.is_uncertain
         )            
         return prediction
 
@@ -369,14 +416,105 @@ class Recommender(BaseRecommender):
                 subject=subject,
                 object_=object_,
                 expectancy=pred_model.expectancy,
-                explanation=pred_model.description
+                explanation=pred_model.description,
+                is_uncertain=pred_model.is_uncertain
             )            
             
             recommendations.append(prediction)
 
         return recommendations
 
+    @classmethod
+    def export_predictions(cls, filename):
+        """Export all predictions to a csv 
+        file of the given name.
+        
+        @type filename: str
+        @param filename: the full path to the file
+        
+        @raise FileNotExists and other file open errors.
+        """
+        recommender_model = cls._get_recommender_model()
+        
+        with open(filename, 'w') as f:
+            
+            i = 0
+        
+            # loop through pairs, export the prediction instances
+            for rpi in RelationshipPredictionInstance.objects.filter(recommender=recommender_model):
+                            
+                # create the common part
+                linestr = "%s,%s,%s\n" % (
+                    rpi.subject_object1.id_in_specific, 
+                    rpi.subject_object2.id_in_specific,
+                    rpi.expectancy)                                
+                
+                # write it to the file
+                f.write(linestr)
+                
+                i += 1
+        
+        print "    %d predictions exported" % i
 
+    @classmethod
+    def update_predictions(cls, filename):
+        """Load predictions for pairs that are unknown in our recommender from 
+        the given csv file.
+                
+        The file has to be in format:
+        <id subject>,<id object>,<prediction>\n
+        
+        @type filename: str
+        @param filename: the full path to the file
+
+        @raise FileNotExists and other file open errors.
+        """
+        recommender_model = cls._get_recommender_model()        
+        
+        # open the csv reader
+        reader = csv.reader(open(filename, "rb"), delimiter=',', quoting=csv.QUOTE_NONE)
+        
+        i = 0
+        # parse the csv line by line
+        for subj_id, obj_id, expectancy in reader:
+            
+            # parse the values to the right types
+            subj_id = int(subj_id)
+            obj_id = int(obj_id)
+            expectancy = float(expectancy)
+            
+            dn_subject = SubjectObject.objects.get(
+                    entity_type=ENTITY_TYPE_SUBJECT, 
+                    id_in_specific=subj_id,
+                    recommender=recommender_model)
+            dn_object = SubjectObject.objects.get(
+                    entity_type=ENTITY_TYPE_OBJECT, 
+                    id_in_specific=obj_id,
+                    recommender=recommender_model)
+                    
+            # if it's already imported, go to the next pair
+            if RelationshipPredictionInstance.objects.filter(
+                subject_object1=dn_subject, 
+                subject_object2=dn_object, 
+                recommender=recommender_model).exists():
+                continue
+            
+            # create a prediction
+            RelationshipPredictionInstance.objects.create(
+                subject_object1=dn_subject,
+                subject_object2=dn_object,
+                recommender=recommender_model,
+                expectancy=expectancy
+            )
+
+            i += 1
+
+        print "%d new predictions imported" % i
+            
+        
+           
+        
+    
     # Update phase:
     # 
     @classmethod
@@ -478,9 +616,9 @@ class Recommender(BaseRecommender):
                     inner_algorithm=SimpleAlgorithm(
                         inner_algorithm=None
                     ),
-                    compilator=CombiningCompilator(combinator=ConfidenceFactorCombinator(), breadth=0)
+                    compilator=CombiningCompilator(combinator=TwistedAverageCombinator(), breadth=0)
                 ),
-                aggregator=CombiningAggregator(combinator=ConfidenceFactorCombinator())
+                aggregator=CombiningAggregator(combinator=TwistedAverageCombinator())
             )
     """The default algorithm setup.
     The class that will be used for the algorithm level. Can be 
@@ -504,6 +642,8 @@ class Recommender(BaseRecommender):
     
     verbose_build = True
     """Should messages be printed during the build?"""
+    
+    save_all_to_predictions = True
     
     # Auxiliary methods - not to be used from outside the application
     #    

@@ -20,7 +20,7 @@ class RelationshipPrediction(object):
     @ivar explanation: the explanation for the prediction        
     """
     
-    def __init__(self, subject, object_, expectancy, explanation=''):
+    def __init__(self, subject, object_, expectancy, is_uncertain, explanation=''):
         """The initializer"""
         
         self.subject = subject
@@ -33,6 +33,9 @@ class RelationshipPrediction(object):
         """The estimated probability of the predicted_relationship
         occuring between the subject and the object.
         """
+        
+        self.is_uncertain = is_uncertain
+        """Is the prediction made without having any information available?"""
         
         self.explanation = explanation
         """The explanation for the prediction"""
