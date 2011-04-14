@@ -616,7 +616,7 @@ class Recommender(BaseRecommender):
                     inner_algorithm=SimpleAlgorithm(
                         inner_algorithm=None
                     ),
-                    compilator=CombiningCompilator(combinator=TwistedAverageCombinator(), breadth=0)
+                    compilator=CombiningCompilator(combinator=TwistedAverageCombinator(), breadth=0) #
                 ),
                 aggregator=CombiningAggregator(combinator=TwistedAverageCombinator())
             )

@@ -1,6 +1,7 @@
 # build the shoe recommender
 
 LASTFM=false
+NLASTFM=false
 DEMO=false
 ADEMO=false
 FLIXSTER=false
@@ -11,6 +12,9 @@ do
     case $param in
     'lastfm')
         LASTFM=true
+        ;;
+    'nlastfm')
+        NLASTFM=true
         ;;
     'demo')
         DEMO=true
@@ -40,6 +44,11 @@ fi
 if [ $LASTFM = true ]
 then
     echo "from lastfm.recommender import ArtistRecommender; ArtistRecommender.build(); quit();" | python ./manage.py shell
+fi
+
+if [ $NLASTFM = true ]
+then
+    echo "from lastfm.recommender import NovelArtistRecommender; NovelArtistRecommender.build(); quit();" | python ./manage.py shell
 fi
 
 if [ $FLIXSTER = true ]

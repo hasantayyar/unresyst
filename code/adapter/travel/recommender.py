@@ -103,21 +103,7 @@ class OrderTourRecommender(Recommender):
             
             confidence=lambda t: min(float(t.viewprofile_set.count())/4, 1.0)
         ),
-        
-        # multiply clicked tours
-        ObjectBias(
-            name="Most clicked tours.",
-            
-            description="Tour %(object)s is often clicked on.",
-            
-            weight=0.25,
-            
-            is_positive=True,
-            
-            generator=lambda: Tour.objects.annotate(hh=Count('click')).filter(hh__gt=1).distinct(),
-            
-            confidence=lambda t: min(float(t.click_set.count())/2, 1.0)
-        ),
+                
         
         # multiply mouse moved tours
         ObjectBias(
@@ -133,6 +119,21 @@ class OrderTourRecommender(Recommender):
             
             confidence=lambda t: min(float(t.mousemove_set.count())/12, 1.0)
         ),
+        # multiply clicked tours
+        ObjectBias(
+            name="Most clicked tours.",
+            
+            description="Tour %(object)s is often clicked on.",
+            
+            weight=0.5,
+            
+            is_positive=True,
+            
+            generator=lambda: Tour.objects.annotate(hh=Count('click')).filter(hh__gt=1).distinct(),
+            
+            confidence=lambda t: min(float(t.click_set.count())/2, 1.0)
+        ),
+        
     )
 
 

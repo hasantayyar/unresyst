@@ -90,6 +90,22 @@
 }
 % parameters: label, caption
 
+% stat table
+\newenvironment{result_table}[2]{
+    \pushQED{#2}
+    \begin{table}[ht]
+        \begin{center}
+            \label{#1}
+            \begin{tabular}{|l|r|}}
+                {
+            \end{tabular}
+            \caption{\popQED}
+        \end{center}
+    \end{table}
+}
+% parameters: label, caption
+
+
 
 \title{Universal Recommender System}   % tyto dvì polo¾ky jsou zde v podstatì formálnì, ve skuteènosti nejsou nikde 
 \author{Petr Cvengro¹} % dále v dokumentu pou¾ity
@@ -198,7 +214,7 @@ Prague 2010-2011
 \openright
 
 \noindent
-I would like to thank my supervisor \vedouci~for his valuable comments and support. I would also like to thank the travel agency system administrator for lending the dataset. I would like to thank attendees of the User-Web seminary for their comments and ideas on the work. Last but not least, thanks to my parents for supporting my studies.
+I would like to thank my supervisor \vedouci~for his valuable comments and support. I would also like to thank the travel agency system administrator for lending the data set. I would like to thank attendees of the User-Web seminary for their comments and ideas on the work. Last but not least, thanks to my parents for supporting my studies.
 
 \newpage
 
@@ -249,12 +265,18 @@ Vedoucí diplomové práce:
 % dle Organizaèní struktury MFF UK, pøípadnì plný název pracovi¹tì mimo MFF UK
 
 Abstrakt:
-% abstrakt v rozsahu 80-200 slov; nejedná se v¹ak o opis zadání diplomové práce
+Doporuèovací systémy jsou programy, které se u¾ivateli nabízejí  \mbox{objekty} (napø. knihy nebo hudbu), které by pro nìj mohly být zajímavé. Tyto systémy získávají vzrùstající popularitu a jsou intenzivnì studovány výzkumnými skupinami po celém svìtì. Ve webových systémech, jako jsou internetové obchody nebo komunitní servery, bývají obvykle k dispozici rùzné datové zdroje, které mohou být vyu¾ity k doporuèování, napø. atributy u¾ivatelù a objektù, hodnocení objektù u¾ivateli nebo nepøímá zpìtná vazba získaná ze zaznamenaného chování u¾ivatele. V této práci pøedstavujeme koncept Univerzálního doporuèovacího systému (Unresyst), který doká¾e vyu¾ít tìchto datových zdrojù a zároveò je doménovì nezávislý. V práci navrhujeme zpùsoby vyu¾ití systému Unresyst, ze souèasných metod pou¾ívaných k doporuèování vybíráme jako nejvíce vhodnou knowledge-based metodu kombinovanou s kolaborativním filtrováním. Dále \mbox{analyzujeme} datové zdroje v rùzných systémech a zobecòujeme je tak, aby byly doménovì nezávislé. Navrhujeme architekturu systému Unresyst, popisujeme rozhraní systému a zpùsoby zpracování datových zdrojù. Dále pøizpùsobujeme Unresyst na tøi data sety z reálných systémù, vyhodnocujeme pøesnost doporuèení a srovnáváme ji se souèasnými algoritmy pro kolaborativní filtrování. Srovnání ukazuje, ¾e kombinování rùzných datových zdrojù mù¾e zlep¹it pøesnost doporuèovaní kolaborativního filtrování a mù¾e být pou¾ito v systémech, pro které standardní kolaborativní není vhodné.
+
 
 Klíèová slova:
+Doporuèovací systémy, Internetové obchodování, Doménová nezávislost, Knowledge-based doporuèování, Kolaborativní filtrování
 % 3 a¾ 5 klíèových slov
 
-\vss}\nobreak\vbox to 0.49\vsize{
+
+
+\vss}
+\newpage
+\nobreak\vbox to 0.49\vsize{
 \setlength\parindent{0mm}
 \setlength\parskip{5mm}
 
@@ -275,10 +297,12 @@ Supervisor:
 % mimo MFF UK v angliètinì
 
 Abstract:
+Recommender systems are programs that aim to present items like songs or books that are likely to be interesting for a user. These systems have become increasingly popular and are intensively studied by research groups all over the world. In web systems, like e-shops or community servers there are usually multiple data sources we can use for recommending, as user and item attributes, user-item rating or implicit feedback from user behaviour. In the thesis, we present a concept of a Universal Recommender System (Unresyst) that can use these data sources and is domain-independent at the same time. We propose how Unresyst can be used. From the contemporary methods of recommending, we choose a knowledge based algorithm combined with collaborative filtering as the most appropriate  algorithm for Unresyst. We analyze data sources in various systems and generalize them to be domain-independent. We design the architecture of Unresyst, describe its interfaces and methods for processing the data sources. We adapt Unresyst to three real-world data sets, evaluate the recommendation accuracy results and compare them to a contemporary collaborative filtering recommender. The comparison shows that combining multiple data sources can improve the accuracy of collaborative filtering algorithms and can be used in systems where standard collaborative filtering doesn't work well.
 % abstrakt v rozsahu 80-200 slov v angliètinì; nejedná se v¹ak o pøeklad
 % zadání diplomové práce
 
 Keywords:
+Recommender Systems, E-commerce, Domain-Independence, Knowledge-Based Recommender, Collaborative Filtering
 % 3 a¾ 5 klíèových slov v angliètinì
 
 \vss}
@@ -316,9 +340,9 @@ Keywords:
         
         In the chapter \emph{Universal Recommender Design and Implementation} we propose  Unresyst, a universal recommender system. We describe its interfaces, architecture and actions that should be performed in the given application parts. Finally we present some details about the Unresyst prototype implementation, including its data model.
         
-        In the chapter \emph{Verifying the Universal Recommender on Real-World Data} we describe how we adapted the Unresyst recommender to datasets containing real data. 
+        In the chapter \emph{Verifying the Universal Recommender on Real-World Data} we describe how we adapted the Unresyst recommender to data sets containing real data. 
         
-        In the chapter \emph{Evaluating Recommender Results} we propose off-line methods and metrics that can be used for evaluating a universal recommender. We describe the results obtained for Unresyst prototype on the studied datasets and propose methods on how the results can be improved.
+        In the chapter \emph{Evaluating Recommender Results} we propose off-line methods and metrics that can be used for evaluating a universal recommender. We describe the results obtained for Unresyst prototype on the studied data sets and propose methods on how the results can be improved.
         
         In the chapter \emph{Conclusion and Future Work} we give a summary of the thesis and depict actions that can be done to continue the work done in the thesis.
         
@@ -343,7 +367,7 @@ Keywords:
             
             \fig[10]{pics/intro_bias.png}{Using item property for recommendations}{pic_bias}
             
-            The obtained \emph{compiled predictions} can be used directly for recommending or they can serve as an input for an ordinary recommender algorithm. More about recommending in the Last.fm dataset can be found in chapter \ref{verifying_last_fm}. 
+            The obtained \emph{compiled predictions} can be used directly for recommending or they can serve as an input for an ordinary recommender algorithm. More about recommending in the Last.fm data set can be found in chapter \ref{verifying_last_fm}. 
             
         \subsection{Main Features}
             \label{main_features}
@@ -359,7 +383,7 @@ Keywords:
         \subsection{Thesis Classification}
             \label{classification}
                 
-                The recommender system research field can be divided into the following, as categorized in the paper \cite{probabilistic_analysis}:
+                The recommender system research field can be divided into the following categories, as described in the paper \cite{probabilistic_analysis}:
                 
                 \begin{enumerate}
                     \item Gathering user preference
@@ -373,7 +397,7 @@ Keywords:
 
                 Finally we list the topics that are out of the scope of our work:
                 \begin{description}
-                    \item[Scalable implementation] The provided recommender application is meant as a prototype and isn't intended to be scalable for large datasets. 
+                    \item[Scalable implementation] The provided recommender application is meant as a prototype and isn't intended to be scalable for large data sets. 
                     \item[Central server for multiple systems.] A single Unresyst instance isn't intended to be used as a central server for multiple domains - a Unresyst instance always refers to a single domain. Unresyst doesn't deal with matching the same subjects and objects appearing in multiple systems. 
                     \item[Collecting user preference] Unresyst doesn't help the system collecting any user actions for recommending. Implicit and explicit user feedback can be used for generating recommendations in Unresyst, but it has to be handled by the outer system and passed to Unresyst in the form of business rules and relationships.
                 \end{description}
@@ -449,11 +473,11 @@ Keywords:
                 \item[Other relationships] Any other relationships between entities of the system can be used for making recommendations. Such relationships include user-defined tags which can be used for determining similarity of the entities marked with the same tag, or user's preference for items marked with a particular tag.
              \end{description}
              
-             Recommendations produced by Unresyst can take into account both objective and subjective criteria. Objective criteria for recommending can be expressed in business rules (e.g. not recommending expensive items to users with low income). Subjective criteria, as the expressed preference for an item are used both for the user and users that are observed to have similar taste.
+             Recommendations produced by Unresyst can take into account both objective and subjective criteria. Objective criteria for recommending can be expressed in business rules (e.g. not recommending expensive items to users with low income). Subjective criteria, as the expressed preference for an item, are used for recommending.
              
              The most common operations for a recommender, providing recommendations and predicting the preference for a particular item, are performed in time independent of the number of the entities in the system. The exact recommendation and prediction time may vary between the recommender algorithms. However most of the presented current algorithm use some kind of recommendation index which enables them to perform recommendations in constant time.
              
-             The Unresyst software component is logically independent of the parent system, it provides an API for all common operations. The API and the domain-specific configuration is made so that the adaptation to the domain and to the parent system is as easy as possible. Unresyst also contains a pluggable user interface for presenting recommendations to the user. The user interface can be incorporated into the parent system user interface so that the user doesn't have to leave the parent system in order to see the recommendations.
+             The Unresyst software component is logically independent of the parent system, it provides an API for all common operations. The API and the domain-specific configuration is made so that the adaptation to the domain and to the parent system is as easy as possible. %Unresyst also contains a pluggable user interface for presenting recommendations to the user. The user interface can be incorporated into the parent system user interface so that the user doesn't have to leave the parent system in order to see the recommendations.
              
         \subsection{Comparison to Other Solutions}
             \label{comparison_to_other_solutions}
@@ -475,7 +499,7 @@ Keywords:
                 
                 The main disadvantage of Unresyst compared to the minimalistic option is the required initiatory effort required to start producing recommendations. Firstly, Unresyst has to be configured for the system, which means specifying the subject and object domain, definition of the predicted relationship  and finally writing down the business knowledge in the form of rules and relationships. Then the recommendations have to be incorporated to the parent system - calling of Unresyst methods has to be added to necessary places, the recommender user interface has to be incorporated to the system. However the initial effort pays off as the latter changes in recommender configuration can be done easily at one place.
                 
-                Running a system that uses a recommender involves some additional effort. The index of the recommender algorithm has to be built before the recommender is used. This can be a time-consuming action, depending on the algorithm and number of entities in the system. The recommender index has to be kept up to date by either rebuilding now and then or by continuously calling methods for index update. These methods keep update the index with every change in the system but they require some additional time during save and update of the system entities and they might be unavailable for some recommender algorithms. The issues of the recommender index however occur when running any recommender that takes constant time for recommending items.
+                Running a system that uses a recommender involves some additional effort. The index of the recommender algorithm has to be built before the recommender is used. This can be a time-consuming action, depending on the algorithm and number of entities in the system. The recommender index has to be kept up to date by either rebuilding now and then or by continuously calling methods for index update. These methods keep the index updated with every change in the system but they require some additional time during save and update of the system entities and they might be unavailable for some recommender algorithms. The issues of the recommender index however occur when running any recommender that takes constant time for recommending items.
                 
                 To summarize the comparison, Unresyst is a better option than filtering items in queries unless the system holder only wishes to implement a small set of fixed filtering rules, that don't need to be changed over time and he/she isn't interested in exploiting the rules by a recommender algorithm.
                 
@@ -579,7 +603,7 @@ Keywords:
             
             Our goal is to estimate the utility function $u_R$ by the expectancy given by $\hat{u}_R$, so that $proj_1 \circ \hat{u}_R \approx u_R$, where $proj_1$ is a projection that discards the explanation from the function $\hat{u}_R$.
 
-            For instance, our recommender predicts that $Bob$'s listening to $Beck$ utility is $0.8$, because $Beck$ is similar to $Sonic \ Youth$, a band that $Bob$ has listened yesterday. In our notation: $\hat{u_R}(Bob, Beck)=(0.8, \textrm{``Bob  has listened to Sonic Youth band, which is similar to Beck''})$. 
+            For instance, our recommender predicts that $Bob$'s listening to $Beck$ utility is $0.8$, because $Beck$ is similar to $Sonic \ Youth$, a band that $Bob$ has listened yesterday. In our notation: $\hat{u_R}(Bob, Beck)=(0.8,$ ``Bob  has listened to Sonic Youth band, which is similar to Beck''$)$. 
             
             Our expectancy concept is similar to the one used in the Duine framework \cite{duine}. The prediction techniques in Duine give a \emph{Prediction}, \emph{Validity indicators} and an \emph{Explanation} for each subject-object pair. \emph{Prediction} is an estimation of subject's rating of the object. \emph{Validity indicators} determine the \emph{confidence} of the technique when predicting the rating. Low values mean, that the technique isn't confident about the \emph{Prediction} for the given subject-object pair, e.g. it doesn't have enough information to make a valid prediction. \emph{Explanation} has the same meaning as the one in our recommender. 
              
@@ -614,7 +638,7 @@ Keywords:
                 \rho^{\hat{u}_R}: S \to (o_1, \dots, o_N), \  o_1, \dots, o_N \in O
             \end{equation}
             
-            The recommender always chooses exactly $N$ objects. The chosen objects are presented to the subject ordered by expectancy.
+            The recommender chooses $N$ objects that are likely to be interesting for the user, i.e. they maximize the $\hat{u}_R$ function for $s$. The chosen objects are presented to the subject ordered by expectancy.
             
             For instance, an artist recommender presents $N$ artists to $Bob$. Artists are sorted by the expectancy.
 
@@ -623,7 +647,7 @@ Keywords:
         In a recommendation system, some common operations are:
         \begin{description}
             \item[Recommender build] After a configuration of the recommender is done, the recommender has to prepare itself for recommending objects. This operation may be pretty time consuming, as this doesn't have to be performed very often. 
-            \item[Recommendation] Recommendation corresponds to evaluating the function $\rho^{\hat{u}_R}$ for a given subject. Recommendation is the most common operation for a recommender system. Choosing objects with the highest expectancy for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time.
+            \item[Recommendation] Recommendation corresponds to evaluating the function $\rho^{\hat{u}_R}$ for a given subject. Recommendation is the most common operation for a recommender system. Choosing objects with the highest expectancy for the given subject among all objects can be a very expensive operation. That's why most recommender systems introduce some kind of index, enabling the recommender to recommend objects real-time. This operation should be performed very fast, ideally in a constant time independent of the number of items in the system.
             \item[Prediction] Prediction corresponds to evaluating the function $\hat{u}_R$ for a given subject-object pair. Prediction is used for estimating the subject's preference in a particular object. It can be used for direct displaying when browsing through the objects or for ordering displayed objects when browsing in an object catalogue. Usually it is not possible to store predictions for all subject-object pairs, so the prediction has to be computed on-line. Therefore it has to be pretty fast.
         \end{description}
     
@@ -640,7 +664,7 @@ Keywords:
             
             An implementation of a domain-neutral component for recommending in e-shops was a part of the thesis \cite{peska}. The component was also dealing with gathering implicit feedback from users. Recommending was done using some of the common recommender algorithms like collaborative filtering. The component was tested on two e-shops.
             
-            The Universal Recommender White Paper \cite{white_paper} describes a recommendation engine working on semantic datasets. The proposed recommender is operating on the full semantic representation of domain data, where entities are connected by various relationships and according to the paper it generalizes all common recommender algorithms. The paper identifies problems that have to be overcome in order to implement such a recommender, such as normalization of the represented relationships.  We use some ideas presented in the paper in the section \ref{combining_knowledge_and_cf} and simplify the approach presented in the paper.
+            The Universal Recommender White Paper \cite{white_paper} describes a recommendation engine working on semantic data sets. The proposed recommender is operating on the full semantic representation of domain data, where entities are connected by various relationships and according to the paper it generalizes all common recommender algorithms. The paper identifies problems that have to be overcome in order to implement such a recommender, such as normalization of the represented relationships.  We use some ideas presented in the paper in the section \ref{combining_knowledge_and_cf} and simplify the approach presented in the paper.
 
 \chapter{Recommender Algorithms}
     \label{algorithms}
@@ -657,7 +681,7 @@ Keywords:
         
         \fig{pics/content-based.png}{Content-based Methods}{pic_content_based}
 
-        More formally, according to \cite{survey}, the utility function approximation is done as depicted in the formula \ref{eq_content_based}, where $sim: O \times O \to [0,1]$ is a measure of object similarity, based on the object attributes. The $sim$ function is applied on objects $o'$ that are already in the relationship $R$ with the given subject $s$. The sum can be replaced by a more sophisticated functions in some implementation. The method can be enhanced by modelling subject preferences for object attributes, as described in \cite{eckhardt}.
+        More formally, according to \cite{survey}, the utility function approximation is done as depicted in the formula \ref{eq_content_based}, where $sim: O \times O \to [0,1]$ is a measure of object similarity, based on the object attributes. The $sim$ function is applied on objects $o'$ that are already in the relationship $R$ with the given subject $s$. The sum can be replaced by a more sophisticated functions in some implementation. The method can be enhanced by modeling subject preferences for object attributes, as described in \cite{eckhardt}.
         
         \begin{equation}
             \label{eq_content_based}
@@ -719,7 +743,7 @@ Keywords:
             
             Latent semantic models use vectors to represent subjects and objects \cite{bellkor_ieee}. For objects, the values in the vectors mean some characteristics of the object. This approach is similar to the one used in content-based filtering (\ref{content_based_filtering}). The difference is in obtaining the vectors: the values in object vectors aren't submitted by a human expert, both subject and object vectors are learned from the known data by various techniques. Therefore the technique is domain-independent. 
             
-            Subject and object vectors allow to project the subjects and object into multidimensional space. Recommended objects are those that are ``near'' the given subject in the multidimensional space. Some common techniques for measuring the subject-object distance are vector cosine and dot product. Some dimensions can be coupled with some known object characteristics as genre for movies \cite{bellkor_ieee}. But the meaning of most of the dimensions can hardly be discovered, as they aren't designed by a human but a machine-learning technique. Consequently, the recommenders using matrix factorization usually aren't able to give reasons for their recommendations. 
+            Subject and object vectors allow to project the subjects and objects into multidimensional space. Recommended objects are those that are ``near'' the given subject in the multidimensional space. Some common techniques for measuring the subject-object distance are vector cosine and dot product. Some dimensions can be coupled with some known object characteristics as genre for movies \cite{bellkor_ieee}. But the meaning of most of the dimensions can hardly be discovered, as they aren't designed by a human but a machine-learning technique. Consequently, the recommenders using matrix factorization usually aren't able to give reasons for their recommendations. 
             
             More formally, latent factor recommender estimates the utility by a function $\hat{u}^{LF}_R$ as displayed in the formula \ref{eq_lf}. $fv^s_R: S \to \mathbf{R}^f$, $fv^o_R: O \to \mathbf{R}^f$ are  functions assigning each subject/object a vector of the given factor latent space dimensionality $f \in \mathbf{N}$. Vectors for the subjects and objects are obtained by a methods like \emph{stochastic gradient descent} or \emph{alternating least squares}, see \cite{bellkor_ieee}.
             
@@ -823,7 +847,7 @@ Keywords:
         
         A hybrid recommender can help to overcome some drawbacks of the recommendation methods, as the \emph{Cold start problem} (see \ref{cf_benefits_drawbacks}). In this case, when little data is known about a new subject and object, some subsidiary recommendation method can be used. This subsidiary method wouldn't be suitable for performing the most of the recommendations, but it can make the best of the little data that is available. This approach is used in the default strategy of the Duine recommender framework \cite{duine}.
         
-        More formally, a linear hybrid recommender uses $\hat{u}^{H}_R$ for estimating the utility, as depicted in the formula \ref{eq_df}. $U$ is a set of functions belonging to the contained recommenders, $\hat{u'}_{iR} \in U$ for $i=1, \dots |U|$. $w_i \in [0,1]$ is a relative weight of the utility function $\hat{u'}_{iR}$.
+        More formally, a linear weighted hybrid recommender, as described in \cite{burke_hybrid}, uses $\hat{u}^{H}_R$ for estimating the utility, as depicted in the formula \ref{eq_df}. $U$ is a set of functions belonging to the contained recommenders, $\hat{u'}_{iR} \in U$ for $i=1, \dots |U|$. $w_i \in [0,1]$ is a relative weight of the utility function $\hat{u'}_{iR}$.
             
         \begin{equation}
             \label{eq_h}
@@ -835,7 +859,7 @@ Keywords:
         \fig{pics/hybrid.png}{Hybrid Recommender}{pic_hybrid} 
         
         \subsubsection{Suitability for The Universal Recommender}
-        As presented in \cite{white_paper}, the specific combination of methods used in a hybrid recommender depends on the data available in the given domains. Therefore a hybrid recommender can't be generic. Finding the right combination of recommenders for the specific domain can be non-trivial and thereby hybrid recommenders aren't suitable for a universal recommender. 
+        As presented in \cite{white_paper}, the specific combination of methods used in a hybrid recommender depends on the data available in the given domains. Therefore a hybrid recommender can't be generic. Finding the right combination of recommenders for the specific domain can be non-trivial. However a hybrid recommender composed of two domain-independent methods can be used.
 
     \section{Algorithm Selection}
         \label{algorithm_conclusion}
@@ -881,38 +905,38 @@ Keywords:
         
 \chapter{Relationships in Studied Systems}
     \label{relationships_in_studied}
-    In the chapter we analyze selected systems where the Unresyst recommender could be used. As we don't have a direct access to the system databases, we use datasets\footnote{Dataset is a set of text files containing some part of data included in the system database}. The first two datasets - Last.fm and Flixster are publicly available. The third one (Czech travel agency e-shop dataset) was made accessible to the thesis author by the courtesy of the system administrator, who didn't wish to disclose his name.
+    In the chapter we analyze selected systems where the Unresyst recommender could be used. As we don't have a direct access to the system databases, we use data sets\footnote{Data set is a set of text files containing some part of data included in the system database}. The first two data sets - Last.fm and Flixster are publicly available. The third one (Czech travel agency e-shop data set) was made accessible to the thesis author by the courtesy of the system administrator, who didn't wish to disclose his name.
     \section{The Last.fm Dataset}
         \label{rel_last_fm}
         Last.fm is a music recommendation service \cite{last_fm}. The system users post the information about what tracks they're listening to through plugins installed in their music players. Last.fm provides a freely available API\footnote{See \url{http://www.last.fm/api}.} for developers who can build applications using Last.fm data. 
         
-        \fig[14]{pics/lastfm.png}{The data model of the Last.fm dataset}{pic_last_fm}
+        \fig[14]{pics/lastfm.png}{The data model of the Last.fm data set}{pic_last_fm}
         
-        The API was used for crawling the datasets we used for our study. The first used dataset \cite{last_fm_dataset1} contains users and their listening history. Each user has listened and posted (\emph{scrobbled}) some tracks, each track was recorded by an artist. For some of the users there's some basic personal information available (age, gender and home country), each scrobble has a timestamp. 
+        The API was used for crawling the data sets we used for our study. The first used data set \cite{last_fm_dataset1} contains users and their listening history. Each user has listened and posted (\emph{scrobbled}) some tracks, each track was recorded by an artist. For some of the users there's some basic personal information available (age, gender and home country), each scrobble has a timestamp. 
         
-        The dataset was integrated with the Last.fm social tag dataset \cite{last_fm_dataset2}. Last.fm users can tag artists, describing the genre the artist is playing (like \emph{Pop}, \emph{Rock} or \emph{Techno}), the feeling of the music (like \emph{slow}, \emph{loud}) or any other property. For some of the artists we were abble assign tags, the users gave the artist.
+        The data set was integrated with the Last.fm social tag data set \cite{last_fm_dataset2}. Last.fm users can tag artists, describing the genre the artist is playing (like \emph{Pop}, \emph{Rock} or \emph{Techno}), the feeling of the music (like \emph{slow}, \emph{loud}) or any other property. For some of the artists we were able to assign tags, the users gave the artist.
         
-        The mentioned datasets were selected because together they contain basic attributes of both subjects and objects, which can be used for similarity measures. It contains implicit feedback (the scrobbles) that discloses some positive preferences of the users. The data model of available data is displayed in the figure \ref{pic_last_fm}
+        The mentioned data sets were selected because together they contain basic attributes of both subjects and objects, which can be used for similarity measures. It contains implicit feedback (the scrobbles) that discloses some positive preferences of the users. The data model of available data is displayed in the figure \ref{pic_last_fm}
 
-    \section{The Flixster Dataset}
-        Flixster is a community server for sharing movie reviews and ratings\footnote{See \ur{http://www.flixster.com/}.}. Each contained movie has a profile page where registered users can comment and rate the movie. Users can become friends with each other. The Flixster data set \cite{flixster_dataset} doesn't contain any properties for movies nor for users. The only data available is the user-movie rating and links between users who are friends. The data model is displayed in the figure \ref{pic_flixster}.
+    \section{The Flixster Data Set}
+        Flixster is a community server for sharing movie reviews and ratings\footnote{See \url{http://www.flixster.com/}.}. Each contained movie has a profile page where registered users can comment and rate the movie. Users can become friends with each other. The Flixster data set \cite{flixster_dataset} doesn't contain any properties for movies nor for users. The only data available is the user-movie rating and links between users who are friends. The data model is displayed in the figure \ref{pic_flixster}.
         
-        \fig[8]{pics/flixster.png}{The data model of the Flixster dataset}{pic_flixster}
+        \fig[8]{pics/flixster.png}{The data model of the Flixster data set}{pic_flixster}
         
-        The dataset is a of a type that is often used for collaborative filtering research as it contains an explicit user-item feedback that can be predicted. In the data set there is additional social information - the links between friends. A version of the dataset was used for a research on trust propagation in social networks \cite{flixster_paper}. 
+        The data set is a of a type that is often used for collaborative filtering research as it contains an explicit user-item feedback that can be predicted. In the data set there is additional social information - the links between friends. A version of the data set was used for a research on trust propagation in social networks \cite{flixster_paper}. 
     
-    \section{The Travel Agency Dataset}
-        The travel agency dataset was collected by an administrator of a travel agency website. During a few months  he was recording different kinds of implicit feedback through a script. Users were browsing through the website, clicking on links, viewing the tour profiles, moving over elements on the web pages. Some of the users asked questions about tours, through an online form. Some users ordered tours from the website. The tours have some basic properties: the country and the type (tours to hotels at the sea, tours visiting interesting places around the country, etc.).
+    \section{The Travel Agency Data Set}
+        The travel agency data set was collected by an administrator of a travel agency website. During a few months  he was recording different kinds of implicit feedback through a script. Users were browsing through the website, clicking on links, viewing the tour profiles, moving over elements on the web pages. Some of the users asked questions about tours, through an online form. Some users ordered tours from the website. The tours have some basic properties: the country and the type (tours to hotels at the sea, tours visiting interesting places around the country, etc.).
         
-        \fig[18]{pics/travel2.png}{The data model of the Travel Agency dataset}{pic_travel}
+        \fig[15]{pics/travel2.png}{The data model of the Travel Agency data set}{pic_travel}
         
-        The dataset contains different kinds of implicit feedback that is to be combined in order to provide good recommendations. Moreover the objects (tours) have some properties that can be used for determining similarity. 
+        The data set contains different kinds of implicit feedback that is to be combined in order to provide good recommendations. Moreover the objects (tours) have some properties that can be used for determining similarity. 
     
     \section{Summary}
         \label{relationship_abstraction_summary}
-        The studied systems were selected so that they cover a variety of different domains, where we can recommend. The datasets fulfill the recommender applicability conditions described in the section \ref{recommender_system_applicability}. The systems were selected so that we can prove the usefulness of the Unresyst recommender concept for processing both implicit and explicit feedback. Some of the datasets have attributes for their subjects and objects, that can be used for similarity measures.
+        The studied systems were selected so that they cover a variety of different domains, where we can recommend. The data sets fulfill the recommender applicability conditions described in the section \ref{recommender_system_applicability}. The systems were selected so that we can prove the usefulness of the Unresyst recommender concept for processing both implicit and explicit feedback. Some of the data sets have attributes for their subjects and objects, that can be used for similarity measures.
         
-        The rules, relationships and biases used in Unresyst for the described datasets are presented in the Chapter \ref{adapting_to_existing_systems}.
+        The rules, relationships and biases used in Unresyst for the described data sets are presented in the Chapter \ref{adapting_to_existing_systems}.
         
         
 
@@ -922,7 +946,7 @@ Keywords:
 
     The chapter describes how the Universal Recommender was implemented. Firstly we give an overview of the architecture, then we describe the interfaces through which Unresyst communicates with the parent system. Then we describe the algorithm used for applying rules. High-level architecture of the Universal Recommender, the layers of the application, are studied in the following section. Finally we give a more detailed overview of the inner structure of Unresyst.
 
-    \section{Universal Recommender Architecture Overview}
+    \section{Overview of the Universal Recommender Architecture}
         \label{architecture}
         
         The Universal Recommender System (Unresyst) is an independent application working with database. The parent system uses Unresyst for creating recommendations through a set of interfaces.
@@ -933,15 +957,15 @@ Keywords:
         
         Unresyst provides two interfaces to the parent system: the \emph{Adaptation Interface} and the  \emph{Runtime Interface}. The Adaptation Interface is used only during the system setup and maintenance. See the section \ref{unresyst_process_draft} for a more detailed description of the actions taken during the adaptation. On the other hand, the Runtime Interfaced is used continuously by the parent system to provide recommendations.
         
-        The figure \ref{pic_unresyst_adaptation} shows how Unresyst can be adapted to a domain on the example of the music domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Novel Artist Recommender} and a \emph{Artist Radio Recommender}. Both recommenders suggest artists to listeners. The Novel Artist recommender tries to broaden listener's music horizons by suggesting artists the listener haven't heard yet. Whereas the Artist Radio Recommender suggests artists to a listener no matter if he/she has already heard it. Such a recommender can be used for an internet radio.
+        The figure \ref{pic_unresyst_adaptation} shows how Unresyst can be adapted to a domain on the example of the music domain. In the example we create two recommenders for a domain. A domain expert firstly creates the desired recommenders. In the example it's a \emph{Novel Artist Recommender} and a \emph{Artist Radio Recommender}. Both recommenders suggest artists to listeners. The Novel Artist recommender tries to broaden listener's music horizons by suggesting artists the listener haven't heard yet. Whereas the Artist Radio Recommender suggests artists to a listener no matter if he/she has already heard it. Such a recommender can be used for a personalized internet radio.
         
         Each recommender has two interfaces: \emph{Adaptation Interface} and \emph{Runtime Interface}. The domain expert uses the Adaptation interface to adapt Unresyst to the music domain. The adaptation is done by defining basic recommender properties and a set of rules. The design and the usage of the Adaptation Interface is later described in the section \ref{adaptation_interface}.
         
         \fig{pics/unresyst_adaptation.png}{Adapting Unresyst to the music domain done by a domain expert.}{pic_unresyst_adaptation}
         
-        In the figure \ref{pic_unresyst_runtime} there is a schema of how a system that is using Unresyst operates. The user accesses the system as usually through its graphical interface (GUI). The Unresyst GUI which is a part of Unresyst is plugged into the Tennis Server user interface and it presents recommendations to the user. The Unresyst GUI as well as the parent system uses the Runtime Interface of both recommenders to get recommendations and to provide information needed for making recommendations. Both recommenders transfer the calls to the Unresyst module. The design and usage of the Runtime Interface is later described in the section \ref{runtime_interface}.
+        In the figure \ref{pic_unresyst_runtime} there is a schema of how a system that is using Unresyst operates. The user accesses the system as usually through its graphical interface (GUI). In the interface the parent system shows the recommendations obtained by using Unresyst. The parent system uses the Runtime Interface of both recommenders to get recommendations and to provide information needed for making recommendations. Both recommenders transfer the calls to the Unresyst module. The design and usage of the Runtime Interface is later described in the section \ref{runtime_interface}.
         
-        \fig[17]{pics/unresyst_runtime.png}{Unresyst common usage.}{pic_unresyst_runtime}
+        \fig[15]{pics/unresyst_runtime.png}{Unresyst common usage.}{pic_unresyst_runtime}
         
     \section{Unresyst Interfaces}
         \label{unresyst_interfaces}
@@ -957,7 +981,7 @@ Keywords:
                 
                 \item[The Predicted Relationship] We have to define which relationship in the parent system data model is the preference. This is done in the way described in the section \ref{representing_predicted_relationship}. This corresponds to defining the $R$ relation in the recommender (see section \ref{definitions})  In our example we use the relationship ``User played Artist's track'' as the predicted relationship.
                 
-                \item[Rules and Relationships that influence recommendations] When we want to use business rules or relationships for making recommendations we have to define them through the adaptation interface. The way to define rules and relationships is described in section \ref{representing_rules}. This corresponds to specifying the $RL$ set of a knowledge-based recommender (see section \ref{knowledge_based}). An example of a subject-object rule is the mentioned ``Music having the given tags shouldn't be recommended to female users''. An example of an object similarity rule influencing the prediction is ``Artists sharing tags are similar''. An example of a subject similarity relationship is the mentioned ``Users coming from the same country are similar''. The difference between a rule and a relationship is the following: For rules we'd like to give a specific strength for each covered pair, i.e. for artists sharing some tags we can give a percentage of how much tags they're sharing. Whereas in relationships, we only know there's some connection, that can't be weighted for the particular pair, i.e. if the users are coming from the same country, they are similar without any further strength differentiation for different pairs of users coming from the same country.
+                \item[Rules and Relationships that influence recommendations] When we wish to use business rules or relationships for making recommendations we have to define them through the adaptation interface. The way to define rules and relationships is described in section \ref{representing_rules}. This corresponds to specifying the $RL$ set of a knowledge-based recommender (see section \ref{knowledge_based}). An example of a subject-object rule is the mentioned ``Music having the given tags shouldn't be recommended to female users''. An example of an object similarity rule influencing the prediction is ``Artists sharing tags are similar''. An example of a subject similarity relationship is the mentioned ``Users coming from the same country are similar''. The difference between a rule and a relationship is the following: For rules we'd like to give a specific strength for each covered pair, i.e. for artists sharing some tags we can give a percentage of how much tags they're sharing. Whereas in relationships, we only know there's some connection, that can't be weighted for the particular pair, i.e. if the users are coming from the same country, they are similar without any further strength differentiation for different pairs of users coming from the same country.
                 
                 \item[Biases] Some objects are more likely to be liked than others, independently of the subject to whom we're recommending - these are called object biases. Subject biases indicate a higher tendency for a subject to like an object, independently of the particular object. Such facts can be included to recommendations by defining biases. More about representing biases can be found in section \ref{representing_biases}. An example of a positive object bias is the mentioned ``Artists that have released a new album recently''.
             \end{description}
@@ -973,7 +997,7 @@ class ArtistRecommender(Recommender):
     the user can like.
     """    
 
-    name = " Artist Recommender"
+    name = "Artist Recommender"
     """The name"""    
     
     subjects = User.objects
@@ -1000,7 +1024,7 @@ class ArtistRecommender(Recommender):
                     \item \label{ex_o_o} \emph{Object-object rules} defining similarity between objects. We denote $RL_{osim}$ a set of object similarity rules for a recommender. An example of a positive similarity rule is the mentioned ``Artists sharing some of their tags are similar''.
                 \end{enumerate}
                 
-                There are several ways how to represent rules. The first studied one is \emph{RuleML (Rule Markup Language)} \cite{ruleml}, a XML-based markup language for representing rules. The language is very powerful, having the same expressiveness as declarative programming languages\footnote{There are several converters between the \emph{Prolog} programming language and RuleML, e.g. \cite{ruleml_prolog}}. RuleML was used for entering rules into the RACOFI recommender system \cite{racofi}.
+                There are several ways how to represent rules. The first studied one is \emph{RuleML (Rule Markup Language)}\footnote{See \url{http://ruleml.org/}.}, a XML-based markup language for representing rules. The language is very powerful, having the same expressiveness as declarative programming languages\footnote{There are several converters between the \emph{Prolog} programming language and RuleML, e.g. \emph{$W^4$ RuleML Compiler}, see \url{http://centria.di.fct.unl.pt/~cd/projectos/w4/ruleml/index.htm}.}. RuleML was used for entering rules into the RACOFI recommender system \cite{racofi}.
 
                 Creating and editing rules in RuleML isn't very convenient as creating and editing any other XML-based document. That is partially solved by a shortened notation \cite{ruleml_short}, but even that isn't very comfortable to a user that isn't experienced in declarative programing. Another drawback of using RuleML for our purpose is its generality. The set of conditions and actions we'd like to represent is very limited and therefore we don't need such a powerful language. 
                 
@@ -1042,7 +1066,7 @@ dont_recommend(U, A) :-
                         \item[Subject-object relationship confidence] $D_{so }:S \times O \to [0,1]$. A function takes a subject-object pair and gives a confidence, that the \emph{predicted relationship} appears (when positive) or doesn't appear (when negative). High values mean strong confidence. Low values mean that the rule is unsure about the impact (positive or negative) on the preference. This makes a similar effect as if the condition $C$ wasn't satisfied for the subject-object pair. In our example \ref{ex_s_o} we can use a linear confidence function. The more of the given tags the artist has, the higher is the resulting confidence. \item[Subject-subject similarity] $D_{ss}:S \times S \to [0,1]$. A function takes a subject-subject pair and determines similarity between the subjects. The higher the confidence, the more similar (or dissimilar if negative) the subjects are, according to the rule. In our example \ref{ex_s_s} we use a confidence function that returns a normalized difference between the age of the two users. 
                         \item[Object-object similarity] $D_{oo}:O \times O \to [0, 1]$ A function takes an object-object pair and determines similarity or dissimilarity between the objects. The higher the confidence, the more similar (or dissimilar when negative) the objects are, according to the rule. In our example \ref{ex_o_o} the confidence function returns the number of common tags normalized by the overall number of tags.
                     \end{description}
-                    \item[Weight] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike confidence, is independent of the particular entities on which the rule is evaluated. The weight should be set so that the more significant rules get higher weight. The exact weight values should be checked experimentally.
+                    \item[Weight] $w \in [0,1]$ A constant between $0$ and $1$ determining the strength of the rule. Weight, unlike confidence, is independent of the particular entities on which the rule is evaluated. The weight should be set so that the more significant rules get higher weight. The exact weight values should be verified experimentally.
                     \item[Description] A text explaining the meaning of the rule. Descriptions can be used when presenting recommendations to users. In the text there can be gaps that that will be filled with a textual representation of entities. Our example rule \ref{ex_s_s} can have a description ``The users \{subject1\} and \{subject2\} are similar because their age is similar.''
                 \end{description}
                 
@@ -1108,21 +1132,25 @@ class ArtistRecommender(Recommender):
             # the user is a female and the artist was tagged by
             # a male-specific tag
             condition=lambda user, artist: user.gender == 'f' and \
-                artist.artisttag_set.filter(tag__gender_specific='m').exists()
+                artist.artisttag_set\
+                .filter(tag__gender_specific='m').exists()
             
             # it's a negative rule
             is_positive=False,
             
             weight=0.5,
             
-            # the more male-specific tags the artist has, the higher is 
-            # the rule confidence. Normalized by the artist tag count
+            # the more male-specific tags the artist has, the higher
+            # is the rule confidence. Normalized by the artist tag 
+            # count
             confidence=lambda user, artist: float(
-                artist.artisttag_set.filter(tag__gender_specific='m').count())/ \
+                artist.artisttag_set\
+                    .filter(tag__gender_specific='m').count())/ \
                     artist.artisttag_set.count(),
                     
-            description="Artist %(object)s isn't recommended to %(subject)s, " +
-                "because the artist is considered male-specific."
+            description="Artist %(object)s isn't recommended to" + \
+                " %(subject)s,  because the artist" + \
+                " is considered male-specific."
         ),
     )
         \end{verbatim}
@@ -1164,7 +1192,8 @@ class ArtistRecommender(Recommender):
                 \begin{equation}
                     \label{eq_ex2_cond}
                     C^{r_2}_{ssim}(s_1, s_2) = \left\{\begin{array}{ll}
-                            True & \textrm{if $country(s_1) \neq \varnothing $ and $country(s_2) \neq \varnothing $ and $country(s_1) = country(s_2)$} \\
+                            True & \textrm{if $country(s_1) \neq \varnothing $ and $country(s_2) \neq \varnothing $} \\
+                            & \textrm{and $country(s_1) = country(s_2)$}\\
                             & \\
                             False & \textrm{otherwise} \\
                         \end{array} \right.
@@ -1198,8 +1227,8 @@ class ArtistRecommender(Recommender):
             
             weight=0.5,            
             
-            description="Users %(subject1)s and %(subject2)s are from " + \
-            " the same country.",
+            description="Users %(subject1)s and %(subject2)s" + \
+            " are from the same country.",
         ),
     )
                 \end{verbatim}
@@ -1207,7 +1236,7 @@ class ArtistRecommender(Recommender):
 
                 Such a representation can use semantics of a system independently of its data model. There doesn't have to be a direct link between subjects/objects in the data model to define a relationship. Even though there isn't a direct connection in the data model, we can represent such a relationship in our system. Moreover, the relationships can be taken from various sources, e.g. multiple databases, data stores, or log files. The only thing that has to be provided to Unresyst is an implementation of a function returning whether the given subjects/objects are in the relationship.
                 
-                This representation is a reduction of the full semantic representation used in \cite{white_paper}. The authors propose using all system entities and relationships for recommending. This approach has some significant drawbacks. Firstly, it's not clear how to assign weights for relationships between entities that are not subjects or objects. Such relationship can have a varied meaning in the context of different relationships. In our example, if we had to use the links from artists to tags, we would have to assign a weight to them. However, we're using these links in two contexts: similarity of artists and the rule deprecating artists marked by the given tag for female users. Evaluating such relationship once in a positive meaning and once in a negative would be much complicated. The second drawback of the \cite{white_paper} approach is that most of the main-stream recommender algorithms use only subjects, objects and relationships between them. Therefore the choice of a recommender algorithm is much more limited.
+                This representation is a reduction of the full semantic representation used in \cite{white_paper}. The authors propose using all system entities and relationships for recommending. In this approach there are significant challenges. Firstly, it's not clear how to assign weights for relationships between entities that are not subjects or objects. Such relationship can have a varied meaning in the context of different relationships. In our example, if we had to use the links from artists to tags, we would have to assign a weight to them. However, we're using these links in two contexts: similarity of artists and the rule deprecating artists marked by the given tag for female users. Evaluating such relationship once in a positive meaning and once in a negative would be much complicated. The second challenge of the \cite{white_paper} approach is that most of the main-stream recommender algorithms use only subjects, objects and relationships between them. Therefore the choice of a recommender algorithm is limited, or new algorithms have to be developed for the recommender.
                 
                 The relationships between entities that are not subjects or objects can be used in our representation as well, but only as parts of the described rules. They do not have a particular representation in Unresyst. 
                 
@@ -1251,12 +1280,13 @@ class ArtistRecommender(Recommender):
     predicted_relationship = PredictedRelationship( 
         name="User listens to artist's tracks.",
         
-        # gives true for user, artist pairs where the user have listened
-        # to the artist
+        # gives true for user, artist pairs where the user 
+        # have listened to the artist
         condition=lambda user, artist: \
             user.scrobble_set.filter(track__artist=artist).exists(), 
         
-        description="""User %(subject)s listens to the %(object)s's tracks."""
+        description="User %(subject)s listens to the " + \
+            "%(object)s's tracks."
     )
     """The relationship that will be predicted"""
                     \end{verbatim}
@@ -1330,7 +1360,8 @@ class ArtistRecommender(Recommender):
     # ...
     biases = (
         ObjectBias(
-            name="Artists whose tracks have been listened a lot recently.",
+            name="Artists whose tracks have been listened a lot" + \
+                " recently.",
             
             description="%(object)s has been listened much recently.",
             
@@ -1347,7 +1378,8 @@ class ArtistRecommender(Recommender):
             # it's a positive bias
             is_positive=True,
             
-            # the number of scrobbles for the artist divided by the max.
+            # the number of scrobbles for the artist divided by 
+            # the maximum
             confidence=lambda artist: \
                 float(artist.track_set\
                     .filter(scrobble__timestamp__range=
@@ -1370,7 +1402,7 @@ class ArtistRecommender(Recommender):
                         \item[$update(entity)$] A method that is called after an update in the parent system database in order to propagate the change to recommendations and predictions. The entity parameter is either a subject or an object. The method recomputes all structures we have created during the build method for the given entity. For some of the algorithms the update method might be as complex as performing build. The update method isn't implemented in our recommender prototype.
                     \end{description}
                     
-                    The $RelationshipPrediction$ class, which instances are returned by the $get\_recommendations$ and $predict\_relationship$ runtime methods, has the following attributes.
+                    The $RelationshipPrediction$ class, which instances are returned by the runtime methods $get\_recommendations$ and $predict\_relationship$, has the following attributes.
                     \begin{description}
                         \item[$subject$] The subject of the prediction, typically the system user. The attribute contains a parent system class instance, no conversion is needed.
                         \item[$object$] The object of the prediction, analogously to the $subject$ attribute.
@@ -1381,10 +1413,26 @@ class ArtistRecommender(Recommender):
                     
                     In our prototype implementation, all runtime interface methods are placed directly on the Recommender base class. When using the interface, we work with our class defined in the adaptation phase. In all runtime methods we work directly with the parent system objects, no conversion is needed.
                     
-%    TODO                 The usage of the runtime interface of our Python prototype implementation can be seen on the following lines.
-%                     \begin{verbatim}
-% kod z konzole - build, recommend, predict
-%                     \end{verbatim}
+                    The usage of the runtime interface of our Python prototype implementation can be seen on the following lines. Firstly we import all necessary classes and build the recommender. The \verb!User! model points to a table in the \verb!lastfm! application containing system users, the \verb!Artist! model table contains artists. These are domain-specific models belonging to the application. Using the recommender method \verb!get_recommendations! we obtain one artist that is according to the recommender most likely to be liked by the user $44$. The recommender proposes artist \emph{Cat Stevens}, with expectancy $0.75$. The recommender explains, that the user $44$ is similar to user $2$, because they're both females, and the user $2$ has already listened to Cat Stevens. 
+                     \begin{verbatim}
+>>> from lastfm.models import *
+>>> from lastfm.recommender import *
+>>> 
+>>> NovelArtistRecommender.build()
+>>> u = User.objects.get(id=44)
+>>> NovelArtistRecommender.get_recommendations(u,1)
+[< user_44 <- Cat Stevens: 0.750000, 
+Similarity: user_44's gender is f. user_2's gender is f. 
+And: User user_2 listens to the Cat Stevens's tracks. >]
+                    \end{verbatim}
+                    The next lines of code show predicting the relationship. Here we ask about an artist, who the user has already listened. Therefore the expectancy is $1.0$.
+                    \begin{verbatim}
+>>> u2 = User.objects.get(id=78)
+>>> a = Artist.objects.get(id=32)
+>>> NovelArtistRecommender.predict_relationship(u2, a)
+< user_78 <- Boards Of Canada: 1.000000, User user_78 listens 
+to the Boards Of Canada's tracks. >
+                     \end{verbatim}
 
 
     \section{Applying Rules}
@@ -1426,9 +1474,9 @@ class ArtistRecommender(Recommender):
             
             For providing a prediction for a given subject-object pair, the following preference sources are taken into account.
             \begin{description}
-                \item[Subject-object rules] Preference rules that apply to the given pair are taken directly as a preference source. An example of such rule is our negative rule not recommending artists tagged by a male-specific tags to female. For Cindy and ``Black Sabbath'' this rule will negatively impact the resulting preference prediction.
-                \item[Known relationships and aggregated similarity] Another way to create a preference prediction is to take an already known preference and recommend a similar object to the one that is already preferred by the subject, or to recommend the preferred object to a subject that is similar to the one who preferred the object. In our example we recommend Modest Mouse to Alice, as she has listened to Arctic Monkeys band which is known to be similar to Modest Mouse. Moreover we recommend U2 to Alice, because Bob has listened to U2 and his age is similar to Alice's.
-                \item[Aggregated Bias] The subject or object bias is also taken into account for relationship predictions. If the subject or the object (or both) have a bias, it's included to the prediction. In our example The Tape has a bias which influence all predictions for pairs where The Tape is the object.
+                \item[Subject-object rules] Preference rules that apply to the given pair are taken directly as a preference source. An example of such rule is our negative rule not recommending artists tagged by a male-specific tags to female. For Cindy and ``Black Sabbath'' this rule will negatively impact the resulting preference prediction. Formally if there's a single rule to be applied to the $s$-$o$ pair, we set $\hat{u}_R(s, o) = D_{so }(s, o) w_{r_1}$ if $C_{pref}(s, o)=True$ for a given rule $r_1 \in RL$.
+                \item[Known relationships and aggregated similarity] Another way to create a preference prediction is to take an already known preference and recommend a similar object to the one that is already preferred by the subject, or to recommend the preferred object to a subject that is similar to the one who preferred the object. In our example we recommend Modest Mouse to Alice, as she has listened to Arctic Monkeys band which is known to be similar to Modest Mouse. Formally for object similarity if there is a single rule applied to the $s$-$o$ pair, we set $\hat{u}_R(s, o) = D_{oo}(o, o') * w_{r_2}$ if $C_{osim}(o, o')=True$ for a given rule $r_2 \in RL$. Moreover we recommend U2 to Alice, because Bob has listened to U2 and his age is similar to Alice's. Formally for subject similarity, if there is a single rule applied to the $s$-$o$ pair, we set $\hat{u}_R(s, o) = D_{ss}(s, s') w_{r_3}$ if $C_{ssim}(s, s')=True$ for a given rule $r_3 \in RL$.
+                \item[Aggregated Bias] The subject or object bias is also taken into account for relationship predictions. If the subject or the object (or both) have a bias, it's included to the prediction. In our example The Tape has a bias which influence all predictions for pairs where The Tape is the object. Formally for object bias, if there is a single rule applied to the $o$ object, we set $\hat{u}_R(s, o) = D_{bobj}(o) w_{r_4}$ if $C_{bobj}(o)=True$ for $\forall s \in S$ and a given rule $r_4 \in RL$, analogously for the subject bias.
             \end{description}
             
             For some of the subject-object pairs more than one of the preference sources can be available, e.g. we have a subject-object rule for the pair and the object is one of the biased ones. For such pairs we use the combinator module (see \ref{combining}) to combine these sources to a single prediction.
@@ -1441,7 +1489,7 @@ class ArtistRecommender(Recommender):
             
             Multiple combination elements can appear for some entities and entity pairs during the following actions.
             \begin{description}
-                \item[Aggregating similarities and biases] During the aggregation multiple similarity instances can appear on a single subject or object pair. Multiple biases can appear on a single subject or object. See \ref{aggregating} for details on aggregation.
+                \item[Aggregating similarities and biases] During the aggregation, multiple similarity instances can appear on a single subject or object pair. Multiple biases can appear on a single subject or object. See \ref{aggregating} for details on aggregation.
                 \item[Compiling rules to preference predictions] During the compilation, multiple combination elements can appear on a single subject-object pair, see \ref{compiling} for the list of all possible preference sources. The similarity preference sources can produce multiple combination elements for one subject-object pair.%, as demonstrated on the figure %\ref{} TODO
             \end{description}
             
@@ -1550,7 +1598,7 @@ class ArtistRecommender(Recommender):
                     \item[Exploiting algorithm level] The level takes the predictions obtained from the higher level and later exploits them for other pairs. For this layer, we can use a classical collaborative filtering algorithm as described in \ref{collaborative_filtering}. In the prototype implementation we use only a simple algorithm returning predictions it has obtained from the compiling level. The input of the level are the predictions, the output are the obtained predictions, optionally exploited to some previously unpredicted subject-object pairs.
                 \end{description}
                 
-                The levels provide a possibility to include another algorithm at any level. E.g. if we find an algorithm that can produce predictions from similarities, aggregated preferences and aggregated biases, we can put the new algorithm in the place of our Compiling Algorithm. The leveled structure even enables us to create a new algorithm with other layers than the proposed ones.
+                The levels provide a possibility to include a new algorithm at any level. E.g. if we find an algorithm that can produce predictions from similarities, aggregated preferences and aggregated biases, we can put the new algorithm in the place of our Compiling Algorithm. The leveled structure even enables us to create a new algorithm with other layers than the proposed ones.
                 
                 In our prototype implementation all algorithm level classes are derived from the same base class, having the same interface for building the algorithm and providing predictions and recommendations. The complete interface description can be found in the generated documentation on the attached CD. 
                 
@@ -1567,10 +1615,11 @@ class ArtistRecommender(Recommender):
             \subsection{Unresyst Prototype Data Model}
                 \label{data_model}
                 As the data model of the Unresyst application is extensive, we had to divide the model to smaller ones: Basic data model, Biases data model, Aggregator data model and Algorithm data model. The figure displaying the complete data model can be found on the attached CD.
+                \fig[15]{pics/core_models.png}{The basic data model of Unresyst}{pic_core_models}
                 
                 The basic data model of the Unresyst application consists of the models displayed in the figure \ref{pic_core_models}. All these models are filled by the Abstractor layer (see \ref{abstractor_layer}). 
                 
-                \fig[15]{pics/core_models.png}{The basic data model of Unresyst}{pic_core_models}
+                
                 
                 As there can be multiple recommenders in one parent system, we need a representation of the recommender in the database. This is the \emph{Recommender} model. One recommender model in database corresponds to one specific recommender. All other models for recommendations are linked to the  recommender model they belong to.
                 
@@ -1580,11 +1629,11 @@ class ArtistRecommender(Recommender):
                 
                 \fig[6]{pics/biases.png}{The data model of entity bias}{pic_biases}
                 
-                The Aggregator data model on the figure \ref{pic_aggregator_models} contains models filled by aggregator level of the algorithm layer (see \ref{algorithm_layer}. The aggregated instances group together rule, relationship and bias instances.
+                The Aggregator data model on the figure \ref{pic_aggregator_models} contains models filled by aggregator level of the algorithm layer (see \ref{algorithm_layer}). The aggregated instances group together rule, relationship and bias instances.
                 
                 \fig[9]{pics/aggregator.png}{The Aggregator data model}{pic_aggregator_models}
                 
-                The data model for our simple algorithm is in the figure \ref{pic_algorithm_models}. As our implementation only returns the results of the levels above, it only contains a model for preference prediction. These models aren't generated for all possible pairs as this wouldn't be feasible for larger domains. However, as we need to generate recommendations for a given subject fast, we do some pre-computation. During the build we select the given number of promising objects for each subject. For these objects, all known preference sources are inspected (see \ref{compiling}) and the predictions for the pairs are saved.
+                The data model for our simple algorithm is in the figure \ref{pic_algorithm_models}. As our implementation only returns the results of the levels above, it only contains a model for preference prediction. These models aren't generated for all possible pairs as this wouldn't be feasible for larger domains. However, as we need to generate recommendations for a given subject fast, we do some pre-computation. During the build we select the given number of promising objects for each subject. The promising objects are chosen from all rules, relationships and biases that are available. For these objects, all known preference sources are inspected (see \ref{compiling}) and the predictions for the pairs are saved.
                 
                 \fig[6]{pics/algorithm.png}{The data model of our simple algorithm implementation}{pic_algorithm_models}
             
@@ -1596,7 +1645,7 @@ class ArtistRecommender(Recommender):
                 
                 \fig[7]{pics/clusters.png}{The data model of our cluster implementation}{pic_clusters}
                 
-                For higher effectivity, we introduced the \emph{cluster} concept. For each country we create a cluster and we connect each user with the cluster appropriate to the country he/she is from. The similarity can then be obtained by checking whether the pair of users is connected to the same cluster. In this case we reduce the number of links so that it's at the most equal to number of users. The domain-neutral representation of models related to clusters is in the figure \ref{pic_clusters}.
+                For higher effectivity, we introduced the \emph{cluster} concept. I.e. for each country we create a cluster and we connect each user with the cluster appropriate to the country he/she is from. The similarity can then be obtained by checking whether the pair of users is connected to the same cluster. In this case we reduce the number of links so that it's at the most equal to number of users. The domain-neutral representation of models related to clusters is in the figure \ref{pic_clusters}.
                 
                 In the Flixster data set there is an explicit feedback relationship that can be both positive and negative. For these kinds of relationships we introduced a new type of rule - an Explicit Rule. In this kind of rule there is no positiveness given, as the feedback can be both positive and negative. Instead of that, in the rule we define directly the expectancy measure. The data model for explicit rules is displayed on the figure \ref{pic_explicit}.
                 
@@ -1606,10 +1655,10 @@ class ArtistRecommender(Recommender):
 
                 \fig{pics/algorithm_classes.png}{The diagram of the classes in our implementation of the algorithm layer}{pic_algorithm_classes}
 
-                As the prototype was to be adapted to real datasets with thousands of subjects and objects we had to make some technical enhancements to make the prototype recommender build in a reasonable time. Firstly, in the rule, relationship and bias classes we added a possibility to define a \emph{generator} instead of the condition. Generator is a function returning entities or entity pairs that satisfy the condition. The use of the generator in rule abstraction is much faster because we don't have to traverse all entities or entity pairs to test the condition, instead of that we directly evaluate the confidence on the entities/entity pairs returned from the generator.
+                As the prototype was to be adapted to real data sets with thousands of subjects and objects we had to make some technical enhancements to make the prototype recommender build in a reasonable time. Firstly, in the rule, relationship and bias classes we added a possibility to define a \emph{generator} instead of the condition. Generator is a function returning entities or entity pairs that satisfy the condition. The use of the generator in rule abstraction is much faster because we don't have to traverse all entities or entity pairs to test the condition, instead of that we directly evaluate the confidence on the entities/entity pairs returned from the generator.
                 
 
-                As can be noted in the data models \ref{pic_core_models} and \ref{pic_aggregator_models} all relationship instances are symmetric, as we use a single model for subjects and objects. When saving a relationship instance between the entities $(A, B)$, we have to check whether the relationship $(B, A)$ isn't already saved. The same check has to be performed when searching for a relationship between the entities. But as the check for the opposite direction adds an extra database query, we introduced some regulations for saving the relationship entities so that the opposite order doesn't have to be checked. The regulations are the following
+                As can be noted in the data models \ref{pic_core_models} and \ref{pic_aggregator_models}, all relationship instances are symmetric, as we use a single model for subjects and objects. When saving a relationship instance between the entities $(A, B)$, we have to check whether the relationship $(B, A)$ isn't already saved. The same check has to be performed when searching for a relationship between the entities. But as the check for the opposite direction adds an extra database query, we introduced some regulations for saving the relationship entities so that the opposite order doesn't have to be checked. The regulations are the following
                 \begin{enumerate}
                     \item If the relationship is between a subject and an object, we save the subject to the first position, object to the second
                     \item If it's a similarity relationship we save the entity with the lower private key to the first position and the entity with the higher private key as the second.
@@ -1619,9 +1668,9 @@ class ArtistRecommender(Recommender):
 
 \chapter{Verifying the Universal Recommender on Real-World Data}
     \label{adapting_to_existing_systems}
-    In the chapter we describe the process of adapting the Unresyst prototype to the selected datasets (see Chapter \ref{relationships_in_studied}). 
+    In the chapter we describe the process of adapting the Unresyst prototype to the selected data sets (see Chapter \ref{relationships_in_studied}). 
     
-    In the following sections we give an overview of relationships we have predicted using Unresyst. We give an overview of the rules we used for the Unresyst configuration. As each dataset contains more data than our prototype can manage, we had to reduce the datasets in the manner described in the following subsections. In addition, we give some basic statistics of the counts of subjects and objects in the reduced datasets.
+    In the following sections we give an overview of relationships we have predicted using Unresyst. We give an overview of the rules we used for the Unresyst configuration. As each data set contains more data than our prototype can manage, we had to reduce the data sets in the manner described in the following subsections. In addition, we give some basic statistics of the counts of subjects and objects in the reduced data sets.
     
     The data models and descriptions of the attributes that we can use for recommending, can be found in the Chapter \ref{relationships_in_studied}. The complete source code of the presented rules can be found on the attached CD. 
     
@@ -1630,9 +1679,9 @@ class ArtistRecommender(Recommender):
         
         We decided to predict the relationship \emph{User listens to Artist}, rather than predicting the listened tracks. That's because the range of played tracks from each artist is pretty wide and different users tend to listen different tracks.
         
-        We have set up two recommenders for the Last.fm dataset: a novel artist recommender, recommending only artists that the user hasn't heard before and a radio recommender recommending all artists no matter if they have been heard or not. The latter recommender could be used e.g. for selecting music to play in a user's personalized internet radio.
+        We have set up two recommenders for the Last.fm data set: a novel artist recommender, recommending only artists that the user hasn't heard before and a radio recommender recommending all artists no matter if they have been heard or not. The latter recommender could be used e.g. for selecting music to play in a user's personalized internet radio.
         
-        In Unresyst configuration for the Last.fm dataset we used the following rules:
+        In Unresyst configuration for the Last.fm data set we used the following rules:
         \begin{itemize}
             \item Similarity of users according to their age. We take only pairs of users whose age difference is lower than a given constant. The confidence of similarity raises with lowering age difference. We suppose, the users of similar age are likely to listen to the same artists.
             \item Similarity of users according to their registration date. We used the same mechanism as for user age. We suppose that in some period of time, the users listening a given kind of music could become members of the last.fm, e.g. when an article about Last.fm was published in a magazine specialized in the given kind of music.
@@ -1643,31 +1692,42 @@ class ArtistRecommender(Recommender):
             \item Negative preference for artists tagged by a gender-specific tag. As shown in the introductory example (\ref{motivation}) we classified some of the most popular tags as gender-specific. We have marked tags like ``Hard Rock'' or ``Death Metal'' as male-specific, and tags like ``sweet'' or ``emotional'' as female-specific. We suppose the gender-specific music is often disliked by the opposite gender.
         \end{itemize}
 
-        As the dataset originaly contains millions of scrobbles, we had to reduce it to make it feasible for our recommender prototype and the available hardware. We took the first cca hundred users from the dataset and then we selected every seven hundredth scrobble for each user. After that we obtained a dataset with entity counts listed in the table \ref{table_lastfm}. Assigning tags for the listened artists was done by matching their MusicBrainz \footnote{MusicBrainz is a community music metadatabase that attempts to create a comprehensive music information site. Each contained artist has a unique identifier\cite{musicbrainz}.}  identifiers.
-        \begin{stattable}{table_lastfm}{Statistics for the reduced Last.fm dataset}
+        As the data set originally contains millions of scrobbles, we had to reduce it to make it feasible for our recommender prototype and the available hardware. We took the first c. hundred users from the data set and then we selected every seven hundredth scrobble for each user. After that we obtained a data set with entity counts listed in the table \ref{table_lastfm}. Assigning tags for the listened artists was done by matching their MusicBrainz \footnote{MusicBrainz is a community music metadatabase that attempts to create a comprehensive music information site. Each contained artist has a unique identifier. See  \url{http://musicbrainz.org/}.}  identifiers. We succeeded in finding tags only for c. $14\%$ of the artists, but for those there was a high number of tags, in average $89$ unique tags for an artist.
+        
+        \begin{stattable}{table_lastfm}{Statistics for the reduced Last.fm data set}
             \hline
-            f & f\\
+            2348 & artists \\
             \hline
-            f & f\\
+            100 & users \\
+            \hline
+            5057 & tracks \\
+            \hline
+            5532 & scrobbles \\
+            \hline
+            9120 & tags \\
+            \hline
+            28588 & artist-tag links \\
+            \hline
+            322 & tagged artists\\
             \hline
         \end{stattable}
 
     \section{Flixster data set}
         \label{verifying_flixster}
     
-        The Flixster dataset is a classic collaborative filtering dataset with explicit user-movie rating and without any attributes for users or movies. Additionally to such datasets, Flixster contains links between users who are friends. As we had the only user-movie interaction relationship - the rating - we took as the predicted preference relationship a rating that was higher than a given constant. If the user gave the movie the given number of stars, he/she probably likes it. 
+        The Flixster data set is a classic collaborative filtering data set with explicit user-movie rating and without any attributes for users or movies. Additionally, Flixster contains links between users who are friends. As we had the only user-movie interaction relationship - the rating - we took as the predicted preference relationship a rating that was higher than a given constant. If the user gave the movie the given number of stars, he/she probably likes it. 
         
         For Unresyst setup we used the following rules.
         \begin{itemize}
             \item The explicit rule for user - movie ratings. As rating can give both positive and negative feedback we introduced a special rule type for it, see section \ref{implementation_challenges} for details. The five-stars scale was normalized to a float number between $0$ and $1$. 
             \item Similarity of users according to the friend relationship. We suppose that users who are friends have a similar taste so they like similar movies. 
             \item Object bias for high- and low-rated movies. We assume movies that were given exceptionally high/low ratings are supposed to be liked/disliked by many users. 
-            \item Subject bias for high- and low-rating users. As mentioned in the section \ref{representing_biases}, the subject biases are relevant only in cases when we care about the exact expectancy number. This is the case of the Flixster dataset as we try to predict the exact user - movie rating. Some users tend to rate all movies high whereas some sceptic users give low ratings to most of the movies. We include this remark to predictions by defining a subject bias.
+            \item Subject bias for high- and low-rating users. As mentioned in the section \ref{representing_biases}, the subject biases are relevant only in cases when we care about the exact expectancy number. This is the case of the Flixster data set as we try to predict the exact user - movie rating. Some users tend to rate all movies high whereas some sceptic users give low ratings to most of the movies. We include this remark to predictions by defining a subject bias.
         \end{itemize}
 
-        The dataset originally contained over eight million ratings and over seven million friend links. When reducing the dataset we took a subset of users so that the friend links were preserved. For these users we found the appropriate ratings.
+        The data set originally contained over eight million ratings and over seven million friend links. When reducing the data set we took a subset of users so that the friend links were preserved. For these users we found the appropriate ratings.
         
-        \begin{stattable}{table_flixster}{Statistics for the reduced Flixster dataset}
+        \begin{stattable}{table_flixster}{Statistics for the reduced Flixster data set}
             \hline
             418 & users\\
             \hline
@@ -1682,19 +1742,19 @@ class ArtistRecommender(Recommender):
     \section{Travel agency}
         \label{verifying_travel}
         
-        The travel agency dataset was created through a dump of the tables where the collected implicit feedback was stored. Firstly we had to filter out feedback that wasn't related to a particular tour, as feedback was collected on the whole website, not just tour profiles. Then we categorized the feedback by saving the data to the data model displayed in the figure \ref{pic_travel}. The strongest sign of preference is ordering the tour, so we decided to predict the \emph{User ordered a tour} relationship.
+        The travel agency data set was created through a dump of the tables where the collected implicit feedback was stored. Firstly we had to filter out feedback that wasn't related to a particular tour, as feedback was collected on the whole website, not just tour profiles. Then we categorized the feedback by saving the data to the data model displayed in the figure \ref{pic_travel}. The strongest sign of preference is ordering the tour, so we decided to predict the \emph{User ordered a tour} relationship.
         
         For Unresyst setup we used the following rules
         \begin{itemize}
             \item Implicit preference relationships - question, mouse move, click. When the user asked a question about the tour, has been actively moving the mouse over the tour profile, or has clicked on tour details or photos, we suppose he/she is interested in the tour. 
-            \item View profile time. As in the dataset there were recorded the events of opening and closing a page, with timestamps, we used the data to determine time the user spent on the tour profile. The longer the time, the higher was the preference according to the rule. 
+            \item View profile time. As in the data set there were recorded the events of opening and closing a page, with timestamps, we used the data to determine time the user spent on the tour profile. The longer the time, the higher was the preference according to the rule. 
             \item Similarity of tours according to their type and destination country. The rules were implemented through clusters (see \ref{implementation_challenges}).
             \item Positive object bias according to the amount of implicit feedback. Tours that were much actively visited were supposed to be more likely to be preferred by any user.
         \end{itemize}
         
-        After processing the dataset in the described way it had the parameters described in the table \ref{table_travel}
+        After processing the data set in the described way it had the parameters described in the table \ref{table_travel}
         
-        \begin{stattable}{table_travel}{Statistics for the Travel agency dataset}
+        \begin{stattable}{table_travel}{Statistics for the Travel agency data set}
             \hline
             193 & users\\
             \hline
@@ -1716,12 +1776,12 @@ class ArtistRecommender(Recommender):
 
 \chapter{Evaluating Recommender Results}
     \label{evaluating_recommender_results}
-    In the chapter we describe how we evaluated Unresyst on the presented datasets. Firstly we describe the methodology of evaluating, then we discuss the choice of the evaluation metric for each dataset, we give an overview of evaluation results. Finally we discuss possibilities of improving the Unresyst evaluation results.
+    In the chapter we describe how we evaluated Unresyst on the presented data sets. Firstly we describe the methodology of evaluating, then we discuss the choice of the evaluation metric for each data set, we give an overview of evaluation results. Finally we discuss possibilities of improving the Unresyst evaluation results.
     
     \section{Evaluation Methodology}
         \label{evaluation_methodology}
         
-        As we only had access to the presented systems through the datasets, we couldn't perform a live experiment with real system users. Instead of that, we used an offline analysis as described in \cite{evaluating}. We ran Unresyst on a subset of available data (\emph{training data}) and evaluated the results on the rest (\emph{testing data}). In the database on which we performed the recommender build, we kept only the training data. Later on we took the testing data and measured the performance of the evaluator using metrics described in the section \ref{evaluation_metrics}. 
+        As we only had access to the presented systems through the data sets, we couldn't perform a live experiment with real system users. Instead of that, we used an offline analysis as described in \cite{evaluating}. We ran Unresyst on a subset of available data (\emph{training data}) and evaluated the results on the rest (\emph{testing data}). In the database on which we performed the recommender build, we kept only the training data. Later on we took the testing data and measured the performance of the evaluator using metrics described in the section \ref{evaluation_metrics}. 
         
         For a comparison, we ran the evaluation also on an external recommender that was using a common recommender algorithm. As an external recommender we used the Mahout recommender framework \cite{mahout}. Our usage of Mahout is illustrated on the figure \ref{pic_external}. We created the External Recommender class having the same interface as the Unresyst recommender. The recommender was using for its build the Mahout recommender, communicating via CSV\footnote{CSV stands for Comma-separated values, a simple format of text files where the values (in our case identifiers of subjects, objects and optionally rating) are separated by commas.} files. The input files contained train data for the Mahout recommender. The output files contained predictions or recommendations on the test data.
         
@@ -1729,9 +1789,9 @@ class ArtistRecommender(Recommender):
 
         \subsection{Selecting Test Data}
             \label{selecting_test_data}
-            We used a constant ratio of testing to training data ($1:4$) for all datasets. In datasets where the timestamp in the feedback relationships was available (Last.fm and Travel agency), we selected the given part of the newest relationships as training data. Then the evaluation was done as if we ``replayed'' the scrobbles and orders recorded in the dataset. In the Flixster dataset where the timestamp wasn't available, we selected the ratings to the test set randomly.
+            We used a constant ratio of testing to training data ($1:4$) for all data sets. In data sets where the timestamp in the feedback relationships was available (Last.fm and Travel agency), we selected the given part of the newest relationships as training data. Then the evaluation was done as if we ``replayed'' the scrobbles and orders recorded in the data set. In the Flixster data set where the timestamp wasn't available, we selected the ratings to the test set randomly.
             
-            In the travel agency dataset we also removed all implicit feedback data that was newer than the newest contained tour order. This corresponds to a simulation of a live user test. In a given period we collect user feedback (orders, questions, clicks, etc.). In the next period we perform a test where we try to predict which tours a user orders, using only the data collected in the previous period. 
+            In the travel agency data set we also removed all implicit feedback data that was newer than the newest contained tour order. This corresponds to a simulation of a live user test. In a given period we collect user feedback (orders, questions, clicks, etc.). In the next period we perform a test where we try to predict which tours a user orders, using only the data collected in the previous period. 
 
     \section{Evaluation Metrics}
         \label{evaluation_metrics}
@@ -1740,7 +1800,7 @@ class ArtistRecommender(Recommender):
         \subsection{Explicit Feedback Metrics}
             \label{explicit_feedback_metrics}
             
-            For evaluating explicit feedback from the Flixster dataset we have chosen RMSE, although the metric is an object of recent criticism \cite{rmse_critic}. RMSE stands for Root Mean Square Error and has been the most widely used metric for evaluating accuracy recommender system, since it was used in the Netflix prize  for evaluating the participants' results \cite{netflix_prize}. Apart from being widely used it has an advantage of being simple to compute and it punishes large errors much more than the small ones.
+            For evaluating explicit feedback from the Flixster data set we have chosen RMSE, although the metric is an object of recent criticism \cite{rmse_critic}. RMSE stands for Root Mean Square Error and has been the most widely used metric for evaluating accuracy recommender system, since it was used in the Netflix prize  for evaluating the participants' results \cite{netflix_prize}. Apart from being widely used it has an advantage of being simple to compute and it punishes large errors much more than the small ones.
             
             The formula \ref{rmse} computes RMSE for the whole recommender. In our case $p_{so}$ is the  preference of $s$ to $o$ taken from the testing data, $\widetilde{p}_{so}$ is a prediction of the preference of $s$ to $o$, created by the recommender.
             
@@ -1751,13 +1811,13 @@ class ArtistRecommender(Recommender):
         
         \subsection{Implicit Feedback Metrics}
             \label{implicit_feedback_metrics}
-            The more complicated case is evaluating a recommender running on a dataset where only implicit feedback is available. Last.fm and Travel agency datasets have only positive implicit feedback and the lack of  feedback can't be taken as a negative preference. I.e. there can be several reasons why a user hasn't listened to an artists, maybe he/she doesn't like the artist or he/she only doesn't know about the artist. 
+            The more complicated case is evaluating a recommender running on a data set where only implicit feedback is available. Last.fm and Travel agency data sets have only positive implicit feedback and the lack of  feedback can't be taken as a negative preference. I.e. there can be several reasons why a user hasn't listened to an artists, maybe he/she doesn't like the artist or he/she only doesn't know about the artist. 
             
-            Therefore using the implicit feedback from test data to evaluate the recommender by a metric like RMSE isn't much sensible, as we only have positive examples with the highest possible expectancy value $1$. If we used such an evaluator, an ideal recommender would give $1$ for all the items, which isn't the recommender we're looking for. We can't even use a slightly negative feedback for missing feedback, as there're much more objects with missing feedback, than with present feedback and there's no reasonable way to select objects without feedback to predict preference for.
+            Therefore using the implicit feedback from test data to evaluate the recommender by a metric like RMSE isn't much sensible, as we only have positive examples with the highest possible expectancy value $1$. If we used such an evaluator, an ideal recommender would give $1$ for all the items, which isn't the recommender we're looking for. We can't even use a slightly negative feedback for missing feedback, as there are much more objects with missing feedback, than with present feedback and there's no reasonable way to select objects without feedback to predict preference for.
             
             In order to overcome the limitations of having only positive implicit feedback, we have to either restrict the number of objects the recommender can propose or we have to take relative values of the predicted expectancy. The metrics measuring coherency of the recommendation list and list from test data, as NDCG \cite{ndcg} aren't much helpful, as we don't have any ordering in the list from test data.
             
-            The paper \cite{evaluating} proposes using the \emph{Precision/Recall} metric, which is heavily used in the field of machine learning and information retrieval. For our application, we count the metric for each user and count an average to get the numbers for the complete recommender. Objects that were have an implicit feedback from the user are taken as \emph{relevant}, others are irrelevant. We try to predict relevant objects for a subject via our \emph{get recommendations} method. In the formulas for counting precision (\ref{precision}) and recall (\ref{recall}) we accommodate the Precision/Recall concepts to our needs. $Prec_s$ is precision of recommendations for subject $s$, $Rec_s$ is recall of recommendations for subject $s$, $R_s$ is a set of objects recommended to $s$, $T_s$ is a set of objects in test set for $s$,
+            The paper \cite{evaluating} proposes using the \emph{Precision/Recall} metric, which is heavily used in the field of machine learning and information retrieval. For our application, we count the metric for each user and count an average to get the numbers for the complete recommender. Objects that  have an implicit feedback from the user are taken as \emph{relevant}, others are irrelevant. We try to predict relevant objects for a subject via our \emph{get recommendations} method. In the formulas for counting precision (\ref{precision}) and recall (\ref{recall}) we accommodate the Precision/Recall concepts to our needs. $Prec_s$ is precision of recommendations for subject $s$, $Rec_s$ is recall of recommendations for subject $s$, $R_s$ is a set of objects recommended to $s$, $T_s$ is a set of objects in test set for $s$,
             $N$ is the number of recommended objects.
             
             \begin{equation}
@@ -1772,7 +1832,7 @@ class ArtistRecommender(Recommender):
             
             We experimented with different values of $N$, but for all tested recommender algorithms both precision and recall were extremely low. The problem of this approach is, that it's taking objects with no implicit feedback as irrelevant, which isn't completely appropriate as the lack of positive feedback doesn't imply a negative preference. Therefore we had to seek another metric.
             
-            Authors of \cite{koren_implicit} used a metric called $\overline{rank}$ for evaluation of their recommender working with implicit feedback. The definition of the metric is the formula \ref{eq_koren_avg}, where $T$ denotes the set of testing subject-object pairs. $rank_{so}$ is a rank for the given subject-object pair, defined in \ref{eq_koren_rank}. $m$ denotes the number of objects in dataset, $i_{so}$ the index of the object $o$ in a list of all objects ordered reversely by the expectancy for the subject $s$ (the first object gets a $0$). $rank_{so}$ has a value of $0$ for the object $o$ that is predicted to be the most desirable for the subject $s$, and it has the value of $1$ for the object $o$ that is predicted to be the least preferred by the subject $s$. 
+            Authors of \cite{koren_implicit} used a metric called $\overline{rank}$ for evaluation of their recommender working with implicit feedback. The definition of the metric is the formula \ref{eq_koren_avg}, where $T$ denotes the set of testing subject-object pairs. $rank_{so}$ is a rank for the given subject-object pair, defined in \ref{eq_koren_rank}. $m$ denotes the number of objects in data set, $i_{so}$ the index of the object $o$ in a list of all objects ordered reversely by the expectancy for the subject $s$ (the first object gets a $0$). $rank_{so}$ has a value of $0$ for the object $o$ that is predicted to be the most desirable for the subject $s$, and it has the value of $1$ for the object $o$ that is predicted to be the least preferred by the subject $s$. 
             
             \begin{equation}
                 \label{eq_koren_avg}
@@ -1790,20 +1850,72 @@ class ArtistRecommender(Recommender):
     \section{Evaluation Results on the Datasets}
         \label{results}
         
-        When evaluating Unresyst on the studied datasets, we experimented with various recommender configurations. The results of our measurements are in the following sections. Finally we give some ideas on improving the recommender results.
+        When evaluating Unresyst on the studied data sets, we experimented with various recommender configurations. The results of our evaluation are in the following sections. Finally we give some ideas on improving the recommender results. For comparison to standard collaborative filtering methods we use a Slope One recommender \cite{slope_one}, implemented in the Mahout \cite{mahout} framework. Slope One is a relatively simple but efficient item-based collaborative filtering method.
         
         \subsection{Last.fm}
             \label{results_lastfm}
-            druhy nenovel - napr. hrani v personalized radiu, nezalezi na tom jestli hral nebo ne. Tohle nesrovnam s Mahoutem, protoze ten vyrazuje zname dvojice z recommendations
+            
+            For the Last.fm data set recommender evaluation we used the $\overline{Rank}$ metric (see the section \ref{evaluation_methodology}, as we didn't have any explicit feedback. But as counting the metric for a single subject requires predicting his/her relationship to all objects in the system, we had to count the metric only for randomly selected users.
+            
+            \fig[15.5]{pics/chart_lastfm.png}{The evaluation results on the Last.fm data set. Smaller Rank values are better.}{pic_chart_lastfm}
+            
+            For the Last.fm data set we have introduced two recommenders: one for predicting novel (previously unheard) artists and a radio recommender for predicting any artists, no matter if the user has listened to them or not. As the number of repeatedly played artists in the dataset was relatively low, the evaluation results of the radio recommender were very close to the novel artist recommender results. Therefore we present only the results of the novel artist recommender.
+            
+            The baseline random recommender gave a rank of $0.5$ as expected. The Slope One recommender wasn't much successful at the data set, its result was almost the same as the result of the random recommender. A breakthrough was done by adding clusters for user gender. Obviously, some music is popular within groups of users of the same gender. The country cluster performed just a bit better then the random recommender. 
+            
+            Recommending the most listened tracks wasn't much successful, giving results just below the random recommender. On the opposite, recommending artists listened by users with similar age was much more successful. The proposed rule with gender-specific tags didn't bring much success, obviously a better analysis should be performed.
+            
+            The combination of all the successful rules gave a very good result, which wasn't improved by using the Slope One recommender below Unresyst.
+            
+            
         \subsection{Flixster}
             \label{results_flixster}
+            For the Flixster data set, we used the RMSE metric, as there's explicit feedback available. The results can be seen on the chart \ref{pic_chart_flixster}. As a baseline we took a random recommender, that predicted for all pairs expectancy value $0.5$. All tested configurations were better than this baseline. 
+            
+            \fig[15.5]{pics/chart_flixster.png}{The evaluation results on the Flixster data set. Smaller RMSE values are better.}{pic_chart_flixster}
+            
+            The external Slope One recommender scored pretty well at the data set, the RMSE was significantly better than the random and also outperformed most of the Unresyst configurations. A good result from the Slope One recommender was expected as the Flixster data set is a classic data set with explicit user-item ratings, for which collaborative filtering methods are designed.
+            
+            Then we evaluated Unresyst, while adding different data sources. Using the friend relationship didn't bring much accuracy benefit, the result was just a bit better than the random. Object biases (giving higher expectancy to highly rated movies and lower to low-rated) were slightly more successful. Much more important were subject biases, obviously some users tend to give constantly high rating to some movies, while some others give constantly low ratings to all movies.
+            
+            Then we experimented with combining biases using the three combination functions: Average (as a baseline), Certainty Factor and Twisted average, as described in the section \ref{combining}. Twisted average outperformed the remaining ones. The twisted average bias combination was even better than the Slope One recommender.
+            
+            Then we added the friends relationship, which didn't make much difference. Finally we experimented with mixing the Unresyst knowledge based recommender with the Slope One recommender. The hybrid recommender used Slope One predictions for pair where no rules could be applied. This approach slightly improved the mere Unresyst recommender. Lastly, we tested the knowledge based recommender above Slope One as proposed in the chapter \ref{combining_knowledge_and_cf}. The evaluation results confirms that the predictions of the knowledge based recommender can be successfully used as an input of a collaborative filtering algorithm. 
+            
+            A table of all evaluation results for the Flixster data set can be found in the Appendix table \ref{table_eval_flixster}. 
+
             
         \subsection{Travel Agency}
             \label{travel_agency}
             
+            For the travel agency data set we used the $\overline{Rank}$ metric as described in the section \ref{evaluation_methodology}. The baseline random recommender result was around $0.5$ which was the expected value.
+            
+            \fig[15.5]{pics/chart_travel.png}{The evaluation results on the Travel data set. Smaller $\overline{Rank}$ values are better.}{pic_chart_travel}
+            
+            The Slope One recommender wasn't successful on the data set, the obtained result was the same as for the random recommender. The reason was that the number of orders was pretty low and therefore the user-item matrix was very sparse. 
+            
+            Then we tested Unresyst with single data sources. Clusters for countries and tour types weren't successful, giving values around $0.5$, nor were the rules obtained from mouse moves, questions and profile views. The first successful attempt were object biases, most successful of them being bias that increased the expectancy for tours that were viewed the most. 
+            
+            The combination of all successful rules further improved the $\overline{Rank}$. We tried using different combination functions to combine rules, but the effect wasn't obvious - all implemented  combination functions gave very similar results. We suppose it's because there were little subject-object pairs where multiple rules would meet.
+            
+            Adding Slope One to a hybrid recommender as well as using Slope One below Unresyst, didn't bring any significant improvement. Obviously the collaborative filtering methods aren't much useful for data sets with sparse data, even when we try to increase the density by a knowledge based recommender.
+            
+            A table of all evaluation results for the travel agency data set can be found in the Appendix table \ref{table_eval_travel}. 
+            
         \subsection{Improving the Recommender Results}
             \label{improving_the_results}
-            An obvious way to improve Unresyst results on a given dataset is to set weights of the rules, so that the important rules that heavily influence the recommendations get high weights and vice versa. As seeing which rule is important and which isn't, we propose an automatic way of weight setting.
+            An obvious way to improve Unresyst results on a given data set is to set weights of the rules, so that the important rules that heavily influence the recommendations get high weights and vice versa.
+            
+            Notably, weight values are important when predicting explicit feedback values, as in the Flixster data set. When we predict a value of an explicit feedback we care about the exact expectancy value, not just the relative order of the object predictions for a subject. 
+            
+            When we evaluated Unesyst on the data sets, we firstly tried adding a single rule to the recommender and according to the evaluation result, we set the rule weight in the final setup. 
+            
+            Another option would be to observe the coherence between the rule instances and the known predicted relationship pairs. A positive rule that covers many predicted relationship pairs and few others should get a high value, e.g. if user's viewed tours cover all ordered tours and not many additional ones, the rule should get high weight. The rule shouldn't be suspended for additional covered pairs as much as for missing coverage, because the uncovered pairs may become being in the predicted relationship, e.g. a user can order a tour he/she has previously viewed. On the contrary negative rules should cover many pairs uncovered by the predicted relationship and few covered. 
+            
+            Similarly, the positive bias rules should cohere with the number of predicted relationships in which the subject or object is. E.g. if we use highly viewed tours as a bias, it should cohere with highly ordered tours.
+            
+            For similarity rules and clusters, a high-weighted rule should cover objects (or subjects if it's a subject similarity rule), that are in the predicted relationship with a single subject (or object). I.e. artist similarity should cover artists that are often played together by a single user. Such similarity should obtain high weight.
+            
 
 
 \chapter{Conclusion and Future Work}
@@ -1815,7 +1927,9 @@ class ArtistRecommender(Recommender):
         
         We have designed an interface for entering business rules that can be used for both explicit and implicit user feedback. For entering the strength of the rules we have introduced the expectancy concept, which is a way of representing confidence of both positive and negative rules. We have analyzed methods for combining multiple rules that can be applied to a single entity or entity pairs. 
         
-        The design concepts were verified by implementing a prototype that was adapted to datasets from various domains. We proposed ways of measuring Unresyst recommendation accuracy and used it for our prototype implementation.
+        The design concepts were verified by implementing a prototype that was adapted to data sets from various domains. We proposed ways of measuring Unresyst recommendation accuracy and used it for our prototype implementation.
+        
+        The evaluation results show that a knowledge based recommender can outperform a common collaborative filtering algorithm. When used with in a combination with collaborative filtering, such recommender can give even more accurate results. 
         
     \section{Future Work}
         \label{future_work}
@@ -1823,21 +1937,18 @@ class ArtistRecommender(Recommender):
         
         \paragraph{Implementation} The Unresyst recommender should be implemented in a fast and scalable way, so that it can be used in a real world system. The implementation should deal with technical matters like a deeper integration of Unresyst with a collaborative filtering framework. We should be able to integrate the Unresyst implementation to systems running on a wide range of platforms or it should be able to run as a recommender service.
         
-        \paragraph{More Domain Experiments} Even though we have experimented with Unresyst on a range of various domains, some more experiments are needed, including collecting user feedback to provided recommendations. Some experiments beyond the traditional user-item recommendations can be performed, like recommending to user groups, or recommending multiple kinds of items.
+        \paragraph{More Domain Experiments} Even though we have experimented with Unresyst on a range of various domains, some more experiments are needed, including collecting user feedback to provided recommendations. Some experiments beyond the traditional user-item recommendations can be performed, like recommending to user groups, or recommending multiple kinds of items. With enough hardware resources, tests on larger data sets can be provided, with a complete evaluation.
         
         \paragraph{More Rule Combination Methods} The rule combination methods presented in the section \ref{combining} can be replaced by more sophisticated ones as Bayesian networks.
         
         \paragraph{Recommender Algorithm Modifications} The traditional collaborative filtering algorithms can be modified so that they take as an input the data sources provided by the Unresyst interface. The modified algorithms can work on one of the levels proposed in the section \ref{algorithm_layer}. 
         
-        \paragraph{Learning Weights of the Rules} The concept of automatic rule weight setting presented in the section \ref{improving_the_results} can be expanded, so that the weight setting is done during the build of the recommender. Experiments with more sophisticated learning methods can be performed.
+        \paragraph{Learning Weights of the Rules} The concept of automatic rule weight setting presented in the section \ref{improving_the_results} can be further studied and expanded, so that the weight setting is done during the build of the recommender. Experiments with more sophisticated learning methods can be performed.
         
         \paragraph{Learning New Rules} Additionally to learning weights of the existing rules, data mining methods can be used for finding new rules in parent system data. The found rules can be discussed with domain experts and eventually added to the Unresyst configuration.
 
 
-    \section{Tools Used for the Work}
-    \label{tools}
- - gedit, http://www.timtim.com (obrazky), Kile (latex),  pdfTeXk version 1.40.3 (Web2C 7.5.6)
- - django 1.2, python 2.7
+    
     
     
 %%% Seznam literatury
@@ -1865,104 +1976,104 @@ class ArtistRecommender(Recommender):
     \bibitem{last_fm}
     \emph{About Last.fm recommendation service}. 
     Last.fm Ltd.[cit. 2011-04-11]
-    Available at URL:\url{http://www.last.fm/about}
+    Available at URL:\url{<http://www.last.fm/about>}
     
     \bibitem{probabilistic_analysis}
     \textsc{Kumar}, Ravi; \textsc{Raghavan}, Prabhakar; \textsc{Rajagopalan} Sridhar; \textsc{Tomkins} Andrew.
     \emph{Recommendation systems: a probabilistic analysis}. 
     39th Annual Symposium on Foundations of Computer Science 1998.
-    Available at URL:\url{http://www.tomkinshome.com/site_media/papers/papers/KRR+98.pdf}.
+    Available at URL:\url{<http://www.tomkinshome.com/site_media/papers/papers/KRR+98.pdf>}.
     ISBN 0-8186-9172-7.
     
     \bibitem{collaborative_filtering}
     \textsc{Schafer}, Ben; \textsc{Frankowski}, Dan, \textsc{Herlocker}, Joe; \textsc{Sen}, Shilad. 
     \emph{Collaborative Filtering Recommender Systems}. 
     The Adaptive Web, LNCS 4321, 291 - 324, 2007.
-    Available at URL:\url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.130.4520&rep=rep1&type=pdf}.
+    Available at URL:\url{<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.130.4520&rep=rep1&type=pdf>}.
     
     \bibitem{google_news}
     \textsc{Abhinandan}, Das; \textsc{Mayur}, Datar; \textsc{Ashutosh} Garg; \textsc{Rajaram}, Shyam.
     \emph{Google News Personalization: Scalable Online Collaborative Filtering}. 
     WWW 2007 / Track: Industrial Practice and Experience 2007.
-    Available at URL:\url{http://iws.seu.edu.cn/resource/Proceedings/WWW/2007/papers/paper570.pdf}.
+    Available at URL:\url{<http://iws.seu.edu.cn/resource/Proceedings/WWW/2007/papers/paper570.pdf>}.
     ACM 978-1-59593-654-7/07/0005. 
     
     \bibitem{amazon}
     \textsc{Linden}, Greg; \textsc{Smith}, Brent; \textsc{York}, Jeremy.
     \emph{Amazon.com Recommendations Item-to-Item Collaborative Filtering}.
     Published by the IEEE Computer Society 2003.
-    Available at URL:\url{http://www.win.tue.nl/~laroyo/2L340/resources/Amazon-Recommendations.pdf}.
+    Available at URL:\url{<http://www.win.tue.nl/~laroyo/2L340/resources/Amazon-Recommendations.pdf>}.
     IEEE Computer Society 1089-7801/03.
     
     \bibitem{yahoo}
     \textsc{Park}, Seung-Taek; \textsc{Pennock}, David M.
     \emph{Applying collaborative filtering techniques to movie search for better ranking and browsing}. 
     KDD '07 Proceedings of the 13th ACM SIGKDD international conference on Knowledge discovery and data mining, 2007.
-    Available at URL:\url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.8109&rep=rep1&type=pdf}.
+    Available at URL:\url{<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.8109&rep=rep1&type=pdf>}.
     ISBN 978-1-59593-609-7.
     
     \bibitem{duine}
     \emph{The Duine Recommender Framework}. 
     Telematica Instituut/Novay. [cit. 2011-04-11]
-    Available at URL:\url{http://duineframework.org/index.html}
+    Available at URL:\url{<http://duineframework.org/index.html>}
     
     \bibitem{mahout}
     \emph{Overview of Mahout}. 
     Apache Software Foundation.[cit. 2011-04-11]
-    Available at URL:\url{https://cwiki.apache.org/confluence/display/MAHOUT/Overview}
+    Available at URL:\url{<https://cwiki.apache.org/confluence/display/MAHOUT/Overview>}
     
     \bibitem{survey}
     \textsc{Adomavicius}, Gediminas; \textsc{Tuzhilin}, Alexander. 
     \emph{Towards the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions}.
     IEEE Transactions On Knowledge and Data Engineering, vol. 17, no. 6, June 2005.
-    Available at URL: \url{http://citeseer.ist.psu.edu/viewdoc/download?doi=10.1.1.107.2790&rep=rep1&type=pdf} 
+    Available at URL: \url{<http://citeseer.ist.psu.edu/viewdoc/download?doi=10.1.1.107.2790&rep=rep1&type=pdf>} 
     IEEE Computer Society 1041-4347/05
     
     \bibitem{netflix_prize}
     \textsc{Bennett}, James, \textsc{Lanning}, Stan. 
     \emph{The Netflix Prize}. 
     KDDCup'07, August 12, 2007.
-    Available at URL:\url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.117.8094&rep=rep1&type=pdf}
+    Available at URL:\url{<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.117.8094&rep=rep1&type=pdf>}
     ACM 978-1-59593-834-3/07/0008
     
     \bibitem{netflix_solution} 
     \textsc{Koren}, Yehuda.
     \emph{The BellKor Solution to the Netflix Grand Prize}.
     Netflix prize documentation, 2009.
-    Available at URL:\url{http://www.netflixprize.com/assets/GrandPrize2009_BPC_BellKor.pdf}
+    Available at URL:\url{<http://www.netflixprize.com/assets/GrandPrize2009_BPC_BellKor.pdf>}
     
     \bibitem{netflix_benefit} 
     \textsc{Bell}, Robert M.; \textsc{Koren} Yehuda.
     \emph{Lessons from the Netflix prize challenge}. 
     ACM SIGKDD Explorations Newsletter 2007, 10.1145/1345448.1345465. 
-    Available at URL:\url{http://www.sigkdd.org/explorations/issues/9-2-2007-12/6-Netflix-1.pdf}
+    Available at URL:\url{<http://www.sigkdd.org/explorations/issues/9-2-2007-12/6-Netflix-1.pdf>}
     
     \bibitem{netflix_end}
     \textsc{Hunt}, Neil.
     \emph{Netflix Prize Update}. 
     Netflix Blog 2010 [cit. 2011-04-11].
-    Available at URL: \url{http://blog.netflix.com/2010/03/this-is-neil-hunt-chief-product-officer.html}.
+    Available at URL: \url{<http://blog.netflix.com/2010/03/this-is-neil-hunt-chief-product-officer.html>}.
     
     \bibitem{google_api}
     \emph{The Google Prediction API}. 
     Google [cit. 2011-04-11]. 
-    Available at URL:\url{http://code.google.com/apis/predict/}.
+    Available at URL:\url{<http://code.google.com/apis/predict/>}.
     
     \bibitem{aura}
     \emph{The Advanced Universal Recommendation Architecture (AURA)}. 
     Oracle Labs [cit. 2011-04-11].
-    Available at URL:\url{http://labs.oracle.com/projects/dashboard.php?id=196}.
+    Available at URL:\url{<http://labs.oracle.com/projects/dashboard.php?id=196>}.
     
     \bibitem{aura_wiki}
     \emph{The AURA project wiki}. 
     Oracle Corporation [cit. 2011-04-11].
-    Available at URL:\url{http://kenai.com/projects/aura/pages/Home}.
+    Available at URL:\url{<http://kenai.com/projects/aura/pages/Home>}.
     
     \bibitem{patent}
     \textsc{Hueter} Geffrey J.; \textsc{Quandt}, Steven C.; \textsc{Hueter}, Noble H.
     \emph{Universal system and method for representing and predicting human behavior}. 
     \#20090248599, United States Patent Application Publication, 2009.
-    Available at URL:\url{http://www.freepatentsonline.com/20090248599.pdf}.
+    Available at URL:\url{<http://www.freepatentsonline.com/20090248599.pdf>}.
 
     \bibitem{peska}
     \textsc{Pe¹ka}, Ladislav.
@@ -1973,119 +2084,389 @@ class ArtistRecommender(Recommender):
     \textsc{Kunegis}, Jerome; \textsc{Said}, Alan; \textsc{Umbrath}, Winfried.
     \emph{White Paper: The Universal Recommender}. 
     Arxiv preprint arXiv:0909.3472, 2009. 
-    Available at URL:\url{http://uni-koblenz.de/~kunegis/paper/kunegis-universal-recommender.pdf}.
+    Available at URL:\url{<http://uni-koblenz.de/~kunegis/paper/kunegis-universal-recommender.pdf>}.
     
     \bibitem{wiki_genome}
     \textsc{Glaser}, William T.; \textsc{Westergren}, Timothy B.; \textsc{Stearns}, Jeffrey P.; \textsc{Kraft}, Jonathan M.
     \emph{Consumer item matching method and system}. 
     United States Patent 7003515. 
-    Available at URL:\url{http://www.freepatentsonline.com/7003515.pdf}.
+    Available at URL:\url{<http://www.freepatentsonline.com/7003515.pdf>}.
     
     \bibitem{eckhardt} 
     \textsc{Eckhardt}, Alan; \textsc{Horváth}, Tomá¹; \emph{Vojtá¹}, Peter. 
     \emph{PHASES: A user Profile Learning Aproach for Web Search}.
     WI '07, 780-783. IEEE Computer Society Washington. 
-    Available to subscribers at URL:\url{http://portal.acm.org/citation.cfm?id=1331740.1331829}
+    Available to subscribers at URL:\url{<http://portal.acm.org/citation.cfm?id=1331740.1331829>}
     ISBN 0-7695-3026-5
     
     \bibitem{bellkor_ieee}
     \textsc{Koren}, Yehuda; \textsc{Bell}, Robert; \textsc{Volinsky}, Chris.
     \emph{Matrix factorization techniques for recommender systems}.
     Published by the IEEE Computer Society, 0018-9162/09, 2009.
-    Available at URL:\url{http://research.yahoo.com/files/ieeecomputer.pdf}
+    Available at URL:\url{<http://research.yahoo.com/files/ieeecomputer.pdf>}
     
     \bibitem{knowledge_spain}
     \textsc{Martínez}, Luis; \textsc{Pérez}, Luis G.; \textsc{Barranco}, Manuel J.; \textsc{Espinilla}, M.
     \emph{A Knowledge Based Recommender System Based on Consistent Preference Relations}.
     Studies in Computational Intelligence, 2008, Volume 117/2008, 93-111, DOI: 10.1007/978-3-540-78308-4\_6 
-    Available for subscribers at URL: \url{http://www.springerlink.com/content/m64g474m7p0t4r26/}.
+    Available for subscribers at URL: \url{<http://www.springerlink.com/content/m64g474m7p0t4r26/>}.
+    
+    \bibitem{burke_hybrid}
+    \textsc{Burke}, Robin.
+    \emph{Hybrid Web Recommender Systems}.
+    The Adaptive Web, LNCS 4321, pp. 377 - 408, 2007.
+    Available at URL: \url{<http://josquin.cs.depaul.edu/twiki/pub/Csc594/ArticleList/burke-hybrid.pdf>}
     
     \bibitem{knowledge_burke}
     \textsc{Burke}, Robin.
     \emph{Knowledge-based recommender systems}.
     Department of Information and Computer Science, University of California, Irvine 200, To Appear in the Encyclopedia of Library and Information Science.
-    Available at URL: \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.41.3078&rep=rep1&type=pdf}
+    Available at URL: \url{<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.41.3078&rep=rep1&type=pdf>}
     
     \bibitem{integrating_burke}
     \textsc{Burke}, Robin.
     \emph{Integrating Knowledge-based and Collaborative-filtering Recommender Systems}.
     AAAI Technical Report WS-99-01, 1999, AAAI.
-    Available at URL: \url{http://www.aaai.org/Papers/Workshops/1999/WS-99-01/WS99-01-011.pdf}.
+    Available at URL: \url{<http://www.aaai.org/Papers/Workshops/1999/WS-99-01/WS99-01-011.pdf>}.
     
     \bibitem{order}
     \textsc{Cohen}, William W.; \textsc{Schapire}, Robert E.; \textsc{Singer}, Yoram.
     \emph{Learning to order things}.
     Journal of Artificial Intelligence Research 10 (1999) 234-270.
-    Available at URL: \url{http://www.jair.org/media/587/live-587-1790-jair.pdf}
+    Available at URL: \url{<http://www.jair.org/media/587/live-587-1790-jair.pdf>}
     
     \bibitem{racofi}
     \textsc{Anderson}, Michelle; \textsc{Lemire}, Daniel; \textsc{Ball}, Marcel; \textsc{Boley}, Harold; \textsc{Greene}, Stephen; \textsc{Howse}, Nancy; \textsc{McGrath}, Sean.
     \emph{RACOFI: A Rule-Applying Collaborative Filtering System}.
     Proc. IEEE/WIC COLA'03, Halifax, Canada, October 2003. 
-    Available at URL: \url{http://www.daniel-lemire.com/fr/documents/publications/racofi_nrc.pdf}
+    Available at URL: \url{<http://www.daniel-lemire.com/fr/documents/publications/racofi_nrc.pdf>}
     NRC 46507
     
     \bibitem{last_fm_dataset1}
     \textsc{Celma}, Oscar.
     \emph{Last.fm Dataset - 1K users}.
     [cit. 2011-04-11].
-    Available at URL: \url{http://www.dtic.upf.edu/~ocelma/MusicRecommendationDataset/lastfm-1K.html}.
+    Available at URL: \url{<http://www.dtic.upf.edu/~ocelma/MusicRecommendationDataset/lastfm-1K.html>}.
     
     \bibitem{last_fm_dataset2}
     \textsc{Lamere}, Paul.
-    \emph{LastFM-ArtistTags2007}.
+    \emph{LastFM-ArtistTags2007}, Dataset.
     [cit. 2011-04-11].
-    Available at URL: \url{http://musicmachinery.com/2010/11/10/lastfm-artisttags2007/}.
-
+    Available at URL: \url{<http://musicmachinery.com/2010/11/10/lastfm-artisttags2007/>}.
     
-    hybrid vec na duinu
-        http://wwwis.win.tue.nl/hacdais2010/paper4short.pdf 
-    \bibitem{wiki_genome}http://en.wikipedia.org/wiki/Music\_Genome\_Project
-    \bibitem{wiki_collaborative}http://en.wikipedia.org/wiki/Collaborative\_filtering
-    \bibitem{wiki_slope_one}http://en.wikipedia.org/wiki/Slope\_One    
-     http://research.yahoo4.akadns.net/files/ieeecomputer.pdf
+    \bibitem{flixster_dataset}
+    \textsc{Jamali}, Mohsen.
+    \emph{Flixster Data Set}.
+    [cit. 2011-04-11]
+    Available at URL: \url{<http://www.cs.sfu.ca/~sja25/personal/datasets/>}.
     
+    \bibitem{flixster_paper}
+    \textsc{Jamali}, Mohsen; \textsc{Ester}, Martin.
+    RecSys '10 Proceedings of the fourth ACM conference on Recommender systems 
+    \emph{A matrix factorization technique with trust propagation for recommendation in social networks}
+    Available for subscribers at URL: \url{<http://portal.acm.org/citation.cfm?id=1864708.1864736>}
+    ISBN: 978-1-60558-906-0
+
+    \bibitem{ruleml_short}
+    \textsc{Boley}, Harold.
+    \emph{POSL: An Integrated Positional-Slotted Language for Semantic Web Knowledge}
+    Faculty of Computer Science University of New Brunswick, Working Draft 11 May 2004.
+    Available at URL: \url{<http://ruleml.org/submission/ruleml-shortation.html>}
     
+    \bibitem{mycin}
+    \textsc{Shortliffe}, Edward Hance.
+    \emph{Computer-based medical consultation MYCIN}. 
+    America Elsevier Publishing Company, Inc., New York 1976.
+    Available as a book at URL: \url{<http://www.annals.org/content/85/6/831.1.extract>}
+    ISBN 978-0444001795
     
+    \bibitem{certainty_calculus}
+    \textsc{Lucas}, P.J.F.
+    \emph{Certainty-factor-like structures in Bayesian belief networks}. 
+    Knowledge-Based Systems 14, 2001, 327-335
+    Available at URL:\url{<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.19.1853&rep=rep1&type=pdf>}
+    PII S 0950-705 1(00)00073-3
     
+    \bibitem{design_patterns}
+    \textsc{Gamma}, Erich; \textsc{Helm}, Richard; \textsc{Johnson} Ralph; \textsc{Vlissides}, John M.
+    \emph{Design Patterns: Elements of Reusable Object-Oriented Software}.
+    Addison-Wesley Professional; 1 edition (November 10, 1994)
+    ISBN 978-0201633610
     
-\verb!http://www.aaai.org/Papers/Workshops/1999/WS-99-01/WS99-01-011.pdf!
+    \bibitem{evaluating}
+    \textsc{Herlocker}, Jonathan L.; \textsc{Konstan}, Joseph A.; \textsc{Terveen}, Loren G.; \textsc{Riedl}, John T.
+    \emph{Evaluating collaborative filtering recommender systems}. 
+    ACM Transactions on Information Systems (TOIS), Volume 22 Issue 1, January 2004.
+    Available at URL:\url{<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.97.5270&rep=rep1&type=pdf>}
+    
+    \bibitem{rmse_critic}
+    \textsc{McNee}, Sean M.; \textsc{Riedl}, John; \textsc{Konstan}, Joseph A.
+    \emph{Being accurate is not enough: how accuracy metrics have hurt recommender systems}. 
+    CHI 2006, April 22-27, 2006, Montreal, Canada. 
+    Available at URL: \url{<http://www.grouplens.org/papers/pdf/mcnee-chi06-acc.pdf>}
+    
+    \bibitem{ndcg}
+    \textsc{Valizadegan}, Hamed; \textsc{Jin}, Rong; \textsc{Zhang}, Ruofei; \textsc{Mao}, Jianchang.
+    \emph{Learning to Rank by Optimizing NDCG Measure}.
+    Advances in Neural Information Processing Systems 22, 1883-1891, 2009.
+    Available at URL:\url{<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.154.8402&rep=rep1&type=pdf>}.
+    
+    \bibitem{koren_implicit}
+    \textsc{Hu}, Yifan; \textsc{Koren}, Yehuda; \textsc{Volinsky}, Chris.
+    \emph{Collaborative Filtering for Implicit Feedback Datasets}.
+    2008 Eighth IEEE International Conference on Data Mining.
+    Available at URL: \url{<http://www2.research.att.com/~yifanhu/PUB/cf.pdf>}
+    ISBN: 978-0-7695-3502-9
+    
+    \bibitem{slope_one}
+    \textsc{Lemire}, Daniel; \textsc{Maclachlan}, Anna.
+    \emph{Slope One Predictors for Online Rating-Based Collaborative Filtering}
+    SIAM Data Mining (SDM'05), Newport Beach, California, April 21-23, 2005
+    Available at URL: \url{<http://arxiv.org/pdf/cs.DB/0702144>}
+    arXiv:cs/0702144v2
 
-\bibitem{knowledge_spain}A Knowledge Based Recommender System Based on Consistent Preference Relations 
-\verb!http://www.springerlink.com/content/m64g474m7p0t4r26/!
-\verb!http://books.google.cz/books?id=LN4dVFPXBioC&lpg=PP1&ots=EwNO8Bpeyy&dq=Intelligent%20Decision%20and%20Policy%20Making%20Support%20Systems&pg=PP1#v=onepage&q&f=false!
-
-\bibitem{ruleml}\verb!http://ruleml.org/!
-\bibitem{ruleml_short}\verb!http://ruleml.org/submission/ruleml-shortation.html!
-\bibitem{ruleml_prolog}\verb!http://centria.di.fct.unl.pt/~cd/projectos/w4/ruleml/index.htm!
 
 
 
 
-
-\bibitem{certainty_calculus}Certainty-factor-like structures in Bayesian belief networks \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.19.1853&rep=rep1&type=pdf!
-\bibitem{mycin}Computer-based medical consultation MYCIN. New York: Elsevier, 1976.\verb!http://www.annals.org/content/85/6/831.1.extract!
-\bibitem{design_patterns}Design Patterns: Elements of Reusable Object-Oriented Software, Erich Gamma, Richard Helm, Ralph Johnson, John M. Vlissides. Addison-Wesley, 1994
-
-
-
-\bibitem{flixster_dataset}Flixster data set \verb!http://www.cs.sfu.ca/~sja25/personal/datasets/!
-\bibitem{flixster_paper}A matrix factorization technique with trust propagation for recommendation in social networks
-\verb!http://portal.acm.org/citation.cfm?id=1864708.1864736!
-\bibitem{musicbrainz} MusicBrainz music database \verb!http://musicbrainz.org/!
-\bibitem{evaluating}Evaluating collaborative filtering recommender systems \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.97.5270&rep=rep1&type=pdf!
-\bibitem{rmse_critic}Being accurate is not enough: how accuracy metrics have hurt recommender systems \verb!http://www.grouplens.org/papers/pdf/mcnee-chi06-acc.pdf!
-\bibitem{ndcg}Learning to Rank by Optimizing NDCG Measure \verb!http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.154.8402&rep=rep1&type=pdf!
-\bibitem{koren_implicit}Collaborative Filtering for Implicit Feedback Datasets \verb!http://www2.research.att.com/~yifanhu/PUB/cf.pdf!
 \end{thebibliography}
 
 %%% Pou¾ité zkratky v diplomové práci, existují-li, vèetnì jejich vysvìtlení.
-\chapwithtoc{List of Abbreviations}
+\chapwithtoc{List of Abbreviations and Terms}
+    \begin{description}
+        \item[API] Application programming interface, a set of methods implemented by a software system that can 
+        be used by another system.
+        \item[CSV] Comma-separated values, a simple format of text files where the values are separated by commas.
+        \item[GUI] Graphical User Interface, a type of user interface that uses graphics when communicating with user, rather than textual commands.
+        \item[ORM] Object-relational mapping, a technique used for manipulating data directly in the application without using SQL.
+        \item[RMSE] Root Mean Square Error, a metric for evaluating accuracy of recommender systems.
+        \item[Scrobble] Scrobble is a verb used in the Last.fm system. To scrobble means to send information about what song a user is playing to the Last.fm server.
+        \item[SQL] Structured Query Language a language for data manipulation in a database.
+        \item[Unresyst] Universal Recommender System proposed in the thesis.
+        \item[XML] Extensible Markup Language, a format of text documents in machine-readable form.
+    \end{description}
+
 
 %%% Pøílohy k diplomové práci, existují-li (rùzné dodatky jako výpisy programù,
 %%% diagramy apod.). Ka¾dá pøíloha musí být alespoò jednou odkazována z vlastního
 %%% textu práce. Pøílohy se èíslují.
 \chapwithtoc{Attachments}
+    The text contains the following attachments:
+    \begin{enumerate}
+        \item Unresyst CD
+        \item List of Tools and Other Resources Used
+        \item Recommender Evaluation Result Tables
+    \end{enumerate}
+
+    \section*{Unresyst CD}
+        The CD is fixed to the thesis book cover. The full list of its contents and brief instructions on how to use it, can be found in the file \verb!readme.txt! on the CD in the root folder. The CD contains:
+        \begin{enumerate}
+            \item Complete source codes of the Unresyst implementation prototype.
+            \item The source code of the Slope One recommender, using the Mahout framework, including the framework setup files and scripts for running the recommender on Unresyst exported data.
+            \item Scripts for reducing the data sets and saving data from them into the system database.
+            \item Generated programming documentation to the Unresyst implementation prototype.
+            \item Complete data models both for Unresyst and applications covering the data sets.
+            \item This text in the \emph{PDF} format.
+            \item Other resources as diagrams and presentations.
+        \end{enumerate}
+        
+        All the named files can be found on the Unresyst project homepage at URL:  \url{<http://code.google.com/p/unresyst/>}.
+\newpage
+        \section*{List of Tools and Other Resources Used}
+        
+        During the work on the thesis we used the following software tools and resources:
+        
+        \begin{enumerate}
+            \item \emph{Python 2.6.5} for building the prototype implementation.
+            \item The ORM layer of the \emph{Django 1.2} web application framework, to operate with the database.
+            \item The \emph{MySQL 14.14} database (can be interchanged with any other database supported by the Django framework).
+            \item The \emph{gedit} text editor for writing the source code.
+            \item The \emph{pdfTeXk 1.40.3} for building the PDF from \LaTeX text.
+            \item \emph{Kile 2.0.85} for writing the thesis text in \LaTeX.
+            \item The drawings were overtaken from the \emph{Tim Tim picture database} of freely available drawings. The drawings are available at URL: \url{<http://www.timtim.com/>}.
+            \item For hosting the source codes in the \emph{SVN} repository, we used the \emph{Google Code} service. Instructions on how to checkout the repository are available at URL: \url{<http://code.google.com/p/unresyst/source/checkout>}.
+        \end{enumerate}
+
+        All the tools are freely available, under open source licenses. The named services are free. 
+        
+        The source code of the prototype implementation is available under \emph{Mozilla Public License 1.1}, see URL: \url{<http://www.mozilla.org/MPL/>}. Other contents as the thesis text are available under \emph{Creative Commons 3.0 BY-SA}, see URL: \url{<http://creativecommons.org/licenses/by-sa/3.0/>}.
+\newpage
+        \section*{Recommender Evaluation Result Tables}
+
+        The attachment contains complete lists of experiments done on the datasets. The interpretation of the results including charts can be found in the section \ref{evaluating_recommender_results}.
+        \begin{table}[ht]
+            \begin{center}
+            \footnotesize
+                \label{table_eval_lastfm}
+                \begin{tabular}{|l|r|}
+                    \hline
+                    \textbf{Recommender Setup} & \textbf{$\overline{Rank}$} \\
+                    \hline
+                    \hline
+                        Empty random recommender &  0.496207 \\
+                    \hline
+                        External Slope One recommender & 0.499361 \\
+                    \hline
+                        Unresyst, gender cluster & 0.275451 \\
+                    \hline
+                        Unresyst, country cluster & 0.463337 \\
+                    \hline
+                        Unresyst, listened tracks bias & 0.490121 \\
+                    \hline
+                        Unresyst, similar age rule & 0.330009 \\
+                    \hline
+                        Unresyst, gender specific tag rule & 0.512404 \\
+                    \hline
+                        Unresyst, similarity based on tags & 0.490963 \\
+                    \hline
+                        Unresyst, combination of successful rules & \\
+                        gender cluster (weight 0.5), country cluster(weight 0.1), & \\
+                        similar age (0.4) & 0.184017 \\
+                    \hline
+                        Unresyst, combination of successful rules & \\
+                        above Slope One & \\
+                        gender cluster (weight 0.5), country cluster(weight 0.1), & \\
+                        similar age (0.4) & 0.184017 \\
+                    \hline
+                        
+                \end{tabular}
+                \caption{Results for evaluating recommenders on the Last.fm data set.}
+            \end{center}
+        \end{table}
+        
+        
+        \begin{table}[ht]
+            \begin{center}
+            \footnotesize
+                \label{table_eval_flixster}
+                \begin{tabular}{|l|r|}
+                
+                    \hline
+                        \textbf{Recommender Setup} & \textbf{$RMSE$} \\
+                    \hline
+                    \hline
+                        Empty random recommender & 0.349860 \\
+                    \hline
+                        External Slope One recommender & 0.225575 \\
+                    \hline
+                        Unresyst, friends (weight 0.5) & 0.332549 \\
+                    \hline
+                        Unresyst, friends (weight 1.0) & 0.337328 \\
+                    \hline
+                        Unresyst, friends (weight 0.2) & 0.340405 \\
+                    \hline
+                        Unresyst, friends (weight  0.65) & 0.340405 \\
+                    \hline
+                        Unresyst, object biases (weight 0.5) & 0.325602 \\
+                    \hline
+                        Unresyst, object biases (weight 1.0) & 0.318892 \\
+                    \hline
+                        Unresyst, object biases (weight 0.75) & 0.319917 \\
+                    \hline
+                        Unresyst, just positive object biases (weight 1.0) & 0.318768 \\
+                    \hline
+                        Unresyst, just negative object biases (weight 1.0) & 0.349974 \\
+                    \hline
+                        Unresyst, subject biases (weight 0.5) & 0.294145 \\
+                    \hline
+                        Unresyst, subject biases (weight 1.0) & 0.257785 \\
+                    \hline
+                        Unresyst, just positive subject biases (weight 1.0) & 0.257919 \\
+                    \hline
+                        Unresyst, just negative subject biases (weight 1.0) & 0.349761 \\
+                    \hline
+                        Unresyst, all biases (weights 1.0 pos., 0.25 neg.), average & 0.349761 \\
+                    \hline
+                        Unresyst, all biases (weights 1.0 pos., 0.25 neg.), certainty factor & 0.242736 \\
+                    \hline
+                        Unresyst, all biases (weights 1.0 pos., 0.25 neg.), twisted average & 0.220870 \\
+                    \hline
+                        Unresyst, all biases (weights 1.0 pos., 0.25 neg.), friends (weight 0.65),& \\
+                        average & 0.245660 \\
+                    \hline
+                        Unresyst, all biases (weights 1.0 pos., 0.25 neg.), friends (weight 0.65), & \\
+                        certainty factor & 0.239204 \\
+                    \hline
+                        Unresyst, all biases (weights 1.0 pos., 0.25 neg.), friends (weight 0.65), & \\
+                        twisted average & 0.227061 \\
+                    \hline
+                        Unresyst, all biases (weights 1.0 pos., 0.25 neg.), friends (weight 0.1), & \\
+                        twisted average & 0.218237 \\
+                    \hline
+                        Hybrid of Unresyst and Slope One, all biases& \\
+                        (weights 1.0 pos., 0.25 neg.),  friends (weight 0.1), twisted average & 0.207439 \\
+                    \hline
+                        Slope One below Unresyst, all biases (weights 1.0 pos., 0.25 neg.), & \\
+                        friends (weight 0.1), twisted average & 0.206578 \\
+                    \hline
+                \end{tabular}
+                \caption{Results for evaluating recommenders on the Flixster data set.}
+            \end{center}
+        \end{table}
+        
+        
+        \begin{table}[ht]
+            \begin{center}
+                \footnotesize
+                \label{table_eval_travel}
+                \begin{tabular}{|l|r|}
+                    \hline
+                        \textbf{Recommender Setup} &\textbf{$\overline{Rank}$}\\
+                    \hline
+                    \hline
+                        Empty random recommender & 0.501684 \\
+                    \hline
+                        External Slope One recommender & 0.501684 \\
+                    \hline
+                        Unresyst with tour type cluster & 0.501684 \\
+                    \hline
+                        Unresyst with tour country cluster & 0.501684 \\
+                    \hline
+                        Unresyst with mouse move rule & 0.501186 \\
+                    \hline
+                        Unresyst with view profile rule & 0.501186 \\
+                    \hline
+                        Unresyst with question rule & 0.501684 \\
+                    \hline
+                        Unresyst with click rule & 0.501454 \\
+                    \hline
+                        Unresyst with bias - most viewed tours & 0.291246\\
+                    \hline
+                        Unresyst with bias - most clicked tours & 0.368687\\
+                    \hline
+                        Unresyst with bias - most mouse moved tours & 0.326599\\
+                    \hline
+                        Unresyst with bias - most mouse moved tours & 0.326599\\
+                    \hline
+                        Unresyst with combination mouse move (weight 0.1), view profile (weight 0.1), & \\
+                        click (weight 0.05), bias viewed (weight 0.3), bias clicked (weight 0.25), & \\
+                        bias mouse moved (weight 0.2), average & 0.250765\\
+                    \hline
+                        Unresyst with combination mouse move (weight 0.1), view profile (weight 0.1), & \\
+                        click (weight 0.05), bias viewed (weight 0.3), bias clicked (weight 0.25), & \\
+                        bias mouse moved (weight 0.2), certainty factor & 0.250765\\
+                    \hline
+                        Unresyst with combination of mouse move (weight 0.1), view profile (weight 0.1), & \\
+                        click (weight 0.05), bias viewed (weight 0.3), bias clicked (weight 0.25), & \\
+                        bias mouse moved (weight 0.2), twisted average  & 0.250765\\
+                    \hline
+                        Hybrid of Unresyst and Slope One with combination of mouse move (weight 0.1), & \\
+                        view profile (weight 0.1), click (weight 0.05), bias viewed (weight 0.3), & \\
+                        bias clicked (weight 0.25), bias mouse moved (weight 0.2), & \\
+                        twisted average  & 0.250765\\
+                    \hline
+                        Slope One below Unresyst with combination of mouse move (weight 0.1), & \\
+                        view profile (weight 0.1), click (weight 0.05), bias viewed (weight 0.3), & \\
+                        bias clicked (weight 0.25), bias mouse moved (weight 0.2), & \\
+                        twisted average  & 0.251148 \\
+                    \hline
+                \end{tabular}
+                \caption{Results for evaluating recommenders on the travel agency data set.}
+            \end{center}
+        \end{table}
+        
+
+    
 
 \openright
 \end{document}
