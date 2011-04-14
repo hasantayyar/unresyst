@@ -1,0 +1,21 @@
+{% comment %}
+    A demo page containing a list of recommendations.
+    Variables: user, user_list
+{% endcomment %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+    <head>
+        <title>{{ user }}'s Recommendations</title>
+        <link rel="stylesheet" href="{{ MEDIA_URL }}style/style.css" type="text/css" title="" />        
+    </head>
+    <body>
+        <h1> Shoe Recommendations for the User '{{ user }}'</h1>
+        {% include "unresyst/recommendation_list.html" %} 
+        
+        <h3> Recommendations for other users: </h3>
+        {% for u in user_list %}
+            <a href="{% url demo:recommendations u.name %}">{{ u }}</a>
+        {% endfor %}
+        <h5> <a href="{% url demo:home_page %}">Back to Home Page</a></h5>        
+    </body>
+</html>
