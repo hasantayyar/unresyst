@@ -1,0 +1,269 @@
+\documentclass{article}
+\usepackage[x11names, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+%
+%
+
+%
+
+%
+
+\begin{document}
+\pagestyle{empty}
+%
+%
+%
+
+\enlargethispage{100cm}
+% Start of code
+% \begin{tikzpicture}[anchor=mid,>=latex',line join=bevel,]
+\begin{tikzpicture}[>=latex',line join=bevel,]
+  \pgfsetlinewidth{1bp}
+%%
+\pgfsetcolor{black}
+  % Edge: PredictedRelationshipDefinition -> Recommender
+  \draw [->] (95bp,283bp) .. controls (101bp,243bp) and (114bp,183bp)  .. (148bp,144bp) .. controls (165bp,125bp) and (185bp,110bp)  .. (216bp,92bp);
+  \draw (170bp,183bp) node {recommender};
+  % Edge: RuleInstance -> SubjectObject
+  \draw [->] (651bp,422bp) .. controls (663bp,409bp) and (673bp,394bp)  .. (680bp,378bp) .. controls (698bp,331bp) and (702bp,310bp)  .. (680bp,266bp) .. controls (669bp,244bp) and (648bp,227bp)  .. (619bp,208bp);
+  \draw (718bp,322bp) node {subject\_object1};
+  % Edge: RuleInstance -> SubjectObject
+  \draw [->] (608bp,422bp) .. controls (610bp,416bp) and (612bp,410bp)  .. (613bp,404bp) .. controls (627bp,332bp) and (624bp,309bp)  .. (601bp,240bp) .. controls (600bp,237bp) and (599bp,234bp)  .. (593bp,222bp);
+  \draw (644bp,322bp) node {subject\_object2};
+  % Edge: RuleInstance -> RelationshipInstance
+  \draw [->] (546bp,422bp) .. controls (543bp,416bp) and (541bp,410bp)  .. (539bp,404bp) .. controls (536bp,395bp) and (534bp,386bp)  .. (532bp,367bp);
+  \draw (576bp,400bp) node {relationshipinstance\_ptr};
+  % Edge: RuleRelationshipDefinition -> BaseRelationshipDefinition
+  \draw [->] (273bp,266bp) .. controls (268bp,261bp) and (264bp,255bp)  .. (260bp,248bp) .. controls (257bp,242bp) and (255bp,234bp)  .. (254bp,217bp);
+  \draw (309bp,244bp) node {baserelationshipdefinition\_ptr};
+  % Edge: RuleRelationshipDefinition -> Recommender
+  \draw [->] (358bp,266bp) .. controls (354bp,225bp) and (347bp,168bp)  .. (338bp,118bp) .. controls (338bp,115bp) and (337bp,113bp)  .. (335bp,100bp);
+  \draw (376bp,183bp) node {recommender};
+  % Edge: RelationshipInstance -> BaseRelationshipDefinition
+  \draw [->] (481bp,277bp) .. controls (475bp,273bp) and (470bp,269bp)  .. (464bp,266bp) .. controls (414bp,237bp) and (395bp,243bp)  .. (343bp,222bp) .. controls (338bp,220bp) and (333bp,218bp)  .. (318bp,211bp);
+  \draw (443bp,244bp) node {definition};
+  % Edge: BaseRelationshipDefinition -> Recommender
+  \draw [->] (276bp,149bp) .. controls (282bp,137bp) and (289bp,123bp)  .. (300bp,100bp);
+  \draw (313bp,122bp) node {recommender};
+  % Edge: RuleInstance -> BaseRelationshipDefinition
+  \draw [->] (501bp,466bp) .. controls (409bp,450bp) and (267bp,420bp)  .. (235bp,378bp) .. controls (202bp,334bp) and (220bp,269bp)  .. (242bp,217bp);
+  \draw (253bp,322bp) node {definition};
+  % Edge: PredictedRelationshipDefinition -> BaseRelationshipDefinition
+  \draw [->] (99bp,283bp) .. controls (103bp,268bp) and (110bp,252bp)  .. (121bp,240bp) .. controls (140bp,221bp) and (166bp,207bp)  .. (200bp,195bp);
+  \draw (167bp,244bp) node {baserelationshipdefinition\_ptr};
+  % Edge: RelationshipInstance -> SubjectObject
+  \draw [->] (494bp,277bp) .. controls (488bp,265bp) and (486bp,252bp)  .. (492bp,240bp) .. controls (494bp,235bp) and (497bp,231bp)  .. (507bp,219bp);
+  \draw (516bp,244bp) node {subject\_object1};
+  % Edge: RelationshipInstance -> SubjectObject
+  \draw [->] (542bp,277bp) .. controls (545bp,262bp) and (549bp,246bp)  .. (554bp,222bp);
+  \draw (572bp,244bp) node {subject\_object2};
+  % Edge: SubjectObject -> Recommender
+  \draw [->] (507bp,152bp) .. controls (482bp,138bp) and (451bp,122bp)  .. (414bp,100bp);
+  \draw (478bp,122bp) node {recommender};
+  % Node: Recommender
+\begin{scope}
+  \pgfsetstrokecolor{palegoldenrod}
+  \pgfsetfillcolor{palegoldenrod}
+  \filldraw (224bp,4bp) -- (224bp,96bp) -- (424bp,96bp) -- (424bp,4bp) -- cycle;
+  \pgfsetstrokecolor{olivedrab4}
+  \pgfsetfillcolor{olivedrab4}
+  \filldraw (224bp,81bp) -- (224bp,96bp) -- (424bp,96bp) -- (424bp,81bp) -- cycle;
+  \pgfsetstrokecolor{white}
+  \draw (300bp,86bp) node[right] {Recommender};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (226bp,73bp) node[right] {id};
+  \draw (376bp,73bp) node[right] {AutoField};
+  \pgfsetstrokecolor{black}
+  \draw (226bp,62bp) node[right] {name};
+  \draw (376bp,62bp) node[right] {CharField};
+  \draw (226bp,51bp) node[right] {class\_name};
+  \draw (376bp,51bp) node[right] {CharField};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (226bp,40bp) node[right] {are\_subjects\_objects};
+  \draw (376bp,40bp) node[right] {BooleanField};
+  \draw (226bp,29bp) node[right] {is\_built};
+  \draw (376bp,29bp) node[right] {BooleanField};
+  \draw (226bp,18bp) node[right] {random\_recommendation\_description};
+  \draw (376bp,18bp) node[right] {TextField};
+  \draw (226bp,7bp) node[right] {remove\_predicted\_from\_recommendations};
+  \draw (376bp,7bp) node[right] {BooleanField};
+\end{scope}
+  % Node: PredictedRelationshipDefinition
+\begin{scope}
+  \pgfsetstrokecolor{palegoldenrod}
+  \pgfsetfillcolor{palegoldenrod}
+  \filldraw (8bp,287bp) -- (8bp,357bp) -- (176bp,357bp) -- (176bp,287bp) -- cycle;
+  \pgfsetstrokecolor{olivedrab4}
+  \pgfsetfillcolor{olivedrab4}
+  \filldraw (8bp,342bp) -- (8bp,357bp) -- (176bp,357bp) -- (176bp,342bp) -- cycle;
+  \pgfsetstrokecolor{white}
+  \draw (37bp,347bp) node[right] {PredictedRelationshipDefinition};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (10bp,334bp) node[right] {id};
+  \draw (119bp,334bp) node[right] {AutoField};
+  \pgfsetstrokecolor{black}
+  \draw (10bp,323bp) node[right] {content\_type};
+  \draw (119bp,323bp) node[right] {ForeignKey};
+  \draw (10bp,312bp) node[right] {name};
+  \draw (119bp,312bp) node[right] {CharField};
+  \draw (10bp,301bp) node[right] {recommender};
+  \draw (119bp,301bp) node[right] {ForeignKey};
+  \draw (10bp,290bp) node[right] {baserelationshipdefinition\_ptr};
+  \draw (119bp,290bp) node[right] {OneToOneField};
+\end{scope}
+  % Node: RelationshipInstance
+\begin{scope}
+  \pgfsetstrokecolor{palegoldenrod}
+  \pgfsetfillcolor{palegoldenrod}
+  \filldraw (481bp,281bp) -- (481bp,363bp) -- (583bp,363bp) -- (583bp,281bp) -- cycle;
+  \pgfsetstrokecolor{olivedrab4}
+  \pgfsetfillcolor{olivedrab4}
+  \filldraw (481bp,347bp) -- (481bp,363bp) -- (583bp,363bp) -- (583bp,347bp) -- cycle;
+  \pgfsetstrokecolor{white}
+  \draw (496bp,353bp) node[right] {RelationshipInstance};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (483bp,339bp) node[right] {id};
+  \draw (541bp,339bp) node[right] {AutoField};
+  \pgfsetstrokecolor{black}
+  \draw (483bp,328bp) node[right] {content\_type};
+  \draw (541bp,328bp) node[right] {ForeignKey};
+  \draw (483bp,317bp) node[right] {subject\_object1};
+  \draw (541bp,317bp) node[right] {ForeignKey};
+  \draw (483bp,306bp) node[right] {subject\_object2};
+  \draw (541bp,306bp) node[right] {ForeignKey};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (483bp,295bp) node[right] {description};
+  \draw (541bp,295bp) node[right] {TextField};
+  \pgfsetstrokecolor{black}
+  \draw (483bp,284bp) node[right] {definition};
+  \draw (541bp,284bp) node[right] {ForeignKey};
+\end{scope}
+  % Node: SubjectObject
+\begin{scope}
+  \pgfsetstrokecolor{palegoldenrod}
+  \pgfsetfillcolor{palegoldenrod}
+  \filldraw (515bp,148bp) -- (515bp,218bp) -- (611bp,218bp) -- (611bp,148bp) -- cycle;
+  \pgfsetstrokecolor{olivedrab4}
+  \pgfsetfillcolor{olivedrab4}
+  \filldraw (515bp,203bp) -- (515bp,218bp) -- (611bp,218bp) -- (611bp,203bp) -- cycle;
+  \pgfsetstrokecolor{white}
+  \draw (540bp,208bp) node[right] {SubjectObject};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (517bp,195bp) node[right] {id};
+  \draw (569bp,195bp) node[right] {AutoField};
+  \pgfsetstrokecolor{black}
+  \draw (517bp,184bp) node[right] {id\_in\_specific};
+  \draw (569bp,184bp) node[right] {CharField};
+  \draw (517bp,173bp) node[right] {name};
+  \draw (569bp,173bp) node[right] {CharField};
+  \draw (517bp,162bp) node[right] {entity\_type};
+  \draw (569bp,162bp) node[right] {CharField};
+  \draw (517bp,151bp) node[right] {recommender};
+  \draw (569bp,151bp) node[right] {ForeignKey};
+\end{scope}
+  % Node: RuleRelationshipDefinition
+\begin{scope}
+  \pgfsetstrokecolor{palegoldenrod}
+  \pgfsetfillcolor{palegoldenrod}
+  \filldraw (281bp,270bp) -- (281bp,374bp) -- (447bp,374bp) -- (447bp,270bp) -- cycle;
+  \pgfsetstrokecolor{olivedrab4}
+  \pgfsetfillcolor{olivedrab4}
+  \filldraw (281bp,358bp) -- (281bp,374bp) -- (447bp,374bp) -- (447bp,358bp) -- cycle;
+  \pgfsetstrokecolor{white}
+  \draw (318bp,364bp) node[right] {RuleRelationshipDefinition};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (283bp,350bp) node[right] {id};
+  \draw (392bp,350bp) node[right] {AutoField};
+  \pgfsetstrokecolor{black}
+  \draw (283bp,339bp) node[right] {content\_type};
+  \draw (392bp,339bp) node[right] {ForeignKey};
+  \draw (283bp,328bp) node[right] {name};
+  \draw (392bp,328bp) node[right] {CharField};
+  \draw (283bp,317bp) node[right] {recommender};
+  \draw (392bp,317bp) node[right] {ForeignKey};
+  \draw (283bp,306bp) node[right] {baserelationshipdefinition\_ptr};
+  \draw (392bp,306bp) node[right] {OneToOneField};
+  \draw (283bp,295bp) node[right] {weight};
+  \draw (392bp,295bp) node[right] {FloatField};
+  \draw (283bp,284bp) node[right] {relationship\_type};
+  \draw (392bp,284bp) node[right] {CharField};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (283bp,273bp) node[right] {is\_positive};
+  \draw (392bp,273bp) node[right] {BooleanField};
+\end{scope}
+  % Node: BaseRelationshipDefinition
+\begin{scope}
+  \pgfsetstrokecolor{palegoldenrod}
+  \pgfsetfillcolor{palegoldenrod}
+  \filldraw (208bp,153bp) -- (208bp,213bp) -- (310bp,213bp) -- (310bp,153bp) -- cycle;
+  \pgfsetstrokecolor{olivedrab4}
+  \pgfsetfillcolor{olivedrab4}
+  \filldraw (208bp,197bp) -- (208bp,213bp) -- (310bp,213bp) -- (310bp,197bp) -- cycle;
+  \pgfsetstrokecolor{white}
+  \draw (212bp,203bp) node[right] {BaseRelationshipDefinition};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (210bp,189bp) node[right] {id};
+  \draw (261bp,189bp) node[right] {AutoField};
+  \pgfsetstrokecolor{black}
+  \draw (210bp,178bp) node[right] {content\_type};
+  \draw (261bp,178bp) node[right] {ForeignKey};
+  \draw (210bp,167bp) node[right] {name};
+  \draw (261bp,167bp) node[right] {CharField};
+  \draw (210bp,156bp) node[right] {recommender};
+  \draw (261bp,156bp) node[right] {ForeignKey};
+\end{scope}
+  % Node: RuleInstance
+\begin{scope}
+  \pgfsetstrokecolor{palegoldenrod}
+  \pgfsetfillcolor{palegoldenrod}
+  \filldraw (509bp,426bp) -- (509bp,530bp) -- (653bp,530bp) -- (653bp,426bp) -- cycle;
+  \pgfsetstrokecolor{olivedrab4}
+  \pgfsetfillcolor{olivedrab4}
+  \filldraw (509bp,514bp) -- (509bp,530bp) -- (653bp,530bp) -- (653bp,514bp) -- cycle;
+  \pgfsetstrokecolor{white}
+  \draw (559bp,520bp) node[right] {RuleInstance};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (511bp,506bp) node[right] {id};
+  \draw (598bp,506bp) node[right] {AutoField};
+  \pgfsetstrokecolor{black}
+  \draw (511bp,495bp) node[right] {content\_type};
+  \draw (598bp,495bp) node[right] {ForeignKey};
+  \draw (511bp,484bp) node[right] {subject\_object1};
+  \draw (598bp,484bp) node[right] {ForeignKey};
+  \draw (511bp,473bp) node[right] {subject\_object2};
+  \draw (598bp,473bp) node[right] {ForeignKey};
+  \definecolor{strokecol}{rgb}{0.48,0.48,0.48};
+  \pgfsetstrokecolor{strokecol}
+  \draw (511bp,462bp) node[right] {description};
+  \draw (598bp,462bp) node[right] {TextField};
+  \pgfsetstrokecolor{black}
+  \draw (511bp,451bp) node[right] {definition};
+  \draw (598bp,451bp) node[right] {ForeignKey};
+  \draw (511bp,440bp) node[right] {relationshipinstance\_ptr};
+  \draw (598bp,440bp) node[right] {OneToOneField};
+  \draw (511bp,429bp) node[right] {confidence};
+  \draw (598bp,429bp) node[right] {FloatField};
+\end{scope}
+%
+\end{tikzpicture}
+% End of code
+
+%
+\end{document}
+%
+
+
+
