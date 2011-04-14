@@ -331,7 +331,7 @@ class BaseRelationship(object):
         @type f: file
         @param f: the file to write to
         
-        @raise: ConfigurationError: if the rule/relationship doesn't have
+        @raise ConfigurationError: if the rule/relationship doesn't have
             a generator.
         """
         
@@ -343,7 +343,7 @@ class BaseRelationship(object):
                 parameter_name='?', 
                 parameter_value=cls.name)
             
-        i = 0
+        fi = 0
         
         # loop through pairs, export the rule/relationship instances
         for ds_arg1, ds_arg2 in self.generator():
