@@ -164,4 +164,6 @@ class TourOrderEvalPair(BaseEvaluationPair):
             order.delete()
             
         print "%d test pairs selected from total %d pairs." % (test_count, all_count)          
-        
+
+    def get_success(self):
+        return True

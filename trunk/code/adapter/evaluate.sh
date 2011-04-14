@@ -36,33 +36,42 @@ fi
 from lastfm.models import *
 BaseArtistEvaluationPair.select()
 
-# select test data - obecne
+
+
+# evaluate novel mahout recommender:
+# 
+
+# export training data
+from lastfm.mahout_recommender import *
+NovelMahoutArtistRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_train.csv')
+
+# export test data
 from lastfm.evaluation import *
-MovieRecommenderEvaluator.select_evaluation_pairs()
+NovelArtistRankEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_test.csv')
 
-# evaluate my recommender
-#
+# run mahout train, test -> lastfm_predictions.csv
+cd ../mahout/mahoutrec
+./unresystpredict.sh lastfm
 
-# build it
-from lastfm.recommender import *
-ArtistRecommender.build()
+# import predictions
+from lastfm.mahout_recommender import *
+NovelMahoutArtistRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_predictions.csv')
 
-# predictions:
-#
-
-# evaluate unresyst (predictions):
+# evaluate the predictions  
+from lastfm.mahout_recommender import *
 from lastfm.evaluation import *
-from lastfm.recommender import *
-ArtistRecommenderEvaluator.evaluate_predictions(ArtistRecommender)
+NovelArtistRankEvaluator.evaluate_predictions(NovelMahoutArtistRecommender)
 
-# evaluate mahout recommender:
+# evaluate nenovel mahout recommender:
+# 
+
 # export training data
 from lastfm.mahout_recommender import *
 MahoutArtistRecommender.export_data('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_train.csv')
 
 # export test data
 from lastfm.evaluation import *
-ArtistRecommenderEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_test.csv')
+ArtistRankEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_test.csv')
 
 # run mahout train, test -> lastfm_predictions.csv
 cd ../mahout/mahoutrec
@@ -75,9 +84,44 @@ MahoutArtistRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/a
 # evaluate the predictions  
 from lastfm.mahout_recommender import *
 from lastfm.evaluation import *
-ArtistRecommenderEvaluator.evaluate_predictions(MahoutArtistRecommender)
+ArtistRankEvaluator.evaluate_predictions(MahoutArtistRecommender)
 
-# recommendations
+
+
+# below
+#
+
+# build, 
+#save_all_to_predictions must be true
+./build.sh lastfm
+
+# evaluate and save the predictions
+from lastfm.evaluation import *
+from lastfm.recommender import *
+NovelArtistRecommenderEvaluator.evaluate_predictions(NovelArtistRecommender, save_predictions=True)
+
+# export predictions
+from lastfm.recommender import *
+NovelArtistRecommender.export_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_train.csv')
+
+# export test data
+from lastfm.evaluation import *
+NovelArtistRankEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_test.csv')
+
+# run mahout train, test -> flixster_predictions.csv
+cd ../mahout/mahoutrec
+./unresystpredict.sh lastfm
+
+# update unresyst predictions with the obtained
+from lastfm.recommender import *
+NovelArtistRecommender.update_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/lastfm_predictions.csv')
+
+# run evaluation
+./lastfmeval.sh novel dontbuild
+
+
+
+# recommendations - netreba
 # 
 
 # evaluate unresyst
@@ -297,5 +341,63 @@ MahoutOrderTourRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/cod
 # evaluate the predictions
 from travel.evaluation import *
 from travel.mahout_recommender import *
+OrderTourRankEvaluator.evaluate_predictions(MahoutOrderTourRecommender)
+
+
+# below
+#
+
+# build, 
+#save_all_to_predictions must be true
+./build.sh travel
+
+# evaluate and save the predictions
+from travel.evaluation import *
+from travel.recommender import *
+OrderTourRecommenderEvaluator.evaluate_predictions(OrderTourRecommender, save_predictions=True)
+
+# export predictions
+from travel.recommender import *
+OrderTourRecommender.export_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/travel_train.csv')
+
+# export test data
+from travel.evaluation import *
+OrderTourRecommenderEvaluator.export_evaluation_pairs('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/travel_test.csv')
+
+# run mahout train, test -> flixster_predictions.csv
+cd ../mahout/mahoutrec
+./unresystpredict.sh travel
+
+# update unresyst predictions with the obtained
+from travel.recommender import *
+OrderTourRecommender.update_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/travel_predictions.csv')
+
+# run evaluation
+./traveleval.sh preds dontbuild
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#############################
+
+# import predictions
+from travel.mahout_recommender import *
+MahoutOrderTourRecommender.import_predictions('/home/pcv/diplomka2/svn/trunk/code/adapter/csv/travel_predictions.csv')
+
+# evaluate the predictions  
+from travel.mahout_recommender import *
+from travel.evaluation import *
 OrderTourRankEvaluator.evaluate_predictions(MahoutOrderTourRecommender)
 

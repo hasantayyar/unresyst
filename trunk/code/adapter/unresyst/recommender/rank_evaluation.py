@@ -64,11 +64,14 @@ class RankEvaluator(BaseEvaluator):
                         else pos_array
                         
                     arr.append((obj, exp_prediction.expectancy))
-            
+
+            print "all predicted"
+
             # sort the array by expectancy
             pos_array.sort(key=lambda el: el[1], reverse=True)  
             neg_array.sort(key=lambda el: el[1], reverse=True)  
-            
+
+            print "all sorted"            
             pos_count = len(pos_array)
             neg_count = len(neg_array)
             

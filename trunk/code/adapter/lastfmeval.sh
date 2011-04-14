@@ -13,11 +13,11 @@ for param in $*;
 do    
     case $param in
     'novel')
-        EVAL='NovelArtistRecommenderEvaluator'
+        EVAL='NovelArtistRankEvaluator'
         REC='NovelArtistRecommender'
         ;;
     'nenovel')
-        EVAL='ArtistRecommenderEvaluator'
+        EVAL='ArtistRankEvaluator'
         REC='ArtistRecommender'
         ;;
     'dontbuild')
@@ -34,7 +34,7 @@ then
 fi
 
 echo "Evaluating recommendations..."
-echo "from lastfm.evaluation import *; from lastfm.recommender import *; $EVAL.evaluate_recommendations($REC, 10)"| python ./manage.py shell
+echo "from lastfm.evaluation import *; from lastfm.recommender import *; $EVAL.evaluate_predictions($REC)"| python ./manage.py shell
 
 echo ""
 
